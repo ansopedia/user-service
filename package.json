@@ -31,5 +31,16 @@
     "supertest": "^6.3.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx,md}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   }
 }
