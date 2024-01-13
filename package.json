@@ -1,0 +1,35 @@
+{
+  "name": "question",
+  "version": "0.0.0",
+  "description": "question service for ansopedia",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon",
+    "prepare": "husky install",
+    "pretest": "npm run build",
+    "start": "node ./dist/index.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "quiz",
+    "ansopedia"
+  ],
+  "author": "ansopedia",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "eslint": "^8.56.0",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.2.1",
+    "supertest": "^6.3.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
