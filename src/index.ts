@@ -2,7 +2,7 @@ import express, { type Application } from 'express';
 import dotenv from 'dotenv';
 
 dotenv.config();
-const port = process.env.APP_PORT ?? 3000;
+const port = process.env.APP_PORT ?? 8000;
 
 // Boot express
 export const app: Application = express();

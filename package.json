@@ -8,7 +8,7 @@
     "dev": "nodemon",
     "prepare": "husky install",
     "pretest": "npm run build",
-    "start": "node ./dist/index.js",
+    "start": "node ./build/index.js",
     "test": "jest"
   },
   "keywords": [

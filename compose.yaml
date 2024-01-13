@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  question-service: 
+    depends_on: 
+      - mongodb
+    build: 
+      context: .
+    ports: 
+      - 8000:8000
+    environment: 
+      NODE_ENV: production
+      DB_URL: mongodb://db/ansopedia-question 
+
+    develop:
+      watch:
+        - path: ./package.json
+          action: rebuild
+        - path: ./package-lock.json
+          action: rebuild
+        - path: ./src
+          target: /app
+          action: sync
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - ansopedia:/data/db
+
+volumes:
+  ansopedia:
