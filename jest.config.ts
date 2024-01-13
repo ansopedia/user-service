@@ -2,7 +2,7 @@ import type { Config } from 'jest';
 
 const config: Config = {
   clearMocks: true,
-  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node'],
+  moduleFileExtensions: ['js', 'ts', 'json', 'node'],
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   roots: ['<rootDir>'],
   setupFiles: ['dotenv/config'],
