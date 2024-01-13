@@ -23,10 +23,12 @@ const transport: DestinationStream = pino.transport({
   options: { destination: path.join(logDirectory, 'app.log') },
 });
 
-export const logger = pino(
+const logger = pino(
   {
     level: process.env.PINO_LOG_LEVEL ?? 'info',
     timestamp: pino.stdTimeFunctions.isoTime,
   },
   transport,
 );
+
+export default logger;

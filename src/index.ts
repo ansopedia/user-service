@@ -3,7 +3,7 @@ import pinoHTTP from 'pino-http';
 import dotenv from 'dotenv';
 
 import connectDB from './config/config';
-import { logger } from './utils/Logger';
+import { logger } from './utils';
 
 dotenv.config();
 const port = process.env.APP_PORT ?? 8000;
