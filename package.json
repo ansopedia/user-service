@@ -1,7 +1,7 @@
 {
-  "name": "question",
+  "name": "user",
   "version": "0.0.0",
-  "description": "question service for ansopedia",
+  "description": "user service for ansopedia",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
@@ -13,7 +13,7 @@
     "prod": "pnpm build && pnpm start"
   },
   "keywords": [
-    "quiz",
+    "user",
     "ansopedia"
   ],
   "author": "ansopedia",
