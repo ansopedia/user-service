@@ -24,7 +24,6 @@ export interface IUser extends Document {
   isProfileComplete: boolean;
   tokens: { [key: string]: unknown }[];
   otp?: { [key: string]: unknown };
-  tc: boolean;
 
   // OAuth Providers
   oauthProviders?: IOAuthProvider[];
@@ -104,10 +103,6 @@ const userSchema: Schema<IUser> = new Schema(
     },
     tokens: [{ type: Schema.Types.Mixed }],
     otp: { type: Schema.Types.Mixed },
-    tc: {
-      type: Boolean,
-      required: true,
-    },
 
     // OAuth Providers
     oauthProviders: [oAuthProviderSchema],

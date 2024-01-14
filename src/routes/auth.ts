@@ -3,6 +3,7 @@ import { body, validationResult } from 'express-validator';
 const authRoutes = express.Router();
 
 interface ISignUp {
+  name: string;
   email: string;
   password: string;
   confirmPassword: string;
