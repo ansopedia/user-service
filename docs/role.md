@@ -1,0 +1,4 @@
+- isProtected: Prevents accidental deletion of essential roles that are critical for system functionality.
+- createdBy, lastUpdatedBy: Tracks role creation and modification for auditing and accountability.
+- version: Enables tracking changes and roll-back if needed.
+- isDeleted: Facilitates soft deletion for data retention and compliance.
