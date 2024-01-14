@@ -3,16 +3,16 @@ import dotenv from 'dotenv';
 import { pinoHttp } from 'pino-http';
 
 import { logger } from './utils';
-import routes from './routes';
+import { auth } from './routes';
 
 dotenv.config();
-const port = process.env.APP_PORT ?? 8000;
+const port = process.env.APP_PORT ?? 8001;
 
 const app: Application = express();
 
 app.use(pinoHttp({ logger }));
 
-app.use('/v1', routes);
+app.use('/v1', auth);
 
 export const server = () => {
   // Start app
