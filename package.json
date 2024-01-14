@@ -8,9 +8,9 @@
     "dev": "nodemon",
     "prepare": "husky install",
     "pretest": "pnpm build",
+    "prod": "pnpm build && pnpm start",
     "start": "node ./build/index.js",
-    "test": "jest",
-    "prod": "pnpm build && pnpm start"
+    "test": "jest"
   },
   "keywords": [
     "user",
@@ -21,6 +21,7 @@
   "dependencies": {
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-validator": "^7.0.1",
     "mongodb": "^6.3.0",
     "mongoose": "^8.0.4",
     "pino": "^8.17.2",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.11",
+    "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
     "eslint": "^8.56.0",

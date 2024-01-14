@@ -8,11 +8,12 @@ import { auth } from './routes';
 dotenv.config();
 const port = process.env.APP_PORT ?? 8001;
 
-const app: Application = express();
+export const app: Application = express();
 
+app.use(express.json());
 app.use(pinoHttp({ logger }));
 
-app.use('/v1', auth);
+app.use('/api/v1', auth);
 
 export const server = () => {
   // Start app
