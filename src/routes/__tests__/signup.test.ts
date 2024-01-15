@@ -22,23 +22,23 @@ const mismatchedPasswordCredentials = {
 const passwordTestCases = [
   {
     password: 'short',
-    expectedMessage: 'Password must be at least 8 characters.',
+    expectedMessage: 'Password must be at least 8 characters',
   },
   {
     password: 'Password',
-    expectedMessage: 'Password must contain at least 1 number.',
+    expectedMessage: 'Password must contain at least 1 number',
   },
   {
     password: '12345678',
-    expectedMessage: 'Password must contain at least 1 uppercase letter and 1 lowercase letter.',
+    expectedMessage: 'Password must contain at least 1 uppercase letter and 1 lowercase letter',
   },
   {
     password: 'PASSWORD123',
-    expectedMessage: 'Password must contain at least 1 lowercase letter.',
+    expectedMessage: 'Password must contain at least 1 lowercase letter',
   },
   {
     password: 'password123',
-    expectedMessage: 'Password must contain at least 1 uppercase letter.',
+    expectedMessage: 'Password must contain at least 1 uppercase letter',
   },
 ];
 
@@ -48,7 +48,7 @@ describe('User Registration Process', () => {
     it('should respond with a 422 status code when an invalid email is provided', async () => {
       const response = await request(app).post('/api/v1/auth/signup').send(invalidEmailCredentials);
       expect(response.statusCode).toBe(422);
-      expect(response.body.message).toBe('Invalid email address.');
+      expect(response.body.message).toBe('Invalid email address');
     });
 
     it('should respond with a 200 status code when a valid email is provided', async () => {
@@ -61,7 +61,7 @@ describe('User Registration Process', () => {
         .post('/api/v1/auth/signup')
         .send({ ...VALID_CREDENTIALS, email: '' });
       expect(response.statusCode).toBe(422);
-      expect(response.body.message).toMatch(/Email is required/);
+      expect(response.body.message).toBe('Email is required');
     });
   });
 
@@ -77,28 +77,36 @@ describe('User Registration Process', () => {
       });
     });
 
-    it('should respond with a 200 status code when the password meets the strength requirements', async () => {
+    it('should respond with 200 for a valid password', async () => {
       const response = await request(app).post('/api/v1/auth/signup').send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(200);
     });
 
-    it('should not allow common passwords', async () => {
-      const commonPasswords = ['password', '123456', 'qwerty'];
-      for (const password of commonPasswords) {
-        const response = await request(app)
-          .post('/api/v1/auth/signup')
-          .send({ ...VALID_CREDENTIALS, password, confirmPassword: password });
-        expect(response.statusCode).toBe(422);
-        expect(response.body.message).toMatch(/Password is too common/);
-      }
-    });
-
-    it('should not allow passwords containing user information', async () => {
+    it.each(['password', '123456', 'qwerty'])('should not allow common password "%s"', async (commonPassword) => {
       const response = await request(app)
         .post('/api/v1/auth/signup')
-        .send({ ...VALID_CREDENTIALS, password: 'ValidUser123!', confirmPassword: 'ValidUser123!' });
+        .send({ ...VALID_CREDENTIALS, password: commonPassword, confirmPassword: commonPassword });
       expect(response.statusCode).toBe(422);
-      expect(response.body.message).toMatch(/Password cannot contain user information/);
+      expect(response.body.message).toBe('Password is too common');
+    });
+
+    it.each(['ValidUser123!', 'User123Valid', '123ValidUser'])(
+      'should not allow passwords containing user information "%s"',
+      async (userPassword) => {
+        const response = await request(app)
+          .post('/api/v1/auth/signup')
+          .send({ ...VALID_CREDENTIALS, password: userPassword, confirmPassword: userPassword });
+        expect(response.statusCode).toBe(422);
+        expect(response.body.message).toBe('Password cannot contain user information');
+      },
+    );
+
+    it('should respond with 422 for empty password', async () => {
+      const response = await request(app)
+        .post('/api/v1/auth/signup')
+        .send({ ...VALID_CREDENTIALS, password: '', confirmPassword: '' });
+      expect(response.statusCode).toBe(422);
+      expect(response.body.message).toBe('Password is required');
     });
   });
 
@@ -107,12 +115,44 @@ describe('User Registration Process', () => {
     it('should respond with a 422 status code when the confirmPassword does not match the password', async () => {
       const response = await request(app).post('/api/v1/auth/signup').send(mismatchedPasswordCredentials);
       expect(response.statusCode).toBe(422);
-      expect(response.body.message).toBe('Passwords do not match.');
+      expect(response.body.message).toBe('Passwords do not match');
     });
 
     it('should respond with a 200 status code when the confirmPassword matches the password', async () => {
       const response = await request(app).post('/api/v1/auth/signup').send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(200);
+    });
+
+    it('should respond with 422 for empty confirm password', async () => {
+      const response = await request(app)
+        .post('/api/v1/auth/signup')
+        .send({ ...VALID_CREDENTIALS, confirmPassword: '' });
+      expect(response.statusCode).toBe(422);
+      expect(response.body.message).toBe('Confirm password is required');
+    });
+
+    it('should respond with 422 when confirm password does not match password', async () => {
+      const response = await request(app)
+        .post('/api/v1/auth/signup')
+        .send({ ...VALID_CREDENTIALS, confirmPassword: 'InvalidConfirmPassword123!' });
+      expect(response.statusCode).toBe(422);
+      expect(response.body.message).toBe('Passwords do not match');
+    });
+
+    it('should respond with 422 for empty password when confirm password is non-empty', async () => {
+      const response = await request(app)
+        .post('/api/v1/auth/signup')
+        .send({ ...VALID_CREDENTIALS, password: '', confirmPassword: 'ValidPassword123!' });
+      expect(response.statusCode).toBe(422);
+      expect(response.body.message).toBe('Password is required');
+    });
+
+    it('should respond with 422 when confirm password is empty and password is invalid', async () => {
+      const response = await request(app)
+        .post('/api/v1/auth/signup')
+        .send({ ...VALID_CREDENTIALS, password: 'short', confirmPassword: '' });
+      expect(response.statusCode).toBe(422);
+      expect(response.body.message).toBe('Password is required');
     });
   });
 
@@ -125,7 +165,7 @@ describe('User Registration Process', () => {
       expect(response.body.message).toBe('User created successfully');
     });
 
-    it('should not allow duplicate email addresses', async () => {
+    it('should respond with 422 for duplicate email', async () => {
       await request(app).post('/api/v1/auth/signup').send(VALID_CREDENTIALS);
       const response = await request(app).post('/api/v1/auth/signup').send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(422);
