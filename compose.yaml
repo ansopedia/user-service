@@ -1,16 +1,16 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  question-service: 
-    depends_on: 
+  question-service:
+    depends_on:
       - mongodb
-    build: 
+    build:
       context: .
-    ports: 
+    ports:
       - 8001:8001
-    environment: 
+    environment:
       NODE_ENV: production
-      DB_URL: mongodb://db/ansopedia-question 
+      DB_URL: mongodb://db/ansopedia-question
 
     develop:
       watch:

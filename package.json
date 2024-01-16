@@ -6,8 +6,11 @@
   "scripts": {
     "build": "tsc",
     "dev": "nodemon",
+    "lint": "eslint src",
     "prepare": "husky install",
     "pretest": "pnpm build",
+    "prettier:check": "prettier --check .",
+    "prettier:fix": "prettier --write .",
     "prod": "pnpm build && pnpm start",
     "start": "node ./build/index.js",
     "test": "jest"
