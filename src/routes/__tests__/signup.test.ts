@@ -1,5 +1,8 @@
 import request from 'supertest';
 import { app } from '../../server';
+import { AUTH_ROUTES } from '../../constants';
+
+const { SIGN_UP: SIGN_UP_URL } = AUTH_ROUTES;
 
 // Define the valid and invalid credentials for reusability and scalability
 const VALID_CREDENTIALS = {
@@ -46,19 +49,19 @@ describe('User Registration Process', () => {
   // Test for email validation
   describe('Email Validation', () => {
     it('should respond with a 422 status code when an invalid email is provided', async () => {
-      const response = await request(app).post('/api/v1/auth/signup').send(invalidEmailCredentials);
+      const response = await request(app).post(SIGN_UP_URL).send(invalidEmailCredentials);
       expect(response.statusCode).toBe(422);
       expect(response.body.message).toBe('Invalid email address');
     });
 
     it('should respond with a 200 status code when a valid email is provided', async () => {
-      const response = await request(app).post('/api/v1/auth/signup').send(VALID_CREDENTIALS);
+      const response = await request(app).post(SIGN_UP_URL).send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(200);
     });
 
     it('should respond with 422 for empty email', async () => {
       const response = await request(app)
-        .post('/api/v1/auth/signup')
+        .post(SIGN_UP_URL)
         .send({ ...VALID_CREDENTIALS, email: '' });
       expect(response.statusCode).toBe(422);
       expect(response.body.message).toBe('Email is required');
@@ -70,7 +73,7 @@ describe('User Registration Process', () => {
     passwordTestCases.forEach(({ password, expectedMessage }) => {
       it(`should respond with a 422 status code and appropriate message when the password "${password}" does not meet the strength requirements`, async () => {
         const response = await request(app)
-          .post('/api/v1/auth/signup')
+          .post(SIGN_UP_URL)
           .send({ ...VALID_CREDENTIALS, password, confirmPassword: password });
         expect(response.statusCode).toBe(422);
         expect(response.body.message).toBe(expectedMessage);
@@ -78,13 +81,13 @@ describe('User Registration Process', () => {
     });
 
     it('should respond with 200 for a valid password', async () => {
-      const response = await request(app).post('/api/v1/auth/signup').send(VALID_CREDENTIALS);
+      const response = await request(app).post(SIGN_UP_URL).send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(200);
     });
 
     it.each(['password', '123456', 'qwerty'])('should not allow common password "%s"', async (commonPassword) => {
       const response = await request(app)
-        .post('/api/v1/auth/signup')
+        .post(SIGN_UP_URL)
         .send({ ...VALID_CREDENTIALS, password: commonPassword, confirmPassword: commonPassword });
       expect(response.statusCode).toBe(422);
       expect(response.body.message).toBe('Password is too common');
@@ -94,7 +97,7 @@ describe('User Registration Process', () => {
       'should not allow passwords containing user information "%s"',
       async (userPassword) => {
         const response = await request(app)
-          .post('/api/v1/auth/signup')
+          .post(SIGN_UP_URL)
           .send({ ...VALID_CREDENTIALS, password: userPassword, confirmPassword: userPassword });
         expect(response.statusCode).toBe(422);
         expect(response.body.message).toBe('Password cannot contain user information');
@@ -103,7 +106,7 @@ describe('User Registration Process', () => {
 
     it('should respond with 422 for empty password', async () => {
       const response = await request(app)
-        .post('/api/v1/auth/signup')
+        .post(SIGN_UP_URL)
         .send({ ...VALID_CREDENTIALS, password: '', confirmPassword: '' });
       expect(response.statusCode).toBe(422);
       expect(response.body.message).toBe('Password is required');
@@ -113,19 +116,19 @@ describe('User Registration Process', () => {
   // Test for password confirmation
   describe('Password Confirmation', () => {
     it('should respond with a 422 status code when the confirmPassword does not match the password', async () => {
-      const response = await request(app).post('/api/v1/auth/signup').send(mismatchedPasswordCredentials);
+      const response = await request(app).post(SIGN_UP_URL).send(mismatchedPasswordCredentials);
       expect(response.statusCode).toBe(422);
       expect(response.body.message).toBe('Passwords do not match');
     });
 
     it('should respond with a 200 status code when the confirmPassword matches the password', async () => {
-      const response = await request(app).post('/api/v1/auth/signup').send(VALID_CREDENTIALS);
+      const response = await request(app).post(SIGN_UP_URL).send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(200);
     });
 
     it('should respond with 422 for empty confirm password', async () => {
       const response = await request(app)
-        .post('/api/v1/auth/signup')
+        .post(SIGN_UP_URL)
         .send({ ...VALID_CREDENTIALS, confirmPassword: '' });
       expect(response.statusCode).toBe(422);
       expect(response.body.message).toBe('Confirm password is required');
@@ -133,7 +136,7 @@ describe('User Registration Process', () => {
 
     it('should respond with 422 when confirm password does not match password', async () => {
       const response = await request(app)
-        .post('/api/v1/auth/signup')
+        .post(SIGN_UP_URL)
         .send({ ...VALID_CREDENTIALS, confirmPassword: 'InvalidConfirmPassword123!' });
       expect(response.statusCode).toBe(422);
       expect(response.body.message).toBe('Passwords do not match');
@@ -141,7 +144,7 @@ describe('User Registration Process', () => {
 
     it('should respond with 422 for empty password when confirm password is non-empty', async () => {
       const response = await request(app)
-        .post('/api/v1/auth/signup')
+        .post(SIGN_UP_URL)
         .send({ ...VALID_CREDENTIALS, password: '', confirmPassword: 'ValidPassword123!' });
       expect(response.statusCode).toBe(422);
       expect(response.body.message).toBe('Password is required');
@@ -149,7 +152,7 @@ describe('User Registration Process', () => {
 
     it('should respond with 422 when confirm password is empty and password is invalid', async () => {
       const response = await request(app)
-        .post('/api/v1/auth/signup')
+        .post(SIGN_UP_URL)
         .send({ ...VALID_CREDENTIALS, password: 'short', confirmPassword: '' });
       expect(response.statusCode).toBe(422);
       expect(response.body.message).toBe('Password is required');
@@ -159,15 +162,15 @@ describe('User Registration Process', () => {
   // User creation
   describe('User Creation', () => {
     it('should create a new user with valid credentials', async () => {
-      const response = await request(app).post('/api/v1/auth/signup').send(VALID_CREDENTIALS);
+      const response = await request(app).post(SIGN_UP_URL).send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(201);
       expect(response.body.user).toHaveProperty('id');
       expect(response.body.message).toBe('User created successfully');
     });
 
     it('should respond with 422 for duplicate email', async () => {
-      await request(app).post('/api/v1/auth/signup').send(VALID_CREDENTIALS);
-      const response = await request(app).post('/api/v1/auth/signup').send(VALID_CREDENTIALS);
+      await request(app).post(SIGN_UP_URL).send(VALID_CREDENTIALS);
+      const response = await request(app).post(SIGN_UP_URL).send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(422);
       expect(response.body.message).toBe('Email already exists');
     });
