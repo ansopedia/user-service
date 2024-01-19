@@ -9,7 +9,7 @@ const app: Application = express();
 
 app.use(pinoHttp({ logger }));
 
-app.use('/v1', routes);
+app.use('/api/v1', routes);
 
 export const server = () => {
   app.listen(APP_PORT, () => {
