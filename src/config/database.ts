@@ -1,5 +1,9 @@
 import { DATABASE_URI } from '../constants';
-import { MongoDBConnector } from '../database/MongoDBConnector';
 import { DatabaseService } from '../services';
+import { MongoDBConnector } from '../database/MongoDBConnector';
 
-export const db = DatabaseService.getInstance(new MongoDBConnector(DATABASE_URI));
+const DB_OPTIONS = {
+  dbName: 'ansopedia-user',
+};
+
+export const db = DatabaseService.getInstance(new MongoDBConnector(DATABASE_URI, DB_OPTIONS));

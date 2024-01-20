@@ -1,19 +1,22 @@
-import { MongoClient } from 'mongodb';
+import mongoose from 'mongoose';
+import { IDatabaseConnector } from './interface/database.interface';
 
-import { IMongoDBConnector } from './interface/mongoDB.interface';
+export class MongoDBConnector implements IDatabaseConnector {
+  private options: Record<string, string>;
 
-export class MongoDBConnector implements IMongoDBConnector {
-  public client: MongoClient;
-
-  constructor(readonly connectionStr: string) {
-    this.client = new MongoClient(connectionStr);
+  constructor(
+    readonly connectionStr: string,
+    options: Record<string, string>,
+  ) {
+    this.connectionStr = connectionStr;
+    this.options = options;
   }
 
   async connect(): Promise<void> {
-    this.client = await this.client.connect();
+    await mongoose.connect(this.connectionStr, this.options);
   }
 
   public async disconnect(): Promise<void> {
-    await this.client.close();
+    await mongoose.disconnect();
   }
 }

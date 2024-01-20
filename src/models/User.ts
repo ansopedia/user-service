@@ -42,7 +42,7 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       trim: true,
       lowercase: true,
-      unique: true,
+      // unique: true,
     },
     email: {
       type: String,
@@ -60,12 +60,6 @@ const userSchema: Schema<IUser> = new Schema(
     mobile: {
       type: String,
       trim: true,
-      validate: {
-        validator: function (v: string) {
-          return /^[0-9]{10}/.test(v);
-        },
-        message: '{VALUE} is not a valid 10 digit number!',
-      },
     },
 
     // Points and Notifications
