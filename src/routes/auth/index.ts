@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import { AUTH_ROUTES } from '../constants';
+import { AUTH_ROUTES, INPUT_VALIDATION_ERRORS } from '../../constants';
 const authRoutes = express.Router();
 
 interface ISignUp {
@@ -12,7 +12,7 @@ interface ISignUp {
 
 authRoutes.post(
   AUTH_ROUTES.SIGN_UP,
-  [body('email').isEmail().withMessage('Email must be valid')],
+  [body('email').isEmail().withMessage(INPUT_VALIDATION_ERRORS.INVALID_EMAIL_FORMAT_ERROR)],
   (req: Request<ISignUp>, res: Response) => {
     const errors = validationResult(req);
 
