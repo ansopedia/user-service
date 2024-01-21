@@ -10,6 +10,8 @@ const config: Config = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
+  preset: 'ts-jest',
+  setupFilesAfterEnv: ['./src/config/setup-after-env.ts'],
 };
 
 export default config;
