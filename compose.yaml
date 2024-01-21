@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  question-service: 
+  boilerplate-service: 
     depends_on: 
       - mongodb
     build: 
@@ -10,7 +10,7 @@ services:
       - 8000:8000
     environment: 
       NODE_ENV: production
-      DB_URL: mongodb://db/ansopedia-question 
+      DB_URL: mongodb://db/boilerplate
 
     develop:
       watch:
@@ -27,7 +27,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ansopedia:/data/db
+      - boilerplate:/data/db
 
 volumes:
-  ansopedia:
+  boilerplate:

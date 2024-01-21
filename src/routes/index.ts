@@ -1,8 +1,6 @@
-import express, { Request, Response } from 'express';
-const routes = express.Router();
+import express from 'express';
+import authRoutes from './auth';
 
-routes.get('/', (_: Request, res: Response) => {
-  res.send('Hello World!');
-});
+export const routes = express.Router();
 
-export default routes;
+routes.use(authRoutes);

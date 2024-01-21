@@ -1,39 +1,45 @@
 {
-  "name": "question",
+  "name": "express-typescript-boilerplate",
   "version": "0.0.0",
-  "description": "question service for ansopedia",
+  "description": "express-typescript-boilerplate",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
     "dev": "nodemon",
+    "lint": "eslint src",
     "prepare": "husky install",
     "pretest": "pnpm build",
+    "prettier:check": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "prod": "pnpm build && pnpm start",
     "start": "node ./build/index.js",
-    "test": "jest",
-    "prod": "pnpm build && pnpm start"
+    "test": "jest"
   },
   "keywords": [
-    "quiz",
-    "ansopedia"
+    "express",
+    "typescript"
   ],
-  "author": "ansopedia",
+  "author": "sanjay",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "mongodb": "^6.3.0",
+    "express-validator": "^7.0.1",
+    "mongoose": "^8.0.4",
     "pino": "^8.17.2",
     "pino-http": "^9.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.11",
+    "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
     "eslint": "^8.56.0",
     "husky": "^8.0.3",
     "jest": "^29.7.0",
     "lint-staged": "^15.2.0",
+    "mongodb-memory-server": "^9.1.6",
     "nodemon": "^3.0.2",
     "prettier": "^3.2.1",
     "supertest": "^6.3.3",

@@ -2,14 +2,14 @@ import express, { type Application } from 'express';
 import { pinoHttp } from 'pino-http';
 
 import { logger } from './utils';
-import routes from './routes';
 import { APP_PORT } from './constants';
+import { routes } from './routes';
 
-const app: Application = express();
+export const app: Application = express();
 
+app.use(express.json());
 app.use(pinoHttp({ logger }));
-
-app.use('/api/v1', routes);
+app.use(routes);
 
 export const server = () => {
   app.listen(APP_PORT, () => {
