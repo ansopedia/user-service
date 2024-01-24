@@ -52,3 +52,4 @@ export const validateConfirmPassword = () => [
 ];
 
 export const validateSignUp = [...validateEmail(), ...validatePassword(), ...validateConfirmPassword()];
+export const validateSignIn = [...validateEmail(), ...validatePassword()];

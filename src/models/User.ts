@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { IOAuthProvider, oAuthProviderSchema } from './AuthProvider';
 
 // User Schema
 export interface IUser extends Document {
@@ -11,22 +10,19 @@ export interface IUser extends Document {
   mobile?: string;
 
   // Points and Notifications
-  points: { totalCoins: number };
+  points: { totalPoints: number };
   notifications: Schema.Types.ObjectId[];
 
   // Additional Information
-  designation?: string;
-  roles: Schema.Types.ObjectId[];
+  role: string;
   avatar?: string;
 
   // Verification and Security
   isAccountVerified?: boolean;
+  isAccountDisabled?: boolean;
   isProfileComplete: boolean;
   tokens: { [key: string]: unknown }[];
   otp?: { [key: string]: unknown };
-
-  // OAuth Providers
-  oauthProviders?: IOAuthProvider[];
 }
 
 const userSchema: Schema<IUser> = new Schema(
@@ -74,20 +70,18 @@ const userSchema: Schema<IUser> = new Schema(
     ],
 
     // Additional Information
-    designation: {
+    role: {
       type: String,
-      trim: true,
+      default: 'user',
     },
-    roles: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'roles',
-      },
-    ],
     avatar: { type: String },
 
     // Verification and Security
     isAccountVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isAccountDisabled: {
       type: Boolean,
       default: false,
     },
@@ -97,9 +91,6 @@ const userSchema: Schema<IUser> = new Schema(
     },
     tokens: [{ type: Schema.Types.Mixed }],
     otp: { type: Schema.Types.Mixed },
-
-    // OAuth Providers
-    oauthProviders: [oAuthProviderSchema],
   },
   { timestamps: true },
 );

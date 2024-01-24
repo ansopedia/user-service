@@ -7,7 +7,6 @@ import {
   CONFIRM_PASSWORD_VALIDATION_ERRORS,
   USER_REGISTRATION_ERRORS,
 } from '../../constants';
-import { USER_CREATED_SUCCESSFULLY } from '../../constants/messages/success';
 
 const { SIGN_UP: SIGN_UP_URL } = AUTH_ROUTES;
 
@@ -153,8 +152,8 @@ describe('User Registration Process', () => {
     it('should create a new user with valid credentials', async () => {
       const response = await request(app).post(SIGN_UP_URL).send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(201);
-      expect(response.body.data).toHaveProperty('_id');
-      expect(response.body.message).toBe(USER_CREATED_SUCCESSFULLY);
+      expect(response.body.token).toHaveProperty('accessToken');
+      expect(response.body.token).toHaveProperty('refreshToken');
     });
 
     it('should respond with 422 for duplicate email', async () => {
