@@ -10,7 +10,6 @@ const config: Config = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
-  preset: 'ts-jest',
 };
 
 export default config;
