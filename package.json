@@ -11,7 +11,7 @@
     "pretest": "pnpm build",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "prod": "pnpm build && pnpm start",
+    "prod": "set NODE_ENV=production&& pnpm build && pnpm start",
     "start": "node ./build/index.js",
     "test": "jest"
   },

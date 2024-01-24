@@ -2,17 +2,17 @@ import { IDatabaseConnector } from '../database/interface/database.interface';
 
 // Singleton pattern for DatabaseService class to ensure that only one instance of the class exists at any given time.
 // Dependency injection is used to inject the database connector into the DatabaseService class.
-export default class DatabaseService implements IDatabaseConnector {
-  private static instance: DatabaseService | null = null;
+export default class DatabaseServiceProvider implements IDatabaseConnector {
+  private static instance: DatabaseServiceProvider | null = null;
   private database: IDatabaseConnector;
 
   private constructor(database: IDatabaseConnector) {
     this.database = database;
   }
 
-  public static getInstance(database: IDatabaseConnector): DatabaseService | null {
+  public static getInstance(database: IDatabaseConnector): DatabaseServiceProvider | null {
     if (!this.instance) {
-      this.instance = new DatabaseService(database);
+      this.instance = new DatabaseServiceProvider(database);
     }
     return this.instance;
   }
