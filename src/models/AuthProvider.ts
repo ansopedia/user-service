@@ -30,4 +30,7 @@ export const oAuthProviderSchema: Schema<IOAuthProvider> = new Schema({
   },
 });
 
-export const OAuthProviderModel = mongoose.model<IOAuthProvider>('oauth_providers', oAuthProviderSchema);
+export const OAuthProviderModel = mongoose.model<IOAuthProvider>(
+  'oauth_providers',
+  oAuthProviderSchema,
+);

@@ -1,16 +1,27 @@
 import { Request, Response } from 'express';
 import { UserModel } from '../models/User';
 
-import { GENERAL_ERRORS, USER_LOGIN_ERRORS, USER_REGISTRATION_ERRORS } from '../constants';
+import {
+  GENERAL_ERRORS,
+  USER_LOGIN_ERRORS,
+  USER_REGISTRATION_ERRORS,
+} from '../constants';
 import { generateAndStoreAuthTokens } from '../utils/jwt-token';
 import { sendApiResponse } from '../utils/sendApiResponse';
 const { INTERNAL_SERVER_ERROR } = GENERAL_ERRORS;
 
 const { EMAIL_ALREADY_EXISTS_ERROR } = USER_REGISTRATION_ERRORS;
-const { USER_NOT_FOUND_ERROR, INVALID_CREDENTIALS_ERROR, ACCOUNT_DISABLED_ERROR } = USER_LOGIN_ERRORS;
+const {
+  USER_NOT_FOUND_ERROR,
+  INVALID_CREDENTIALS_ERROR,
+  ACCOUNT_DISABLED_ERROR,
+} = USER_LOGIN_ERRORS;
 
 export class AuthController {
-  static async createUserWithEmailAndPassword(req: Request, response: Response) {
+  static async createUserWithEmailAndPassword(
+    req: Request,
+    response: Response,
+  ) {
     const { name, email, password } = req.body;
     try {
       const isUserExist = await UserModel.findOne({ email });

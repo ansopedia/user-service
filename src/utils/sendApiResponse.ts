@@ -9,7 +9,13 @@ type ApiResponse = {
   payload?: Record<string, unknown>;
 };
 
-export const sendApiResponse = ({ response, statusCode, message, errors, payload }: ApiResponse) => {
+export const sendApiResponse = ({
+  response,
+  statusCode,
+  message,
+  errors,
+  payload,
+}: ApiResponse) => {
   const isProduction = NODE_ENV === 'production';
   const responseBody: Record<string, unknown> = { message };
 

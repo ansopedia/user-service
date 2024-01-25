@@ -12,6 +12,11 @@ authRoutes.post(
   AuthController.createUserWithEmailAndPassword,
 );
 
-authRoutes.post(AUTH_ROUTES.SIGN_IN, validateSignIn, handleValidationErrors, AuthController.signInWithEmailAndPassword);
+authRoutes.post(
+  AUTH_ROUTES.SIGN_IN,
+  validateSignIn,
+  handleValidationErrors,
+  AuthController.signInWithEmailAndPassword,
+);
 
 export default authRoutes;

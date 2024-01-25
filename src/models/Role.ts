@@ -87,7 +87,13 @@ const roleSchema: Schema<IRole> = new Schema(
 );
 
 // Add indexes for optimized queries
-roleSchema.index({ name: 'text', permissions: 1, isDefault: 1, isProtected: 1, isDeleted: 1 });
+roleSchema.index({
+  name: 'text',
+  permissions: 1,
+  isDefault: 1,
+  isProtected: 1,
+  isDeleted: 1,
+});
 roleSchema.index({ keywords: 1 });
 roleSchema.index({ assignedUsers: 1 });
 

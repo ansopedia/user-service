@@ -15,7 +15,9 @@ try {
     fs.mkdirSync(logDirectory);
   }
 } catch (error) {
-  consoleLogger.error(`Failed to create log directory: ${(error as Error).message}`);
+  consoleLogger.error(
+    `Failed to create log directory: ${(error as Error).message}`,
+  );
   process.exit(1);
 }
 

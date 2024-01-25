@@ -1,6 +1,10 @@
 import { check } from 'express-validator';
 
-import { CONFIRM_PASSWORD_VALIDATION_ERRORS, EMAIL_VALIDATION_ERRORS, PASSWORD_VALIDATION_ERRORS } from '../constants';
+import {
+  CONFIRM_PASSWORD_VALIDATION_ERRORS,
+  EMAIL_VALIDATION_ERRORS,
+  PASSWORD_VALIDATION_ERRORS,
+} from '../constants';
 const { EMAIL_INVALID_ERROR, EMAIL_EMPTY_ERROR } = EMAIL_VALIDATION_ERRORS;
 
 const {
@@ -11,10 +15,17 @@ const {
   PASSWORD_MISSING_UPPERCASE,
   PASSWORD_MISSING_CASE_VARIATION,
 } = PASSWORD_VALIDATION_ERRORS;
-const { CONFIRM_PASSWORD_EMPTY_ERROR, CONFIRM_PASSWORD_MISMATCH_ERROR } = CONFIRM_PASSWORD_VALIDATION_ERRORS;
+const { CONFIRM_PASSWORD_EMPTY_ERROR, CONFIRM_PASSWORD_MISMATCH_ERROR } =
+  CONFIRM_PASSWORD_VALIDATION_ERRORS;
 
 export const validateEmail = () => [
-  check('email').notEmpty().withMessage(EMAIL_EMPTY_ERROR).bail().trim().isEmail().withMessage(EMAIL_INVALID_ERROR),
+  check('email')
+    .notEmpty()
+    .withMessage(EMAIL_EMPTY_ERROR)
+    .bail()
+    .trim()
+    .isEmail()
+    .withMessage(EMAIL_INVALID_ERROR),
 ];
 
 export const validatePassword = () => [
@@ -51,5 +62,9 @@ export const validateConfirmPassword = () => [
     }),
 ];
 
-export const validateSignUp = [...validateEmail(), ...validatePassword(), ...validateConfirmPassword()];
+export const validateSignUp = [
+  ...validateEmail(),
+  ...validatePassword(),
+  ...validateConfirmPassword(),
+];
 export const validateSignIn = [...validateEmail(), ...validatePassword()];

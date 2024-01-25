@@ -22,7 +22,8 @@ const {
   PASSWORD_MISSING_CASE_VARIATION,
 } = PASSWORD_VALIDATION_ERRORS;
 
-const { CONFIRM_PASSWORD_EMPTY_ERROR, CONFIRM_PASSWORD_MISMATCH_ERROR } = CONFIRM_PASSWORD_VALIDATION_ERRORS;
+const { CONFIRM_PASSWORD_EMPTY_ERROR, CONFIRM_PASSWORD_MISMATCH_ERROR } =
+  CONFIRM_PASSWORD_VALIDATION_ERRORS;
 
 // Define the valid and invalid credentials for reusability and scalability
 const VALID_CREDENTIALS = {
@@ -69,7 +70,9 @@ describe('User Registration Process', () => {
   // Test for email validation
   describe('Email Validation', () => {
     it('should respond with a 422 status code when an invalid email is provided', async () => {
-      const response = await request(app).post(SIGN_UP_ROUTE).send(invalidEmailCredentials);
+      const response = await request(app)
+        .post(SIGN_UP_ROUTE)
+        .send(invalidEmailCredentials);
       expect(response.statusCode).toBe(422);
       const error = response.body.errors[0];
       expect(error.msg).toBe(EMAIL_INVALID_ERROR);
@@ -131,7 +134,9 @@ describe('User Registration Process', () => {
   // Test for password confirmation
   describe('Password Confirmation', () => {
     it('should respond with a 422 status code when the confirmPassword does not match the password', async () => {
-      const response = await request(app).post(SIGN_UP_ROUTE).send(mismatchedPasswordCredentials);
+      const response = await request(app)
+        .post(SIGN_UP_ROUTE)
+        .send(mismatchedPasswordCredentials);
       expect(response.statusCode).toBe(422);
       const error = response.body.errors[0];
       expect(error.msg).toBe(CONFIRM_PASSWORD_MISMATCH_ERROR);
@@ -150,7 +155,9 @@ describe('User Registration Process', () => {
   // User creation
   describe('User Creation', () => {
     it('should create a new user with valid credentials', async () => {
-      const response = await request(app).post(SIGN_UP_ROUTE).send(VALID_CREDENTIALS);
+      const response = await request(app)
+        .post(SIGN_UP_ROUTE)
+        .send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(201);
       expect(response.body.tokens).toHaveProperty('accessToken');
       expect(response.body.tokens).toHaveProperty('refreshToken');
@@ -158,7 +165,9 @@ describe('User Registration Process', () => {
 
     it('should respond with 422 for duplicate email', async () => {
       await request(app).post(SIGN_UP_ROUTE).send(VALID_CREDENTIALS);
-      const response = await request(app).post(SIGN_UP_ROUTE).send(VALID_CREDENTIALS);
+      const response = await request(app)
+        .post(SIGN_UP_ROUTE)
+        .send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(409);
       expect(response.body.message).toBe(EMAIL_ALREADY_EXISTS_ERROR);
     });
@@ -167,7 +176,9 @@ describe('User Registration Process', () => {
   describe('User Login', () => {
     it('should login with valid credentials', async () => {
       await request(app).post(SIGN_UP_ROUTE).send(VALID_CREDENTIALS);
-      const response = await request(app).post(SIGN_IN_ROUTE).send(VALID_CREDENTIALS);
+      const response = await request(app)
+        .post(SIGN_IN_ROUTE)
+        .send(VALID_CREDENTIALS);
       expect(response.statusCode).toBe(200);
       expect(response.body.tokens).toHaveProperty('accessToken');
       expect(response.body.tokens).toHaveProperty('refreshToken');

@@ -17,13 +17,17 @@ async function getDatabaseConnection() {
       logger.error('DATABASE_URI is not defined');
     }
 
-    db = DatabaseServiceProvider.getInstance(new MongoDBConnector(DATABASE_URI, DB_OPTIONS));
+    db = DatabaseServiceProvider.getInstance(
+      new MongoDBConnector(DATABASE_URI, DB_OPTIONS),
+    );
   }
 
   if (NODE_ENV === 'test') {
     const mongoMemoryServer = await MongoMemoryServer.create();
     const mongoUri = mongoMemoryServer.getUri();
-    db = DatabaseServiceProvider.getInstance(new MongoDBConnector(mongoUri, DB_OPTIONS));
+    db = DatabaseServiceProvider.getInstance(
+      new MongoDBConnector(mongoUri, DB_OPTIONS),
+    );
   }
 
   return db?.connect();

@@ -10,7 +10,9 @@ export default class DatabaseServiceProvider implements IDatabaseConnector {
     this.database = database;
   }
 
-  public static getInstance(database: IDatabaseConnector): DatabaseServiceProvider | null {
+  public static getInstance(
+    database: IDatabaseConnector,
+  ): DatabaseServiceProvider | null {
     if (!this.instance) {
       this.instance = new DatabaseServiceProvider(database);
     }

@@ -91,4 +91,7 @@ const permissionSchema: Schema<IPermission> = new Schema(
 // Add indexes for optimized queries
 permissionSchema.index({ name: 1, isDeleted: 1 });
 
-export const PermissionModel = mongoose.model<IPermission>('permissions', permissionSchema);
+export const PermissionModel = mongoose.model<IPermission>(
+  'permissions',
+  permissionSchema,
+);
