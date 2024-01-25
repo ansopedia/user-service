@@ -15,7 +15,6 @@
   "rules": {
     "indent": ["error", 2],
     "@typescript-eslint/prefer-nullish-coalescing": "error",
-    "@typescript-eslint/strict-boolean-expressions": "error",
     "no-console": "error"
   }
 }

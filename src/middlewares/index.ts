@@ -1,10 +1,16 @@
 import { NextFunction, Response, Request } from 'express';
 import { validationResult } from 'express-validator';
+import { sendApiResponse } from '../utils/sendApiResponse';
 
-export const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
+export const handleValidationErrors = (req: Request, response: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.status(422).json({ errors: errors.array() });
+    sendApiResponse({
+      response,
+      statusCode: 422,
+      message: 'Validation error',
+      payload: { errors: errors.array() },
+    });
     return;
   }
   next();
