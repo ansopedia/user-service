@@ -1,21 +1,15 @@
 import { Request, Response } from 'express';
 import { UserModel } from '../models/User';
 
-import {
-  GENERAL_ERRORS,
-  USER_LOGIN_ERRORS,
-  USER_REGISTRATION_ERRORS,
-} from '../constants';
 import { generateAndStoreAuthTokens } from '../utils/jwt-token';
 import { sendApiResponse } from '../utils/sendApiResponse';
-const { INTERNAL_SERVER_ERROR } = GENERAL_ERRORS;
-
-const { EMAIL_ALREADY_EXISTS_ERROR } = USER_REGISTRATION_ERRORS;
-const {
-  USER_NOT_FOUND_ERROR,
-  INVALID_CREDENTIALS_ERROR,
+import {
   ACCOUNT_DISABLED_ERROR,
-} = USER_LOGIN_ERRORS;
+  EMAIL_ALREADY_EXISTS_ERROR,
+  INTERNAL_SERVER_ERROR,
+  INVALID_CREDENTIALS_ERROR,
+  USER_NOT_FOUND_ERROR,
+} from '../constants';
 
 export class AuthController {
   static async createUserWithEmailAndPassword(
