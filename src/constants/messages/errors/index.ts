@@ -7,7 +7,7 @@ export const RESOURCE_NOT_FOUND_ERROR = 'Resource not found. Please verify the U
 export const FORBIDDEN_ERROR = 'Access forbidden. You do not have permission to access this resource.';
 
 // Authentication errors
-export const TOKEN_MISSING_ERROR = 'Authentication token missing. Please log in to continue.';
+export const AUTHENTICATION_TOKEN_MISSING_ERROR = 'Authentication token missing. Please log in to continue.';
 export const TOKEN_EXPIRED_ERROR = 'Your session has expired. Please log in again to continue.';
 export const PASSWORD_RESET_REQUIRED_ERROR = 'Password reset required. Please check your email for instructions.';
 export const TOKEN_INVALID_ERROR = 'The authentication token is either invalid or has been tampered with. Please try logging in again.';

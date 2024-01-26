@@ -7,6 +7,8 @@ export const LOGOUT_ROUTE = `${BASE_URL}/auth/logout`;
 export const PASSWORD_RESET_ROUTE = `${BASE_URL}/auth/password-reset`;
 
 // User routes
-export const GET_PROFILE_ROUTE = `${BASE_URL}/users/profile`;
-export const UPDATE_PROFILE_ROUTE = `${BASE_URL}/users/profile`;
-export const GET_ALL_USERS_ROUTE = `${BASE_URL}/users`;
+export const GET_PROFILE_ROUTE = `${BASE_URL}/user/profile`;
+export const UPDATE_USER_ROUTE = `${BASE_URL}/user`;
+export const GET_ALL_USER_ROUTE = `${BASE_URL}/users`;
+export const DISABLE_USER_ROUTE = `${BASE_URL}/user/:userId/disable`;
+export const GET_USER_BY_USERNAME_ROUTE = `${BASE_URL}/user/:username`;
