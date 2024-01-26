@@ -11,7 +11,7 @@ import {
   CONFIRM_PASSWORD_EMPTY_ERROR,
   CONFIRM_PASSWORD_MISMATCH_ERROR,
   PASSWORD_MISSING_CASE_VARIATION,
-} from '../constants';
+} from '../../constants';
 
 export const validateEmail = () => [
   check('email')
