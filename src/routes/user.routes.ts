@@ -1,20 +1,21 @@
 import express from 'express';
-import { DISABLE_USER_ROUTE, GET_PROFILE_ROUTE } from '../constants';
-import { validateEmail } from '../utils/validation/validation';
+import { UPDATE_USER_STATUS_ROUTE, GET_USER_ROUTE } from '../constants';
 import { handleValidationErrors, verifyAccessToken } from '../middlewares';
 import { UserController } from '../controllers';
+import { validateUserStatusFields } from '../utils/validation/validation';
 
 const userRoutes = express.Router();
 
-const { getUserById, disableUser } = UserController;
+const { getUserById, updateUserStatus } = UserController;
 
-userRoutes.get(GET_PROFILE_ROUTE, verifyAccessToken, getUserById);
+userRoutes.get(GET_USER_ROUTE, verifyAccessToken, getUserById);
 
-userRoutes.post(
-  DISABLE_USER_ROUTE,
-  validateEmail,
+userRoutes.put(
+  UPDATE_USER_STATUS_ROUTE,
+  validateUserStatusFields,
   handleValidationErrors,
-  disableUser,
+  verifyAccessToken,
+  updateUserStatus,
 );
 
 export default userRoutes;

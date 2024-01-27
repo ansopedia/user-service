@@ -11,7 +11,6 @@ export interface IUser extends Document {
 
   // Points and Notifications
   points: { totalPoints: number };
-  notifications: Schema.Types.ObjectId[];
 
   // Additional Information
   role: string;
@@ -21,7 +20,7 @@ export interface IUser extends Document {
   isAccountVerified?: boolean;
   isAccountDisabled?: boolean;
   isProfileComplete: boolean;
-  tokens: { [key: string]: unknown }[];
+  tokens: { accessToken: string }[];
   otp?: { [key: string]: unknown };
 }
 
@@ -62,12 +61,6 @@ const userSchema: Schema<IUser> = new Schema(
     points: {
       totalCoins: { type: Number, default: 100 },
     },
-    notifications: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'notifications',
-      },
-    ],
 
     // Additional Information
     role: {
@@ -89,7 +82,13 @@ const userSchema: Schema<IUser> = new Schema(
       type: Boolean,
       default: false,
     },
-    tokens: [{ type: Schema.Types.Mixed }],
+    tokens: [
+      {
+        type: {
+          accessToken: { type: String },
+        },
+      },
+    ],
     otp: { type: Schema.Types.Mixed },
   },
   { timestamps: true },

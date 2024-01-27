@@ -1,29 +1,35 @@
 import express from 'express';
-import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '../../constants';
+import {
+  SIGN_IN_ROUTE,
+  SIGN_UP_ROUTE,
+  VERIFY_ACCESS_TOKEN,
+} from '../../constants';
 import {
   validateSignIn,
   validateSignUp,
 } from '../../utils/validation/validation';
-import { handleValidationErrors } from '../../middlewares';
+import { handleValidationErrors, verifyAccessToken } from '../../middlewares';
 import { AuthController } from '../../controllers';
 
 const authRoutes = express.Router();
-
-const { createUserWithEmailAndPassword, signInWithEmailAndPassword } =
-  AuthController;
 
 authRoutes.post(
   SIGN_UP_ROUTE,
   validateSignUp,
   handleValidationErrors,
-  createUserWithEmailAndPassword,
+  AuthController.createUserWithEmailAndPassword,
 );
 
 authRoutes.post(
   SIGN_IN_ROUTE,
   validateSignIn,
   handleValidationErrors,
-  signInWithEmailAndPassword,
+  AuthController.signInWithEmailAndPassword,
 );
 
+authRoutes.get(
+  VERIFY_ACCESS_TOKEN,
+  verifyAccessToken,
+  AuthController.verifyAccessToken,
+);
 export default authRoutes;

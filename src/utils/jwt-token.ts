@@ -16,12 +16,13 @@ export const verifyToken = (token: string): JwtPayload => {
   return verifiedToken as JwtPayload;
 };
 
-export const generateAndStoreAuthTokens = (
+export const generateAndSaveAuthTokens = async (
   user: IUser,
-): { refreshToken: string; accessToken: string } => {
-  const refreshToken = generateRefreshToken({ id: user._id });
-  const accessToken = generateAccessToken({ id: user._id });
+): Promise<{ refreshToken: string; accessToken: string }> => {
+  const refreshToken = generateRefreshToken({ userId: user._id });
+  const accessToken = generateAccessToken({ userId: user._id });
   user.tokens.push({ accessToken: `Bearer ${accessToken}` });
+  await user.save();
   return {
     refreshToken: `Bearer ${refreshToken}`,
     accessToken: `Bearer ${accessToken}`,

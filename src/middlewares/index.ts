@@ -16,13 +16,12 @@ export const handleValidationErrors = (
 ) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    sendApiResponse({
+    return sendApiResponse({
       response,
       statusCode: STATUS_CODES.UNPROCESSABLE_ENTITY,
       message: 'Validation error',
       payload: { errors: errors.array() },
     });
-    return;
   }
   next();
 };
@@ -44,8 +43,8 @@ export const verifyAccessToken = async (
       return;
     }
 
-    const decodedToken: JwtPayload = verifyToken(accessToken);
-    req.body.userId = decodedToken.id;
+    const { userId }: JwtPayload = verifyToken(accessToken);
+    req.body.userId = userId;
 
     next();
   } catch (error) {

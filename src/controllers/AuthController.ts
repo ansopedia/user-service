@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { UserModel } from '../models/User';
+import { IUser } from '../models/User';
 
-import { generateAndStoreAuthTokens } from '../utils/jwt-token';
+import { generateAndSaveAuthTokens } from '../utils/jwt-token';
 import { sendApiResponse } from '../utils/sendApiResponse';
 import {
   ACCOUNT_DISABLED_ERROR,
@@ -13,8 +13,12 @@ import {
 } from '../constants';
 import {
   LOGGED_IN_SUCCESSFULLY,
+  TOKEN_VERIFIED_SUCCESSFULLY,
   USER_CREATED_SUCCESSFULLY,
 } from '../constants/messages/success';
+import { UserProvider } from '../providers/UserProvider';
+
+const { getUserByEmail, createUser, getUserById } = UserProvider;
 
 export class AuthController {
   static async createUserWithEmailAndPassword(
@@ -23,7 +27,8 @@ export class AuthController {
   ) {
     const { name, email, password } = req.body;
     try {
-      const isUserExist = await UserModel.findOne({ email });
+      const isUserExist = await getUserByEmail(email);
+
       if (isUserExist) {
         sendApiResponse({
           response,
@@ -33,11 +38,16 @@ export class AuthController {
         return;
       }
 
-      const user = new UserModel({ name, email, password });
-      const tokens = generateAndStoreAuthTokens(user);
-      await user.save();
+      const user: IUser = await createUser({
+        name,
+        email,
+        password,
+      });
 
-      response.setHeader('Authorization', tokens.accessToken);
+      const tokens: { refreshToken: string; accessToken: string } =
+        await generateAndSaveAuthTokens(user);
+
+      response.setHeader('authorization', tokens.accessToken);
       response.cookie('refresh_token', tokens.refreshToken, {
         httpOnly: true,
         secure: true,
@@ -59,7 +69,7 @@ export class AuthController {
   static async signInWithEmailAndPassword(req: Request, response: Response) {
     const { email, password } = req.body;
     try {
-      const user = await UserModel.findOne({ email });
+      const user = await getUserByEmail(email);
 
       if (!user) {
         sendApiResponse({
@@ -90,10 +100,10 @@ export class AuthController {
         return;
       }
 
-      const tokens = generateAndStoreAuthTokens(user);
-      await user.save();
+      const tokens: { refreshToken: string; accessToken: string } =
+        await generateAndSaveAuthTokens(user);
 
-      response.setHeader('Authorization', tokens.accessToken);
+      response.setHeader('authorization', tokens.accessToken);
       response.cookie('refresh_token', tokens.refreshToken, {
         httpOnly: true,
         secure: true,
@@ -102,6 +112,58 @@ export class AuthController {
         response,
         statusCode: STATUS_CODES.OK,
         message: LOGGED_IN_SUCCESSFULLY,
+      });
+    } catch (error) {
+      sendApiResponse({
+        response,
+        statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
+        message: INTERNAL_SERVER_ERROR,
+        errors: error as Error,
+      });
+    }
+  }
+
+  static async verifyAccessToken(req: Request, response: Response) {
+    const { userId } = req.body;
+    if (!userId) {
+      sendApiResponse({
+        response,
+        statusCode: STATUS_CODES.BAD_REQUEST,
+        message: 'userId is required',
+      });
+      return;
+    }
+    try {
+      const user = await getUserById(userId);
+
+      if (!user) {
+        sendApiResponse({
+          response,
+          statusCode: STATUS_CODES.NOT_FOUND,
+          message: USER_NOT_FOUND_ERROR,
+        });
+        return;
+      }
+
+      if (user.isAccountDisabled) {
+        sendApiResponse({
+          response,
+          statusCode: STATUS_CODES.FORBIDDEN,
+          message: ACCOUNT_DISABLED_ERROR,
+        });
+        return;
+      }
+
+      const userPayload = {
+        userId: user._id,
+        role: user.role,
+      };
+
+      sendApiResponse({
+        response,
+        statusCode: STATUS_CODES.OK,
+        message: TOKEN_VERIFIED_SUCCESSFULLY,
+        payload: userPayload,
       });
     } catch (error) {
       sendApiResponse({
