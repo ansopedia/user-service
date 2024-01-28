@@ -1,8 +1,8 @@
 import express from 'express';
-import { UPDATE_USER_STATUS_ROUTE, GET_USER_ROUTE } from '../constants';
-import { handleValidationErrors, verifyAccessToken } from '../middlewares';
-import { UserController } from '../controllers';
-import { validateUserStatusFields } from '../utils/validation/validation';
+import { UPDATE_USER_STATUS_ROUTE, GET_USER_ROUTE } from '../../constants';
+import { handleValidationErrors, verifyAccessToken } from '../../middlewares';
+import { UserController } from '../../controllers';
+import { validateUserStatusFields } from '../../utils/validation/validation';
 
 const userRoutes = express.Router();
 
