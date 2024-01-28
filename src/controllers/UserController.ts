@@ -15,6 +15,7 @@ import {
   USER_VERIFIED_SUCCESSFULLY,
 } from '../constants/messages/success';
 import { UserProvider } from '../providers/UserProvider';
+import { UserDto } from '../dto/UserDto';
 
 export class UserController {
   static async getUserById(req: Request, response: Response) {
@@ -40,14 +41,8 @@ export class UserController {
         return;
       }
 
-      const userPayload = {
-        userId: user._id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        isAccountVerified: user.isAccountVerified,
-        isProfileComplete: user.isProfileComplete,
-      };
+      const userDto = new UserDto(user);
+      const userPayload = userDto.getUserDetails();
 
       sendApiResponse({
         response,
@@ -88,14 +83,8 @@ export class UserController {
         });
       }
 
-      const userPayload = {
-        userId: updatedUser._id,
-        email: updatedUser.email,
-        name: updatedUser.name,
-        role: updatedUser.role,
-        isAccountVerified: updatedUser.isAccountVerified,
-        isProfileComplete: updatedUser.isProfileComplete,
-      };
+      const userDto = new UserDto(updatedUser);
+      const userPayload = userDto.getUserDetails();
 
       if (updatedUser.isAccountDisabled) {
         return sendApiResponse({

@@ -17,6 +17,7 @@ import {
   USER_CREATED_SUCCESSFULLY,
 } from '../constants/messages/success';
 import { UserProvider } from '../providers/UserProvider';
+import { UserDto } from '../dto/UserDto';
 
 const { getUserByEmail, createUser, getUserById } = UserProvider;
 
@@ -154,10 +155,8 @@ export class AuthController {
         return;
       }
 
-      const userPayload = {
-        userId: user._id,
-        role: user.role,
-      };
+      const userDto = new UserDto(user);
+      const userPayload = userDto.getUserDetailsForExternalServices();
 
       sendApiResponse({
         response,
