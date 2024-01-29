@@ -49,8 +49,13 @@ FROM base as final
 # Use production node environment by default.
 ENV NODE_ENV production
 
-# Run the application as a non-root user.
-USER node
+# Create a new user 'appuser' and set it as the current user.
+RUN adduser -D appuser
+
+# Create the log directory and change its ownership to 'appuser'.
+RUN mkdir -p /usr/src/app/log && chown -R appuser:appuser /usr/src/app
+
+USER appuser
 
 # Copy package.json so that package manager commands can be used.
 COPY package.json .
