@@ -11,8 +11,10 @@ export const app: Application = express();
 
 app.use(express.json());
 app.use(pinoHttp({ logger }));
+
+app.use(cors({ origin: 'http://localhost:3000' }));
+
 app.use(routes);
-app.use(cors());
 
 (async () => {
   await getDatabaseConnection();
