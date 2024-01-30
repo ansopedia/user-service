@@ -1,15 +1,15 @@
 import request from 'supertest';
 import { app } from '../../../server';
 import {
-  SIGN_UP_ROUTE,
-  SIGN_IN_ROUTE,
-  EMAIL_ALREADY_EXISTS_ERROR,
-  INVALID_CREDENTIALS_ERROR,
-  USER_NOT_FOUND_ERROR,
-  STATUS_CODES,
-  VERIFY_ACCESS_TOKEN,
   ACCOUNT_DISABLED_ERROR,
   BASE_URL,
+  EMAIL_ALREADY_EXISTS_ERROR,
+  INVALID_CREDENTIALS_ERROR,
+  SIGN_IN_ROUTE,
+  SIGN_UP_ROUTE,
+  STATUS_CODES,
+  USER_NOT_FOUND_ERROR,
+  VERIFY_ACCESS_TOKEN_ROUTE,
 } from '../../../constants';
 import {
   LOGGED_IN_SUCCESSFULLY,
@@ -40,7 +40,7 @@ describe('Registration Process', () => {
     expect(authorizationHeader).toBeDefined();
 
     const setCookieHeader = response.get('set-cookie')[0];
-    expect(setCookieHeader).toContain('refresh_token=');
+    expect(setCookieHeader).toContain('refreshToken=');
     expect(setCookieHeader).toMatch(/HttpOnly; Secure/);
 
     expect(body).toMatchObject({
@@ -75,7 +75,7 @@ describe('Login Process', () => {
     expect(authorizationHeader).toBeDefined();
 
     const setCookieHeader = response.get('set-cookie')[0];
-    expect(setCookieHeader).toContain('refresh_token=');
+    expect(setCookieHeader).toContain('refreshToken=');
     expect(setCookieHeader).toMatch(/HttpOnly; Secure/);
 
     expect(body).toMatchObject({
@@ -114,7 +114,7 @@ describe('Login Process', () => {
     const authorizationHeader = header['authorization'];
 
     const verificationResponse = await request(app)
-      .get(VERIFY_ACCESS_TOKEN)
+      .get(VERIFY_ACCESS_TOKEN_ROUTE)
       .set('authorization', authorizationHeader);
 
     const disableUserRoute = `${BASE_URL}/user/${verificationResponse.body.userId}/status`;
@@ -135,8 +135,8 @@ describe('Login Process', () => {
   });
 });
 
-describe('token verification', () => {
-  it('should respond with 200 when token is valid', async () => {
+describe('access token verification', () => {
+  it('should respond with 200 when access token is valid', async () => {
     const user = {
       name: 'Test User',
       email: 'test@test.com',
@@ -151,7 +151,7 @@ describe('token verification', () => {
     const authorizationHeader = response.header['authorization'];
 
     const verificationResponse = await request(app)
-      .get(VERIFY_ACCESS_TOKEN)
+      .get(VERIFY_ACCESS_TOKEN_ROUTE)
       .set('authorization', authorizationHeader);
 
     const { statusCode, body } = verificationResponse;

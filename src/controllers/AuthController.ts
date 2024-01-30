@@ -49,7 +49,7 @@ export class AuthController {
         await generateAndSaveAuthTokens(user);
 
       response.setHeader('authorization', tokens.accessToken);
-      response.cookie('refresh_token', tokens.refreshToken, {
+      response.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: true,
       });
@@ -105,7 +105,7 @@ export class AuthController {
         await generateAndSaveAuthTokens(user);
 
       response.setHeader('authorization', tokens.accessToken);
-      response.cookie('refresh_token', tokens.refreshToken, {
+      response.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: true,
       });
@@ -163,6 +163,52 @@ export class AuthController {
         statusCode: STATUS_CODES.OK,
         message: TOKEN_VERIFIED_SUCCESSFULLY,
         payload: userPayload,
+      });
+    } catch (error) {
+      sendApiResponse({
+        response,
+        statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
+        message: INTERNAL_SERVER_ERROR,
+        errors: error as Error,
+      });
+    }
+  }
+
+  static async verifyRefreshToken(req: Request, response: Response) {
+    const { userId } = req.body;
+    try {
+      const user = await getUserById(userId);
+
+      if (!user) {
+        sendApiResponse({
+          response,
+          statusCode: STATUS_CODES.NOT_FOUND,
+          message: USER_NOT_FOUND_ERROR,
+        });
+        return;
+      }
+
+      if (user.isAccountDisabled) {
+        sendApiResponse({
+          response,
+          statusCode: STATUS_CODES.FORBIDDEN,
+          message: ACCOUNT_DISABLED_ERROR,
+        });
+        return;
+      }
+
+      const tokens: { refreshToken: string; accessToken: string } =
+        await generateAndSaveAuthTokens(user);
+
+      response.setHeader('Authorization', tokens.accessToken);
+      response.cookie('refreshToken', tokens.refreshToken, {
+        httpOnly: true,
+        secure: true,
+      });
+      sendApiResponse({
+        response,
+        statusCode: STATUS_CODES.OK,
+        message: TOKEN_VERIFIED_SUCCESSFULLY,
       });
     } catch (error) {
       sendApiResponse({

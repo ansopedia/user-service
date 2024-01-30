@@ -4,10 +4,10 @@ import { verifyToken } from '../utils/jwt-token';
 import { sendApiResponse } from '../utils/sendApiResponse';
 import {
   AUTHENTICATION_TOKEN_MISSING_ERROR,
+  REFRESH_TOKEN_MISSING_ERROR,
   STATUS_CODES,
   UNAUTHORIZED_ERROR,
 } from '../constants';
-import { JwtPayload } from 'jsonwebtoken';
 
 export const handleValidationErrors = (
   req: Request,
@@ -43,8 +43,38 @@ export const verifyAccessToken = async (
       return;
     }
 
-    const { userId }: JwtPayload = verifyToken(accessToken);
+    const { userId } = verifyToken(accessToken);
     req.body.userId = userId;
+
+    next();
+  } catch (error) {
+    sendApiResponse({
+      response,
+      statusCode: STATUS_CODES.UNAUTHORIZED,
+      message: UNAUTHORIZED_ERROR,
+      errors: error as Error,
+    });
+  }
+};
+
+export const verifyRefreshToken = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const refreshToken = request.headers.authorization?.split(' ')[1];
+
+    if (!refreshToken) {
+      return sendApiResponse({
+        response,
+        statusCode: STATUS_CODES.UNAUTHORIZED,
+        message: REFRESH_TOKEN_MISSING_ERROR,
+      });
+    }
+
+    const { userId } = verifyToken(refreshToken);
+    request.body.userId = userId;
 
     next();
   } catch (error) {

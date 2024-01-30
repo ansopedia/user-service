@@ -11,6 +11,7 @@ export const AUTHENTICATION_TOKEN_MISSING_ERROR = 'Authentication token missing.
 export const TOKEN_EXPIRED_ERROR = 'Your session has expired. Please log in again to continue.';
 export const PASSWORD_RESET_REQUIRED_ERROR = 'Password reset required. Please check your email for instructions.';
 export const TOKEN_INVALID_ERROR = 'The authentication token is either invalid or has been tampered with. Please try logging in again.';
+export const REFRESH_TOKEN_MISSING_ERROR = 'Refresh token missing. Please log in to continue.';
 
 // Authentication errors
 export const UNAUTHORIZED_ERROR = 'Unauthorized access. Please ensure you are logged in.';

@@ -4,7 +4,7 @@ import { IUser } from '../models/User';
 import { JWT_SECRET } from '../constants';
 
 export const generateAccessToken = (payload: object) => {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
 };
 
 export const generateRefreshToken = (payload: object) => {
