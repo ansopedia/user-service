@@ -23,6 +23,6 @@ app.use(routes);
 export const server = () => {
   app.listen(APP_PORT, () => {
     // eslint-disable-next-line no-console
-    console.log(`Server is listening on port ${APP_PORT}!`);
+    console.log(`User service Server is listening on port ${APP_PORT}!`);
   });
 };
