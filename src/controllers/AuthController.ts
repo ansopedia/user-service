@@ -48,6 +48,7 @@ export class AuthController {
       const tokens: { refreshToken: string; accessToken: string } =
         await generateAndSaveAuthTokens(user);
 
+      response.header('Access-Control-Expose-Headers', 'authorization');
       response.setHeader('authorization', tokens.accessToken);
       response.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
@@ -68,8 +69,8 @@ export class AuthController {
   }
 
   static async signInWithEmailAndPassword(req: Request, response: Response) {
-    const { email, password } = req.body;
     try {
+      const { email, password } = req.body;
       const user = await getUserByEmail(email);
 
       if (!user) {
@@ -104,6 +105,7 @@ export class AuthController {
       const tokens: { refreshToken: string; accessToken: string } =
         await generateAndSaveAuthTokens(user);
 
+      response.header('Access-Control-Expose-Headers', 'authorization');
       response.setHeader('authorization', tokens.accessToken);
       response.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
@@ -200,7 +202,8 @@ export class AuthController {
       const tokens: { refreshToken: string; accessToken: string } =
         await generateAndSaveAuthTokens(user);
 
-      response.setHeader('Authorization', tokens.accessToken);
+      response.header('Access-Control-Expose-Headers', 'authorization');
+      response.setHeader('authorization', tokens.accessToken);
       response.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: true,
