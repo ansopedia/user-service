@@ -63,7 +63,7 @@ export const verifyRefreshToken = async (
   next: NextFunction,
 ) => {
   try {
-    const refreshToken = request.headers.authorization?.split(' ')[1];
+    const refreshToken = request.headers.authorization?.replace('Bearer ', '');
 
     if (!refreshToken) {
       return sendApiResponse({
