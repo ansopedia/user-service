@@ -24,10 +24,12 @@ describe('User Management Process', () => {
 
     expect(signUpStatusCode).toBe(STATUS_CODES.CREATED);
 
+    const authorizationHeader = `Bearer ${signUpResponse.header['authorization']}`;
+
     // Fetch user details:
     const fetchUserResponse = await request(app)
       .get(GET_USER_ROUTE)
-      .set('authorization', signUpResponse.header['authorization']);
+      .set('authorization', authorizationHeader);
 
     const { statusCode: fetchUserStatusCode, body: fetchUserBody } =
       fetchUserResponse;

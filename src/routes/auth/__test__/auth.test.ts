@@ -36,7 +36,6 @@ describe('Registration Process', () => {
     expect(statusCode).toBe(STATUS_CODES.CREATED);
 
     const authorizationHeader = header['authorization'];
-    expect(authorizationHeader).toMatch(/^Bearer .+$/);
     expect(authorizationHeader).toBeDefined();
 
     const setCookieHeader = response.get('set-cookie')[0];
@@ -71,7 +70,6 @@ describe('Login Process', () => {
     expect(statusCode).toBe(STATUS_CODES.OK);
 
     const authorizationHeader = header['authorization'];
-    expect(authorizationHeader).toMatch(/^Bearer .+$/);
     expect(authorizationHeader).toBeDefined();
 
     const setCookieHeader = response.get('set-cookie')[0];
@@ -111,7 +109,7 @@ describe('Login Process', () => {
       .post(SIGN_IN_ROUTE)
       .send(VALID_CREDENTIALS);
 
-    const authorizationHeader = header['authorization'];
+    const authorizationHeader = `Bearer ${header['authorization']}`;
 
     const verificationResponse = await request(app)
       .get(VERIFY_ACCESS_TOKEN_ROUTE)
@@ -148,7 +146,7 @@ describe('access token verification', () => {
 
     const response = await request(app).post(SIGN_IN_ROUTE).send(user);
 
-    const authorizationHeader = response.header['authorization'];
+    const authorizationHeader = `Bearer ${response.header['authorization']}`;
 
     const verificationResponse = await request(app)
       .get(VERIFY_ACCESS_TOKEN_ROUTE)

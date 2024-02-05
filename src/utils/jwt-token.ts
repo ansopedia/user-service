@@ -25,17 +25,14 @@ export const generateAndSaveAuthTokens = async (
   // Remove old refresh tokens
   user.tokens = user.tokens.filter((token) => {
     try {
-      verifyToken(token.accessToken.replace('Bearer ', ''));
+      verifyToken(token.accessToken);
       return true;
     } catch (err) {
       return false;
     }
   });
 
-  user.tokens.push({ accessToken: `Bearer ${accessToken}` });
+  user.tokens.push({ accessToken });
   await user.save();
-  return {
-    refreshToken: `Bearer ${refreshToken}`,
-    accessToken: `Bearer ${accessToken}`,
-  };
+  return { refreshToken, accessToken };
 };
