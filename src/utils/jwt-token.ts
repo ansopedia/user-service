@@ -16,6 +16,10 @@ export const verifyToken = (token: string): JwtPayload => {
   return verifiedToken as JwtPayload;
 };
 
+export const isBearerToken = (token: string): boolean => {
+  return token.toLowerCase() === 'bearer';
+};
+
 export const generateAndSaveAuthTokens = async (
   user: IUser,
 ): Promise<{ refreshToken: string; accessToken: string }> => {

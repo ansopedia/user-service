@@ -105,11 +105,16 @@ export class AuthController {
       const tokens: { refreshToken: string; accessToken: string } =
         await generateAndSaveAuthTokens(user);
 
-      response.header('Access-Control-Expose-Headers', 'authorization');
+      response.header(
+        'Access-Control-Expose-Headers',
+        'set-cookie, authorization',
+      );
+
       response.setHeader('authorization', tokens.accessToken);
       response.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: true,
+        sameSite: 'strict',
       });
       sendApiResponse({
         response,

@@ -1,9 +1,10 @@
 import { NextFunction, Response, Request } from 'express';
 import { validationResult } from 'express-validator';
-import { verifyToken } from '../utils/jwt-token';
+import { isBearerToken, verifyToken } from '../utils/jwt-token';
 import { sendApiResponse } from '../utils/sendApiResponse';
 import {
   AUTHENTICATION_TOKEN_MISSING_ERROR,
+  MISSING_BEARER_TOKEN,
   REFRESH_TOKEN_MISSING_ERROR,
   STATUS_CODES,
   UNAUTHORIZED_ERROR,
@@ -32,15 +33,23 @@ export const verifyAccessToken = async (
   next: NextFunction,
 ) => {
   try {
-    const accessToken = req.headers.authorization?.split(' ')[1];
+    const [bearerToken, accessToken] =
+      req.headers.authorization?.split(' ') ?? [];
+
+    if (!isBearerToken(bearerToken)) {
+      return sendApiResponse({
+        response,
+        statusCode: STATUS_CODES.UNAUTHORIZED,
+        message: MISSING_BEARER_TOKEN,
+      });
+    }
 
     if (!accessToken) {
-      sendApiResponse({
+      return sendApiResponse({
         response,
         statusCode: STATUS_CODES.UNAUTHORIZED,
         message: AUTHENTICATION_TOKEN_MISSING_ERROR,
       });
-      return;
     }
 
     const { userId } = verifyToken(accessToken);
@@ -63,7 +72,16 @@ export const verifyRefreshToken = async (
   next: NextFunction,
 ) => {
   try {
-    const refreshToken = request.headers.authorization?.replace('Bearer ', '');
+    const [bearerToken, refreshToken] =
+      request.headers.authorization?.split(' ') ?? [];
+
+    if (!isBearerToken(bearerToken)) {
+      return sendApiResponse({
+        response,
+        statusCode: STATUS_CODES.UNAUTHORIZED,
+        message: MISSING_BEARER_TOKEN,
+      });
+    }
 
     if (!refreshToken) {
       return sendApiResponse({
