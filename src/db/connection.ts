@@ -7,7 +7,9 @@ const { DATABASE_URL, NODE_ENV } = envConstants;
 export const connectDB = async () => {
   if (NODE_ENV === 'development') {
     mongoose.set('debug', true);
-    await mongoose.connect(DATABASE_URL, {});
+    await mongoose.connect(DATABASE_URL, {
+      dbName: 'users-service',
+    });
   }
 
   if (NODE_ENV === 'test') {

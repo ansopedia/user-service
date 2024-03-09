@@ -2,9 +2,9 @@ import express, { type Application } from 'express';
 import { pinoHttp } from 'pino-http';
 
 import { logger } from './utils';
-import routes from './routes';
 import { envConstants } from './constants';
 import { connectDB } from './db/connection';
+import { routes } from './routes';
 
 const { APP_PORT } = envConstants;
 
@@ -14,9 +14,10 @@ const app: Application = express();
   await connectDB();
 })();
 
+app.use(express.json());
 app.use(pinoHttp({ logger }));
 
-app.use('/v1', routes);
+app.use('/api/v1', routes);
 
 export const server = () => {
   app.listen(APP_PORT, () => {
