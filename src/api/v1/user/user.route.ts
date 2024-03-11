@@ -3,9 +3,9 @@ import { createUser } from './user.controller';
 
 const router = Router();
 
-router.post('/user', createUser);
-router.get('/user');
-router.put('/user:userId');
-router.delete('/user');
+router.post('/users', createUser);
+router.get('/users');
+router.put('/users:userId');
+router.delete('/users');
 
 export { router as userRoutes };
