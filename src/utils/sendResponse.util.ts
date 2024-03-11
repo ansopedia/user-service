@@ -2,7 +2,7 @@ import { Response, request } from 'express';
 import logger from './Logger';
 import { envConstants } from '../constants';
 
-export type SendResponse<T> = {
+export type SendResponse<T = undefined> = {
   response: Response;
   statusCode: number;
   status?: 'success' | 'failed';

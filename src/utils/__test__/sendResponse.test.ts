@@ -35,7 +35,7 @@ describe('sendResponse', () => {
 
     const mockError: Error = new Error('Something went wrong');
 
-    const mockData: SendResponse<unknown> = {
+    const mockData: SendResponse = {
       response: mockResponse,
       statusCode: 500,
       message: 'Internal Server Error',
