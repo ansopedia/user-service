@@ -1,25 +1,36 @@
 import { z } from 'zod';
+import { STATUS_CODES } from './statusCode.constant';
 
-const errorType = ['VALIDATION_ERROR', 'DUPLICATE_KEY_VALUE', 'INTERNAL_SERVER_ERROR', 'RESOURCE_NOT_FOUND'] as const;
+const errorType = [
+  'VALIDATION_ERROR',
+  'DUPLICATE_KEY_VALUE',
+  'INTERNAL_SERVER_ERROR',
+  'RESOURCE_NOT_FOUND',
+  'EMAIL_ALREADY_EXISTS',
+] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
 
 export const errorMap = {
   [ErrorTypeEnum.enum.VALIDATION_ERROR]: {
-    httpStatusCode: 400,
+    httpStatusCode: STATUS_CODES.BAD_REQUEST,
     body: { code: 'validation_error', message: 'Validation failed' },
   },
   [ErrorTypeEnum.enum.DUPLICATE_KEY_VALUE]: {
-    httpStatusCode: 409,
+    httpStatusCode: STATUS_CODES.CONFLICT,
     body: { code: 'duplicate_key_value', message: 'Duplicate key value' },
   },
   [ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR]: {
-    httpStatusCode: 500,
+    httpStatusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
     body: { code: 'internal_server_error', message: 'Internal server error' },
   },
   [ErrorTypeEnum.enum.RESOURCE_NOT_FOUND]: {
-    httpStatusCode: 404,
+    httpStatusCode: STATUS_CODES.NOT_FOUND,
     body: { code: 'resource_not_found', message: 'Resource not found' },
+  },
+  [ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS]: {
+    httpStatusCode: STATUS_CODES.CONFLICT,
+    body: { code: 'duplicate_email', message: 'Email already exists. Please choose a different email.' },
   },
 };
 

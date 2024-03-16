@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
-import { user } from './user.validation';
+import { User } from './user.validation';
 
-const UserSchema = new Schema<user>(
+const UserSchema = new Schema<User>(
   {
     username: {
       type: String,
@@ -28,4 +28,4 @@ const UserSchema = new Schema<user>(
   { timestamps: true },
 );
 
-export const UserModel = model<user>('User', UserSchema);
+export const UserModel = model<User>('User', UserSchema);

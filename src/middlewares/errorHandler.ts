@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { ErrorTypeEnum, getErrorObject } from '../constants/errorTypes.constant';
 import { sendResponse } from '../utils/sendResponse.util';
+import { ZodError } from 'zod';
 
 export const errorHandler = (err: Error, _: Request, res: Response, next: NextFunction) => {
-  if (err.message) {
-    const errorObj = getErrorObject(err.message as unknown as ErrorTypeEnum);
+  if (err instanceof ZodError) {
+    const errorObj = getErrorObject(ErrorTypeEnum.enum.VALIDATION_ERROR);
     sendResponse({
       status: 'failed',
       response: res,
@@ -13,8 +14,22 @@ export const errorHandler = (err: Error, _: Request, res: Response, next: NextFu
       errorDetails: err,
       payload: {
         code: errorObj.body.code,
+        errors: err.issues,
       },
     });
-    next();
+    return next();
   }
+
+  const errorObj = getErrorObject(err.message as unknown as ErrorTypeEnum);
+  sendResponse({
+    status: 'failed',
+    response: res,
+    statusCode: errorObj.httpStatusCode,
+    message: errorObj.body.message,
+    errorDetails: err,
+    payload: {
+      code: errorObj.body.code,
+    },
+  });
+  next();
 };
