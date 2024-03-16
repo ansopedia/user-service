@@ -26,6 +26,8 @@ export const createUserSchema = userSchema
     path: ['confirmPassword'],
   });
 
+export const validateUsername = userSchema.pick({ username: true });
+
 export const updateUserSchema = userSchema.partial({ username: true, email: true, password: true });
 export const getUserSchema = userSchema.omit({ password: true, confirmPassword: true });
 

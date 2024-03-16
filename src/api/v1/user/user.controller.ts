@@ -19,3 +19,19 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const getUserByUsername = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await UserService.getUserByUsername(req.params.username);
+    sendResponse({
+      response: res,
+      message: success.USER_FETCHED_SUCCESSFULLY,
+      payload: {
+        user,
+      },
+      statusCode: STATUS_CODES.OK,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

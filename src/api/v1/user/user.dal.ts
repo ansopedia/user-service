@@ -10,4 +10,8 @@ export class UserDAL {
   static async getUserByEmail(email: string): Promise<User | null> {
     return await UserModel.findOne({ email });
   }
+
+  static async getUserByUsername(username: string): Promise<User | null> {
+    return await UserModel.findOne({ username });
+  }
 }
