@@ -31,5 +31,5 @@ export const sendResponse = <T>(data: SendResponse<T>) => {
     );
   }
 
-  response.status(statusCode).json({ responseBody, status });
+  response.status(statusCode).json({ ...responseBody, status });
 };
