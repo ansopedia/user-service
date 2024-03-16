@@ -5,8 +5,8 @@ import { success } from '../user.constant';
 import { ErrorTypeEnum, errorMap } from '../../../../constants/errorTypes.constant';
 
 const VALID_CREDENTIALS = {
-  username: 'validUserName',
-  email: 'validEmail@example.com',
+  username: 'username',
+  email: 'validemail@example.com',
   password: 'ValidPassword123!',
   confirmPassword: 'ValidPassword123!',
 };
@@ -21,7 +21,15 @@ describe('User Test', () => {
 
     expect(body).toMatchObject({
       message: success.USER_CREATED_SUCCESSFULLY,
+      user: {
+        id: expect.any(String),
+        email: VALID_CREDENTIALS.email,
+        username: VALID_CREDENTIALS.username,
+      },
     });
+
+    expect(body.user).not.toHaveProperty('password');
+    expect(body.user).not.toHaveProperty('confirmPassword');
   });
 
   it('should respond with 409 for duplicate email', async () => {

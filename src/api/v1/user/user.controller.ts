@@ -10,7 +10,9 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     sendResponse({
       response: res,
       message: success.USER_CREATED_SUCCESSFULLY,
-      payload: createdUser,
+      payload: {
+        user: createdUser,
+      },
       statusCode: STATUS_CODES.CREATED,
     });
   } catch (error) {
