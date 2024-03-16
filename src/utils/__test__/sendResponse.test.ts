@@ -19,10 +19,8 @@ describe('sendResponse', () => {
 
     expect(mockResponse.status).toHaveBeenCalledWith(200);
     expect(mockResponse.json).toHaveBeenCalledWith({
-      responseBody: {
-        message: 'Success!',
-        someData: 'Hello, World!',
-      },
+      message: 'Success!',
+      someData: 'Hello, World!',
       status: 'success',
     });
   });
