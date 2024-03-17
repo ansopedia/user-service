@@ -7,6 +7,7 @@ const errorType = [
   'INTERNAL_SERVER_ERROR',
   'RESOURCE_NOT_FOUND',
   'EMAIL_ALREADY_EXISTS',
+  'USER_NAME_ALREADY_EXISTS',
   'USER_NOT_FOUND',
 ] as const;
 
@@ -32,6 +33,10 @@ export const errorMap = {
   [ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS]: {
     httpStatusCode: STATUS_CODES.CONFLICT,
     body: { code: 'duplicate_email', message: 'Email already exists. Please choose a different email.' },
+  },
+  [ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS]: {
+    httpStatusCode: STATUS_CODES.CONFLICT,
+    body: { code: 'duplicate_username', message: 'Username already exists. Please choose a different username.' },
   },
   [ErrorTypeEnum.enum.USER_NOT_FOUND]: {
     httpStatusCode: STATUS_CODES.NOT_FOUND,

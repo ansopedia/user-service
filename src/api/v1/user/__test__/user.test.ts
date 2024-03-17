@@ -41,6 +41,19 @@ describe('User Test', () => {
     expect(response.body.code).toBe(errorObject.body.code);
   });
 
+  it('should respond with 409 for duplicate username', async () => {
+    const errorObject = errorMap[ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS];
+    const response = await request(app)
+      .post('/api/v1/users')
+      .send({
+        ...VALID_CREDENTIALS,
+        email: 'new@gmail.com',
+      });
+    expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
+    expect(response.body.message).toBe(errorObject.body.message);
+    expect(response.body.code).toBe(errorObject.body.code);
+  });
+
   it('should find user by username', async () => {
     const response = await request(app).get(`/api/v1/users/${VALID_CREDENTIALS.username}`);
 

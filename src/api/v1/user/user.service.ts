@@ -14,6 +14,12 @@ export class UserService {
       throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS);
     }
 
+    const isUserNameExist = await UserDAL.getUserByUsername(validUserData.username);
+
+    if (isUserNameExist) {
+      throw new Error(ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS);
+    }
+
     const createdUser = await UserDAL.createUser(validUserData);
     return UserDto(createdUser).getUser();
   }
