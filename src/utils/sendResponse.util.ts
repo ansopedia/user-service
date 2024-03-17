@@ -1,5 +1,5 @@
 import { Response, request } from 'express';
-import logger from './Logger';
+import { errorLogger } from './Logger';
 import { envConstants } from '../constants';
 
 export type SendResponse<T = undefined> = {
@@ -26,7 +26,7 @@ export const sendResponse = <T>(data: SendResponse<T>) => {
   Object.assign(responseBody, payload);
 
   if (errorDetails && statusCode >= 500) {
-    logger.error(
+    errorLogger.error(
       `Error occurred in ${request.url}: ${errorDetails.name} ${errorDetails.message} ${errorDetails.stack}`,
     );
   }
