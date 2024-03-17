@@ -67,3 +67,19 @@ export const softDeleteUser = async (req: Request, res: Response, next: NextFunc
     next(error);
   }
 };
+
+export const restoreUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await UserService.restoreUser(req.params.userId);
+    sendResponse({
+      response: res,
+      message: success.USER_RESTORED_SUCCESSFULLY,
+      payload: {
+        user,
+      },
+      statusCode: STATUS_CODES.OK,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

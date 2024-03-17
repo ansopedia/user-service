@@ -22,4 +22,8 @@ export class UserDAL {
   static async softDeleteUser(userId: string): Promise<User | null> {
     return await UserModel.findByIdAndUpdate(userId, { isDeleted: true }, { new: true });
   }
+
+  static async restoreUser(userId: string): Promise<User | null> {
+    return await UserModel.findByIdAndUpdate(userId, { isDeleted: false }, { new: true });
+  }
 }
