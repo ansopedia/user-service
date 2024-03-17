@@ -51,3 +51,19 @@ export const getUserByUsername = async (req: Request, res: Response, next: NextF
     next(error);
   }
 };
+
+export const softDeleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await UserService.softDeleteUser(req.params.userId);
+    sendResponse({
+      response: res,
+      message: success.USER_DELETED_SUCCESSFULLY,
+      payload: {
+        user,
+      },
+      statusCode: STATUS_CODES.OK,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

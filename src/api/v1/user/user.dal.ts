@@ -8,7 +8,7 @@ export class UserDAL {
   }
 
   static async getAllUsers(): Promise<User[]> {
-    return await UserModel.find();
+    return await UserModel.find({ isDeleted: false });
   }
 
   static async getUserByEmail(email: string): Promise<User | null> {
@@ -16,6 +16,10 @@ export class UserDAL {
   }
 
   static async getUserByUsername(username: string): Promise<User | null> {
-    return await UserModel.findOne({ username });
+    return await UserModel.findOne({ username, isDeleted: false });
+  }
+
+  static async softDeleteUser(userId: string): Promise<User | null> {
+    return await UserModel.findByIdAndUpdate(userId, { isDeleted: true }, { new: true });
   }
 }

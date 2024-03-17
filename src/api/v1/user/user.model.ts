@@ -24,6 +24,10 @@ const UserSchema = new Schema<User>(
       trim: true,
       minlength: 8,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

@@ -1,7 +1,7 @@
 import { ZodError } from 'zod';
 import { UserDAL } from './user.dal';
 import { UserDto } from './user.dto';
-import { createUser, createUserSchema, getUser, validateUsername } from './user.validation';
+import { createUser, createUserSchema, getUser, validateMongoId, validateUsername } from './user.validation';
 import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
 
 export class UserService {
@@ -27,6 +27,18 @@ export class UserService {
     const validateData = validateUsername.parse({ username });
 
     const user = await UserDAL.getUserByUsername(validateData.username);
+
+    if (!user) {
+      throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
+    }
+
+    return UserDto(user).getUser();
+  }
+
+  static async softDeleteUser(userId: string): Promise<getUser | null> {
+    const validateData = validateMongoId.parse(userId);
+
+    const user = await UserDAL.softDeleteUser(validateData);
 
     if (!user) {
       throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);

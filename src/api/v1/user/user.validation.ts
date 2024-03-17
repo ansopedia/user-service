@@ -12,6 +12,7 @@ const userSchema = z.object({
   email: z.string().email().trim().toLowerCase(),
   password: z.string().min(8),
   confirmPassword: z.string(),
+  isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -26,10 +27,12 @@ export const createUserSchema = userSchema
     path: ['confirmPassword'],
   });
 
+export const validateMongoId = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid id');
+
 export const validateUsername = userSchema.pick({ username: true });
 
 export const updateUserSchema = userSchema.partial({ username: true, email: true, password: true });
-export const getUserSchema = userSchema.omit({ password: true, confirmPassword: true });
+export const getUserSchema = userSchema.omit({ password: true, confirmPassword: true, isDeleted: true });
 
 export type User = z.infer<typeof userSchema>;
 export type createUser = z.infer<typeof createUserSchema>;
