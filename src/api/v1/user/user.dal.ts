@@ -7,6 +7,10 @@ export class UserDAL {
     return await newUser.save();
   }
 
+  static async getAllUsers(): Promise<User[]> {
+    return await UserModel.find();
+  }
+
   static async getUserByEmail(email: string): Promise<User | null> {
     return await UserModel.findOne({ email });
   }

@@ -73,4 +73,22 @@ describe('User Test', () => {
       status: 'failed',
     });
   });
+
+  it('should fetch all users', async () => {
+    const response = await request(app).get('/api/v1/users');
+
+    const { statusCode, body } = response;
+
+    expect(statusCode).toBe(STATUS_CODES.OK);
+
+    expect(body).toMatchObject({
+      message: success.USER_FETCHED_SUCCESSFULLY,
+      users: expect.any(Array),
+    });
+
+    if (body.users.length > 0) {
+      expect(body.users[0]).not.toHaveProperty('password');
+      expect(body.users[0]).not.toHaveProperty('confirmPassword');
+    }
+  });
 });

@@ -20,6 +20,22 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+export const getAllUsers = async (_: Request, res: Response, next: NextFunction) => {
+  try {
+    const users = await UserService.getAllUsers();
+    sendResponse({
+      response: res,
+      message: success.USER_FETCHED_SUCCESSFULLY,
+      payload: {
+        users,
+      },
+      statusCode: STATUS_CODES.OK,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getUserByUsername = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await UserService.getUserByUsername(req.params.username);

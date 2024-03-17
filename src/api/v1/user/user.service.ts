@@ -18,6 +18,11 @@ export class UserService {
     return UserDto(createdUser).getUser();
   }
 
+  static async getAllUsers(): Promise<getUser[]> {
+    const users = await UserDAL.getAllUsers();
+    return users.map((user) => UserDto(user).getUser());
+  }
+
   static async getUserByUsername(username: string): Promise<getUser | null> {
     const validateData = validateUsername.parse({ username });
 
