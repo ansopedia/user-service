@@ -31,4 +31,17 @@ const logger = pino(
   transport,
 );
 
+const errorTransport: DestinationStream = pino.transport({
+  target: 'pino/file',
+  options: { destination: path.join(logDirectory, 'server.log') },
+});
+
+export const errorLogger = pino(
+  {
+    level: 'error',
+    timestamp: pino.stdTimeFunctions.isoTime,
+  },
+  errorTransport,
+);
+
 export default logger;
