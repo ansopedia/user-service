@@ -1,8 +1,6 @@
-import express, { Request, Response } from 'express';
-const routes = express.Router();
+import { Router } from 'express';
+import { userRoutes } from '../api/v1/user/user.route';
 
-routes.get('/', (_: Request, res: Response) => {
-  res.send('Hello World!');
-});
+export const routes = Router();
 
-export default routes;
+routes.use(userRoutes);

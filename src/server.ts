@@ -2,11 +2,11 @@ import express, { type Application } from 'express';
 import { pinoHttp } from 'pino-http';
 
 import { logger } from './utils';
-import routes from './routes';
 import { envConstants } from './constants';
 import { connectDB } from './db/connection';
 import { errorHandler } from './middlewares/errorHandler';
 import { ErrorTypeEnum } from './constants/errorTypes.constant';
+import { routes } from './routes';
 
 const { APP_PORT } = envConstants;
 
@@ -19,7 +19,7 @@ export const app: Application = express();
 app.use(express.json());
 app.use(pinoHttp({ logger }));
 
-app.use('/v1', routes);
+app.use('/api/v1', routes);
 
 // Handling non matching request from the client
 app.use('*', () => {

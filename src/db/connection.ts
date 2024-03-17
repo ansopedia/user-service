@@ -4,15 +4,23 @@ import { envConstants } from '../constants';
 
 const { DATABASE_URL, NODE_ENV } = envConstants;
 
+const dbOptions = {
+  dbName: 'users-service',
+};
+
 export const connectDB = async () => {
   if (NODE_ENV === 'development') {
     mongoose.set('debug', true);
-    await mongoose.connect(DATABASE_URL, {});
+    await mongoose.connect(DATABASE_URL, dbOptions);
   }
 
   if (NODE_ENV === 'test') {
     const mongoMemoryServer = await MongoMemoryServer.create();
     const mongoUri = mongoMemoryServer.getUri();
-    await mongoose.connect(mongoUri, {});
+    await mongoose.connect(mongoUri, dbOptions);
+  }
+
+  if (NODE_ENV === 'production') {
+    await mongoose.connect(DATABASE_URL, dbOptions);
   }
 };

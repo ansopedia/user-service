@@ -25,7 +25,7 @@ export const sendResponse = <T>(data: SendResponse<T>) => {
 
   Object.assign(responseBody, payload);
 
-  if (errorDetails && statusCode === 500) {
+  if (errorDetails && statusCode >= 500) {
     logger.error(
       `Error occurred in ${request.url}: ${errorDetails.name} ${errorDetails.message} ${errorDetails.stack}`,
     );
