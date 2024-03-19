@@ -3,7 +3,7 @@ import { UserDAL } from './user.dal';
 import { UserDto } from './user.dto';
 import { createUser, createUserSchema, getUser, validateUsername } from './user.validation';
 import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
-import { validateMongoId } from '../../../utils/validation';
+import { validateMongoId } from '../../../utils/validation.util';
 
 export class UserService {
   static async createUser(userData: createUser): Promise<getUser | ZodError> {
