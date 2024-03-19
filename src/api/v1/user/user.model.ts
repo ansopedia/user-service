@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { User } from './user.validation';
+import { hashPassword } from '../../../utils/password.util';
 
 const UserSchema = new Schema<User>(
   {
@@ -32,5 +33,11 @@ const UserSchema = new Schema<User>(
   },
   { timestamps: true },
 );
+
+UserSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await hashPassword(this.password);
+  next();
+});
 
 export const UserModel = model<User>('User', UserSchema);
