@@ -1,8 +1,9 @@
 import { ZodError } from 'zod';
 import { UserDAL } from './user.dal';
 import { UserDto } from './user.dto';
-import { createUser, createUserSchema, getUser, validateMongoId, validateUsername } from './user.validation';
+import { createUser, createUserSchema, getUser, validateUsername } from './user.validation';
 import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
+import { validateMongoId } from '../../../utils/validation';
 
 export class UserService {
   static async createUser(userData: createUser): Promise<getUser | ZodError> {

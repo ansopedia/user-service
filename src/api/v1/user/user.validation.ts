@@ -5,7 +5,7 @@ const userSchema = z.object({
   username: z
     .string()
     .min(3, 'username must be at least 3 characters')
-    .max(18)
+    .max(18, 'username must be at most 18 characters')
     .regex(/^[a-z]/i, 'username must start with a letter')
     .regex(/^[a-z0-9]*$/i, 'username can only contain alphanumeric characters')
     .transform((val) => val.toLowerCase().trim()),
@@ -26,8 +26,6 @@ export const createUserSchema = userSchema
     message: 'Confirm password does not match password',
     path: ['confirmPassword'],
   });
-
-export const validateMongoId = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid id');
 
 export const validateUsername = userSchema.pick({ username: true });
 
