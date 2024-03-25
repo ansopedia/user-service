@@ -11,4 +11,9 @@ export class PermissionDAL {
     const permission = await PermissionModel.findOne({ name });
     return permission;
   }
+
+  static async getPermissions(): Promise<Permission[]> {
+    const permissions = await PermissionModel.find();
+    return permissions;
+  }
 }

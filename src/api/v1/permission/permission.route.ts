@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { createPermission } from './permission.controller';
+import { createPermission, getPermissions } from './permission.controller';
 
 const router = Router();
 
 router.post('/permissions', createPermission);
+router.get('/permissions', getPermissions);
 
 export { router as permissionRoutes };

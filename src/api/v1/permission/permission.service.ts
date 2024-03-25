@@ -17,4 +17,9 @@ export class PermissionService {
     const createdPermission = await PermissionDAL.createPermission(validPermissionData);
     return PermissionDto(createdPermission).getPermission();
   }
+
+  static async getPermissions(): Promise<getPermission[]> {
+    const permissions = await PermissionDAL.getPermissions();
+    return permissions.map((permission) => PermissionDto(permission).getPermission());
+  }
 }

@@ -64,4 +64,18 @@ describe('Permission Service', () => {
   it('should respond with 400 for invalid createdBy', async () => {
     await testInvalidField('createdBy', 'a');
   });
+
+  it('should get all permissions', async () => {
+    const response = await request(app).get('/api/v1/permissions');
+
+    expect(response).toBeDefined();
+
+    const { statusCode, body } = response;
+
+    expect(statusCode).toBe(STATUS_CODES.OK);
+    expect(body).toMatchObject({
+      message: success.PERMISSION_FETCHED_SUCCESSFULLY,
+      permissions: expect.any(Array),
+    });
+  });
 });
