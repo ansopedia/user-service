@@ -9,8 +9,11 @@ const errorType = [
   'EMAIL_ALREADY_EXISTS',
   'USER_NAME_ALREADY_EXISTS',
   'ROLE_ALREADY_EXISTS',
+  'ROLE_NOT_FOUND',
   'USER_NOT_FOUND',
   'PERMISSION_ALREADY_EXISTS',
+  'PERMISSION_NOT_FOUND',
+  'ROLE_PERMISSION_ALREADY_EXISTS',
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -44,6 +47,10 @@ export const errorMap = {
     httpStatusCode: STATUS_CODES.CONFLICT,
     body: { code: 'duplicate_role', message: 'Role already exists. Please choose a different role.' },
   },
+  [ErrorTypeEnum.enum.ROLE_NOT_FOUND]: {
+    httpStatusCode: STATUS_CODES.NOT_FOUND,
+    body: { code: 'role_not_found', message: 'Role not found' },
+  },
   [ErrorTypeEnum.enum.USER_NOT_FOUND]: {
     httpStatusCode: STATUS_CODES.NOT_FOUND,
     body: { code: 'user_not_found', message: 'User not found' },
@@ -51,6 +58,14 @@ export const errorMap = {
   [ErrorTypeEnum.enum.PERMISSION_ALREADY_EXISTS]: {
     httpStatusCode: STATUS_CODES.CONFLICT,
     body: { code: 'duplicate_permission', message: 'Permission already exists. Please choose a different permission.' },
+  },
+  [ErrorTypeEnum.enum.PERMISSION_NOT_FOUND]: {
+    httpStatusCode: STATUS_CODES.NOT_FOUND,
+    body: { code: 'permission_not_found', message: 'Permission not found' },
+  },
+  [ErrorTypeEnum.enum.ROLE_PERMISSION_ALREADY_EXISTS]: {
+    httpStatusCode: STATUS_CODES.CONFLICT,
+    body: { code: 'duplicate_role_permission', message: 'Role and permission combination already exists' },
   },
 };
 
