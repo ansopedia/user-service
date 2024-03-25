@@ -10,6 +10,7 @@ const errorType = [
   'USER_NAME_ALREADY_EXISTS',
   'ROLE_ALREADY_EXISTS',
   'USER_NOT_FOUND',
+  'PERMISSION_ALREADY_EXISTS',
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -46,6 +47,10 @@ export const errorMap = {
   [ErrorTypeEnum.enum.USER_NOT_FOUND]: {
     httpStatusCode: STATUS_CODES.NOT_FOUND,
     body: { code: 'user_not_found', message: 'User not found' },
+  },
+  [ErrorTypeEnum.enum.PERMISSION_ALREADY_EXISTS]: {
+    httpStatusCode: STATUS_CODES.CONFLICT,
+    body: { code: 'duplicate_permission', message: 'Permission already exists. Please choose a different permission.' },
   },
 };
 
