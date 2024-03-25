@@ -17,4 +17,9 @@ export class RoleService {
     const createdRole = await RoleDAL.createRole(validRoleData);
     return RoleDto(createdRole).getRole();
   }
+
+  static async getRoles(): Promise<getRole[]> {
+    const roles = await RoleDAL.getRoles();
+    return roles.map((role) => RoleDto(role).getRole());
+  }
 }

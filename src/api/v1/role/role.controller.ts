@@ -19,3 +19,19 @@ export const createRole = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const getRoles = async (_: Request, res: Response, next: NextFunction) => {
+  try {
+    const roles = await RoleService.getRoles();
+    sendResponse({
+      response: res,
+      message: success.ROLES_FETCHED_SUCCESSFULLY,
+      payload: {
+        roles,
+      },
+      statusCode: STATUS_CODES.OK,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

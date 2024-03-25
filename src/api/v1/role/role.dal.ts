@@ -7,7 +7,7 @@ export class RoleDAL {
     return await newRole.save();
   }
 
-  static async getAllRoles(): Promise<Role[]> {
+  static async getRoles(): Promise<Role[]> {
     return await RoleModel.find({ isDeleted: false });
   }
 
