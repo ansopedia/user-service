@@ -5,4 +5,4 @@ const router = Router();
 
 router.post('/user-role', createUserRole);
 
-export { router as userRoleRouter };
+export { router as userRoleRoutes };

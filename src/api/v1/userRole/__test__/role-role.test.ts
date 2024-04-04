@@ -15,7 +15,7 @@ const VALID_CREDENTIALS = {
   confirmPassword: 'ValidPassword123!',
 };
 
-describe('Role Permission Test', () => {
+describe('User Role Test', () => {
   it('should create a new role permission', async () => {
     const { body: roleBody } = await request(app).post('/api/v1/roles').send(VALID_ROLE);
     const { body: userBody } = await request(app).post('/api/v1/users').send(VALID_CREDENTIALS);
