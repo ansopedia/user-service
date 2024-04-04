@@ -8,6 +8,7 @@ const envSchema = z.object({
   APP_PORT: z.coerce.number().readonly(),
   PINO_LOG_LEVEL: z.string().readonly(),
   NODE_ENV: z.string().readonly(),
+  JWT_SECRET: z.string().readonly(),
 });
 
 export const envConstants = envSchema.parse(process.env);

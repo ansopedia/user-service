@@ -7,6 +7,7 @@
     "build": "tsc",
     "dev": "nodemon",
     "lint": "eslint src",
+    "lint:fix": "eslint --fix .",
     "prepare": "husky",
     "pretest": "pnpm build",
     "prettier:check": "prettier --check .",
@@ -60,8 +61,8 @@
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx,md}": [
-      "prettier --write",
-      "eslint --fix"
+      "prettier --write .",
+      "eslint --fix ."
     ]
   }
 }
