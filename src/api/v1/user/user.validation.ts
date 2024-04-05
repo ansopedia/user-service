@@ -33,5 +33,5 @@ export const updateUserSchema = userSchema.partial({ username: true, email: true
 export const getUserSchema = userSchema.omit({ password: true, confirmPassword: true, isDeleted: true });
 
 export type User = z.infer<typeof userSchema>;
-export type createUser = z.infer<typeof createUserSchema>;
-export type getUser = z.infer<typeof getUserSchema>;
+export type CreateUser = z.infer<typeof createUserSchema>;
+export type GetUser = z.infer<typeof getUserSchema>;

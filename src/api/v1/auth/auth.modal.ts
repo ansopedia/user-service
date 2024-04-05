@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import { Auth } from './auth.validation';
 
 const AuthSchema = new Schema(
   {
@@ -19,4 +20,4 @@ const AuthSchema = new Schema(
   { timestamps: true },
 );
 
-export const AuthModel = model('Auth', AuthSchema);
+export const AuthModel = model<Auth>('Auth', AuthSchema);

@@ -2,20 +2,20 @@ import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
 import { comparePassword } from '../../../utils/password.util';
 import { UserDAL } from '../user/user.dal';
 import { UserService } from '../user/user.service';
-import { createUser } from '../user/user.validation';
+import { CreateUser } from '../user/user.validation';
 import { AuthDAL } from './auth.dal';
 import { generateAccessToken, generateRefreshToken } from './auth.util';
-import { Auth, AuthUser, authUserSchema } from './auth.validation';
+import { Auth, loginSchema, Login } from './auth.validation';
 
 export class AuthService {
-  public static async signUp(userData: createUser) {
+  public static async signUp(userData: CreateUser) {
     await UserService.createUser(userData);
 
     // TODO: Send verification email
   }
 
-  public static async signInWithEmailAndPassword(userData: AuthUser): Promise<Auth> {
-    const validUserData = authUserSchema.parse(userData);
+  public static async signInWithEmailAndPassword(userData: Login): Promise<Auth> {
+    const validUserData = loginSchema.parse(userData);
 
     const user = await UserDAL.getUserByEmail(validUserData.email);
 
@@ -36,8 +36,13 @@ export class AuthService {
     const refreshToken = generateRefreshToken(user);
     const accessToken = generateAccessToken(user);
 
-    await AuthDAL.saveAuthTokens(user.id, accessToken, refreshToken);
+    const newAuthToken = await AuthDAL.updateAuthTokens({ userId: user.id, accessToken, refreshToken });
 
-    return { refreshToken, accessToken, userId: user.id };
+    if (!newAuthToken) {
+      const newAuth = await AuthDAL.createAuth({ userId: user.id, accessToken, refreshToken });
+      return newAuth;
+    }
+
+    return newAuthToken;
   }
 }
