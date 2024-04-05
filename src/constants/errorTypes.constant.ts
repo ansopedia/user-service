@@ -15,6 +15,7 @@ const errorType = [
   'PERMISSION_NOT_FOUND',
   'ROLE_PERMISSION_ALREADY_EXISTS',
   'USER_ROLE_ALREADY_EXISTS',
+  'INVALID_CREDENTIALS',
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -71,6 +72,10 @@ export const errorMap = {
   [ErrorTypeEnum.enum.USER_ROLE_ALREADY_EXISTS]: {
     httpStatusCode: STATUS_CODES.CONFLICT,
     body: { code: 'duplicate_user_role', message: 'User and role combination already exists' },
+  },
+  [ErrorTypeEnum.enum.INVALID_CREDENTIALS]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: { code: 'invalid_credentials', message: 'Invalid credentials' },
   },
 };
 

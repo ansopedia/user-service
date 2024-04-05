@@ -1,8 +1,8 @@
 import { UserModel } from './user.model';
-import { createUser, User } from './user.validation';
+import { CreateUser, User } from './user.validation';
 
 export class UserDAL {
-  static async createUser(userData: createUser): Promise<User> {
+  static async createUser(userData: CreateUser): Promise<User> {
     const newUser = new UserModel(userData);
     return await newUser.save();
   }

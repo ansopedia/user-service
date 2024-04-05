@@ -1,12 +1,12 @@
 import { ZodError } from 'zod';
 import { UserDAL } from './user.dal';
 import { UserDto } from './user.dto';
-import { createUser, createUserSchema, getUser, validateUsername } from './user.validation';
+import { CreateUser, createUserSchema, GetUser, validateUsername } from './user.validation';
 import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
 import { validateMongoId } from '../../../utils/validation.util';
 
 export class UserService {
-  static async createUser(userData: createUser): Promise<getUser | ZodError> {
+  static async createUser(userData: CreateUser): Promise<GetUser | ZodError> {
     const validUserData = createUserSchema.parse(userData);
 
     const isUserExist = await UserDAL.getUserByEmail(validUserData.email);
@@ -25,12 +25,12 @@ export class UserService {
     return UserDto(createdUser).getUser();
   }
 
-  static async getAllUsers(): Promise<getUser[]> {
+  static async getAllUsers(): Promise<GetUser[]> {
     const users = await UserDAL.getAllUsers();
     return users.map((user) => UserDto(user).getUser());
   }
 
-  static async getUserByUsername(username: string): Promise<getUser | null> {
+  static async getUserByUsername(username: string): Promise<GetUser | null> {
     const validateData = validateUsername.parse({ username });
 
     const user = await UserDAL.getUserByUsername(validateData.username);
@@ -42,7 +42,7 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async softDeleteUser(userId: string): Promise<getUser | null> {
+  static async softDeleteUser(userId: string): Promise<GetUser | null> {
     const validateData = validateMongoId.parse(userId);
 
     const user = await UserDAL.softDeleteUser(validateData);
@@ -54,7 +54,7 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async restoreUser(userId: string): Promise<getUser | null> {
+  static async restoreUser(userId: string): Promise<GetUser | null> {
     const validateData = validateMongoId.parse(userId);
 
     const user = await UserDAL.restoreUser(validateData);
