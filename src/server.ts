@@ -1,5 +1,7 @@
 import express, { type Application } from 'express';
 import { pinoHttp } from 'pino-http';
+import helmet from 'helmet';
+import cors from 'cors';
 
 import { logger } from './utils';
 import { envConstants } from './constants';
@@ -15,6 +17,28 @@ export const app: Application = express();
 (async () => {
   await connectDB();
 })();
+
+if (envConstants.NODE_ENV !== 'test') {
+  // Apply Helmet middleware with default options
+  app.use(helmet());
+
+  // Apply CORS middleware with a whitelist (adjust origins as needed)
+  const allowedOrigins = ['http://localhost:3000'];
+
+  const corsOptions = {
+    origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+      if (origin === undefined) {
+        callback(new Error('Origin is undefined'));
+      } else if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  };
+
+  app.use(cors(corsOptions));
+}
 
 app.use(express.json());
 app.use(pinoHttp({ logger }));
