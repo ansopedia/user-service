@@ -23,6 +23,8 @@ export class AuthController {
     try {
       const { accessToken, refreshToken, userId }: Auth = await AuthService.signInWithEmailAndPassword(req.body);
 
+      res.header('Access-Control-Expose-Headers', 'set-cookie, authorization');
+
       res.setHeader('authorization', accessToken);
       res.cookie('refresh-token', refreshToken, {
         httpOnly: true,
