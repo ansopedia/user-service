@@ -2,14 +2,14 @@ import { Response, request } from 'express';
 import { errorLogger } from './Logger';
 import { envConstants } from '../constants';
 
-export type SendResponse<T = undefined> = {
+export interface SendResponse<T = undefined> {
   response: Response;
   statusCode: number;
   status?: 'success' | 'failed';
   message: string;
   errorDetails?: Error;
   payload?: T;
-};
+}
 
 export const sendResponse = <T>(data: SendResponse<T>) => {
   const { response, statusCode, message, errorDetails, payload, status = 'success' } = data;

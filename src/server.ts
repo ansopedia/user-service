@@ -35,6 +35,7 @@ if (envConstants.NODE_ENV !== 'test') {
         callback(new Error('Not allowed by CORS'));
       }
     },
+    credentials: true,
   };
 
   app.use(cors(corsOptions));
