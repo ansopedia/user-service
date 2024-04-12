@@ -6,12 +6,12 @@ import { RolePermissionService } from './role-permission.service';
 
 export const createRolePermission = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const createdRolePermission = await RolePermissionService.createRolePermission(req.body);
+    const rolePermission = await RolePermissionService.createRolePermission(req.body);
     sendResponse({
       response: res,
       message: success.ROLE_PERMISSION_CREATED_SUCCESSFULLY,
       payload: {
-        rolePermission: createdRolePermission,
+        rolePermission,
       },
       statusCode: STATUS_CODES.CREATED,
     });

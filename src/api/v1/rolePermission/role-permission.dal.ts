@@ -8,6 +8,6 @@ export class RolePermissionDAL {
   }
 
   static async exists(rolePermissionData: RolePermission) {
-    return RolePermissionModel.exists(rolePermissionData);
+    return await RolePermissionModel.exists(rolePermissionData);
   }
 }

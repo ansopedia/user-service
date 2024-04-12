@@ -9,9 +9,8 @@ export class RolePermissionService {
 
     const rolePermissionExists = await RolePermissionDAL.exists(validRolePermissionData);
 
-    if (rolePermissionExists) {
-      throw new Error(ErrorTypeEnum.enum.ROLE_PERMISSION_ALREADY_EXISTS);
-    }
+    if (rolePermissionExists) throw new Error(ErrorTypeEnum.enum.ROLE_PERMISSION_ALREADY_EXISTS);
+
     const createdPermission = await RolePermissionDAL.createRolePermission(validRolePermissionData);
     return RolePermissionDto(createdPermission).getRolePermission();
   }

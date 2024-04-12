@@ -6,12 +6,12 @@ import { STATUS_CODES } from '../../../constants/statusCode.constant';
 
 export const createRole = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const createdRole = await RoleService.createRole(req.body);
+    const role = await RoleService.createRole(req.body);
     sendResponse({
       response: res,
       message: success.ROLE_CREATED_SUCCESSFULLY,
       payload: {
-        role: createdRole,
+        role,
       },
       statusCode: STATUS_CODES.CREATED,
     });

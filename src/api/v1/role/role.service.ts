@@ -10,11 +10,10 @@ export class RoleService {
 
     const isRoleExist = await RoleDAL.getRoleByName(validRoleData.name);
 
-    if (isRoleExist) {
-      throw new Error(ErrorTypeEnum.enum.ROLE_ALREADY_EXISTS);
-    }
+    if (isRoleExist) throw new Error(ErrorTypeEnum.enum.ROLE_ALREADY_EXISTS);
 
     const createdRole = await RoleDAL.createRole(validRoleData);
+
     return RoleDto(createdRole).getRole();
   }
 

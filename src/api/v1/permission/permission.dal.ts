@@ -3,17 +3,14 @@ import { Permission, createPermission } from './permission.validation';
 
 export class PermissionDAL {
   static async createPermission(permission: createPermission): Promise<Permission> {
-    const createdPermission = await PermissionModel.create(permission);
-    return createdPermission;
+    return await PermissionModel.create(permission);
   }
 
   static async getPermissionByName(name: string): Promise<Permission | null> {
-    const permission = await PermissionModel.findOne({ name });
-    return permission;
+    return await PermissionModel.findOne({ name });
   }
 
   static async getPermissions(): Promise<Permission[]> {
-    const permissions = await PermissionModel.find();
-    return permissions;
+    return await PermissionModel.find();
   }
 }

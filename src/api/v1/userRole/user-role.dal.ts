@@ -8,6 +8,6 @@ export class UserRoleDAL {
   }
 
   static async exists(userRole: UserRole) {
-    return UserRoleModel.exists(userRole);
+    return await UserRoleModel.exists(userRole);
   }
 }
