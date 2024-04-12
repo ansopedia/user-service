@@ -10,11 +10,10 @@ export class PermissionService {
 
     const isPermissionExist = await PermissionDAL.getPermissionByName(validPermissionData.name);
 
-    if (isPermissionExist) {
-      throw new Error(ErrorTypeEnum.enum.PERMISSION_ALREADY_EXISTS);
-    }
+    if (isPermissionExist) throw new Error(ErrorTypeEnum.enum.PERMISSION_ALREADY_EXISTS);
 
     const createdPermission = await PermissionDAL.createPermission(validPermissionData);
+
     return PermissionDto(createdPermission).getPermission();
   }
 

@@ -19,29 +19,20 @@ export class AuthService {
 
     const user = await UserDAL.getUserByEmail(validUserData.email);
 
-    if (!user) {
-      throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
-    }
+    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     const isPasswordMatch = await comparePassword(validUserData.password, user.password);
 
-    if (!isPasswordMatch) {
-      throw new Error(ErrorTypeEnum.enum.INVALID_CREDENTIALS);
-    }
+    if (!isPasswordMatch) throw new Error(ErrorTypeEnum.enum.INVALID_CREDENTIALS);
 
-    if (user.isDeleted) {
-      throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
-    }
+    if (user.isDeleted) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     const refreshToken = generateRefreshToken(user);
     const accessToken = generateAccessToken(user);
 
     const newAuthToken = await AuthDAL.updateAuthTokens({ userId: user.id, accessToken, refreshToken });
 
-    if (!newAuthToken) {
-      const newAuth = await AuthDAL.createAuth({ userId: user.id, accessToken, refreshToken });
-      return newAuth;
-    }
+    if (!newAuthToken) return await AuthDAL.createAuth({ userId: user.id, accessToken, refreshToken });
 
     return newAuthToken;
   }

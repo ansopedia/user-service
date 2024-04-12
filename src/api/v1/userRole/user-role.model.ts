@@ -24,13 +24,9 @@ UserRoleSchema.pre('save', async function (next) {
   const userExists = await mongoose.model('User').exists({ _id: this.userId });
   const roleExists = await mongoose.model('Role').exists({ _id: this.roleId });
 
-  if (!userExists) {
-    throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
-  }
+  if (!userExists) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
-  if (!roleExists) {
-    throw new Error(ErrorTypeEnum.enum.ROLE_NOT_FOUND);
-  }
+  if (!roleExists) throw new Error(ErrorTypeEnum.enum.ROLE_NOT_FOUND);
 
   next();
 });

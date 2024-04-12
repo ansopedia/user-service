@@ -11,15 +11,11 @@ export class UserService {
 
     const isUserExist = await UserDAL.getUserByEmail(validUserData.email);
 
-    if (isUserExist) {
-      throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS);
-    }
+    if (isUserExist) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS);
 
     const isUserNameExist = await UserDAL.getUserByUsername(validUserData.username);
 
-    if (isUserNameExist) {
-      throw new Error(ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS);
-    }
+    if (isUserNameExist) throw new Error(ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS);
 
     const createdUser = await UserDAL.createUser(validUserData);
     return UserDto(createdUser).getUser();
@@ -35,9 +31,7 @@ export class UserService {
 
     const user = await UserDAL.getUserByUsername(validateData.username);
 
-    if (!user) {
-      throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
-    }
+    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     return UserDto(user).getUser();
   }
@@ -47,9 +41,7 @@ export class UserService {
 
     const user = await UserDAL.softDeleteUser(validateData);
 
-    if (!user) {
-      throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
-    }
+    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     return UserDto(user).getUser();
   }
@@ -59,9 +51,7 @@ export class UserService {
 
     const user = await UserDAL.restoreUser(validateData);
 
-    if (!user) {
-      throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
-    }
+    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     return UserDto(user).getUser();
   }
