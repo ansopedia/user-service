@@ -16,6 +16,11 @@ const errorType = [
   'ROLE_PERMISSION_ALREADY_EXISTS',
   'USER_ROLE_ALREADY_EXISTS',
   'INVALID_CREDENTIALS',
+  'UNAUTHORIZED',
+  'NO_AUTH_HEADER',
+  'INVALID_ACCESS',
+  'TOKEN_EXPIRED',
+  'INVALID_TOKEN',
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -76,6 +81,26 @@ export const errorMap = {
   [ErrorTypeEnum.enum.INVALID_CREDENTIALS]: {
     httpStatusCode: STATUS_CODES.UNAUTHORIZED,
     body: { code: 'invalid_credentials', message: 'Invalid credentials' },
+  },
+  [ErrorTypeEnum.enum.UNAUTHORIZED]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: { code: 'unauthorized', message: 'Unauthorized' },
+  },
+  [ErrorTypeEnum.enum.NO_AUTH_HEADER]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: { code: 'no_auth_header', message: 'No authorization header' },
+  },
+  [ErrorTypeEnum.enum.INVALID_ACCESS]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: { code: 'invalid_access', message: 'Invalid access' },
+  },
+  [ErrorTypeEnum.enum.TOKEN_EXPIRED]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: { code: 'token_expired', message: 'Token expired' },
+  },
+  [ErrorTypeEnum.enum.INVALID_TOKEN]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: { code: 'invalid_token', message: 'Invalid token' },
   },
 };
 

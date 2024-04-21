@@ -3,7 +3,7 @@ import { success } from './auth.constant';
 import { sendResponse } from '../../../utils/sendResponse.util';
 import { STATUS_CODES } from '../../../constants/statusCode.constant';
 import { AuthService } from './auth.service';
-import { Auth } from './auth.validation';
+import { AuthToken } from './auth.validation';
 
 export class AuthController {
   public static async signUp(req: Request, res: Response, next: NextFunction) {
@@ -21,7 +21,7 @@ export class AuthController {
 
   public static async signInWithEmailAndPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      const { accessToken, refreshToken, userId }: Auth = await AuthService.signInWithEmailAndPassword(req.body);
+      const { accessToken, refreshToken, userId }: AuthToken = await AuthService.signInWithEmailAndPassword(req.body);
 
       res.header('Access-Control-Expose-Headers', 'set-cookie, authorization');
 
@@ -37,6 +37,19 @@ export class AuthController {
         message: success.LOGGED_IN_SUCCESSFULLY,
         statusCode: STATUS_CODES.OK,
         payload: { userId },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async signOut(req: Request, res: Response, next: NextFunction) {
+    try {
+      await AuthService.signOut(req.body.userId);
+      sendResponse({
+        response: res,
+        message: success.LOGGED_OUT_SUCCESSFULLY,
+        statusCode: STATUS_CODES.OK,
       });
     } catch (error) {
       next(error);
