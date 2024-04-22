@@ -3,7 +3,7 @@ import { checkBearerToken, verifyToken } from '../utils/jwt.util';
 import { ErrorTypeEnum } from '../constants/errorTypes.constant';
 import { UserService } from '../api/v1/user/user.service';
 
-const validateToken = async (req: Request, _: Response, next: NextFunction) => {
+const parseUser = async (req: Request, _: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -26,9 +26,9 @@ const validateToken = async (req: Request, _: Response, next: NextFunction) => {
 };
 
 export const validateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
-  return validateToken(req, res, next);
+  return parseUser(req, res, next);
 };
 
 export const validateRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
-  return validateToken(req, res, next);
+  return parseUser(req, res, next);
 };
