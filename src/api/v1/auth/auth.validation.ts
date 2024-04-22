@@ -10,13 +10,18 @@ const authToken = AuthSchema.extend({
   accessToken: z.string(),
 });
 
-export const jwtTokenSchema = z.object({
+export const jwtAccessTokenSchema = z.object({
   userId: z.string(),
+});
+
+export const jwtRefreshTokenSchema = z.object({
+  id: z.string(),
 });
 
 export const loginSchema = userSchema.pick({ email: true, password: true });
 
-export type JwtToken = z.infer<typeof jwtTokenSchema>;
+export type JwtAccessToken = z.infer<typeof jwtAccessTokenSchema>;
+export type JwtRefreshToken = z.infer<typeof jwtRefreshTokenSchema>;
 export type Login = z.infer<typeof loginSchema>;
 export type Auth = z.infer<typeof AuthSchema>;
 export type AuthToken = z.infer<typeof authToken>;

@@ -1,24 +1,29 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { envConstants } from '../constants';
-import { JwtToken, jwtTokenSchema } from '../api/v1/auth/auth.validation';
+import {
+  JwtAccessToken,
+  jwtAccessTokenSchema,
+  JwtRefreshToken,
+  jwtRefreshTokenSchema,
+} from '../api/v1/auth/auth.validation';
 import { ErrorTypeEnum } from '../constants/errorTypes.constant';
 
-const { JWT_SECRET } = envConstants;
+const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } = envConstants;
 
-export const generateAccessToken = (payload: JwtToken) => {
-  const validPayload = jwtTokenSchema.parse(payload);
-  return jwt.sign(validPayload, JWT_SECRET, { expiresIn: '1h' });
+export const generateAccessToken = (payload: JwtAccessToken) => {
+  const validPayload = jwtAccessTokenSchema.parse(payload);
+  return jwt.sign(validPayload, JWT_ACCESS_SECRET, { expiresIn: '1h' });
 };
 
-export const generateRefreshToken = (payload: JwtToken) => {
-  const validPayload = jwtTokenSchema.parse(payload);
-  return jwt.sign(validPayload, JWT_SECRET, { expiresIn: '7d' });
+export const generateRefreshToken = (payload: JwtRefreshToken) => {
+  const validPayload = jwtRefreshTokenSchema.parse(payload);
+  return jwt.sign(validPayload, JWT_REFRESH_SECRET, { expiresIn: '7d' });
 };
 
-export const verifyToken = (token: string): JwtPayload => {
+export const verifyToken = <T>(token: string, tokenType: 'access' | 'refresh'): T => {
   try {
-    const verifiedToken = jwt.verify(token, JWT_SECRET);
-    return verifiedToken as JwtPayload;
+    const verifiedToken = jwt.verify(token, tokenType === 'access' ? JWT_ACCESS_SECRET : JWT_REFRESH_SECRET);
+    return verifiedToken as T;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       throw new Error(ErrorTypeEnum.enum.TOKEN_EXPIRED);

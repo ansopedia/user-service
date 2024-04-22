@@ -29,7 +29,7 @@ export class AuthService {
 
     const userId = user.id;
 
-    const refreshToken = generateRefreshToken({ userId });
+    const refreshToken = generateRefreshToken({ id: userId });
     const accessToken = generateAccessToken({ userId });
 
     const newAuthToken = await AuthDAL.updateAuthTokens({ userId, refreshToken });
@@ -44,7 +44,7 @@ export class AuthService {
   }
 
   public static async renewToken({ id: userId }: User): Promise<AuthToken> {
-    const newRefreshToken = generateRefreshToken({ userId });
+    const newRefreshToken = generateRefreshToken({ id: userId });
     const newAccessToken = generateAccessToken({ userId });
 
     await AuthDAL.updateAuthTokens({ userId, refreshToken: newRefreshToken });

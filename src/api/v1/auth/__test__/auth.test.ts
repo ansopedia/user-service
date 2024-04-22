@@ -3,6 +3,8 @@ import { app } from '../../../../server';
 import { STATUS_CODES } from '../../../../constants/statusCode.constant';
 import { success } from '../auth.constant';
 import { ErrorTypeEnum, errorMap } from '../../../../constants/errorTypes.constant';
+import { sign } from 'jsonwebtoken';
+import { envConstants } from '../../../../constants';
 
 const VALID_CREDENTIALS = {
   username: 'username',
@@ -71,6 +73,89 @@ describe('Auth Test', () => {
         ...VALID_CREDENTIALS,
         password: 'notRegistered123',
       });
+    expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
+    expect(response.body).toMatchObject({
+      message: errorObject.body.message,
+      code: errorObject.body.code,
+      status: 'failed',
+    });
+  });
+
+  it('should logout a user', async () => {
+    await request(app).post('/api/v1/auth/sign-up').send(VALID_CREDENTIALS);
+
+    const loginResponse = await request(app).post('/api/v1/auth/login').send(VALID_CREDENTIALS);
+
+    const authorizationHeader = `Bearer ${loginResponse.header['authorization']}`;
+
+    const response = await request(app).post('/api/v1/auth/logout').set('authorization', authorizationHeader);
+
+    expect(response.statusCode).toBe(STATUS_CODES.OK);
+    expect(response.body).toMatchObject({
+      message: success.LOGGED_OUT_SUCCESSFULLY,
+      status: 'success',
+    });
+  });
+
+  it('should renew token', async () => {
+    await request(app).post('/api/v1/auth/sign-up').send(VALID_CREDENTIALS);
+
+    const loginResponse = await request(app).post('/api/v1/auth/login').send(VALID_CREDENTIALS);
+
+    const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0].replace('refresh-token=', '');
+
+    const response = await request(app).post('/api/v1/auth/token').set('authorization', `Bearer ${refreshToken}`);
+
+    expect(response.statusCode).toBe(STATUS_CODES.OK);
+    expect(response.body).toMatchObject({
+      status: 'success',
+    });
+  });
+
+  it('should respond with 401 for invalid token', async () => {
+    const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_TOKEN];
+
+    const response = await request(app).post('/api/v1/auth/token').set('authorization', 'Bearer invalidToken');
+
+    expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
+    expect(response.body).toMatchObject({
+      message: errorObject.body.message,
+      code: errorObject.body.code,
+      status: 'failed',
+    });
+  });
+
+  it('should throw an error if the token is invalid', async () => {
+    const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_TOKEN];
+
+    // Call the function that uses verifyToken with an invalid token
+    const invalidToken = 'invalidToken';
+    const response = await request(app).post('/api/v1/auth/token').set('authorization', `Bearer ${invalidToken}`);
+
+    // Expect an error to be thrown
+    expect(response.status).toBe(STATUS_CODES.UNAUTHORIZED);
+    expect(response.body).toMatchObject({
+      message: errorObject.body.message,
+      code: errorObject.body.code,
+      status: 'failed',
+    });
+  });
+
+  it('should throw an error if the token is expired', async () => {
+    const errorObject = errorMap[ErrorTypeEnum.enum.TOKEN_EXPIRED];
+
+    const newUserRes = await request(app).post('/api/v1/users').send({
+      username: 'newUserRes',
+      email: 'newUserRes@example.com',
+      password: 'ValidPassword123!',
+      confirmPassword: 'ValidPassword123!',
+    });
+
+    // Mock verifyToken to throw a TokenExpiredError
+    const refreshToken = sign({ id: newUserRes.body.user.id }, envConstants.JWT_REFRESH_SECRET, { expiresIn: '0s' });
+
+    const response = await request(app).post('/api/v1/auth/token').set('authorization', `Bearer ${refreshToken}`);
+
     expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
     expect(response.body).toMatchObject({
       message: errorObject.body.message,

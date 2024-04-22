@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { JwtToken } from '../../api/v1/auth/auth.validation';
+import { JwtAccessToken } from '../../api/v1/auth/auth.validation';
 import { checkBearerToken, generateAccessToken, generateRefreshToken, verifyToken } from '../jwt.util';
 import { envConstants } from '../../constants';
 
@@ -9,7 +9,7 @@ jest.mock('jsonwebtoken', () => ({
 }));
 
 describe('Jwt token', () => {
-  const mockPayload: JwtToken = {
+  const mockPayload: JwtAccessToken = {
     userId: '123',
   };
 
@@ -19,19 +19,19 @@ describe('Jwt token', () => {
 
   it('should generate an access token', () => {
     generateAccessToken(mockPayload);
-    expect(jwt.sign).toHaveBeenCalledWith(mockPayload, envConstants.JWT_SECRET, { expiresIn: '1h' });
+    expect(jwt.sign).toHaveBeenCalledWith(mockPayload, envConstants.JWT_ACCESS_SECRET, { expiresIn: '1h' });
   });
 
   it('should generate a refresh token', () => {
-    generateRefreshToken(mockPayload);
-    expect(jwt.sign).toHaveBeenCalledWith(mockPayload, envConstants.JWT_SECRET, { expiresIn: '7d' });
+    generateRefreshToken({ id: '123' });
+    expect(jwt.sign).toHaveBeenCalledWith({ id: '123' }, envConstants.JWT_REFRESH_SECRET, { expiresIn: '7d' });
   });
 
   it('should verify a token', () => {
     const mockToken = 'mockToken';
     (jwt.verify as jest.Mock).mockReturnValue(mockPayload);
-    const result = verifyToken(mockToken);
-    expect(jwt.verify).toHaveBeenCalledWith(mockToken, envConstants.JWT_SECRET);
+    const result = verifyToken(mockToken, 'access');
+    expect(jwt.verify).toHaveBeenCalledWith(mockToken, envConstants.JWT_ACCESS_SECRET);
     expect(result).toEqual(mockPayload);
   });
 
@@ -54,7 +54,7 @@ describe('verifyToken', () => {
   it('should return the decoded payload for a valid token', () => {
     (jwt.verify as jest.Mock).mockReturnValue({ someData: 'payload' }); // Mock successful verification
 
-    const decodedPayload = verifyToken(validToken);
+    const decodedPayload = verifyToken(validToken, 'refresh');
     expect(decodedPayload).toEqual({ someData: 'payload' });
   });
 });
