@@ -21,6 +21,8 @@ const errorType = [
   'INVALID_ACCESS',
   'TOKEN_EXPIRED',
   'INVALID_TOKEN',
+  'ORIGIN_IS_UNDEFINED',
+  'NOT_ALLOWED',
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -101,6 +103,14 @@ export const errorMap = {
   [ErrorTypeEnum.enum.INVALID_TOKEN]: {
     httpStatusCode: STATUS_CODES.UNAUTHORIZED,
     body: { code: 'invalid_token', message: 'Invalid token' },
+  },
+  [ErrorTypeEnum.enum.ORIGIN_IS_UNDEFINED]: {
+    httpStatusCode: STATUS_CODES.BAD_REQUEST,
+    body: { code: 'origin_is_undefined', message: 'Origin is undefined' },
+  },
+  [ErrorTypeEnum.enum.NOT_ALLOWED]: {
+    httpStatusCode: STATUS_CODES.FORBIDDEN,
+    body: { code: 'not_allowed', message: 'Not allowed' },
   },
 };
 

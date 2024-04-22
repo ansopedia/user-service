@@ -2,7 +2,7 @@ import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
 import { comparePassword } from '../../../utils/password.util';
 import { UserDAL } from '../user/user.dal';
 import { UserService } from '../user/user.service';
-import { CreateUser } from '../user/user.validation';
+import { CreateUser, User } from '../user/user.validation';
 import { AuthDAL } from './auth.dal';
 import { generateAccessToken, generateRefreshToken } from '../../../utils/jwt.util';
 import { loginSchema, Login, AuthToken } from './auth.validation';
@@ -27,17 +27,28 @@ export class AuthService {
 
     if (user.isDeleted) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
-    const refreshToken = generateRefreshToken(user);
-    const accessToken = generateAccessToken(user);
+    const userId = user.id;
 
-    const newAuthToken = await AuthDAL.updateAuthTokens({ userId: user.id, refreshToken });
+    const refreshToken = generateRefreshToken({ userId });
+    const accessToken = generateAccessToken({ userId });
 
-    if (!newAuthToken) await AuthDAL.createAuth({ userId: user.id, refreshToken });
+    const newAuthToken = await AuthDAL.updateAuthTokens({ userId, refreshToken });
 
-    return { userId: user.id, accessToken, refreshToken };
+    if (!newAuthToken) await AuthDAL.createAuth({ userId, refreshToken });
+
+    return { userId, accessToken, refreshToken };
   }
 
   public static async signOut(userId: string) {
     return await AuthDAL.deleteAuth(userId);
+  }
+
+  public static async renewToken({ id: userId }: User): Promise<AuthToken> {
+    const newRefreshToken = generateRefreshToken({ userId });
+    const newAccessToken = generateAccessToken({ userId });
+
+    await AuthDAL.updateAuthTokens({ userId, refreshToken: newRefreshToken });
+
+    return { userId, accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 }

@@ -55,4 +55,27 @@ export class AuthController {
       next(error);
     }
   }
+
+  public static async renewToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { accessToken, refreshToken }: AuthToken = await AuthService.renewToken(req.body.authUser);
+
+      res.header('Access-Control-Expose-Headers', 'set-cookie, authorization');
+
+      res.setHeader('authorization', accessToken);
+      res.cookie('refresh-token', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      });
+
+      sendResponse({
+        response: res,
+        message: success.REFRESH_TOKEN_SUCCESS,
+        statusCode: STATUS_CODES.OK,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

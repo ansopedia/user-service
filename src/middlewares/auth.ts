@@ -1,24 +1,34 @@
 import { NextFunction, Response, Request } from 'express';
-
 import { checkBearerToken, verifyToken } from '../utils/jwt.util';
 import { ErrorTypeEnum } from '../constants/errorTypes.constant';
+import { UserService } from '../api/v1/user/user.service';
 
-export const validateAccessToken = async (req: Request, _: Response, next: NextFunction) => {
+const validateToken = async (req: Request, _: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
 
     if (authHeader == null) throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
 
-    const accessToken = checkBearerToken(authHeader);
+    const token = checkBearerToken(authHeader);
 
-    if (accessToken === false) throw new Error(ErrorTypeEnum.enum.INVALID_ACCESS);
+    if (token === false) throw new Error(ErrorTypeEnum.enum.INVALID_ACCESS);
 
-    const { userId } = verifyToken(accessToken);
+    const { userId } = verifyToken(token);
 
-    req.body.authUserId = userId;
+    const user = await UserService.getUserById(userId);
+
+    req.body.authUser = user;
 
     next();
   } catch (error) {
     next(error);
   }
+};
+
+export const validateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+  return validateToken(req, res, next);
+};
+
+export const validateRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
+  return validateToken(req, res, next);
 };

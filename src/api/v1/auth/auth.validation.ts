@@ -11,7 +11,7 @@ const authToken = AuthSchema.extend({
 });
 
 export const jwtTokenSchema = z.object({
-  id: z.string(),
+  userId: z.string(),
 });
 
 export const loginSchema = userSchema.pick({ email: true, password: true });

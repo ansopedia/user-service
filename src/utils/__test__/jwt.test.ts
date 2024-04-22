@@ -10,7 +10,7 @@ jest.mock('jsonwebtoken', () => ({
 
 describe('Jwt token', () => {
   const mockPayload: JwtToken = {
-    id: '123',
+    userId: '123',
   };
 
   beforeEach(() => {
