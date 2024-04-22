@@ -2,10 +2,10 @@ import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
 import { comparePassword } from '../../../utils/password.util';
 import { UserDAL } from '../user/user.dal';
 import { UserService } from '../user/user.service';
-import { CreateUser } from '../user/user.validation';
+import { CreateUser, User } from '../user/user.validation';
 import { AuthDAL } from './auth.dal';
-import { generateAccessToken, generateRefreshToken } from './auth.util';
-import { Auth, loginSchema, Login } from './auth.validation';
+import { generateAccessToken, generateRefreshToken } from '../../../utils/jwt.util';
+import { loginSchema, Login, AuthToken } from './auth.validation';
 
 export class AuthService {
   public static async signUp(userData: CreateUser) {
@@ -14,7 +14,7 @@ export class AuthService {
     // TODO: Send verification email
   }
 
-  public static async signInWithEmailAndPassword(userData: Login): Promise<Auth> {
+  public static async signInWithEmailAndPassword(userData: Login): Promise<AuthToken> {
     const validUserData = loginSchema.parse(userData);
 
     const user = await UserDAL.getUserByEmail(validUserData.email);
@@ -27,13 +27,28 @@ export class AuthService {
 
     if (user.isDeleted) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
-    const refreshToken = generateRefreshToken(user);
-    const accessToken = generateAccessToken(user);
+    const userId = user.id;
 
-    const newAuthToken = await AuthDAL.updateAuthTokens({ userId: user.id, accessToken, refreshToken });
+    const refreshToken = generateRefreshToken({ id: userId });
+    const accessToken = generateAccessToken({ userId });
 
-    if (!newAuthToken) return await AuthDAL.createAuth({ userId: user.id, accessToken, refreshToken });
+    const newAuthToken = await AuthDAL.updateAuthTokens({ userId, refreshToken });
 
-    return newAuthToken;
+    if (!newAuthToken) await AuthDAL.createAuth({ userId, refreshToken });
+
+    return { userId, accessToken, refreshToken };
+  }
+
+  public static async signOut(userId: string) {
+    return await AuthDAL.deleteAuth(userId);
+  }
+
+  public static async renewToken({ id: userId }: User): Promise<AuthToken> {
+    const newRefreshToken = generateRefreshToken({ id: userId });
+    const newAccessToken = generateAccessToken({ userId });
+
+    await AuthDAL.updateAuthTokens({ userId, refreshToken: newRefreshToken });
+
+    return { userId, accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 }

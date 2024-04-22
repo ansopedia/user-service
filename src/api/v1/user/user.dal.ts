@@ -19,6 +19,10 @@ export class UserDAL {
     return await UserModel.findOne({ username, isDeleted: false });
   }
 
+  static async getUserById(userId: string): Promise<User | null> {
+    return await UserModel.findById(userId);
+  }
+
   static async softDeleteUser(userId: string): Promise<User | null> {
     return await UserModel.findByIdAndUpdate(userId, { isDeleted: true }, { new: true });
   }

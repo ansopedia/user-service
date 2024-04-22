@@ -7,11 +7,15 @@ export class AuthDAL {
     return await newAuth.save();
   }
 
-  static async updateAuthTokens({ userId, accessToken, refreshToken }: Auth): Promise<Auth | null> {
+  static async updateAuthTokens({ userId, refreshToken }: Auth): Promise<Auth | null> {
     return await AuthModel.findOneAndUpdate(
       { userId },
-      { $set: { accessToken, refreshToken } },
+      { $set: { refreshToken } },
       { new: true }, // Return the updated document
     );
+  }
+
+  static async deleteAuth(userId: string): Promise<Auth | null> {
+    return await AuthModel.findOneAndDelete({ userId });
   }
 }

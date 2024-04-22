@@ -28,11 +28,11 @@ if (envConstants.NODE_ENV !== 'test') {
   const corsOptions = {
     origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
       if (origin === undefined) {
-        callback(new Error('Origin is undefined'));
+        callback(new Error(ErrorTypeEnum.enum.ORIGIN_IS_UNDEFINED));
       } else if (allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        callback(new Error(ErrorTypeEnum.enum.NOT_ALLOWED));
       }
     },
     credentials: true,

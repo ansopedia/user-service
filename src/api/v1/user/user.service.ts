@@ -36,6 +36,16 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
+  static async getUserById(userId: string): Promise<GetUser | null> {
+    const validateData = validateMongoId.parse(userId);
+
+    const user = await UserDAL.getUserById(validateData);
+
+    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
+
+    return UserDto(user).getUser();
+  }
+
   static async softDeleteUser(userId: string): Promise<GetUser | null> {
     const validateData = validateMongoId.parse(userId);
 

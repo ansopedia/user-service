@@ -8,10 +8,6 @@ const AuthSchema = new Schema(
       ref: 'User',
       required: true,
     },
-    accessToken: {
-      type: String,
-      required: true,
-    },
     refreshToken: {
       type: String,
       required: true,
