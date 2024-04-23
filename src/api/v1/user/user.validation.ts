@@ -12,6 +12,7 @@ export const userSchema = z.object({
   email: z.string().email().trim().toLowerCase(),
   password: z.string().min(8),
   confirmPassword: z.string(),
+  isEmailVerified: z.boolean().default(false),
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),

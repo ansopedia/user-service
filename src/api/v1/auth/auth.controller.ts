@@ -78,4 +78,17 @@ export class AuthController {
       next(error);
     }
   }
+
+  public static async sendVerificationEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      await AuthService.sendVerificationEmail(req.body.email);
+      sendResponse({
+        response: res,
+        message: success.VERIFICATION_EMAIL_SENT,
+        statusCode: STATUS_CODES.OK,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

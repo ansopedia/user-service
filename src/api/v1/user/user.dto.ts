@@ -8,6 +8,7 @@ export const UserDto = (user: User) => ({
       email: user.email,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
+      isEmailVerified: user.isEmailVerified,
     };
   },
   createUser: () => {

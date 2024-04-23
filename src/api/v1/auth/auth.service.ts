@@ -51,4 +51,14 @@ export class AuthService {
 
     return { userId, accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
+
+  public static async sendVerificationEmail(email: string) {
+    const user = await UserDAL.getUserByEmail(email);
+
+    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
+
+    if (user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.USER_ALREADY_VERIFIED);
+
+    // TODO: Send verification email
+  }
 }

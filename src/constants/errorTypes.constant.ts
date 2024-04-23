@@ -23,6 +23,7 @@ const errorType = [
   'INVALID_TOKEN',
   'ORIGIN_IS_UNDEFINED',
   'NOT_ALLOWED',
+  'USER_ALREADY_VERIFIED',
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -111,6 +112,10 @@ export const errorMap = {
   [ErrorTypeEnum.enum.NOT_ALLOWED]: {
     httpStatusCode: STATUS_CODES.FORBIDDEN,
     body: { code: 'not_allowed', message: 'Not allowed' },
+  },
+  [ErrorTypeEnum.enum.USER_ALREADY_VERIFIED]: {
+    httpStatusCode: STATUS_CODES.CONFLICT,
+    body: { code: 'user_already_verified', message: 'User already verified' },
   },
 };
 

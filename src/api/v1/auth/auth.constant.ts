@@ -3,4 +3,5 @@ export const success = {
   LOGGED_IN_SUCCESSFULLY: 'Logged in successfully',
   LOGGED_OUT_SUCCESSFULLY: 'Logged out successfully',
   REFRESH_TOKEN_SUCCESS: 'Token refreshed successfully',
+  VERIFICATION_EMAIL_SENT: 'Verification email sent',
 };
