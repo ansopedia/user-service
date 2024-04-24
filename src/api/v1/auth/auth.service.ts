@@ -5,7 +5,7 @@ import { UserService } from '../user/user.service';
 import { CreateUser, User } from '../user/user.validation';
 import { AuthDAL } from './auth.dal';
 import { generateAccessToken, generateRefreshToken } from '../../../utils/jwt.util';
-import { loginSchema, Login, AuthToken } from './auth.validation';
+import { loginSchema, Login, AuthToken, SendOtp, sendOtpSchema } from './auth.validation';
 
 export class AuthService {
   public static async signUp(userData: CreateUser) {
@@ -52,8 +52,10 @@ export class AuthService {
     return { userId, accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 
-  public static async sendVerificationEmail(email: string) {
-    const user = await UserDAL.getUserByEmail(email);
+  public static async sendOtp(otpSchema: SendOtp) {
+    const validData = sendOtpSchema.parse(otpSchema);
+
+    const user = await UserDAL.getUserByEmail(validData.payload);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 

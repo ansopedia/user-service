@@ -79,9 +79,9 @@ export class AuthController {
     }
   }
 
-  public static async sendVerificationEmail(req: Request, res: Response, next: NextFunction) {
+  public static async sendOtp(req: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.sendVerificationEmail(req.body.email);
+      await AuthService.sendOtp(req.body);
       sendResponse({
         response: res,
         message: success.VERIFICATION_EMAIL_SENT,
