@@ -2,10 +2,10 @@ import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
 import { comparePassword } from '../../../utils/password.util';
 import { UserDAL } from '../user/user.dal';
 import { UserService } from '../user/user.service';
-import { CreateUser, User } from '../user/user.validation';
+import { CreateUser, GetUser, User } from '../user/user.validation';
 import { AuthDAL } from './auth.dal';
 import { generateAccessToken, generateRefreshToken } from '../../../utils/jwt.util';
-import { loginSchema, Login, AuthToken, SendOtp, sendOtpSchema } from './auth.validation';
+import { loginSchema, Login, AuthToken, EventPayload, eventSchema } from './auth.validation';
 
 export class AuthService {
   public static async signUp(userData: CreateUser) {
@@ -52,10 +52,14 @@ export class AuthService {
     return { userId, accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 
-  public static async sendOtp(otpSchema: SendOtp) {
-    const validData = sendOtpSchema.parse(otpSchema);
+  public static async sendOtp(otpSchema: EventPayload) {
+    const validData = eventSchema.parse(otpSchema);
 
-    const user = await UserDAL.getUserByEmail(validData.payload);
+    let user: GetUser | null = null;
+
+    if (validData.eventType === 'verifyEmail') {
+      user = await UserService.getUserByEmail(validData.email);
+    }
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 

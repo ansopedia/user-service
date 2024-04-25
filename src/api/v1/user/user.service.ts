@@ -1,7 +1,7 @@
 import { ZodError } from 'zod';
 import { UserDAL } from './user.dal';
 import { UserDto } from './user.dto';
-import { CreateUser, createUserSchema, GetUser, validateUsername } from './user.validation';
+import { CreateUser, createUserSchema, Email, GetUser, validateEmail, validateUsername } from './user.validation';
 import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
 import { validateMongoId } from '../../../utils/validation.util';
 
@@ -40,6 +40,16 @@ export class UserService {
     const validateData = validateMongoId.parse(userId);
 
     const user = await UserDAL.getUserById(validateData);
+
+    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
+
+    return UserDto(user).getUser();
+  }
+
+  static async getUserByEmail(email: Email): Promise<GetUser | null> {
+    const validEmail = validateEmail.parse(email);
+
+    const user = await UserDAL.getUserByEmail(validEmail);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 

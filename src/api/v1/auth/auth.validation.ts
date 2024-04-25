@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { userSchema } from '../user/user.validation';
+import { userSchema, validateEmail } from '../user/user.validation';
 
 const AuthSchema = z.object({
   userId: z.string().regex(/^[a-f\d]{24}$/i, 'Invalid id'),
@@ -33,3 +33,16 @@ export type Login = z.infer<typeof loginSchema>;
 export type Auth = z.infer<typeof authenticateSchema>;
 export type AuthToken = z.infer<typeof authToken>;
 export type SendOtp = z.infer<typeof sendOtpSchema>;
+
+export const eventSchema = z.union([
+  z.object({
+    eventType: z.literal('verifyEmail'),
+    email: validateEmail,
+  }),
+  z.object({
+    eventType: z.literal('verifyPhoneNumber'),
+    phoneNumber: z.string().startsWith('91'), // Adjust pattern for your phone number format
+  }),
+]);
+
+export type EventPayload = z.infer<typeof eventSchema>;
