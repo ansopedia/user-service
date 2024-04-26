@@ -58,7 +58,7 @@ export class AuthService {
     let user: GetUser | null = null;
 
     if (validData.eventType === 'verifyEmail') {
-      user = await UserService.getUserByEmail(validData.email);
+      user = await UserService.getUserByEmail(validData.email as string);
     }
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);

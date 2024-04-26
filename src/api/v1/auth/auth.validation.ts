@@ -34,15 +34,46 @@ export type Auth = z.infer<typeof authenticateSchema>;
 export type AuthToken = z.infer<typeof authToken>;
 export type SendOtp = z.infer<typeof sendOtpSchema>;
 
-export const eventSchema = z.union([
-  z.object({
-    eventType: z.literal('verifyEmail'),
-    email: validateEmail,
-  }),
-  z.object({
-    eventType: z.literal('verifyPhoneNumber'),
-    phoneNumber: z.string().startsWith('91'), // Adjust pattern for your phone number format
-  }),
-]);
+export const eventSchema = z
+  .object({
+    eventType: z.enum(['verifyEmail', 'verifyPhoneNumber']),
+    email: validateEmail.optional(),
+    phoneNumber: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.eventType === 'verifyEmail') {
+        if (data.email !== undefined) {
+          return validateEmail.parse(data.email);
+        } else {
+          const error = new z.ZodError([]);
+          error.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Email is required',
+            path: ['email'],
+          });
+          throw error;
+        }
+      } else if (data.eventType === 'verifyPhoneNumber') {
+        if (data.phoneNumber !== undefined) {
+          // TODO: Add phone number validation
+          return z.string().startsWith('91').parse(data.phoneNumber);
+        } else {
+          const error = new z.ZodError([]);
+          error.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Phone number is required',
+            path: ['phoneNumber'],
+          });
+          throw error;
+        }
+      }
+      return false;
+    },
+    {
+      message: 'Invalid payload for the given eventType',
+      path: ['eventType'],
+    },
+  );
 
 export type EventPayload = z.infer<typeof eventSchema>;
