@@ -1,21 +1,20 @@
-import { generateOTP } from '../otp.util';
+import { generateOTP, verifyOTP } from '../otp.util';
 
-describe('generateOTP', () => {
-  it('should return a number', () => {
-    const otp = generateOTP();
-    expect(typeof otp).toBe('number');
-  });
-
-  it('should return a 6 digit number by default', () => {
-    const otp = generateOTP();
-    expect(otp).toBeGreaterThanOrEqual(100000);
-    expect(otp).toBeLessThan(1000000);
-  });
-
-  it('should return a number of specified length', () => {
-    const length = 4;
+describe('OTP validation', () => {
+  test('generateOTP generates an OTP of the correct length', () => {
+    const length = 6;
     const otp = generateOTP(length);
-    expect(otp).toBeGreaterThanOrEqual(Math.pow(10, length - 1));
-    expect(otp).toBeLessThan(Math.pow(10, length));
+    expect(otp.length).toBe(length);
+  });
+
+  test('verifyOTP returns true when the OTPs match', () => {
+    const otp = generateOTP();
+    expect(verifyOTP(otp, otp)).toBe(true);
+  });
+
+  test('verifyOTP returns false when the OTPs do not match', () => {
+    const otp1 = generateOTP();
+    const otp2 = generateOTP();
+    expect(verifyOTP(otp1, otp2)).toBe(false);
   });
 });

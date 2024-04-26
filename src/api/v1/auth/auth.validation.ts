@@ -1,10 +1,11 @@
 import { z } from 'zod';
 import { userSchema, validateEmail } from '../user/user.validation';
+import { otp } from '../otp/otp.validation';
 
 const AuthSchema = z.object({
   userId: z.string().regex(/^[a-f\d]{24}$/i, 'Invalid id'),
   refreshToken: z.string(),
-  otp: z.string().length(6),
+  otp,
   accessToken: z.string(),
 });
 
@@ -27,16 +28,11 @@ export const sendOtpSchema = z.object({
 
 export const loginSchema = userSchema.pick({ email: true, password: true });
 
-export type JwtAccessToken = z.infer<typeof jwtAccessTokenSchema>;
-export type JwtRefreshToken = z.infer<typeof jwtRefreshTokenSchema>;
-export type Login = z.infer<typeof loginSchema>;
-export type Auth = z.infer<typeof authenticateSchema>;
-export type AuthToken = z.infer<typeof authToken>;
-export type SendOtp = z.infer<typeof sendOtpSchema>;
+export const eventTypes = z.enum(['verifyEmail', 'verifyPhoneNumber']);
 
 export const eventSchema = z
   .object({
-    eventType: z.enum(['verifyEmail', 'verifyPhoneNumber']),
+    eventType: eventTypes,
     email: validateEmail.optional(),
     phoneNumber: z.string().optional(),
   })
@@ -77,3 +73,10 @@ export const eventSchema = z
   );
 
 export type EventPayload = z.infer<typeof eventSchema>;
+export type JwtAccessToken = z.infer<typeof jwtAccessTokenSchema>;
+export type JwtRefreshToken = z.infer<typeof jwtRefreshTokenSchema>;
+export type Login = z.infer<typeof loginSchema>;
+export type Auth = z.infer<typeof authenticateSchema>;
+export type AuthToken = z.infer<typeof authToken>;
+export type SendOtp = z.infer<typeof sendOtpSchema>;
+export type EventTypes = z.infer<typeof eventTypes>;
