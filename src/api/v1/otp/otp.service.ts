@@ -1,3 +1,4 @@
+import { FIVE_MINUTES_IN_MS } from '../../../constants';
 import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
 import { generateOTP } from '../../../utils/otp.util';
 import { success } from '../auth/auth.constant';
@@ -26,7 +27,7 @@ export class OTPService {
       userId: user.id,
       otp,
       otpType,
-      expiryTime: new Date(),
+      expiryTime: new Date(Date.now() + FIVE_MINUTES_IN_MS),
     });
 
     return { message };

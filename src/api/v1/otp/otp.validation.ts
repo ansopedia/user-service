@@ -55,14 +55,12 @@ export const otpEvent = z
     },
   );
 
-const FIVE_MINUTES_IN_MS = 1000 * 60 * 5;
-
 export const otp = z.string().length(6);
 
 export const otpSchema = z.object({
   otp,
   userId: z.string().regex(/^[a-f\d]{24}$/i, 'Invalid id'),
-  expiryTime: z.date().default(() => new Date(Date.now() + FIVE_MINUTES_IN_MS)),
+  expiryTime: z.date(),
   otpType,
 });
 
