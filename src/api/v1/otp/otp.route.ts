@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { OTPController } from './otp.controller';
+import { OtpController } from './otp.controller';
 
 const router = Router();
 
-router.post('/otp', OTPController.sendOtp);
-// router.post('/otp/verify', AuthController.verifyOtp);
+router.post('/otp', OtpController.sendOtp);
+router.post('/otp/verify', OtpController.verifyOtp);
 
 export { router as otpRoutes };

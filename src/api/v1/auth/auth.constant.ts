@@ -5,4 +5,5 @@ export const success = {
   REFRESH_TOKEN_SUCCESS: 'Token refreshed successfully',
   VERIFICATION_EMAIL_SENT: 'Verification email sent',
   OTP_SENT: 'OTP sent',
+  OTP_VERIFIED: 'OTP verified',
 };
