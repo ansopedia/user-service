@@ -2,10 +2,10 @@ import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
 import { comparePassword } from '../../../utils/password.util';
 import { UserDAL } from '../user/user.dal';
 import { UserService } from '../user/user.service';
-import { CreateUser, GetUser, User } from '../user/user.validation';
+import { CreateUser, User } from '../user/user.validation';
 import { AuthDAL } from './auth.dal';
 import { generateAccessToken, generateRefreshToken } from '../../../utils/jwt.util';
-import { loginSchema, Login, AuthToken, EventPayload, eventSchema } from './auth.validation';
+import { loginSchema, Login, AuthToken } from './auth.validation';
 
 export class AuthService {
   public static async signUp(userData: CreateUser) {
@@ -50,21 +50,5 @@ export class AuthService {
     await AuthDAL.updateAuthTokens({ userId, refreshToken: newRefreshToken });
 
     return { userId, accessToken: newAccessToken, refreshToken: newRefreshToken };
-  }
-
-  public static async sendOtp(otpSchema: EventPayload) {
-    const validData = eventSchema.parse(otpSchema);
-
-    let user: GetUser | null = null;
-
-    if (validData.eventType === 'verifyEmail') {
-      user = await UserService.getUserByEmail(validData.email as string);
-    }
-
-    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
-
-    if (user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.USER_ALREADY_VERIFIED);
-
-    // TODO: Send verification email
   }
 }

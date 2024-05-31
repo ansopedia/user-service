@@ -4,4 +4,5 @@ export const success = {
   LOGGED_OUT_SUCCESSFULLY: 'Logged out successfully',
   REFRESH_TOKEN_SUCCESS: 'Token refreshed successfully',
   VERIFICATION_EMAIL_SENT: 'Verification email sent',
+  OTP_SENT: 'OTP sent',
 };

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { userSchema, validateEmail } from '../user/user.validation';
+import { userSchema } from '../user/user.validation';
 import { otp } from '../otp/otp.validation';
 
 const AuthSchema = z.object({
@@ -30,49 +30,6 @@ export const loginSchema = userSchema.pick({ email: true, password: true });
 
 export const eventTypes = z.enum(['verifyEmail', 'verifyPhoneNumber']);
 
-export const eventSchema = z
-  .object({
-    eventType: eventTypes,
-    email: validateEmail.optional(),
-    phoneNumber: z.string().optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.eventType === 'verifyEmail') {
-        if (data.email !== undefined) {
-          return validateEmail.parse(data.email);
-        } else {
-          const error = new z.ZodError([]);
-          error.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Email is required',
-            path: ['email'],
-          });
-          throw error;
-        }
-      } else if (data.eventType === 'verifyPhoneNumber') {
-        if (data.phoneNumber !== undefined) {
-          // TODO: Add phone number validation
-          return z.string().startsWith('91').parse(data.phoneNumber);
-        } else {
-          const error = new z.ZodError([]);
-          error.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Phone number is required',
-            path: ['phoneNumber'],
-          });
-          throw error;
-        }
-      }
-      return false;
-    },
-    {
-      message: 'Invalid payload for the given eventType',
-      path: ['eventType'],
-    },
-  );
-
-export type EventPayload = z.infer<typeof eventSchema>;
 export type JwtAccessToken = z.infer<typeof jwtAccessTokenSchema>;
 export type JwtRefreshToken = z.infer<typeof jwtRefreshTokenSchema>;
 export type Login = z.infer<typeof loginSchema>;

@@ -78,17 +78,4 @@ export class AuthController {
       next(error);
     }
   }
-
-  public static async sendOtp(req: Request, res: Response, next: NextFunction) {
-    try {
-      await AuthService.sendOtp(req.body);
-      sendResponse({
-        response: res,
-        message: success.VERIFICATION_EMAIL_SENT,
-        statusCode: STATUS_CODES.OK,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
 }

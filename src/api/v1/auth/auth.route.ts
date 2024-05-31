@@ -11,6 +11,5 @@ router.post('/auth/token', validateRefreshToken, AuthController.renewToken);
 // router.post('/auth/send-reset-password-email', AuthController.sendResetPasswordEmail);
 // router.post('/auth/reset-password', AuthController.resetPassword);
 // router.post('/auth/verify-email', AuthController.verifyEmail);
-router.post('/auth/otp', AuthController.sendOtp);
 
 export { router as authRoutes };
