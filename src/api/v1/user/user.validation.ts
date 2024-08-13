@@ -34,10 +34,21 @@ export const validateEmail = z
   .email()
   .transform((val) => val.toLowerCase().trim());
 
-export const updateUserSchema = userSchema.partial({ username: true, email: true, password: true });
+export const updateUserSchema = userSchema
+  .partial() // Make all keys optional
+  .refine((data) => {
+    // Check if at least one key is present
+    const hasValues = Object.values(data).some((value) => value !== undefined);
+    if (!hasValues) {
+      throw new Error('At least one field is required for user update');
+    }
+    return true;
+  });
+
 export const getUserSchema = userSchema.omit({ password: true, confirmPassword: true, isDeleted: true });
 
 export type User = z.infer<typeof userSchema>;
 export type CreateUser = z.infer<typeof createUserSchema>;
+export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type GetUser = z.infer<typeof getUserSchema>;
 export type Email = z.infer<typeof validateEmail>;

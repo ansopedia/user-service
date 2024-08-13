@@ -6,12 +6,14 @@ import { CreateUser, User } from '../user/user.validation';
 import { AuthDAL } from './auth.dal';
 import { generateAccessToken, generateRefreshToken } from '../../../utils/jwt.util';
 import { loginSchema, Login, AuthToken } from './auth.validation';
+import { OtpService } from '../otp/otp.service';
 
 export class AuthService {
   public static async signUp(userData: CreateUser) {
     await UserService.createUser(userData);
 
     // TODO: Send verification email
+    await OtpService.sendOtp({ email: userData.email, otpType: 'verifyEmail' });
   }
 
   public static async signInWithEmailAndPassword(userData: Login): Promise<AuthToken> {
@@ -26,6 +28,8 @@ export class AuthService {
     if (!isPasswordMatch) throw new Error(ErrorTypeEnum.enum.INVALID_CREDENTIALS);
 
     if (user.isDeleted) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
+
+    if (!user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED);
 
     const userId = user.id;
 

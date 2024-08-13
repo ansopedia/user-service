@@ -38,3 +38,7 @@ export const validateAccessToken = async (req: Request, res: Response, next: Nex
 export const validateRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
   return parseUser(req, res, next, 'refresh');
 };
+
+export const validateOtpToken = async (req: Request, res: Response, next: NextFunction) => {
+  return parseUser(req, res, next, 'access');
+};

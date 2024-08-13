@@ -24,6 +24,7 @@ const errorType = [
   'ORIGIN_IS_UNDEFINED',
   'NOT_ALLOWED',
   'EMAIL_ALREADY_VERIFIED',
+  'EMAIL_NOT_VERIFIED',
   'INVALID_OTP',
   'OTP_EXPIRED',
 ] as const;
@@ -118,6 +119,10 @@ export const errorMap = {
   [ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED]: {
     httpStatusCode: STATUS_CODES.CONFLICT,
     body: { code: 'EMAIL_already_verified', message: 'User already verified' },
+  },
+  [ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED]: {
+    httpStatusCode: STATUS_CODES.FORBIDDEN,
+    body: { code: 'email_not_verified', message: 'Email not verified' },
   },
   [ErrorTypeEnum.enum.INVALID_OTP]: {
     httpStatusCode: STATUS_CODES.BAD_REQUEST,

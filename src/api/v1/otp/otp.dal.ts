@@ -14,4 +14,16 @@ export class OtpDAL {
   static async deleteOtp(otpId: string) {
     return await OtpModel.findByIdAndDelete(otpId);
   }
+
+  static async deleteOtpByUserId(userId: string) {
+    return await OtpModel.deleteMany({ userId });
+  }
+
+  static async replaceOtpForUser(otpSchema: SaveOtp) {
+    return await OtpModel.findOneAndUpdate(
+      { userId: otpSchema.userId, otpType: otpSchema.otpType },
+      { ...otpSchema },
+      { upsert: true, new: true },
+    );
+  }
 }

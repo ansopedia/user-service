@@ -1,7 +1,11 @@
-import mongoose, { Schema, model } from 'mongoose';
+import { Schema, model, Model, Document } from 'mongoose';
 import { Role } from './role.validation';
 
-const RoleSchema = new Schema<Role>(
+interface IRole extends Role, Document {
+  id: string;
+}
+
+const RoleSchema: Schema<IRole> = new Schema(
   {
     name: {
       type: String,
@@ -19,8 +23,8 @@ const RoleSchema = new Schema<Role>(
       minlength: 25,
       maxlength: 255,
     },
-    createdBy: mongoose.Schema.Types.ObjectId,
-    updatedBy: mongoose.Schema.Types.ObjectId,
+    createdBy: Schema.Types.ObjectId,
+    updatedBy: Schema.Types.ObjectId,
     isDeleted: {
       type: Boolean,
       default: false,
@@ -29,4 +33,4 @@ const RoleSchema = new Schema<Role>(
   { timestamps: true },
 );
 
-export const RoleModel = model<Role>('Role', RoleSchema);
+export const RoleModel: Model<IRole> = model<IRole>('Role', RoleSchema);

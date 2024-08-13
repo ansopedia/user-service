@@ -16,7 +16,9 @@ const roleSchema = z.object({
   createdBy: z.string().refine((value) => mongoose.Types.ObjectId.isValid(value), {
     message: 'createdBy must be a valid MongoDB ObjectId',
   }),
-  updatedBy: z.string().uuid(),
+  updatedBy: z.string().refine((value) => mongoose.Types.ObjectId.isValid(value), {
+    message: 'updateBy must be a valid MongoDB ObjectId',
+  }),
 });
 
 export const createRoleSchema = roleSchema.omit({ id: true, createdAt: true, updatedAt: true, updatedBy: true });

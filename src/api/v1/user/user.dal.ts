@@ -1,5 +1,5 @@
 import { UserModel } from './user.model';
-import { CreateUser, User } from './user.validation';
+import { CreateUser, UpdateUser, User } from './user.validation';
 
 export class UserDAL {
   static async createUser(userData: CreateUser): Promise<User> {
@@ -29,5 +29,9 @@ export class UserDAL {
 
   static async restoreUser(userId: string): Promise<User | null> {
     return await UserModel.findByIdAndUpdate(userId, { isDeleted: false }, { new: true });
+  }
+
+  static async updateUser(userId: string, userData: UpdateUser): Promise<User | null> {
+    return await UserModel.findByIdAndUpdate(userId, userData, { new: true });
   }
 }

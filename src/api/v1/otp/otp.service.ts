@@ -23,7 +23,7 @@ export class OtpService {
       // TODO:  EmailService.sendVerificationEmail({ email, otp });
     }
 
-    await OtpDAL.saveOtp({
+    await OtpDAL.replaceOtpForUser({
       userId: user.id,
       otp,
       otpType,
@@ -48,6 +48,10 @@ export class OtpService {
     if (!otpData || !verifyOTP(otpData.otp, otp as string)) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
 
     if (otpData.expiryTime < new Date()) throw new Error(ErrorTypeEnum.enum.OTP_EXPIRED);
+
+    if (otpType === 'verifyEmail') {
+      await UserService.updateUser(user.id, { isEmailVerified: true });
+    }
 
     await OtpDAL.deleteOtp(otpData.id);
 
