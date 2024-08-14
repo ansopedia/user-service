@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "target": "es2021",
-    "module": "CommonJS",
+    "module": "ESNext",
     "rootDir": "./src",
     "moduleResolution": "Node",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
+    "moduleDetection": "force",
     "sourceMap": true,
     "outDir": "./build",
     "sourceRoot": "./src",

@@ -9,7 +9,7 @@ const AuthSchema = z.object({
   accessToken: z.string(),
 });
 
-const authToken = AuthSchema.pick({ userId: true, accessToken: true, refreshToken: true });
+export const authToken = AuthSchema.pick({ userId: true, accessToken: true, refreshToken: true });
 
 export const authenticateSchema = AuthSchema.pick({ refreshToken: true, userId: true });
 
