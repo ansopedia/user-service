@@ -1,4 +1,4 @@
-import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from '@/constants';
+import { envConstants, ErrorTypeEnum, FIVE_MINUTES_IN_MS } from '@/constants';
 import { generateOTP, verifyOTP } from '@/utils';
 import { success } from '../auth/auth.constant';
 import { UserService } from '../user/user.service';
@@ -39,12 +39,18 @@ export class OtpService {
 
     if (!user) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
 
+    const isMasterOTP = envConstants.MASTER_OTP === otp;
+
     const otpData = await OtpDAL.getOtp({
       userId: user.id,
       otpType,
     });
 
-    if (!otpData || !verifyOTP(otpData.otp, otp as string)) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
+    if (!otpData) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
+
+    const otpToVerify = isMasterOTP && envConstants.NODE_ENV !== 'production' ? envConstants.MASTER_OTP : otpData.otp;
+
+    if (!verifyOTP(otpToVerify, otp as string)) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
 
     if (otpData.expiryTime < new Date()) throw new Error(ErrorTypeEnum.enum.OTP_EXPIRED);
 

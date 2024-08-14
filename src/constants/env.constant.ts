@@ -10,6 +10,7 @@ const envSchema = z.object({
   NODE_ENV: z.string().readonly(),
   JWT_ACCESS_SECRET: z.string().readonly(),
   JWT_REFRESH_SECRET: z.string().readonly(),
+  MASTER_OTP: z.string().readonly(),
 });
 
 export const envConstants = envSchema.parse(process.env);
