@@ -1,12 +1,11 @@
 import jwt from 'jsonwebtoken';
-import { envConstants } from '../constants';
+import { envConstants, ErrorTypeEnum } from '@/constants';
 import {
   JwtAccessToken,
   jwtAccessTokenSchema,
   JwtRefreshToken,
   jwtRefreshTokenSchema,
-} from '../api/v1/auth/auth.validation';
-import { ErrorTypeEnum } from '../constants/errorTypes.constant';
+} from '@/api/v1/auth/auth.validation';
 import { AuthDAL } from '../api/v1/auth/auth.dal';
 
 const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } = envConstants;

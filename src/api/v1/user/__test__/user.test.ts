@@ -1,8 +1,7 @@
-import request from 'supertest';
-import { app } from '../../../../server';
-import { STATUS_CODES } from '../../../../constants/statusCode.constant';
+import supertest from 'supertest';
+import { app } from '@/server';
 import { success } from '../user.constant';
-import { ErrorTypeEnum, errorMap } from '../../../../constants/errorTypes.constant';
+import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
 
 const VALID_CREDENTIALS = {
   username: 'username',
@@ -13,7 +12,7 @@ const VALID_CREDENTIALS = {
 
 describe('User Test', () => {
   it('should create a new user with valid credentials', async () => {
-    const response = await request(app).post('/api/v1/users').send(VALID_CREDENTIALS);
+    const response = await supertest(app).post('/api/v1/users').send(VALID_CREDENTIALS);
 
     const { statusCode, body } = response;
 
@@ -34,7 +33,7 @@ describe('User Test', () => {
 
   it('should respond with 409 for duplicate email', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS];
-    const response = await request(app).post('/api/v1/users').send(VALID_CREDENTIALS);
+    const response = await supertest(app).post('/api/v1/users').send(VALID_CREDENTIALS);
 
     expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
     expect(response.body.message).toBe(errorObject.body.message);
@@ -43,7 +42,7 @@ describe('User Test', () => {
 
   it('should respond with 409 for duplicate username', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS];
-    const response = await request(app)
+    const response = await supertest(app)
       .post('/api/v1/users')
       .send({
         ...VALID_CREDENTIALS,
@@ -55,7 +54,7 @@ describe('User Test', () => {
   });
 
   it('should find user by username', async () => {
-    const response = await request(app).get(`/api/v1/users/${VALID_CREDENTIALS.username}`);
+    const response = await supertest(app).get(`/api/v1/users/${VALID_CREDENTIALS.username}`);
 
     const { statusCode, body } = response;
 
@@ -76,7 +75,7 @@ describe('User Test', () => {
 
   it('should respond with 404 for user not found', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.USER_NOT_FOUND];
-    const response = await request(app).get('/api/v1/users/invalidUsername');
+    const response = await supertest(app).get('/api/v1/users/invalidUsername');
 
     expect(response.statusCode).toBe(STATUS_CODES.NOT_FOUND);
 
@@ -88,7 +87,7 @@ describe('User Test', () => {
   });
 
   it('should fetch all users', async () => {
-    const response = await request(app).get('/api/v1/users');
+    const response = await supertest(app).get('/api/v1/users');
 
     const { statusCode, body } = response;
 
@@ -106,8 +105,8 @@ describe('User Test', () => {
   });
 
   it('should soft delete user', async () => {
-    const userResponse = await request(app).get(`/api/v1/users/${VALID_CREDENTIALS.username}`);
-    const response = await request(app).delete(`/api/v1/users/${userResponse.body.user.id}`);
+    const userResponse = await supertest(app).get(`/api/v1/users/${VALID_CREDENTIALS.username}`);
+    const response = await supertest(app).delete(`/api/v1/users/${userResponse.body.user.id}`);
 
     const { statusCode, body } = response;
 
@@ -134,9 +133,9 @@ describe('User Test', () => {
       confirmPassword: 'ValidPassword123!',
     };
 
-    const userResponse = await request(app).post('/api/v1/users').send(newUser);
+    const userResponse = await supertest(app).post('/api/v1/users').send(newUser);
 
-    const response = await request(app).patch(`/api/v1/users/${userResponse.body.user.id}/restore`);
+    const response = await supertest(app).patch(`/api/v1/users/${userResponse.body.user.id}/restore`);
 
     const { statusCode, body } = response;
 

@@ -3,12 +3,11 @@ import { pinoHttp } from 'pino-http';
 import helmet from 'helmet';
 import cors from 'cors';
 
-import { logger } from './utils';
-import { envConstants } from './constants';
-import { connectDB } from './db/connection';
-import { errorHandler } from './middlewares/errorHandler';
-import { ErrorTypeEnum } from './constants/errorTypes.constant';
-import { routes } from './routes';
+import { envConstants, ErrorTypeEnum } from '@/constants';
+import { logger } from '@/utils';
+import { connectDB } from '@/db/connection';
+import { errorHandler } from '@/middlewares';
+import { routes } from '@/routes';
 
 const { APP_PORT } = envConstants;
 

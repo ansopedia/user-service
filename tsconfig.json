@@ -4,7 +4,10 @@
     "module": "CommonJS",
     "rootDir": "./src",
     "moduleResolution": "Node",
-    "baseUrl": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "sourceMap": true,
     "outDir": "./build",
     "sourceRoot": "./src",

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { STATUS_CODES } from '../../../constants/statusCode.constant';
-import { sendResponse } from '../../../utils/sendResponse.util';
+import { STATUS_CODES } from '@/constants';
+import { sendResponse } from '@/utils';
 import { success } from './role-permission.constant';
 import { RolePermissionService } from './role-permission.service';
 

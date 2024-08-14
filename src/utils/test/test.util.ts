@@ -1,10 +1,10 @@
 import supertest, { Response } from 'supertest';
-import { OTP, OtpSchema } from '../api/v1/otp/otp.validation';
-import { app } from '../server';
-import { STATUS_CODES } from '../constants/statusCode.constant';
-import { success } from '../api/v1/auth/auth.constant';
-import { OtpDAL } from '../api/v1/otp/otp.dal';
-import { Login } from '../api/v1/auth/auth.validation';
+import { OTP, OtpSchema } from '../../api/v1/otp/otp.validation';
+import { app } from '../../server';
+import { STATUS_CODES } from '../../constants/statusCode.constant';
+import { success } from '../../api/v1/auth/auth.constant';
+import { OtpDAL } from '../../api/v1/otp/otp.dal';
+import { Login } from '../../api/v1/auth/auth.validation';
 
 export async function requestOTP(email: string): Promise<Response> {
   return supertest(app).post('/api/v1/otp').send({

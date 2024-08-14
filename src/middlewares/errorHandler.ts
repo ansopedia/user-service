@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { ErrorTypeEnum, getErrorObject } from '../constants/errorTypes.constant';
-import { sendResponse } from '../utils/sendResponse.util';
+import { ErrorTypeEnum, getErrorObject } from '@/constants';
+import { sendResponse } from '@/utils/sendResponse.util';
 import { ZodError } from 'zod';
 
 export const errorHandler = (err: Error, _: Request, res: Response, next: NextFunction) => {

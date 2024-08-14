@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { app } from '../../server';
-import { ErrorTypeEnum, getErrorObject } from '../../constants/errorTypes.constant';
+import { app } from '@/server';
+import { ErrorTypeEnum, getErrorObject } from '@/constants';
 
 describe('errorHandler', () => {
   it('should handle general errors', async () => {

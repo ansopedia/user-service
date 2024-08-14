@@ -1,6 +1,5 @@
-import { FIVE_MINUTES_IN_MS } from '../../../constants';
-import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
-import { generateOTP, verifyOTP } from '../../../utils/otp.util';
+import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from '@/constants';
+import { generateOTP, verifyOTP } from '@/utils';
 import { success } from '../auth/auth.constant';
 import { UserService } from '../user/user.service';
 import { OtpDAL } from './otp.dal';

@@ -1,11 +1,11 @@
-import mongoose from 'mongoose';
+import { Types } from 'mongoose';
 import { z } from 'zod';
 
 export const rolePermissionSchema = z.object({
-  roleId: z.string().refine((value) => mongoose.Types.ObjectId.isValid(value), {
+  roleId: z.string().refine((value) => Types.ObjectId.isValid(value), {
     message: 'roleId must be a valid MongoDB ObjectId',
   }),
-  permissionId: z.string().refine((value) => mongoose.Types.ObjectId.isValid(value), {
+  permissionId: z.string().refine((value) => Types.ObjectId.isValid(value), {
     message: 'permissionId must be a valid MongoDB ObjectId',
   }),
 });

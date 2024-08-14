@@ -2,7 +2,7 @@ import { ZodError } from 'zod';
 import { RoleDAL } from './role.dal';
 import { RoleDto } from './role.dto';
 import { createRole, createRoleSchema, getRole } from './role.validation';
-import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
+import { ErrorTypeEnum } from '@/constants';
 
 export class RoleService {
   static async createRole(userData: createRole): Promise<getRole | ZodError> {

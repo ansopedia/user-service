@@ -1,7 +1,6 @@
 import request from 'supertest';
-import { app } from '../../../../server';
-import { STATUS_CODES } from '../../../../constants/statusCode.constant';
-import { ErrorTypeEnum, errorMap } from '../../../../constants/errorTypes.constant';
+import { app } from '@/server';
+import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
 import { success } from '../permission.constant';
 
 const VALID_PERMISSION = {

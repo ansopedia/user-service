@@ -1,10 +1,9 @@
-import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
-import { comparePassword } from '../../../utils/password.util';
+import { ErrorTypeEnum } from '@/constants';
+import { comparePassword, generateAccessToken, generateRefreshToken } from '@/utils';
 import { UserDAL } from '../user/user.dal';
 import { UserService } from '../user/user.service';
 import { CreateUser, User } from '../user/user.validation';
 import { AuthDAL } from './auth.dal';
-import { generateAccessToken, generateRefreshToken } from '../../../utils/jwt.util';
 import { loginSchema, Login, AuthToken } from './auth.validation';
 import { OtpService } from '../otp/otp.service';
 

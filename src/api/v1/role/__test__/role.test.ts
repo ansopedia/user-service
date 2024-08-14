@@ -1,8 +1,7 @@
-import request from 'supertest';
-import { app } from '../../../../server';
-import { STATUS_CODES } from '../../../../constants/statusCode.constant';
+import supertest from 'supertest';
+import { app } from '@/server';
 import { success } from '../role.constant';
-import { ErrorTypeEnum, errorMap } from '../../../../constants/errorTypes.constant';
+import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
 
 const VALID_ROLE = {
   name: 'super-admin',
@@ -13,7 +12,7 @@ const VALID_ROLE = {
 const testInvalidField = async (field: string, value: string) => {
   const errorObj = errorMap[ErrorTypeEnum.enum.VALIDATION_ERROR];
 
-  const response = await request(app)
+  const response = await supertest(app)
     .post('/api/v1/roles')
     .send({
       ...VALID_ROLE,
@@ -27,7 +26,7 @@ const testInvalidField = async (field: string, value: string) => {
 
 describe('Role Service', () => {
   it('should create a new role', async () => {
-    const response = await request(app).post('/api/v1/roles').send(VALID_ROLE);
+    const response = await supertest(app).post('/api/v1/roles').send(VALID_ROLE);
     expect(response).toBeDefined();
 
     const { statusCode, body } = response;
@@ -46,7 +45,7 @@ describe('Role Service', () => {
 
   it('should respond with 409 for duplicate role', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.ROLE_ALREADY_EXISTS];
-    const response = await request(app).post('/api/v1/roles').send(VALID_ROLE);
+    const response = await supertest(app).post('/api/v1/roles').send(VALID_ROLE);
 
     expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
     expect(response.body.message).toBe(errorObject.body.message);
@@ -66,7 +65,7 @@ describe('Role Service', () => {
   });
 
   it('should get all roles', async () => {
-    const response = await request(app).get('/api/v1/roles');
+    const response = await supertest(app).get('/api/v1/roles');
     expect(response).toBeDefined();
 
     const { statusCode, body } = response;

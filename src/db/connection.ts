@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { envConstants } from '../constants';
+import { envConstants } from '@/constants';
 
 const { DATABASE_URL, NODE_ENV } = envConstants;
 

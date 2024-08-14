@@ -1,16 +1,16 @@
-import mongoose, { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { UserRole } from './user-role.validation';
-import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
+import { ErrorTypeEnum } from '@/constants';
 
 const UserRoleSchema = new Schema(
   {
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'user',
       required: true,
     },
     roleId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'role',
       required: true,
     },
@@ -21,8 +21,8 @@ const UserRoleSchema = new Schema(
 UserRoleSchema.index({ roleId: 1, userId: 1 }, { unique: true });
 
 UserRoleSchema.pre('save', async function (next) {
-  const userExists = await mongoose.model('User').exists({ _id: this.userId });
-  const roleExists = await mongoose.model('Role').exists({ _id: this.roleId });
+  const userExists = await model('User').exists({ _id: this.userId });
+  const roleExists = await model('Role').exists({ _id: this.roleId });
 
   if (!userExists) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 

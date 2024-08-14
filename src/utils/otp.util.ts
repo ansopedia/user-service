@@ -1,4 +1,4 @@
-import { OTP } from '../api/v1/otp/otp.validation';
+import { OTP } from '@/api/v1/otp/otp.validation';
 
 export const generateOTP = (length: number = 6): OTP => {
   const factor = Math.pow(10, length - 1);

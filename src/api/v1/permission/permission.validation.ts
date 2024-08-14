@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import { Types } from 'mongoose';
 import { z } from 'zod';
 
 const permissionSchema = z.object({
@@ -13,7 +13,7 @@ const permissionSchema = z.object({
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
-  createdBy: z.string().refine((value) => mongoose.Types.ObjectId.isValid(value), {
+  createdBy: z.string().refine((value) => Types.ObjectId.isValid(value), {
     message: 'createdBy must be a valid MongoDB ObjectId',
   }),
   updatedBy: z.string().uuid(),

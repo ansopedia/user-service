@@ -1,10 +1,8 @@
 import supertest from 'supertest';
-import { app } from '../../../../server';
-import { STATUS_CODES } from '../../../../constants/statusCode.constant';
+import { app } from '@/server';
 import { success } from '../auth.constant';
-import { ErrorTypeEnum, errorMap } from '../../../../constants/errorTypes.constant';
 import { sign } from 'jsonwebtoken';
-import { envConstants } from '../../../../constants';
+import { envConstants, errorMap, ErrorTypeEnum, STATUS_CODES } from '@/constants';
 import {
   expectOTPRequestSuccess,
   expectOTPVerificationSuccess,
@@ -13,7 +11,7 @@ import {
   retrieveOTP,
   retrieveUser,
   verifyOTP,
-} from '../../../../utils/test.util';
+} from '../../../../utils/test/test.util';
 
 const VALID_CREDENTIALS = {
   username: 'username',

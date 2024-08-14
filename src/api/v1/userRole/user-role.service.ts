@@ -1,4 +1,4 @@
-import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
+import { ErrorTypeEnum } from '@/constants';
 import { UserRoleDAL } from './user-role.dal';
 import { UserRoleDto } from './user-role.dto';
 import { UserRole, userRoleSchema } from './user-role.validation';

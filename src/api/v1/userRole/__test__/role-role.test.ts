@@ -1,5 +1,5 @@
-import request from 'supertest';
-import { app } from '../../../../server';
+import supertest from 'supertest';
+import { app } from '@/server';
 import { success } from '../user-role.constant';
 
 const VALID_ROLE = {
@@ -17,15 +17,15 @@ const VALID_CREDENTIALS = {
 
 describe('User Role Test', () => {
   it('should create a new role permission', async () => {
-    const { body: roleBody } = await request(app).post('/api/v1/roles').send(VALID_ROLE);
-    const { body: userBody } = await request(app).post('/api/v1/users').send(VALID_CREDENTIALS);
+    const { body: roleBody } = await supertest(app).post('/api/v1/roles').send(VALID_ROLE);
+    const { body: userBody } = await supertest(app).post('/api/v1/users').send(VALID_CREDENTIALS);
 
     const userRole = {
       roleId: roleBody.role.id,
       userId: userBody.user.id,
     };
 
-    const { body } = await request(app).post('/api/v1/user-role').send(userRole);
+    const { body } = await supertest(app).post('/api/v1/user-role').send(userRole);
 
     expect(body).toMatchObject({
       message: success.USER_ROLE_CREATED_SUCCESSFULLY,

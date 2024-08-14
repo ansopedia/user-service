@@ -1,8 +1,8 @@
 import { NextFunction, Response, Request } from 'express';
-import { checkBearerToken, verifyToken } from '../utils/jwt.util';
-import { ErrorTypeEnum } from '../constants/errorTypes.constant';
-import { UserService } from '../api/v1/user/user.service';
-import { JwtAccessToken, JwtRefreshToken } from '../api/v1/auth/auth.validation';
+import { checkBearerToken, verifyToken } from '@/utils/jwt.util';
+import { ErrorTypeEnum } from '@/constants';
+import { UserService } from '@/api/v1/user/user.service';
+import { JwtAccessToken, JwtRefreshToken } from '@/api/v1/auth/auth.validation';
 
 const parseUser = async (req: Request, _: Response, next: NextFunction, tokenType: 'access' | 'refresh') => {
   try {

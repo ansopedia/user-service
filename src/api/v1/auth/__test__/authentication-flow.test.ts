@@ -1,7 +1,6 @@
 import supertest from 'supertest';
-import { app } from '../../../../server';
-import { ErrorTypeEnum, errorMap } from '../../../../constants/errorTypes.constant';
-
+import { app } from '@/server';
+import { ErrorTypeEnum, errorMap } from '@/constants';
 import {
   expectLoginSuccess,
   expectOTPRequestSuccess,
@@ -12,7 +11,7 @@ import {
   retrieveOTP,
   retrieveUser,
   verifyOTP,
-} from '../../../../utils/test.util';
+} from '@/utils/test';
 
 const VALID_CREDENTIALS = {
   username: 'username',

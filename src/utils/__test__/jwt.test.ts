@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
-import { JwtAccessToken } from '../../api/v1/auth/auth.validation';
-import { checkBearerToken, generateAccessToken, generateRefreshToken, verifyToken } from '../jwt.util';
-import { envConstants } from '../../constants';
+import { JwtAccessToken } from '@/api/v1/auth/auth.validation';
+import { checkBearerToken, generateAccessToken, generateRefreshToken, verifyToken } from '@/utils';
+import { envConstants } from '@/constants';
 
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(),
