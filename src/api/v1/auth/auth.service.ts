@@ -36,9 +36,7 @@ export class AuthService {
     const refreshToken = generateRefreshToken({ id: userId });
     const accessToken = generateAccessToken({ userId });
 
-    const newAuthToken = await AuthDAL.updateAuthTokens({ userId, refreshToken });
-
-    if (!newAuthToken) await AuthDAL.createAuth({ userId, refreshToken });
+    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken });
 
     return { userId, accessToken, refreshToken };
   }
@@ -51,7 +49,7 @@ export class AuthService {
     const newRefreshToken = generateRefreshToken({ id: userId });
     const newAccessToken = generateAccessToken({ userId });
 
-    await AuthDAL.updateAuthTokens({ userId, refreshToken: newRefreshToken });
+    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken: newRefreshToken });
 
     return { userId, accessToken: newAccessToken, refreshToken: newRefreshToken };
   }

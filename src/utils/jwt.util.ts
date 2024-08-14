@@ -7,6 +7,7 @@ import {
   jwtRefreshTokenSchema,
 } from '../api/v1/auth/auth.validation';
 import { ErrorTypeEnum } from '../constants/errorTypes.constant';
+import { AuthDAL } from '../api/v1/auth/auth.dal';
 
 const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } = envConstants;
 
@@ -20,17 +21,27 @@ export const generateRefreshToken = (payload: JwtRefreshToken) => {
   return jwt.sign(validPayload, JWT_REFRESH_SECRET, { expiresIn: '7d' });
 };
 
-export const verifyToken = <T>(token: string, tokenType: 'access' | 'refresh'): T => {
+export const verifyToken = async <T>(token: string, tokenType: 'access' | 'refresh'): Promise<T> => {
   try {
     const verifiedToken = jwt.verify(token, tokenType === 'access' ? JWT_ACCESS_SECRET : JWT_REFRESH_SECRET);
+
+    if (tokenType === 'refresh') {
+      const storedToken = await AuthDAL.getAuthByRefreshToken(token);
+      if (!storedToken) {
+        throw new Error(ErrorTypeEnum.enum.TOKEN_EXPIRED);
+      }
+    }
+
     return verifiedToken as T;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       throw new Error(ErrorTypeEnum.enum.TOKEN_EXPIRED);
     } else if (error instanceof jwt.JsonWebTokenError) {
       throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
-    } else {
+    } else if (error instanceof jwt.NotBeforeError) {
       throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
+    } else {
+      throw error;
     }
   }
 };

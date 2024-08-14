@@ -16,10 +16,10 @@ const parseUser = async (req: Request, _: Response, next: NextFunction, tokenTyp
 
     let user;
     if (tokenType === 'refresh') {
-      const { id }: JwtRefreshToken = verifyToken<JwtRefreshToken>(token, tokenType);
+      const { id }: JwtRefreshToken = await verifyToken<JwtRefreshToken>(token, tokenType);
       user = await UserService.getUserById(id);
     } else {
-      const { userId } = verifyToken<JwtAccessToken>(token, tokenType);
+      const { userId }: JwtAccessToken = await verifyToken<JwtAccessToken>(token, tokenType);
       user = await UserService.getUserById(userId);
     }
 
