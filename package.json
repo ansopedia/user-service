@@ -13,7 +13,7 @@
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "prod": "set NODE_ENV=production&& pnpm build && pnpm start",
-    "start": "node ./build/index.js",
+    "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "test": "jest"
   },
   "keywords": [
@@ -53,6 +53,7 @@
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.2"
   },
   "husky": {

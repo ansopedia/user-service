@@ -1,17 +1,18 @@
-import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
-import { comparePassword } from '../../../utils/password.util';
+import { ErrorTypeEnum } from '@/constants';
+import { comparePassword, generateAccessToken, generateRefreshToken } from '@/utils';
 import { UserDAL } from '../user/user.dal';
 import { UserService } from '../user/user.service';
 import { CreateUser, User } from '../user/user.validation';
 import { AuthDAL } from './auth.dal';
-import { generateAccessToken, generateRefreshToken } from '../../../utils/jwt.util';
 import { loginSchema, Login, AuthToken } from './auth.validation';
+import { OtpService } from '../otp/otp.service';
 
 export class AuthService {
   public static async signUp(userData: CreateUser) {
     await UserService.createUser(userData);
 
     // TODO: Send verification email
+    await OtpService.sendOtp({ email: userData.email, otpType: 'verifyEmail' });
   }
 
   public static async signInWithEmailAndPassword(userData: Login): Promise<AuthToken> {
@@ -27,14 +28,14 @@ export class AuthService {
 
     if (user.isDeleted) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
+    if (!user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED);
+
     const userId = user.id;
 
     const refreshToken = generateRefreshToken({ id: userId });
     const accessToken = generateAccessToken({ userId });
 
-    const newAuthToken = await AuthDAL.updateAuthTokens({ userId, refreshToken });
-
-    if (!newAuthToken) await AuthDAL.createAuth({ userId, refreshToken });
+    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken });
 
     return { userId, accessToken, refreshToken };
   }
@@ -47,7 +48,7 @@ export class AuthService {
     const newRefreshToken = generateRefreshToken({ id: userId });
     const newAccessToken = generateAccessToken({ userId });
 
-    await AuthDAL.updateAuthTokens({ userId, refreshToken: newRefreshToken });
+    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken: newRefreshToken });
 
     return { userId, accessToken: newAccessToken, refreshToken: newRefreshToken };
   }

@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { User } from './user.validation';
-import { hashPassword } from '../../../utils/password.util';
+import { hashPassword } from '@/utils';
 
 const UserSchema = new Schema<User>(
   {
@@ -27,6 +27,10 @@ const UserSchema = new Schema<User>(
       minlength: 8,
     },
     isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    isEmailVerified: {
       type: Boolean,
       default: false,
     },

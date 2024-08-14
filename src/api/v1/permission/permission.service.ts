@@ -1,6 +1,6 @@
 import { ZodError } from 'zod';
 import { createPermission, createPermissionSchema, getPermission } from './permission.validation';
-import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
+import { ErrorTypeEnum } from '@/constants';
 import { PermissionDAL } from './permission.dal';
 import { PermissionDto } from './permission.dto';
 

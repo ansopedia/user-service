@@ -2,17 +2,16 @@ import { AuthModel } from './auth.modal';
 import { Auth } from './auth.validation';
 
 export class AuthDAL {
-  static async createAuth(authData: Auth): Promise<Auth> {
-    const newAuth = new AuthModel(authData);
-    return await newAuth.save();
+  static async getAuthByUserId(userId: string): Promise<Auth | null> {
+    return await AuthModel.findOne({ userId });
   }
 
-  static async updateAuthTokens({ userId, refreshToken }: Auth): Promise<Auth | null> {
-    return await AuthModel.findOneAndUpdate(
-      { userId },
-      { $set: { refreshToken } },
-      { new: true }, // Return the updated document
-    );
+  static async getAuthByRefreshToken(refreshToken: string): Promise<Auth | null> {
+    return await AuthModel.findOne({ refreshToken });
+  }
+
+  static async updateOrCreateAuthTokens({ userId, refreshToken }: Auth): Promise<Auth | null> {
+    return await AuthModel.findOneAndUpdate({ userId }, { refreshToken: refreshToken }, { upsert: true, new: true });
   }
 
   static async deleteAuth(userId: string): Promise<Auth | null> {

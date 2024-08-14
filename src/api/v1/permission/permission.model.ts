@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { Permission } from './permission.validation';
 
 const PermissionSchema = new Schema<Permission>(
@@ -19,8 +19,8 @@ const PermissionSchema = new Schema<Permission>(
       minlength: 25,
       maxlength: 255,
     },
-    createdBy: mongoose.Schema.Types.ObjectId,
-    updatedBy: mongoose.Schema.Types.ObjectId,
+    createdBy: Schema.Types.ObjectId,
+    updatedBy: Schema.Types.ObjectId,
     isDeleted: {
       type: Boolean,
       default: false,

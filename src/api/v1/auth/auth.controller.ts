@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { success } from './auth.constant';
-import { sendResponse } from '../../../utils/sendResponse.util';
-import { STATUS_CODES } from '../../../constants/statusCode.constant';
+import { sendResponse } from '@/utils';
+import { STATUS_CODES } from '@/constants';
 import { AuthService } from './auth.service';
 import { AuthToken } from './auth.validation';
 

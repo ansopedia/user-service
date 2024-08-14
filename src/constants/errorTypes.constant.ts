@@ -23,6 +23,10 @@ const errorType = [
   'INVALID_TOKEN',
   'ORIGIN_IS_UNDEFINED',
   'NOT_ALLOWED',
+  'EMAIL_ALREADY_VERIFIED',
+  'EMAIL_NOT_VERIFIED',
+  'INVALID_OTP',
+  'OTP_EXPIRED',
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -111,6 +115,22 @@ export const errorMap = {
   [ErrorTypeEnum.enum.NOT_ALLOWED]: {
     httpStatusCode: STATUS_CODES.FORBIDDEN,
     body: { code: 'not_allowed', message: 'Not allowed' },
+  },
+  [ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED]: {
+    httpStatusCode: STATUS_CODES.CONFLICT,
+    body: { code: 'EMAIL_already_verified', message: 'Email already verified' },
+  },
+  [ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED]: {
+    httpStatusCode: STATUS_CODES.FORBIDDEN,
+    body: { code: 'email_not_verified', message: 'Email not verified' },
+  },
+  [ErrorTypeEnum.enum.INVALID_OTP]: {
+    httpStatusCode: STATUS_CODES.BAD_REQUEST,
+    body: { code: 'invalid_otp', message: 'Invalid OTP' },
+  },
+  [ErrorTypeEnum.enum.OTP_EXPIRED]: {
+    httpStatusCode: STATUS_CODES.BAD_REQUEST,
+    body: { code: 'otp_expired', message: 'OTP expired' },
   },
 };
 

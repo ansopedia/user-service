@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
-import { JwtAccessToken } from '../../api/v1/auth/auth.validation';
-import { checkBearerToken, generateAccessToken, generateRefreshToken, verifyToken } from '../jwt.util';
-import { envConstants } from '../../constants';
+import { JwtAccessToken } from '@/api/v1/auth/auth.validation';
+import { checkBearerToken, generateAccessToken, generateRefreshToken, verifyToken } from '@/utils';
+import { envConstants } from '@/constants';
 
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(),
@@ -27,10 +27,10 @@ describe('Jwt token', () => {
     expect(jwt.sign).toHaveBeenCalledWith({ id: '123' }, envConstants.JWT_REFRESH_SECRET, { expiresIn: '7d' });
   });
 
-  it('should verify a token', () => {
+  it('should verify access token', async () => {
     const mockToken = 'mockToken';
     (jwt.verify as jest.Mock).mockReturnValue(mockPayload);
-    const result = verifyToken(mockToken, 'access');
+    const result = await verifyToken(mockToken, 'access');
     expect(jwt.verify).toHaveBeenCalledWith(mockToken, envConstants.JWT_ACCESS_SECRET);
     expect(result).toEqual(mockPayload);
   });
@@ -45,16 +45,5 @@ describe('Jwt token', () => {
     const mockToken = 'mockToken';
     const result = checkBearerToken(mockToken);
     expect(result).toEqual(false);
-  });
-});
-
-describe('verifyToken', () => {
-  const validToken = jwt.sign({ someData: 'payload' }, 'your_secret_key'); // Generate a valid token
-
-  it('should return the decoded payload for a valid token', () => {
-    (jwt.verify as jest.Mock).mockReturnValue({ someData: 'payload' }); // Mock successful verification
-
-    const decodedPayload = verifyToken(validToken, 'refresh');
-    expect(decodedPayload).toEqual({ someData: 'payload' });
   });
 });

@@ -1,6 +1,6 @@
 import { Response, request } from 'express';
 import { errorLogger } from './Logger';
-import { envConstants } from '../constants';
+import { envConstants } from '@/constants';
 
 export interface SendResponse<T = undefined> {
   response: Response;

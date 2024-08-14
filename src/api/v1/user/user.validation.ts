@@ -12,6 +12,7 @@ export const userSchema = z.object({
   email: z.string().email().trim().toLowerCase(),
   password: z.string().min(8),
   confirmPassword: z.string(),
+  isEmailVerified: z.boolean().default(false),
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -28,10 +29,26 @@ export const createUserSchema = userSchema
   });
 
 export const validateUsername = userSchema.pick({ username: true });
+export const validateEmail = z
+  .string()
+  .email()
+  .transform((val) => val.toLowerCase().trim());
 
-export const updateUserSchema = userSchema.partial({ username: true, email: true, password: true });
+export const updateUserSchema = userSchema
+  .partial() // Make all keys optional
+  .refine((data) => {
+    // Check if at least one key is present
+    const hasValues = Object.values(data).some((value) => value !== undefined);
+    if (!hasValues) {
+      throw new Error('At least one field is required for user update');
+    }
+    return true;
+  });
+
 export const getUserSchema = userSchema.omit({ password: true, confirmPassword: true, isDeleted: true });
 
 export type User = z.infer<typeof userSchema>;
 export type CreateUser = z.infer<typeof createUserSchema>;
+export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type GetUser = z.infer<typeof getUserSchema>;
+export type Email = z.infer<typeof validateEmail>;
