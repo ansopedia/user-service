@@ -30,6 +30,7 @@ const validateOtpEvent = (data: BaseSchema) => {
       // TODO: Add phone number validation
       try {
         return z.string().startsWith('91').parse(data.phoneNumber);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         const error = new z.ZodError([]);
         error.addIssue({
