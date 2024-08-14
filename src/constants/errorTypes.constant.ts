@@ -118,7 +118,7 @@ export const errorMap = {
   },
   [ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED]: {
     httpStatusCode: STATUS_CODES.CONFLICT,
-    body: { code: 'EMAIL_already_verified', message: 'User already verified' },
+    body: { code: 'EMAIL_already_verified', message: 'Email already verified' },
   },
   [ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED]: {
     httpStatusCode: STATUS_CODES.FORBIDDEN,
