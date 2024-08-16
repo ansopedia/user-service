@@ -1,4 +1,3 @@
-import { ZodError } from 'zod';
 import { UserDAL } from './user.dal';
 import { UserDto } from './user.dto';
 import {
@@ -14,7 +13,7 @@ import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
 import { validateMongoId } from '../../../utils/validation.util';
 
 export class UserService {
-  static async createUser(userData: CreateUser): Promise<GetUser | ZodError> {
+  static async createUser(userData: CreateUser): Promise<GetUser> {
     const validUserData = createUserSchema.parse(userData);
 
     const isUserExist = await UserDAL.getUserByEmail(validUserData.email);

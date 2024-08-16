@@ -1,7 +1,15 @@
 import { PermissionService } from '../api/v1/permission/permission.service';
 import { RoleService } from '../api/v1/role/role.service';
 import { RolePermissionService } from '../api/v1/rolePermission/role-permission.service';
-import { defaultPermissions, defaultRolePermissions, defaultRoles } from '../constants/rbac.constants';
+import { UserService } from '../api/v1/user/user.service';
+import { UserRoleService } from '../api/v1/userRole/user-role.service';
+import {
+  defaultPermissions,
+  defaultRolePermissions,
+  defaultRoles,
+  defaultUsers,
+  ROLES,
+} from '../constants/rbac.constants';
 import { logger } from '../utils';
 
 export async function setupInitialRolesAndPermissions() {
@@ -55,4 +63,23 @@ export async function setupInitialRolesAndPermissions() {
       }
     });
   });
+}
+
+export async function setupInitialUserRole() {
+  try {
+    const user = await UserService.createUser(defaultUsers);
+
+    const roles = await RoleService.getRoles();
+
+    const role = roles.find((role) => role.name === ROLES.SUPER_ADMIN);
+
+    if (!role) {
+      logger.error(`Role not found for: roleName =  ${ROLES.SUPER_ADMIN}`);
+      return;
+    }
+
+    await UserRoleService.createUserRole({ userId: user.id, roleId: role.id });
+  } catch (error) {
+    logger.error(`Error while creating user role: error = ${error}`);
+  }
 }

@@ -8,7 +8,7 @@ import { logger } from '@/utils';
 import { connectDB } from '@/db/connection';
 import { errorHandler } from '@/middlewares';
 import { routes } from '@/routes';
-import { setupInitialRolesAndPermissions } from './script/initialize';
+import { setupInitialRolesAndPermissions, setupInitialUserRole } from './script/initialize';
 
 const { APP_PORT, INITIAL_SETUP_DONE } = envConstants;
 
@@ -16,7 +16,10 @@ export const app: Application = express();
 
 (async () => {
   await connectDB();
-  if (!INITIAL_SETUP_DONE) await setupInitialRolesAndPermissions();
+  if (envConstants.NODE_ENV !== 'test' && !INITIAL_SETUP_DONE) {
+    await setupInitialRolesAndPermissions();
+    await setupInitialUserRole();
+  }
 })();
 
 if (envConstants.NODE_ENV !== 'test') {

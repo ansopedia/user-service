@@ -1,6 +1,8 @@
 import { Types } from 'mongoose';
 import { createPermission, PermissionCategory } from '../api/v1/permission/permission.validation';
 import { createRole } from '../api/v1/role/role.validation';
+import { CreateUser } from '../api/v1/user/user.validation';
+import { envConstants } from './env.constant';
 
 // Generate a unique ObjectId for the system user, which might represent a system-level action
 const systemUserObjectId: string = new Types.ObjectId().toHexString();
@@ -89,4 +91,13 @@ export const defaultRolePermissions: IDefaultRolePermission = {
   [ROLES.SUPER_ADMIN]: Object.values(PERMISSIONS),
   [ROLES.ADMIN]: [PERMISSIONS.MANAGE_ROLES, PERMISSIONS.MANAGE_USERS, PERMISSIONS.MANAGE_CONTENT],
   [ROLES.USER]: [PERMISSIONS.MANAGE_CONTENT],
+};
+
+export const defaultUsers: CreateUser = {
+  username: envConstants.DEFAULT_SUPER_ADMIN_USERNAME,
+  email: envConstants.DEFAULT_SUPER_ADMIN_EMAIL,
+  password: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD,
+  confirmPassword: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD,
+  isDeleted: false,
+  isEmailVerified: true,
 };
