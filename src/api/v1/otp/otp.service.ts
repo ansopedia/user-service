@@ -43,7 +43,7 @@ export class OtpService {
       otpType,
     });
 
-    if (!otpData) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
+    if (!otpData) throw new Error(ErrorTypeEnum.enum.OTP_NOT_REQUESTED);
 
     const otpToVerify = isMasterOTP && envConstants.NODE_ENV !== 'production' ? envConstants.MASTER_OTP : otpData.otp;
 

@@ -25,6 +25,7 @@ const errorType = [
   'NOT_ALLOWED',
   'EMAIL_ALREADY_VERIFIED',
   'EMAIL_NOT_VERIFIED',
+  'OTP_NOT_REQUESTED',
   'INVALID_OTP',
   'OTP_EXPIRED',
   'INITIAL_SETUP_FAILED',
@@ -125,14 +126,29 @@ export const errorMap = {
     httpStatusCode: STATUS_CODES.FORBIDDEN,
     body: { code: 'email_not_verified', message: 'Email not verified' },
   },
+  [ErrorTypeEnum.enum.OTP_NOT_REQUESTED]: {
+    httpStatusCode: STATUS_CODES.BAD_REQUEST,
+    body: {
+      code: 'otp_not_requested',
+      message: 'OTP was not requested. Please initiate an OTP request before attempting this action.',
+    },
+  },
   [ErrorTypeEnum.enum.INVALID_OTP]: {
     httpStatusCode: STATUS_CODES.BAD_REQUEST,
-    body: { code: 'invalid_otp', message: 'Invalid OTP' },
+    body: {
+      code: 'invalid_otp',
+      message: 'The OTP entered is invalid. Please check the OTP and try again.',
+    },
   },
+
   [ErrorTypeEnum.enum.OTP_EXPIRED]: {
     httpStatusCode: STATUS_CODES.BAD_REQUEST,
-    body: { code: 'otp_expired', message: 'OTP expired' },
+    body: {
+      code: 'otp_expired',
+      message: 'The OTP has expired. Please request a new OTP and try again.',
+    },
   },
+
   [ErrorTypeEnum.enum.INITIAL_SETUP_FAILED]: {
     httpStatusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
     body: { code: 'initial_setup_failed', message: 'Initial setup failed' },
