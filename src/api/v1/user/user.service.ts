@@ -41,7 +41,7 @@ export class UserService {
     return users.map((user) => UserDto(user).getUser());
   }
 
-  static async getUserByUsername(username: string): Promise<GetUser | null> {
+  static async getUserByUsername(username: string): Promise<GetUser> {
     const validateData = validateUsername.parse({ username });
 
     const user = await UserDAL.getUserByUsername(validateData.username);
@@ -51,7 +51,7 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async getUserById(userId: string): Promise<GetUser | null> {
+  static async getUserById(userId: string): Promise<GetUser> {
     const validateData = validateMongoId.parse(userId);
 
     const user = await UserDAL.getUserById(validateData);
@@ -61,7 +61,7 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async getUserByEmail(email: Email): Promise<GetUser | null> {
+  static async getUserByEmail(email: Email): Promise<GetUser> {
     const validEmail = validateEmail.parse(email);
 
     const user = await UserDAL.getUserByEmail(validEmail);
@@ -71,7 +71,7 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async softDeleteUser(userId: string): Promise<GetUser | null> {
+  static async softDeleteUser(userId: string): Promise<GetUser> {
     const validateData = validateMongoId.parse(userId);
 
     const user = await UserDAL.softDeleteUser(validateData);
@@ -81,7 +81,7 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async restoreUser(userId: string): Promise<GetUser | null> {
+  static async restoreUser(userId: string): Promise<GetUser> {
     const validateData = validateMongoId.parse(userId);
 
     const user = await UserDAL.restoreUser(validateData);
@@ -91,7 +91,7 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async updateUser(userId: string, userData: UpdateUser): Promise<GetUser | null> {
+  static async updateUser(userId: string, userData: UpdateUser): Promise<GetUser> {
     const validateData = validateMongoId.parse(userId);
 
     const user = await UserDAL.getUserById(validateData);

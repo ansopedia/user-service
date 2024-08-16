@@ -12,7 +12,6 @@ export class OtpService {
     let message: string = success.OTP_SENT;
 
     const user = await UserService.getUserByEmail(email as string);
-    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     if (otpType === 'verifyEmail') {
       if (user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED);
@@ -37,8 +36,6 @@ export class OtpService {
 
     const user = await UserService.getUserByEmail(email as string);
 
-    if (!user) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
-
     const isMasterOTP = envConstants.MASTER_OTP === otp;
 
     const otpData = await OtpDAL.getOtp({
@@ -46,7 +43,7 @@ export class OtpService {
       otpType,
     });
 
-    if (!otpData) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
+    if (!otpData) throw new Error(ErrorTypeEnum.enum.OTP_NOT_REQUESTED);
 
     const otpToVerify = isMasterOTP && envConstants.NODE_ENV !== 'production' ? envConstants.MASTER_OTP : otpData.otp;
 
