@@ -5,6 +5,7 @@ export const PermissionDto = (permission: Permission) => ({
     id: permission.id,
     name: permission.name,
     description: permission.description,
+    category: permission.category,
     createdAt: permission.createdAt,
     updatedAt: permission.updatedAt,
   }),

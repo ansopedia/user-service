@@ -1,7 +1,7 @@
-import { Schema, model } from 'mongoose';
-import { Permission } from './permission.validation';
+import { Model, Schema, Types, model } from 'mongoose';
+import { Permission, PermissionCategory } from './permission.validation';
 
-const PermissionSchema = new Schema<Permission>(
+const PermissionSchema: Schema<Permission> = new Schema<Permission>(
   {
     name: {
       type: String,
@@ -19,8 +19,13 @@ const PermissionSchema = new Schema<Permission>(
       minlength: 25,
       maxlength: 255,
     },
-    createdBy: Schema.Types.ObjectId,
-    updatedBy: Schema.Types.ObjectId,
+    category: {
+      type: String,
+      enum: Object.values(PermissionCategory),
+      required: true,
+    },
+    createdBy: Types.ObjectId,
+    updatedBy: Types.ObjectId,
     isDeleted: {
       type: Boolean,
       default: false,
@@ -29,4 +34,4 @@ const PermissionSchema = new Schema<Permission>(
   { timestamps: true },
 );
 
-export const PermissionModel = model<Permission>('Permission', PermissionSchema);
+export const PermissionModel: Model<Permission> = model<Permission>('Permission', PermissionSchema);

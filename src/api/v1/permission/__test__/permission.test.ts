@@ -2,10 +2,13 @@ import request from 'supertest';
 import { app } from '@/server';
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
 import { success } from '../permission.constant';
+import { createPermission, PermissionCategory } from '../permission.validation';
 
-const VALID_PERMISSION = {
+const VALID_PERMISSION: createPermission = {
   name: 'create-permission',
   description: 'this is crete permission creating first time',
+  category: PermissionCategory.SYSTEM,
+  isDeleted: false,
   createdBy: '65f6dac9156e93e7b6f1b88d',
 };
 
@@ -39,6 +42,7 @@ describe('Permission Service', () => {
         id: expect.any(String),
         name: VALID_PERMISSION.name,
         description: VALID_PERMISSION.description,
+        category: VALID_PERMISSION.category,
       },
     });
   });

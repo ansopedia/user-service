@@ -1,17 +1,23 @@
 import supertest from 'supertest';
 import { app } from '@/server';
 import { success } from '../role-permission.constant';
+import { createRole } from '../../role/role.validation';
+import { createPermission, PermissionCategory } from '../../permission/permission.validation';
 
-const VALID_ROLE = {
+const VALID_ROLE: createRole = {
   name: 'new-role',
   description: 'this is super admin creating first time',
   createdBy: '65f6dac9156e93e7b6f1b88d',
+  isDeleted: false,
+  isSystemRole: false,
 };
 
-const VALID_PERMISSION = {
+const VALID_PERMISSION: createPermission = {
   name: 'new-permissions',
   description: 'this is crete permission creating first time',
   createdBy: '65f6dac9156e93e7b6f1b88d',
+  isDeleted: false,
+  category: PermissionCategory.SYSTEM,
 };
 
 describe('Role Permission Test', () => {

@@ -1,15 +1,24 @@
 import { Types } from 'mongoose';
 import { z } from 'zod';
 
+export enum PermissionCategory {
+  'USER_MANAGEMENT' = 'USER_MANAGEMENT',
+  'CONTENT_MANAGEMENT' = 'CONTENT_MANAGEMENT',
+  'ROLE_MANAGEMENT' = 'ROLE_MANAGEMENT',
+  'ANALYTICS' = 'ANALYTICS',
+  'SYSTEM' = 'SYSTEM',
+}
+
 const permissionSchema = z.object({
   id: z.string().uuid(),
   name: z
     .string()
-    .min(3, 'name must be at least 3 characters')
-    .max(18, 'name must be at most 18 characters')
-    .regex(/^[a-z][a-z-]*$/i, 'name must start with a letter')
+    .min(3, 'Name must be at least 3 characters long.')
+    .max(18, 'Name must be at most 18 characters long.')
+    .regex(/^[a-z][a-z-]*$/i, 'Name must start with a letter and can only contain letters and hyphens.')
     .transform((val) => val.toLowerCase().trim()),
   description: z.string().min(25).max(255),
+  category: z.nativeEnum(PermissionCategory),
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
