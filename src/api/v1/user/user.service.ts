@@ -1,4 +1,3 @@
-import { ZodError } from 'zod';
 import { UserDAL } from './user.dal';
 import { UserDto } from './user.dto';
 import {
@@ -12,9 +11,12 @@ import {
 } from './user.validation';
 import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
 import { validateMongoId } from '../../../utils/validation.util';
+import { RoleService } from '../role/role.service';
+import { ROLES } from '../../../constants/rbac.constants';
+import { UserRoleService } from '../userRole/user-role.service';
 
 export class UserService {
-  static async createUser(userData: CreateUser): Promise<GetUser | ZodError> {
+  static async createUser(userData: CreateUser): Promise<GetUser> {
     const validUserData = createUserSchema.parse(userData);
 
     const isUserExist = await UserDAL.getUserByEmail(validUserData.email);
@@ -26,6 +28,11 @@ export class UserService {
     if (isUserNameExist) throw new Error(ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS);
 
     const createdUser = await UserDAL.createUser(validUserData);
+
+    const userRole = await RoleService.getRoleByName(ROLES.USER);
+
+    await UserRoleService.createUserRole({ userId: createdUser.id, roleId: userRole.id });
+
     return UserDto(createdUser).getUser();
   }
 

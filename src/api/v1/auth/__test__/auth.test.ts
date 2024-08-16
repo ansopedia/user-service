@@ -12,6 +12,7 @@ import {
   retrieveUser,
   verifyOTP,
 } from '../../../../utils/test/test.util';
+import { setupInitialRolesAndPermissions } from '../../../../script/initialize';
 
 const VALID_CREDENTIALS = {
   username: 'username',
@@ -21,10 +22,15 @@ const VALID_CREDENTIALS = {
 };
 
 describe('Auth Test', () => {
+  beforeAll(async () => {
+    await setupInitialRolesAndPermissions();
+  });
+
   it('should sign up a user & send verification email', async () => {
     const response = await supertest(app).post('/api/v1/auth/sign-up').send(VALID_CREDENTIALS);
 
     const { statusCode, body } = response;
+
     expect(statusCode).toBe(STATUS_CODES.CREATED);
 
     expect(body).toMatchObject({

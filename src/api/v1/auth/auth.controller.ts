@@ -58,7 +58,7 @@ export class AuthController {
 
   public static async renewToken(req: Request, res: Response, next: NextFunction) {
     try {
-      const { accessToken, refreshToken }: AuthToken = await AuthService.renewToken(req.body.authUser);
+      const { accessToken, refreshToken }: AuthToken = await AuthService.renewToken(req.body.loggedInUser);
 
       res.header('Access-Control-Expose-Headers', 'set-cookie, authorization');
 

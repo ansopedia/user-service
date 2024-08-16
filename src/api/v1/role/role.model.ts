@@ -23,12 +23,16 @@ const RoleSchema: Schema<IRole> = new Schema(
       minlength: 25,
       maxlength: 255,
     },
-    createdBy: Schema.Types.ObjectId,
-    updatedBy: Schema.Types.ObjectId,
     isDeleted: {
       type: Boolean,
       default: false,
     },
+    isSystemRole: {
+      type: Boolean,
+      default: false,
+    },
+    createdBy: Schema.Types.ObjectId,
+    updatedBy: Schema.Types.ObjectId,
   },
   { timestamps: true },
 );

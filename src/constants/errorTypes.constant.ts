@@ -27,6 +27,7 @@ const errorType = [
   'EMAIL_NOT_VERIFIED',
   'INVALID_OTP',
   'OTP_EXPIRED',
+  'INITIAL_SETUP_FAILED',
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -131,6 +132,10 @@ export const errorMap = {
   [ErrorTypeEnum.enum.OTP_EXPIRED]: {
     httpStatusCode: STATUS_CODES.BAD_REQUEST,
     body: { code: 'otp_expired', message: 'OTP expired' },
+  },
+  [ErrorTypeEnum.enum.INITIAL_SETUP_FAILED]: {
+    httpStatusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
+    body: { code: 'initial_setup_failed', message: 'Initial setup failed' },
   },
 };
 

@@ -23,7 +23,7 @@ const parseUser = async (req: Request, _: Response, next: NextFunction, tokenTyp
       user = await UserService.getUserById(userId);
     }
 
-    req.body.authUser = user;
+    req.body.loggedInUser = user;
 
     next();
   } catch (error) {
