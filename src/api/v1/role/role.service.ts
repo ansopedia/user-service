@@ -1,11 +1,10 @@
-import { ZodError } from 'zod';
 import { RoleDAL } from './role.dal';
 import { RoleDto } from './role.dto';
 import { createRole, createRoleSchema, getRole } from './role.validation';
 import { ErrorTypeEnum } from '@/constants';
 
 export class RoleService {
-  static async createRole(userData: createRole): Promise<getRole | ZodError> {
+  static async createRole(userData: createRole): Promise<getRole> {
     const validRoleData = createRoleSchema.parse(userData);
 
     const isRoleExist = await RoleDAL.getRoleByName(validRoleData.name);

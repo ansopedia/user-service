@@ -1,11 +1,10 @@
-import { ZodError } from 'zod';
 import { createPermission, createPermissionSchema, getPermission } from './permission.validation';
 import { ErrorTypeEnum } from '@/constants';
 import { PermissionDAL } from './permission.dal';
 import { PermissionDto } from './permission.dto';
 
 export class PermissionService {
-  static async createPermission(createPermission: createPermission): Promise<getPermission | ZodError> {
+  static async createPermission(createPermission: createPermission): Promise<getPermission> {
     const validPermissionData = createPermissionSchema.parse(createPermission);
 
     const isPermissionExist = await PermissionDAL.getPermissionByName(validPermissionData.name);

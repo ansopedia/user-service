@@ -12,7 +12,6 @@ export class OtpService {
     let message: string = success.OTP_SENT;
 
     const user = await UserService.getUserByEmail(email as string);
-    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     if (otpType === 'verifyEmail') {
       if (user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED);
@@ -36,8 +35,6 @@ export class OtpService {
     const { otp, email, otpType } = otpVerifyEvent.parse(otpEvents);
 
     const user = await UserService.getUserByEmail(email as string);
-
-    if (!user) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
 
     const isMasterOTP = envConstants.MASTER_OTP === otp;
 
