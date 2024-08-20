@@ -3,7 +3,7 @@ import { OtpEvent, otpEvent } from '../otp.validation';
 
 describe('Test OTP validation', () => {
   const otpTypes: OtpEvent = {
-    otpType: 'verifyEmail',
+    otpType: 'sendEmailVerificationOTP',
     email: 'example@gmail.com',
   };
 
@@ -12,7 +12,7 @@ describe('Test OTP validation', () => {
     expect(res.success).toBe(true);
   });
 
-  it('should throw error if email is not provided with otpType of "verifyEmail"', () => {
+  it('should throw error if email is not provided with otpType of "sendEmailVerificationOTP"', () => {
     const otpTypesWithoutEmail = { ...otpTypes, email: undefined };
 
     try {

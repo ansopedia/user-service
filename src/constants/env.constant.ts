@@ -20,6 +20,7 @@ const envSchema = z.object({
   DEFAULT_SUPER_ADMIN_USERNAME: username.readonly(),
   DEFAULT_SUPER_ADMIN_EMAIL: z.string().email().readonly(),
   DEFAULT_SUPER_ADMIN_PASSWORD: password.readonly(),
+  NOTIFICATION_SERVICE_BASE_URL: z.string().url().readonly(),
 });
 
 export const envConstants = envSchema.parse(process.env);

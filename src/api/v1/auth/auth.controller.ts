@@ -4,11 +4,15 @@ import { sendResponse } from '@/utils';
 import { STATUS_CODES } from '@/constants';
 import { AuthService } from './auth.service';
 import { AuthToken } from './auth.validation';
+import { getServerURL } from '../../../utils/helper.util';
 
 export class AuthController {
   public static async signUp(req: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.signUp(req.body);
+      const serverURL = getServerURL(req);
+
+      await AuthService.signUp(req.body, serverURL);
+
       sendResponse({
         response: res,
         message: success.SIGN_UP_SUCCESS,

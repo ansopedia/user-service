@@ -23,12 +23,12 @@ export const jwtRefreshTokenSchema = z.object({
 
 export const sendOtpSchema = z.object({
   payload: userSchema.shape.email,
-  eventType: z.enum(['signUp', 'resetPassword', 'verifyEmail']),
+  eventType: z.enum(['signUp', 'resetPassword', 'sendEmailVerificationOTP']),
 });
 
 export const loginSchema = userSchema.pick({ email: true, password: true });
 
-export const eventTypes = z.enum(['verifyEmail', 'verifyPhoneNumber']);
+export const eventTypes = z.enum(['sendEmailVerificationOTP', 'verifyPhoneNumber']);
 
 export type JwtAccessToken = z.infer<typeof jwtAccessTokenSchema>;
 export type JwtRefreshToken = z.infer<typeof jwtRefreshTokenSchema>;

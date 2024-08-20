@@ -4,21 +4,30 @@ import { success } from '../auth/auth.constant';
 import { UserService } from '../user/user.service';
 import { OtpDAL } from './otp.dal';
 import { OtpEvent, otpEvent, OtpVerifyEvent, otpVerifyEvent } from './otp.validation';
+import { notificationService } from '@/services/notification.services';
 
 export class OtpService {
-  public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string }> {
+  public static async sendOtp(otpEvents: OtpEvent, serverURL: string): Promise<{ message: string }> {
     const { otpType, email } = otpEvent.parse(otpEvents);
-    const otp = generateOTP();
-    let message: string = success.OTP_SENT;
 
+    const otp = generateOTP();
+
+    let message: string = success.OTP_SENT;
     const user = await UserService.getUserByEmail(email as string);
 
-    if (otpType === 'verifyEmail') {
+    if (otpType === 'sendEmailVerificationOTP') {
       if (user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED);
 
       message = success.VERIFICATION_EMAIL_SENT;
 
-      // TODO:  EmailService.sendVerificationEmail({ email, otp });
+      notificationService.sendEmail(
+        {
+          to: email as string,
+          eventType: 'sendEmailVerificationOTP',
+          payload: { otp },
+        },
+        serverURL,
+      );
     }
 
     await OtpDAL.replaceOtpForUser({
@@ -51,7 +60,7 @@ export class OtpService {
 
     if (otpData.expiryTime < new Date()) throw new Error(ErrorTypeEnum.enum.OTP_EXPIRED);
 
-    if (otpType === 'verifyEmail') {
+    if (otpType === 'sendEmailVerificationOTP') {
       await UserService.updateUser(user.id, { isEmailVerified: true });
     }
 
