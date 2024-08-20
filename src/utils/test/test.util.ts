@@ -8,7 +8,7 @@ import { Login } from '../../api/v1/auth/auth.validation';
 
 export async function requestOTP(email: string): Promise<Response> {
   return supertest(app).post('/api/v1/otp').send({
-    otpType: 'verifyEmail',
+    otpType: 'sendEmailVerificationOTP',
     email,
   });
 }
@@ -29,13 +29,13 @@ export function expectUserRetrievalSuccess(response: Response): void {
 export async function retrieveOTP(userId: string): Promise<OtpSchema | null> {
   return OtpDAL.getOtp({
     userId: userId,
-    otpType: 'verifyEmail',
+    otpType: 'sendEmailVerificationOTP',
   });
 }
 
 export async function verifyOTP(otp: OTP | undefined, email: string): Promise<Response> {
   return supertest(app).post('/api/v1/otp/verify').send({
-    otpType: 'verifyEmail',
+    otpType: 'sendEmailVerificationOTP',
     email,
     otp,
   });

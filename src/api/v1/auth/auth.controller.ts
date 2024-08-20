@@ -9,6 +9,7 @@ export class AuthController {
   public static async signUp(req: Request, res: Response, next: NextFunction) {
     try {
       await AuthService.signUp(req.body);
+
       sendResponse({
         response: res,
         message: success.SIGN_UP_SUCCESS,

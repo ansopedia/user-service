@@ -9,6 +9,7 @@ import { connectDB } from '@/db/connection';
 import { errorHandler } from '@/middlewares';
 import { routes } from '@/routes';
 import { setupInitialRolesAndPermissions, setupInitialUserRole } from './script/initialize';
+import { addAxiosHeadersMiddleware } from './middlewares/axiosHeader';
 
 const { APP_PORT, INITIAL_SETUP_DONE } = envConstants;
 
@@ -47,6 +48,7 @@ if (envConstants.NODE_ENV !== 'test') {
 
 app.use(express.json());
 app.use(pinoHttp({ logger }));
+app.use(addAxiosHeadersMiddleware);
 
 app.use('/api/v1', routes);
 
