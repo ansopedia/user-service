@@ -7,7 +7,7 @@ import { OtpEvent, otpEvent, OtpVerifyEvent, otpVerifyEvent } from './otp.valida
 import { notificationService } from '@/services/notification.services';
 
 export class OtpService {
-  public static async sendOtp(otpEvents: OtpEvent, serverURL: string): Promise<{ message: string }> {
+  public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string }> {
     const { otpType, email } = otpEvent.parse(otpEvents);
 
     const otp = generateOTP();
@@ -20,14 +20,11 @@ export class OtpService {
 
       message = success.VERIFICATION_EMAIL_SENT;
 
-      notificationService.sendEmail(
-        {
-          to: email as string,
-          eventType: 'sendEmailVerificationOTP',
-          payload: { otp },
-        },
-        serverURL,
-      );
+      notificationService.sendEmail({
+        to: user.email,
+        eventType: 'sendEmailVerificationOTP',
+        payload: { otp },
+      });
     }
 
     await OtpDAL.replaceOtpForUser({

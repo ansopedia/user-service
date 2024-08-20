@@ -3,15 +3,9 @@ import { EmailNotification } from './notificaiton.validation';
 import { logger } from '../utils';
 import { envConstants } from '../constants';
 
-const sendEmail = async (body: EmailNotification, serverURL: string) => {
+const sendEmail = async (body: EmailNotification) => {
   try {
-    const config = {
-      headers: {
-        Origin: serverURL,
-      },
-    };
-
-    await axios.post(`${envConstants.NOTIFICATION_SERVICE_BASE_URL}/api/v1/emails`, body, config);
+    await axios.post(`${envConstants.NOTIFICATION_SERVICE_BASE_URL}/api/v1/emails`, body);
   } catch (error) {
     logger.error(`Error while sending email, ${error}`);
   }

@@ -8,10 +8,10 @@ import { loginSchema, Login, AuthToken } from './auth.validation';
 import { OtpService } from '../otp/otp.service';
 
 export class AuthService {
-  public static async signUp(userData: CreateUser, serverURL: string) {
+  public static async signUp(userData: CreateUser) {
     await UserService.createUser(userData);
 
-    await OtpService.sendOtp({ email: userData.email, otpType: 'sendEmailVerificationOTP' }, serverURL);
+    await OtpService.sendOtp({ email: userData.email, otpType: 'sendEmailVerificationOTP' });
   }
 
   public static async signInWithEmailAndPassword(userData: Login): Promise<AuthToken> {
