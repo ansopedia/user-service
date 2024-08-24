@@ -4,6 +4,7 @@ import { hashPassword } from '@/utils';
 
 const UserSchema = new Schema<User>(
   {
+    googleId: { type: String },
     username: {
       type: String,
       required: true,
@@ -22,7 +23,6 @@ const UserSchema = new Schema<User>(
     },
     password: {
       type: String,
-      required: true,
       trim: true,
       minlength: 8,
     },
