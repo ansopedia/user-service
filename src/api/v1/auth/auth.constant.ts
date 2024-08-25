@@ -6,4 +6,5 @@ export const success = {
   VERIFICATION_EMAIL_SENT: 'Verification email sent',
   OTP_SENT: 'OTP sent',
   OTP_VERIFIED: 'OTP verified',
+  TOKEN_VERIFIED: 'Access token is verified',
 };

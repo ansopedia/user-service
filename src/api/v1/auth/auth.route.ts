@@ -7,7 +7,8 @@ const router = Router();
 router.post('/auth/sign-up', AuthController.signUp);
 router.post('/auth/login', AuthController.signInWithEmailAndPassword);
 router.post('/auth/logout', validateAccessToken, AuthController.signOut);
-router.post('/auth/token', validateRefreshToken, AuthController.renewToken);
+router.post('/auth/renew-token', validateRefreshToken, AuthController.renewToken);
+router.post('/auth/verify-token', validateAccessToken, AuthController.verifyToken);
 
 router.get('/auth/google', signInWithGoogle);
 router.get('/auth/google/callback', signInWithGoogleCallback, AuthController.signInWithGoogleCallback);

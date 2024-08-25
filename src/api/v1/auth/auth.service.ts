@@ -1,5 +1,5 @@
 import { ErrorTypeEnum } from '@/constants';
-import { comparePassword, generateAccessToken, generateRefreshToken } from '@/utils';
+import { comparePassword, generateAccessToken, generateRefreshToken, validateMongoId } from '@/utils';
 import { UserDAL } from '../user/user.dal';
 import { UserService } from '../user/user.service';
 import { CreateUser, User } from '../user/user.validation';
@@ -81,7 +81,17 @@ export class AuthService {
   }
 
   public static async signOut(userId: string) {
+    validateMongoId.parse(userId);
     return await AuthDAL.deleteAuth(userId);
+  }
+
+  public static async verifyToken(userId: string) {
+    validateMongoId.parse(userId);
+    const user = await AuthDAL.getAuthByUserId(userId);
+
+    if (!user) throw new Error(ErrorTypeEnum.enum.UNAUTHORIZED);
+
+    return user;
   }
 
   public static async renewToken({ id: userId }: User): Promise<AuthToken> {

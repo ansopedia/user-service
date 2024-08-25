@@ -75,10 +75,23 @@ export class AuthController {
 
   public static async signOut(req: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.signOut(req.body.userId);
+      await AuthService.signOut(req.body.loggedInUser.id);
       sendResponse({
         response: res,
         message: success.LOGGED_OUT_SUCCESSFULLY,
+        statusCode: STATUS_CODES.OK,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async verifyToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      await AuthService.verifyToken(req.body.loggedInUser.id);
+      sendResponse({
+        response: res,
+        message: success.TOKEN_VERIFIED,
         statusCode: STATUS_CODES.OK,
       });
     } catch (error) {
