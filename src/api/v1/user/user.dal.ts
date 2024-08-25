@@ -23,6 +23,10 @@ export class UserDAL {
     return await UserModel.findById(userId);
   }
 
+  static async getUserByGoogleId(googleId: string): Promise<User | null> {
+    return await UserModel.findOne({ googleId });
+  }
+
   static async softDeleteUser(userId: string): Promise<User | null> {
     return await UserModel.findByIdAndUpdate(userId, { isDeleted: true }, { new: true });
   }

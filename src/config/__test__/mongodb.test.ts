@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { connectDB } from '../connection';
+import { connectDB } from '../mongodb';
 
 describe('Test Connection', () => {
   beforeEach(async () => {

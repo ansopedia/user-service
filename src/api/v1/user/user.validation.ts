@@ -5,13 +5,14 @@ export const username = z
   .min(3, 'username must be at least 3 characters')
   .max(18, 'username must be at most 18 characters')
   .regex(/^[a-z]/i, 'username must start with a letter')
-  .regex(/^[a-z0-9]*$/i, 'username can only contain alphanumeric characters')
+  .regex(/^[a-z0-9-_]*$/i, 'username can only contain alphanumeric characters, hyphens, and underscores')
   .transform((val) => val.toLowerCase().trim());
 
 export const password = z.string().min(8, 'password must be at least 8 characters');
 
 export const userSchema = z.object({
   id: z.string().uuid(),
+  googleId: z.string().optional(),
   username: username,
   email: z.string().email().trim().toLowerCase(),
   password: password,
@@ -22,8 +23,23 @@ export const userSchema = z.object({
   updatedAt: z.date(),
 });
 
-export const createUserSchema = userSchema
-  .omit({ id: true, createdAt: true, updatedAt: true, confirmPassword: true })
+const createUserWithGoogleSchema = userSchema.omit({
+  password: true,
+  confirmPassword: true,
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  isDeleted: true,
+});
+
+const createUserWithEmailAndPasswordSchema = userSchema
+  .omit({
+    googleId: true,
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    isDeleted: true,
+  })
   .extend({
     confirmPassword: z.string().min(8),
   })
@@ -31,6 +47,8 @@ export const createUserSchema = userSchema
     message: 'Confirm password does not match password',
     path: ['confirmPassword'],
   });
+
+export const createUserSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
 
 export const validateUsername = userSchema.pick({ username: true });
 export const validateEmail = z
@@ -56,3 +74,10 @@ export type CreateUser = z.infer<typeof createUserSchema>;
 export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type GetUser = z.infer<typeof getUserSchema>;
 export type Email = z.infer<typeof validateEmail>;
+
+export const validateCreateUser = (data: Partial<CreateUser>) => {
+  if ('password' in data && typeof data.password === 'string') {
+    return createUserWithEmailAndPasswordSchema.safeParse(data);
+  }
+  return createUserWithGoogleSchema.safeParse(data);
+};

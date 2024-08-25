@@ -110,7 +110,9 @@ describe('Auth Test', () => {
 
     const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0].replace('refresh-token=', '');
 
-    const response = await supertest(app).post('/api/v1/auth/token').set('authorization', `Bearer ${refreshToken}`);
+    const response = await supertest(app)
+      .post('/api/v1/auth/renew-token')
+      .set('authorization', `Bearer ${refreshToken}`);
 
     expect(response.statusCode).toBe(STATUS_CODES.OK);
     expect(response.body).toMatchObject({
@@ -121,7 +123,7 @@ describe('Auth Test', () => {
   it('should respond with 401 for invalid token', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_TOKEN];
 
-    const response = await supertest(app).post('/api/v1/auth/token').set('authorization', 'Bearer invalidToken');
+    const response = await supertest(app).post('/api/v1/auth/renew-token').set('authorization', 'Bearer invalidToken');
 
     expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
     expect(response.body).toMatchObject({
@@ -136,7 +138,9 @@ describe('Auth Test', () => {
 
     // Call the function that uses verifyToken with an invalid token
     const invalidToken = 'invalidToken';
-    const response = await supertest(app).post('/api/v1/auth/token').set('authorization', `Bearer ${invalidToken}`);
+    const response = await supertest(app)
+      .post('/api/v1/auth/renew-token')
+      .set('authorization', `Bearer ${invalidToken}`);
 
     // Expect an error to be thrown
     expect(response.status).toBe(STATUS_CODES.UNAUTHORIZED);
@@ -160,7 +164,9 @@ describe('Auth Test', () => {
     // Mock verifyToken to throw a TokenExpiredError
     const refreshToken = sign({ id: newUserRes.body.user.id }, envConstants.JWT_REFRESH_SECRET, { expiresIn: '0s' });
 
-    const response = await supertest(app).post('/api/v1/auth/token').set('authorization', `Bearer ${refreshToken}`);
+    const response = await supertest(app)
+      .post('/api/v1/auth/renew-token')
+      .set('authorization', `Bearer ${refreshToken}`);
 
     expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
     expect(response.body).toMatchObject({

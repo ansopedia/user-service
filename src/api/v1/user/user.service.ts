@@ -9,13 +9,22 @@ import {
   validateEmail,
   validateUsername,
 } from './user.validation';
-import { ErrorTypeEnum } from '../../../constants/errorTypes.constant';
-import { validateMongoId } from '../../../utils/validation.util';
 import { RoleService } from '../role/role.service';
-import { ROLES } from '../../../constants/rbac.constants';
 import { UserRoleService } from '../userRole/user-role.service';
+import { generateRandomUsername, validateMongoId } from '@/utils';
+import { ErrorTypeEnum, ROLES } from '@/constants';
 
 export class UserService {
+  static async generateUniqueUsername(username: string): Promise<string> {
+    const user = await UserDAL.getUserByUsername(username);
+
+    if (!user) return username;
+
+    const newUsername = generateRandomUsername();
+
+    return await this.generateUniqueUsername(newUsername);
+  }
+
   static async createUser(userData: CreateUser): Promise<GetUser> {
     const validUserData = createUserSchema.parse(userData);
 
@@ -59,6 +68,14 @@ export class UserService {
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     return UserDto(user).getUser();
+  }
+
+  static async getUserByGoogleId(googleId: string): Promise<GetUser | null> {
+    const user = await UserDAL.getUserByGoogleId(googleId);
+
+    if (user) return UserDto(user).getUser();
+
+    return null;
   }
 
   static async getUserByEmail(email: Email): Promise<GetUser> {

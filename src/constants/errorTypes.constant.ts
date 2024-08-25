@@ -22,7 +22,7 @@ const errorType = [
   'TOKEN_EXPIRED',
   'INVALID_TOKEN',
   'ORIGIN_IS_UNDEFINED',
-  'NOT_ALLOWED',
+  'ORIGIN_NOT_ALLOWED',
   'EMAIL_ALREADY_VERIFIED',
   'EMAIL_NOT_VERIFIED',
   'OTP_NOT_REQUESTED',
@@ -114,9 +114,9 @@ export const errorMap = {
     httpStatusCode: STATUS_CODES.BAD_REQUEST,
     body: { code: 'origin_is_undefined', message: 'Origin is undefined' },
   },
-  [ErrorTypeEnum.enum.NOT_ALLOWED]: {
+  [ErrorTypeEnum.enum.ORIGIN_NOT_ALLOWED]: {
     httpStatusCode: STATUS_CODES.FORBIDDEN,
-    body: { code: 'not_allowed', message: 'Not allowed' },
+    body: { code: 'origin_not_allowed', message: 'CORS error: Origin not allowed' },
   },
   [ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED]: {
     httpStatusCode: STATUS_CODES.CONFLICT,
