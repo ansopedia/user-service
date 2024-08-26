@@ -6,12 +6,12 @@ const UserRoleSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'User',
       required: true,
     },
     roleId: {
       type: Schema.Types.ObjectId,
-      ref: 'role',
+      ref: 'Role',
       required: true,
     },
   },

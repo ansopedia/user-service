@@ -1,8 +1,8 @@
 import { NextFunction, Response, Request } from 'express';
 import { checkBearerToken, verifyToken } from '@/utils/jwt.util';
 import { ErrorTypeEnum } from '@/constants';
-import { UserService } from '@/api/v1/user/user.service';
-import { JwtAccessToken, JwtRefreshToken } from '@/api/v1/auth/auth.validation';
+import { Auth, JwtAccessToken, JwtRefreshToken } from '@/api/v1/auth/auth.validation';
+import { AuthService } from '@/api/v1/auth/auth.service';
 
 const parseUser = async (req: Request, _: Response, next: NextFunction, tokenType: 'access' | 'refresh') => {
   try {
@@ -14,16 +14,16 @@ const parseUser = async (req: Request, _: Response, next: NextFunction, tokenTyp
 
     if (token === false) throw new Error(ErrorTypeEnum.enum.INVALID_ACCESS);
 
-    let user;
+    let user: Auth;
     if (tokenType === 'refresh') {
       const { id }: JwtRefreshToken = await verifyToken<JwtRefreshToken>(token, tokenType);
-      user = await UserService.getUserById(id);
+      user = await AuthService.verifyToken(id);
     } else {
       const { userId }: JwtAccessToken = await verifyToken<JwtAccessToken>(token, tokenType);
-      user = await UserService.getUserById(userId);
+      user = await AuthService.verifyToken(userId);
     }
 
-    req.body.loggedInUser = user;
+    req.body.loggedInUser = { ...user, userId: user.userId.toString() };
 
     next();
   } catch (error) {

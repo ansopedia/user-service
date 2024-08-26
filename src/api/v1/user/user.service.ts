@@ -11,7 +11,7 @@ import {
 } from './user.validation';
 import { RoleService } from '../role/role.service';
 import { UserRoleService } from '../userRole/user-role.service';
-import { generateRandomUsername, validateMongoId } from '@/utils';
+import { generateRandomUsername, validateObjectId } from '@/utils';
 import { ErrorTypeEnum, ROLES } from '@/constants';
 
 export class UserService {
@@ -61,7 +61,7 @@ export class UserService {
   }
 
   static async getUserById(userId: string): Promise<GetUser> {
-    const validateData = validateMongoId.parse(userId);
+    const validateData = validateObjectId(userId);
 
     const user = await UserDAL.getUserById(validateData);
 
@@ -89,7 +89,7 @@ export class UserService {
   }
 
   static async softDeleteUser(userId: string): Promise<GetUser> {
-    const validateData = validateMongoId.parse(userId);
+    const validateData = validateObjectId(userId);
 
     const user = await UserDAL.softDeleteUser(validateData);
 
@@ -99,7 +99,7 @@ export class UserService {
   }
 
   static async restoreUser(userId: string): Promise<GetUser> {
-    const validateData = validateMongoId.parse(userId);
+    const validateData = validateObjectId(userId);
 
     const user = await UserDAL.restoreUser(validateData);
 
@@ -109,7 +109,7 @@ export class UserService {
   }
 
   static async updateUser(userId: string, userData: UpdateUser): Promise<GetUser> {
-    const validateData = validateMongoId.parse(userId);
+    const validateData = validateObjectId(userId);
 
     const user = await UserDAL.getUserById(validateData);
 

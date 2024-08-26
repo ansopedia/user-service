@@ -7,6 +7,10 @@ export class UserRoleDAL {
     return rolePermission.save();
   }
 
+  static async getUserRoles(userId: string) {
+    return await UserRoleModel.find({ userId });
+  }
+
   static async exists(userRole: UserRole) {
     return await UserRoleModel.exists(userRole);
   }

@@ -75,7 +75,7 @@ export class AuthController {
 
   public static async signOut(req: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.signOut(req.body.loggedInUser.id);
+      await AuthService.signOut(req.body.loggedInUser.userId);
       sendResponse({
         response: res,
         message: success.LOGGED_OUT_SUCCESSFULLY,
@@ -88,7 +88,7 @@ export class AuthController {
 
   public static async verifyToken(req: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.verifyToken(req.body.loggedInUser.id);
+      await AuthService.verifyToken(req.body.loggedInUser.userId);
       sendResponse({
         response: res,
         message: success.TOKEN_VERIFIED,
@@ -101,7 +101,7 @@ export class AuthController {
 
   public static async renewToken(req: Request, res: Response, next: NextFunction) {
     try {
-      const { accessToken, refreshToken }: AuthToken = await AuthService.renewToken(req.body.loggedInUser);
+      const { accessToken, refreshToken }: AuthToken = await AuthService.renewToken(req.body.loggedInUser.userId);
 
       res.header('Access-Control-Expose-Headers', 'set-cookie, authorization');
 

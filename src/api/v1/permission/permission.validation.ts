@@ -1,5 +1,5 @@
-import { Types } from 'mongoose';
 import { z } from 'zod';
+import { objectIdSchema } from '../../../utils';
 
 export enum PermissionCategory {
   'USER_MANAGEMENT' = 'USER_MANAGEMENT',
@@ -10,7 +10,7 @@ export enum PermissionCategory {
 }
 
 const permissionSchema = z.object({
-  id: z.string().uuid(),
+  id: objectIdSchema,
   name: z
     .string()
     .min(3, 'Name must be at least 3 characters long.')
@@ -22,10 +22,8 @@ const permissionSchema = z.object({
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
-  createdBy: z.string().refine((value) => Types.ObjectId.isValid(value), {
-    message: 'createdBy must be a valid MongoDB ObjectId',
-  }),
-  updatedBy: z.string().uuid(),
+  createdBy: objectIdSchema,
+  updatedBy: objectIdSchema,
 });
 
 export const createPermissionSchema = permissionSchema.omit({
@@ -37,7 +35,6 @@ export const createPermissionSchema = permissionSchema.omit({
 
 export const validatePermissionName = permissionSchema.pick({ name: true });
 
-export const updatePermissionSchema = permissionSchema.partial({ name: true, description: true, updatedBy: true });
 export const getPermissionSchema = permissionSchema.omit({ createdBy: true, updatedBy: true, isDeleted: true });
 
 export type Permission = z.infer<typeof permissionSchema>;

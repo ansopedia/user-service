@@ -17,6 +17,7 @@ const errorType = [
   'USER_ROLE_ALREADY_EXISTS',
   'INVALID_CREDENTIALS',
   'UNAUTHORIZED',
+  'FORBIDDEN',
   'NO_AUTH_HEADER',
   'INVALID_ACCESS',
   'TOKEN_EXPIRED',
@@ -93,6 +94,10 @@ export const errorMap = {
   [ErrorTypeEnum.enum.UNAUTHORIZED]: {
     httpStatusCode: STATUS_CODES.UNAUTHORIZED,
     body: { code: 'unauthorized', message: 'Unauthorized' },
+  },
+  [ErrorTypeEnum.enum.FORBIDDEN]: {
+    httpStatusCode: STATUS_CODES.FORBIDDEN,
+    body: { code: 'forbidden', message: 'Forbidden' },
   },
   [ErrorTypeEnum.enum.NO_AUTH_HEADER]: {
     httpStatusCode: STATUS_CODES.UNAUTHORIZED,

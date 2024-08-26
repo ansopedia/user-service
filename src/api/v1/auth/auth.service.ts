@@ -1,10 +1,10 @@
 import { ErrorTypeEnum } from '@/constants';
-import { comparePassword, generateAccessToken, generateRefreshToken, validateMongoId } from '@/utils';
+import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from '@/utils';
 import { UserDAL } from '../user/user.dal';
 import { UserService } from '../user/user.service';
-import { CreateUser, User } from '../user/user.validation';
+import { CreateUser } from '../user/user.validation';
 import { AuthDAL } from './auth.dal';
-import { loginSchema, Login, AuthToken } from './auth.validation';
+import { loginSchema, Login, AuthToken, Auth } from './auth.validation';
 import { OtpService } from '../otp/otp.service';
 import { GoogleUser } from '@/types/passport-google';
 
@@ -81,12 +81,12 @@ export class AuthService {
   }
 
   public static async signOut(userId: string) {
-    validateMongoId.parse(userId);
+    validateObjectId(userId);
     return await AuthDAL.deleteAuth(userId);
   }
 
-  public static async verifyToken(userId: string) {
-    validateMongoId.parse(userId);
+  public static async verifyToken(userId: string): Promise<Auth> {
+    validateObjectId(userId);
     const user = await AuthDAL.getAuthByUserId(userId);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.UNAUTHORIZED);
@@ -94,7 +94,7 @@ export class AuthService {
     return user;
   }
 
-  public static async renewToken({ id: userId }: User): Promise<AuthToken> {
+  public static async renewToken(userId: string): Promise<AuthToken> {
     const newRefreshToken = generateRefreshToken({ id: userId });
     const newAccessToken = generateAccessToken({ userId });
 
