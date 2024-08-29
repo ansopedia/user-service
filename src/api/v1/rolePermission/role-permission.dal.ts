@@ -10,8 +10,4 @@ export class RolePermissionDAL {
   static async exists(rolePermissionData: RolePermission) {
     return await RolePermissionModel.exists(rolePermissionData);
   }
-
-  static async getPermissionsByRoleIds(roleIds: string[]) {
-    return await RolePermissionModel.find({ roleId: { $in: roleIds } });
-  }
 }

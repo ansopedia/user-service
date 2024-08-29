@@ -81,3 +81,30 @@ export const validateCreateUser = (data: Partial<CreateUser>) => {
   }
   return createUserWithGoogleSchema.safeParse(data);
 };
+
+export interface UserRolePermission {
+  _id: string;
+  username: string;
+  email: string;
+  roles: Role[];
+  allPermissions: AllPermission[];
+}
+
+export interface Role {
+  roleId: string;
+  roleName: string;
+  roleDescription: string;
+  permissions: Permission[];
+}
+
+export interface Permission {
+  _id: string;
+  name: string;
+  description: string;
+}
+
+export interface AllPermission {
+  _id: string;
+  name: string;
+  description: string;
+}

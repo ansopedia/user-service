@@ -1,5 +1,6 @@
+import mongoose from 'mongoose';
 import { UserModel } from './user.model';
-import { CreateUser, UpdateUser, User } from './user.validation';
+import { CreateUser, UpdateUser, User, UserRolePermission } from './user.validation';
 
 export class UserDAL {
   static async createUser(userData: CreateUser): Promise<User> {
@@ -37,5 +38,98 @@ export class UserDAL {
 
   static async updateUser(userId: string, userData: UpdateUser): Promise<User | null> {
     return await UserModel.findByIdAndUpdate(userId, userData, { new: true });
+  }
+
+  static async getUserRolesAndPermissionsByUserId(userId: string): Promise<UserRolePermission> {
+    const userRolePermissions = await UserModel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: 'userroles',
+          localField: '_id',
+          foreignField: 'userId',
+          as: 'userRoles',
+          pipeline: [
+            {
+              $lookup: {
+                from: 'roles',
+                localField: 'roleId',
+                foreignField: '_id',
+                as: 'roleDetails',
+              },
+            },
+            {
+              $unwind: '$roleDetails',
+            },
+            {
+              $lookup: {
+                from: 'rolepermissions',
+                localField: 'roleId',
+                foreignField: 'roleId',
+                as: 'userPermissions',
+                pipeline: [
+                  {
+                    $lookup: {
+                      from: 'permissions',
+                      localField: 'permissionId',
+                      foreignField: '_id',
+                      as: 'permissions',
+                      pipeline: [
+                        {
+                          $project: {
+                            name: 1,
+                            description: 1,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    $unwind: '$permissions',
+                  },
+                  {
+                    $replaceRoot: {
+                      newRoot: '$permissions',
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                roleId: 1,
+                roleName: '$roleDetails.name',
+                roleDescription: '$roleDetails.description',
+                permissions: '$userPermissions',
+              },
+            },
+          ],
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          username: 1,
+          email: 1,
+          roles: '$userRoles',
+          allPermissions: {
+            $reduce: {
+              input: '$userRoles',
+              initialValue: [],
+              in: {
+                $setUnion: ['$$value', '$$this.permissions'],
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    return userRolePermissions[0];
   }
 }
