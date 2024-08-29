@@ -6,12 +6,12 @@ const RolePermissionSchema = new Schema(
   {
     roleId: {
       type: Schema.Types.ObjectId,
-      ref: 'role',
+      ref: 'Role',
       required: true,
     },
     permissionId: {
       type: Schema.Types.ObjectId,
-      ref: 'permission',
+      ref: 'Permission',
       required: true,
     },
   },

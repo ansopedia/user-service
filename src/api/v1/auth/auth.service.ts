@@ -30,14 +30,7 @@ export class AuthService {
 
     if (!user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED);
 
-    const userId = user.id;
-
-    const refreshToken = generateRefreshToken({ id: userId });
-    const accessToken = generateAccessToken({ userId });
-
-    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken });
-
-    return { userId, accessToken, refreshToken };
+    return await this.generateAccessAndRefreshToken(user.id);
   }
 
   public static async signInWithGoogle(googleUser: GoogleUser): Promise<AuthToken> {
@@ -71,13 +64,7 @@ export class AuthService {
       }
     }
 
-    const userId = userRecord.id;
-    const refreshToken = generateRefreshToken({ id: userId });
-    const accessToken = generateAccessToken({ userId });
-
-    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken });
-
-    return { userId: googleId, accessToken, refreshToken };
+    return await this.generateAccessAndRefreshToken(userRecord.id);
   }
 
   public static async signOut(userId: string) {
@@ -94,12 +81,14 @@ export class AuthService {
     return user;
   }
 
-  public static async renewToken(userId: string): Promise<AuthToken> {
-    const newRefreshToken = generateRefreshToken({ id: userId });
-    const newAccessToken = generateAccessToken({ userId });
+  static async generateAccessAndRefreshToken(userId: string) {
+    validateObjectId(userId);
 
-    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken: newRefreshToken });
+    const refreshToken = generateRefreshToken({ id: userId });
+    const accessToken = generateAccessToken({ userId });
 
-    return { userId, accessToken: newAccessToken, refreshToken: newRefreshToken };
+    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken });
+
+    return { userId, accessToken, refreshToken };
   }
 }
