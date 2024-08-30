@@ -7,10 +7,19 @@ import { AuthToken } from './auth.validation';
 import { GoogleUser } from '@/types/passport-google';
 
 export class AuthController {
+  private static setTokenCookies(res: Response, accessToken: string, refreshToken: string) {
+    res.header('Access-Control-Expose-Headers', 'set-cookie, authorization');
+    res.setHeader('authorization', accessToken);
+    res.cookie('refresh-token', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+  }
+
   public static async signUp(req: Request, res: Response, next: NextFunction) {
     try {
       await AuthService.signUp(req.body);
-
       sendResponse({
         response: res,
         message: success.SIGN_UP_SUCCESS,
@@ -24,16 +33,7 @@ export class AuthController {
   public static async signInWithEmailAndPassword(req: Request, res: Response, next: NextFunction) {
     try {
       const { accessToken, refreshToken, userId }: AuthToken = await AuthService.signInWithEmailAndPassword(req.body);
-
-      res.header('Access-Control-Expose-Headers', 'set-cookie, authorization');
-
-      res.setHeader('authorization', accessToken);
-      res.cookie('refresh-token', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-      });
-
+      AuthController.setTokenCookies(res, accessToken, refreshToken);
       sendResponse({
         response: res,
         message: success.LOGGED_IN_SUCCESSFULLY,
@@ -48,17 +48,9 @@ export class AuthController {
   public static async signInWithGoogleCallback(req: Request, res: Response, next: NextFunction) {
     try {
       const googleUser = req.user as GoogleUser;
-
       const { accessToken, refreshToken } = await AuthService.signInWithGoogle(googleUser);
 
-      res.header('Access-Control-Expose-Headers', 'set-cookie, authorization');
-
-      res.cookie('refresh-token', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-      });
-
+      AuthController.setTokenCookies(res, accessToken, refreshToken);
       res.cookie('access-token', accessToken, {
         httpOnly: false,
         secure: true,
@@ -75,7 +67,7 @@ export class AuthController {
 
   public static async signOut(req: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.signOut(req.body.loggedInUser.id);
+      await AuthService.signOut(req.body.loggedInUser.userId);
       sendResponse({
         response: res,
         message: success.LOGGED_OUT_SUCCESSFULLY,
@@ -88,7 +80,7 @@ export class AuthController {
 
   public static async verifyToken(req: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.verifyToken(req.body.loggedInUser.id);
+      await AuthService.verifyToken(req.body.loggedInUser.userId);
       sendResponse({
         response: res,
         message: success.TOKEN_VERIFIED,
@@ -101,17 +93,10 @@ export class AuthController {
 
   public static async renewToken(req: Request, res: Response, next: NextFunction) {
     try {
-      const { accessToken, refreshToken }: AuthToken = await AuthService.renewToken(req.body.loggedInUser);
-
-      res.header('Access-Control-Expose-Headers', 'set-cookie, authorization');
-
-      res.setHeader('authorization', accessToken);
-      res.cookie('refresh-token', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-      });
-
+      const { accessToken, refreshToken }: AuthToken = await AuthService.generateAccessAndRefreshToken(
+        req.body.loggedInUser.userId,
+      );
+      AuthController.setTokenCookies(res, accessToken, refreshToken);
       sendResponse({
         response: res,
         message: success.REFRESH_TOKEN_SUCCESS,

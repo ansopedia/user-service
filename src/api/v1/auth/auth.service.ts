@@ -1,10 +1,10 @@
 import { ErrorTypeEnum } from '@/constants';
-import { comparePassword, generateAccessToken, generateRefreshToken, validateMongoId } from '@/utils';
+import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from '@/utils';
 import { UserDAL } from '../user/user.dal';
 import { UserService } from '../user/user.service';
-import { CreateUser, User } from '../user/user.validation';
+import { CreateUser } from '../user/user.validation';
 import { AuthDAL } from './auth.dal';
-import { loginSchema, Login, AuthToken } from './auth.validation';
+import { loginSchema, Login, AuthToken, Auth } from './auth.validation';
 import { OtpService } from '../otp/otp.service';
 import { GoogleUser } from '@/types/passport-google';
 
@@ -30,14 +30,7 @@ export class AuthService {
 
     if (!user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED);
 
-    const userId = user.id;
-
-    const refreshToken = generateRefreshToken({ id: userId });
-    const accessToken = generateAccessToken({ userId });
-
-    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken });
-
-    return { userId, accessToken, refreshToken };
+    return await this.generateAccessAndRefreshToken(user.id);
   }
 
   public static async signInWithGoogle(googleUser: GoogleUser): Promise<AuthToken> {
@@ -71,22 +64,16 @@ export class AuthService {
       }
     }
 
-    const userId = userRecord.id;
-    const refreshToken = generateRefreshToken({ id: userId });
-    const accessToken = generateAccessToken({ userId });
-
-    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken });
-
-    return { userId: googleId, accessToken, refreshToken };
+    return await this.generateAccessAndRefreshToken(userRecord.id);
   }
 
   public static async signOut(userId: string) {
-    validateMongoId.parse(userId);
+    validateObjectId(userId);
     return await AuthDAL.deleteAuth(userId);
   }
 
-  public static async verifyToken(userId: string) {
-    validateMongoId.parse(userId);
+  public static async verifyToken(userId: string): Promise<Auth> {
+    validateObjectId(userId);
     const user = await AuthDAL.getAuthByUserId(userId);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.UNAUTHORIZED);
@@ -94,12 +81,14 @@ export class AuthService {
     return user;
   }
 
-  public static async renewToken({ id: userId }: User): Promise<AuthToken> {
-    const newRefreshToken = generateRefreshToken({ id: userId });
-    const newAccessToken = generateAccessToken({ userId });
+  static async generateAccessAndRefreshToken(userId: string) {
+    validateObjectId(userId);
 
-    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken: newRefreshToken });
+    const refreshToken = generateRefreshToken({ id: userId });
+    const accessToken = generateAccessToken({ userId });
 
-    return { userId, accessToken: newAccessToken, refreshToken: newRefreshToken };
+    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken });
+
+    return { userId, accessToken, refreshToken };
   }
 }

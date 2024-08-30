@@ -1,4 +1,10 @@
+import { Types } from 'mongoose';
 import { z } from 'zod';
 
-export const validateMongoId = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid id');
-export type ValidMongoId = z.infer<typeof validateMongoId>;
+export const objectIdSchema = z.string().refine((value) => Types.ObjectId.isValid(value), {
+  message: 'Invalid ObjectId',
+});
+
+export const validateObjectId = (objectId: string) => {
+  return objectIdSchema.parse(objectId);
+};

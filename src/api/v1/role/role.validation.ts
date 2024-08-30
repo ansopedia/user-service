@@ -1,8 +1,8 @@
-import { Types } from 'mongoose';
 import { z } from 'zod';
+import { objectIdSchema } from '@/utils';
 
 const roleSchema = z.object({
-  id: z.string().uuid(),
+  id: objectIdSchema,
   name: z
     .string()
     .min(3, 'name must be at least 3 characters')
@@ -14,12 +14,8 @@ const roleSchema = z.object({
   isSystemRole: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
-  createdBy: z.string().refine((value) => Types.ObjectId.isValid(value), {
-    message: 'createdBy must be a valid MongoDB ObjectId',
-  }),
-  updatedBy: z.string().refine((value) => Types.ObjectId.isValid(value), {
-    message: 'updateBy must be a valid MongoDB ObjectId',
-  }),
+  createdBy: objectIdSchema,
+  updatedBy: objectIdSchema,
 });
 
 export const createRoleSchema = roleSchema.omit({ id: true, createdAt: true, updatedAt: true, updatedBy: true });

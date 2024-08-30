@@ -38,7 +38,7 @@ const UserSchema = new Schema<User>(
   { timestamps: true },
 );
 
-UserSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function (next): Promise<void> {
   if (!this.isModified('password')) return next();
 
   this.password = await hashPassword(this.password);

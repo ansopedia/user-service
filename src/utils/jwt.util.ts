@@ -45,7 +45,8 @@ export const verifyToken = async <T>(token: string, tokenType: 'access' | 'refre
   }
 };
 
-export const checkBearerToken = (bearerToken: string): string | false => {
+export const extractTokenFromBearerString = (bearerToken: string): string => {
   const [bearer, token] = bearerToken.split(' ');
-  return bearer === 'Bearer' ? token : false;
+  if (bearer !== 'Bearer' || !token) throw new Error(ErrorTypeEnum.enum.INVALID_ACCESS);
+  return token;
 };

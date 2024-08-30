@@ -3,7 +3,7 @@ import { createRole, Role } from './role.validation';
 
 export class RoleDAL {
   static async createRole(userData: createRole): Promise<Role> {
-    const newRole = new RoleModel(userData);
+    const newRole = new RoleModel({ ...userData, updatedBy: userData.createdBy });
     return await newRole.save();
   }
 

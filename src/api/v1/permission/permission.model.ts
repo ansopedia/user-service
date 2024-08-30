@@ -24,8 +24,24 @@ const PermissionSchema: Schema<Permission> = new Schema<Permission>(
       enum: Object.values(PermissionCategory),
       required: true,
     },
-    createdBy: Types.ObjectId,
-    updatedBy: Types.ObjectId,
+    createdBy: {
+      type: String,
+      required: true,
+      validate: {
+        validator: (v: string) => Types.ObjectId.isValid(v),
+        message: 'createdBy must be a valid MongoDB ObjectId string',
+      },
+      ref: 'User',
+    },
+    updatedBy: {
+      type: String,
+      required: true,
+      validate: {
+        validator: (v: string) => Types.ObjectId.isValid(v),
+        message: 'updatedBy must be a valid MongoDB ObjectId string',
+      },
+      ref: 'User',
+    },
     isDeleted: {
       type: Boolean,
       default: false,
