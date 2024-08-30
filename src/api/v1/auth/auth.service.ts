@@ -15,10 +15,10 @@ export class AuthService {
     await OtpService.sendOtp({ email: userData.email, otpType: 'sendEmailVerificationOTP' });
   }
 
-  public static async signInWithEmailAndPassword(userData: Login): Promise<AuthToken> {
+  public static async signInWithEmailOrUsernameAndPassword(userData: Login): Promise<AuthToken> {
     const validUserData = loginSchema.parse(userData);
 
-    const user = await UserDAL.getUserByEmail(validUserData.email);
+    const user = await UserDAL.getUser(validUserData);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 

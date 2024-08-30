@@ -26,7 +26,17 @@ export const sendOtpSchema = z.object({
   eventType: z.enum(['signUp', 'resetPassword', 'sendEmailVerificationOTP']),
 });
 
-export const loginSchema = userSchema.pick({ email: true, password: true });
+const emailSchema = z.object({
+  email: userSchema.shape.email,
+  password: z.string(),
+});
+
+const usernameSchema = z.object({
+  username: userSchema.shape.username,
+  password: z.string(),
+});
+
+export const loginSchema = z.union([emailSchema, usernameSchema]);
 
 export const eventTypes = z.enum(['sendEmailVerificationOTP', 'verifyPhoneNumber']);
 

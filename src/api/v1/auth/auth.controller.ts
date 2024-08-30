@@ -30,9 +30,11 @@ export class AuthController {
     }
   }
 
-  public static async signInWithEmailAndPassword(req: Request, res: Response, next: NextFunction) {
+  public static async signInWithEmailOrUsernameAndPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      const { accessToken, refreshToken, userId }: AuthToken = await AuthService.signInWithEmailAndPassword(req.body);
+      const { accessToken, refreshToken, userId }: AuthToken = await AuthService.signInWithEmailOrUsernameAndPassword(
+        req.body,
+      );
       AuthController.setTokenCookies(res, accessToken, refreshToken);
       sendResponse({
         response: res,
