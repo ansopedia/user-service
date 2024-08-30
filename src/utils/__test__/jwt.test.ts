@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { JwtAccessToken } from '@/api/v1/auth/auth.validation';
-import { checkBearerToken, generateAccessToken, generateRefreshToken, verifyToken } from '@/utils';
-import { envConstants } from '@/constants';
+import { extractTokenFromBearerString, generateAccessToken, generateRefreshToken, verifyToken } from '@/utils';
+import { envConstants, ErrorTypeEnum } from '@/constants';
 
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(),
@@ -37,13 +37,29 @@ describe('Jwt token', () => {
 
   it('should check a bearer token', () => {
     const mockToken = 'mockToken';
-    const result = checkBearerToken(`Bearer ${mockToken}`);
+    const result = extractTokenFromBearerString(`Bearer ${mockToken}`);
     expect(result).toEqual(mockToken);
   });
+});
 
-  it('should return false if bearer token is not formatted correctly', () => {
-    const mockToken = 'mockToken';
-    const result = checkBearerToken(mockToken);
-    expect(result).toEqual(false);
+describe('extractTokenFromBearerString', () => {
+  it('should extract token from valid bearer string', () => {
+    const bearerToken = 'Bearer abc123';
+    expect(extractTokenFromBearerString(bearerToken)).toBe('abc123');
+  });
+
+  it('should throw INVALID_ACCESS error for non-Bearer prefix', () => {
+    const invalidBearerToken = 'NotBearer abc123';
+    expect(() => extractTokenFromBearerString(invalidBearerToken)).toThrow(ErrorTypeEnum.enum.INVALID_ACCESS);
+  });
+
+  it('should throw INVALID_ACCESS error for missing token', () => {
+    const invalidBearerToken = 'Bearer ';
+    expect(() => extractTokenFromBearerString(invalidBearerToken)).toThrow(ErrorTypeEnum.enum.INVALID_ACCESS);
+  });
+
+  it('should throw INVALID_ACCESS error for empty string', () => {
+    const emptyString = '';
+    expect(() => extractTokenFromBearerString(emptyString)).toThrow(ErrorTypeEnum.enum.INVALID_ACCESS);
   });
 });

@@ -1,5 +1,5 @@
 import { NextFunction, Response, Request } from 'express';
-import { checkBearerToken, verifyToken } from '@/utils/jwt.util';
+import { extractTokenFromBearerString, verifyToken } from '@/utils/jwt.util';
 import { ErrorTypeEnum } from '@/constants';
 import { Auth, JwtAccessToken, JwtRefreshToken } from '@/api/v1/auth/auth.validation';
 import { AuthService } from '@/api/v1/auth/auth.service';
@@ -10,11 +10,9 @@ const parseUser = async (req: Request, _: Response, next: NextFunction, tokenTyp
 
     if (authHeader == null) throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
 
-    const token = checkBearerToken(authHeader);
-
-    if (token === false) throw new Error(ErrorTypeEnum.enum.INVALID_ACCESS);
-
+    const token = extractTokenFromBearerString(authHeader);
     let user: Auth;
+
     if (tokenType === 'refresh') {
       const { id }: JwtRefreshToken = await verifyToken<JwtRefreshToken>(token, tokenType);
       user = await AuthService.verifyToken(id);
