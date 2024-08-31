@@ -67,7 +67,7 @@ export class AuthService {
     return await this.generateAccessAndRefreshToken(userRecord.id);
   }
 
-  public static async signOut(userId: string) {
+  public static async logout(userId: string) {
     validateObjectId(userId);
     return await AuthDAL.deleteAuth(userId);
   }

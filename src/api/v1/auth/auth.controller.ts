@@ -67,9 +67,9 @@ export class AuthController {
     }
   }
 
-  public static async signOut(req: Request, res: Response, next: NextFunction) {
+  public static async logout(req: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.signOut(req.body.loggedInUser.userId);
+      await AuthService.logout(req.body.loggedInUser.userId);
       sendResponse({
         response: res,
         message: success.LOGGED_OUT_SUCCESSFULLY,
@@ -101,7 +101,7 @@ export class AuthController {
       AuthController.setTokenCookies(res, accessToken, refreshToken);
       sendResponse({
         response: res,
-        message: success.REFRESH_TOKEN_SUCCESS,
+        message: success.TOKEN_RENEWED_SUCCESSFULLY,
         statusCode: STATUS_CODES.OK,
       });
     } catch (error) {

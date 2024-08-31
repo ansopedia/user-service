@@ -1,15 +1,12 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  clearMocks: true,
+  preset: 'ts-jest',
   moduleFileExtensions: ['js', 'ts', 'json', 'node'],
   modulePathIgnorePatterns: ['<rootDir>/build'],
   roots: ['<rootDir>'],
   setupFiles: ['dotenv/config'],
-  testEnvironment: 'jest-environment-node',
-  transform: {
-    '^.+\\.tsx?$': 'ts-jest',
-  },
+  testEnvironment: 'node',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },

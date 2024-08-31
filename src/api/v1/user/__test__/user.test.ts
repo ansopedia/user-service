@@ -2,7 +2,6 @@ import supertest from 'supertest';
 import { app } from '@/server';
 import { success } from '../user.constant';
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
-import { setupInitialRolesAndPermissions } from '../../../../script/initialize';
 
 const VALID_CREDENTIALS = {
   username: 'username',
@@ -12,10 +11,6 @@ const VALID_CREDENTIALS = {
 };
 
 describe('User Test', () => {
-  beforeAll(async () => {
-    await setupInitialRolesAndPermissions();
-  });
-
   it('should create a new user with valid credentials', async () => {
     const response = await supertest(app).post('/api/v1/users').send(VALID_CREDENTIALS);
 

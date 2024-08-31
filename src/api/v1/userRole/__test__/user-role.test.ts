@@ -1,7 +1,6 @@
 import supertest from 'supertest';
 import { app } from '@/server';
 import { success } from '../user-role.constant';
-import { setupInitialRolesAndPermissions } from '../../../../script/initialize';
 
 const VALID_ROLE = {
   name: 'new-role',
@@ -17,10 +16,6 @@ const VALID_CREDENTIALS = {
 };
 
 describe('User Role Test', () => {
-  beforeAll(async () => {
-    await setupInitialRolesAndPermissions();
-  });
-
   it('should create a new role permission', async () => {
     const { body: roleBody } = await supertest(app).post('/api/v1/roles').send(VALID_ROLE);
     const { body: userBody } = await supertest(app).post('/api/v1/users').send(VALID_CREDENTIALS);
