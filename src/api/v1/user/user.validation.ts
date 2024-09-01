@@ -8,7 +8,22 @@ export const username = z
   .regex(/^[a-z0-9-_]*$/i, 'username can only contain alphanumeric characters, hyphens, and underscores')
   .transform((val) => val.toLowerCase().trim());
 
-export const password = z.string().min(8, 'password must be at least 8 characters');
+export const password = z
+  .string()
+  .min(8, 'Password must be at least 8 characters long')
+  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+  .regex(/[0-9]/, 'Password must contain at least one numeric digit')
+  .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character')
+  .refine(
+    (password) => {
+      const repeatedChars = /(.)\1{2,}/;
+      return !repeatedChars.test(password);
+    },
+    {
+      message: 'Password should not contain repeated characters',
+    },
+  );
 
 export const userSchema = z.object({
   id: z.string().uuid(),

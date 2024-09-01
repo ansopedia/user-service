@@ -1,7 +1,6 @@
 import {
   createUserSchema,
   getUserSchema,
-  password,
   updateUserSchema,
   username,
   userSchema,
@@ -16,8 +15,8 @@ describe('User Validation', () => {
       const result = validateCreateUser({
         username: 'validUsername',
         email: 'testuser@example.com',
-        password: 'password123',
-        confirmPassword: 'password123',
+        password: 'Password123@',
+        confirmPassword: 'Password123@',
       });
       expect(result.success).toBe(true);
     });
@@ -26,8 +25,8 @@ describe('User Validation', () => {
       const result = validateCreateUser({
         username: 'ab',
         email: 'testuser@example.com',
-        password: 'password123',
-        confirmPassword: 'password123',
+        password: 'Password123@',
+        confirmPassword: 'Password123@',
       });
       expect(result.success).toBe(false);
       expect(result.error?.issues[0].message).toBe('username must be at least 3 characters');
@@ -37,8 +36,8 @@ describe('User Validation', () => {
       const result = validateCreateUser({
         username: 'thisisaverylongusername',
         email: 'testuser@example.com',
-        password: 'password123',
-        confirmPassword: 'password123',
+        password: 'Password123@',
+        confirmPassword: 'Password123@',
       });
       expect(result.success).toBe(false);
       expect(result.error?.issues[0].message).toBe('username must be at most 18 characters');
@@ -48,8 +47,8 @@ describe('User Validation', () => {
       const result = validateCreateUser({
         username: '1invalidusername',
         email: 'testuser@example.com',
-        password: 'password123',
-        confirmPassword: 'password123',
+        password: 'Password123@',
+        confirmPassword: 'Password123@',
       });
       expect(result.success).toBe(false);
       expect(result.error?.issues[0].message).toBe('username must start with a letter');
@@ -59,8 +58,8 @@ describe('User Validation', () => {
       const result = validateCreateUser({
         username: 'invalid_username!',
         email: 'testuser@example.com',
-        password: 'password123',
-        confirmPassword: 'password123',
+        password: 'Password123@',
+        confirmPassword: 'Password123@',
       });
       expect(result.success).toBe(false);
       expect(result.error?.issues[0].message).toBe(
@@ -74,8 +73,8 @@ describe('User Validation', () => {
       const result = validateCreateUser({
         username: 'validUsername',
         email: 'testuser@example.com',
-        password: 'password123',
-        confirmPassword: 'password123',
+        password: 'Password123@',
+        confirmPassword: 'Password123@',
       });
       expect(result.success).toBe(true);
     });
@@ -89,14 +88,14 @@ describe('User Validation', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(result.error?.issues[0].message).toBe('password must be at least 8 characters');
+      expect(result.error?.issues[0].message).toBe('Password must be at least 8 characters long');
     });
 
     it('should fail when passwords do not match', () => {
       const result = validateCreateUser({
         username: 'validUsername',
         email: 'testuser@example.com',
-        password: 'password123',
+        password: 'Password123@',
         confirmPassword: 'password321',
       });
       expect(result.success).toBe(false);
@@ -129,23 +128,13 @@ describe('User Schema Validation', () => {
     });
   });
 
-  describe('password', () => {
-    it('should pass for valid passwords', () => {
-      expect(password.parse('password123')).toBe('password123');
-    });
-
-    it('should fail for passwords shorter than 8 characters', () => {
-      expect(() => password.parse('short')).toThrow('password must be at least 8 characters');
-    });
-  });
-
   describe('userSchema', () => {
     const validUser = {
       id: '123e4567-e89b-12d3-a456-426614174000',
       username: 'testuser',
       email: 'test@example.com',
-      password: 'password123',
-      confirmPassword: 'password123',
+      password: 'Password123@',
+      confirmPassword: 'Password123@',
       isEmailVerified: false,
       isDeleted: false,
       createdAt: new Date(),
@@ -167,8 +156,8 @@ describe('User Schema Validation', () => {
       const validUser = {
         username: 'newuser',
         email: 'new@example.com',
-        password: 'password123',
-        confirmPassword: 'password123',
+        password: 'Password123@',
+        confirmPassword: 'Password123@',
       };
       expect(() => createUserSchema.parse(validUser)).not.toThrow();
     });
@@ -187,7 +176,7 @@ describe('User Schema Validation', () => {
       const result = validateCreateUser({
         username: 'validUsername',
         email: 'testuser@example.com',
-        password: 'password123',
+        password: 'Password123@',
         confirmPassword: 'password321',
       });
       expect(result.success).toBe(false);
@@ -245,8 +234,8 @@ describe('User Schema Validation', () => {
       const validUser = {
         username: 'newuser',
         email: 'new@example.com',
-        password: 'password123',
-        confirmPassword: 'password123',
+        password: 'Password123@',
+        confirmPassword: 'Password123@',
       };
       const result = validateCreateUser(validUser);
       expect(result.success).toBe(true);

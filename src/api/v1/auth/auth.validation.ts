@@ -30,7 +30,7 @@ export const loginSchema = z
   .object({
     email: userSchema.shape.email.optional(),
     username: userSchema.shape.username.optional(),
-    password: z.string().min(1, 'Password is required'),
+    password: userSchema.shape.password,
   })
   .superRefine((data, ctx) => {
     if (data.email == null && data.username == null) {
