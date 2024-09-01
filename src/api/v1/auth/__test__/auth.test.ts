@@ -7,8 +7,8 @@ import { ZodError, ZodIssue } from 'zod';
 const VALID_CREDENTIALS = {
   username: 'username',
   email: 'validemail@example.com',
-  password: 'ValidPassword123!',
-  confirmPassword: 'ValidPassword123!',
+  password: 'ValidPassword123@',
+  confirmPassword: 'ValidPassword123@',
 };
 
 type ValidationResult = { success: true; data: Login } | { success: false; error: ZodIssue[] };
@@ -30,7 +30,7 @@ describe('Auth Test', () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.USER_NOT_FOUND];
     const response = await login({
       email: 'notRegistered@test.com',
-      password: 'notRegistered123',
+      password: 'notRegistered123@',
     });
 
     expect(response.statusCode).toBe(STATUS_CODES.NOT_FOUND);
@@ -50,7 +50,7 @@ describe('Auth Test', () => {
 
     const response = await login({
       ...VALID_CREDENTIALS,
-      password: 'notRegistered123',
+      password: 'notRegistered123@',
     });
     expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
     expect(response.body).toMatchObject({
@@ -105,23 +105,23 @@ describe('Auth Test', () => {
   });
 
   test('should accept valid email login', () => {
-    const result = validateLoginSchema({ email: 'user@example.com', password: 'password123' });
+    const result = validateLoginSchema({ email: 'user@example.com', password: 'Password123@' });
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data).toEqual({ email: 'user@example.com', password: 'password123' });
+      expect(result.data).toEqual({ email: 'user@example.com', password: 'Password123@' });
     }
   });
 
   test('should accept valid username login', () => {
-    const result = validateLoginSchema({ username: 'user123', password: 'password123' });
+    const result = validateLoginSchema({ username: 'user123', password: 'Password123@' });
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data).toEqual({ username: 'user123', password: 'password123' });
+      expect(result.data).toEqual({ username: 'user123', password: 'Password123@' });
     }
   });
 
   test('should reject invalid email format', () => {
-    const result = validateLoginSchema({ email: 'invalid-email', password: 'password123' });
+    const result = validateLoginSchema({ email: 'invalid-email', password: 'Password123@' });
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error[0].message).toBe('Invalid email');
@@ -129,7 +129,7 @@ describe('Auth Test', () => {
   });
 
   test('should reject when both email and username are missing', () => {
-    const result = validateLoginSchema({ password: 'password123' });
+    const result = validateLoginSchema({ password: 'Password123@' });
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error[0].message).toBe('Please provide either an email or a username');
@@ -145,7 +145,7 @@ describe('Auth Test', () => {
   });
 
   test('should reject when email is empty string', () => {
-    const result = validateLoginSchema({ email: '', password: 'password123' });
+    const result = validateLoginSchema({ email: '', password: 'Password123@' });
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error[0].message).toBe('Invalid email');
@@ -153,7 +153,7 @@ describe('Auth Test', () => {
   });
 
   test('should reject when username is empty string', () => {
-    const result = validateLoginSchema({ username: '', password: 'password123' });
+    const result = validateLoginSchema({ username: '', password: 'Password123@' });
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error[0].message).toBe('username must be at least 3 characters');

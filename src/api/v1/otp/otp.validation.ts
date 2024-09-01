@@ -1,12 +1,12 @@
 import { z } from 'zod';
-import { validateEmail } from '../user/user.validation';
+import { userSchema, validateEmail } from '../user/user.validation';
 
 const otpType = z.enum(['sendEmailVerificationOTP', 'verifyPhoneNumber', 'resetPassword', 'forgetPassword']);
 export const otp = z.string().length(6);
 
 const baseSchema = z.object({
   otpType,
-  email: validateEmail.optional(),
+  email: userSchema.shape.email.optional(),
   phoneNumber: z.string().optional(),
 });
 

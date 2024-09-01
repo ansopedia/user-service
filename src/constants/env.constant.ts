@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { z } from 'zod';
-import { password, username } from '../api/v1/user/user.validation';
+import { userSchema } from '@/api/v1/user/user.validation';
 
 const envSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required').readonly(),
@@ -17,9 +17,9 @@ const envSchema = z.object({
     .min(1, 'INITIAL_SETUP_DONE is required')
     .transform((value) => value === 'true')
     .readonly(),
-  DEFAULT_SUPER_ADMIN_USERNAME: username.readonly(),
+  DEFAULT_SUPER_ADMIN_USERNAME: userSchema.shape.username.readonly(),
   DEFAULT_SUPER_ADMIN_EMAIL: z.string().email().readonly(),
-  DEFAULT_SUPER_ADMIN_PASSWORD: password.readonly(),
+  DEFAULT_SUPER_ADMIN_PASSWORD: userSchema.shape.password.readonly(),
   NOTIFICATION_SERVICE_BASE_URL: z.string().url().readonly(),
   GOOGLE_CLIENT_ID: z.string().min(1, 'GOOGLE_CLIENT_ID is required').readonly(),
   GOOGLE_CLIENT_SECRET: z.string().min(1, 'GOOGLE_CLIENT_SECRET is required').readonly(),
