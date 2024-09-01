@@ -13,19 +13,19 @@ import { addAxiosHeadersMiddleware } from './middlewares/axiosHeader';
 import passport from 'passport';
 import './config/passport';
 
-const { APP_PORT, INITIAL_SETUP_DONE } = envConstants;
+const { APP_PORT, INITIAL_SETUP_DONE, NODE_ENV } = envConstants;
 
 export const app: Application = express();
 
 (async () => {
   await connectDB();
-  if (envConstants.NODE_ENV !== 'test' && !INITIAL_SETUP_DONE) {
+  if (NODE_ENV === 'test' || !INITIAL_SETUP_DONE) {
     await setupInitialRolesAndPermissions();
     await setupInitialUserRole();
   }
 })();
 
-if (envConstants.NODE_ENV !== 'test') {
+if (NODE_ENV !== 'test') {
   // Apply Helmet middleware with default options
   app.use(helmet());
 

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { UserModel } from './user.model';
 import { CreateUser, UpdateUser, User, UserRolePermission } from './user.validation';
+import { Login } from '../auth/auth.validation';
 
 export class UserDAL {
   static async createUser(userData: CreateUser): Promise<User> {
@@ -12,8 +13,21 @@ export class UserDAL {
     return await UserModel.find({ isDeleted: false });
   }
 
-  static async getUserByEmail(email: string): Promise<User | null> {
-    return await UserModel.findOne({ email });
+  static async getUser(validUserData: Login): Promise<User | null> {
+    const identifier = 'email' in validUserData ? validUserData.email : validUserData.username;
+    return UserDAL.getUserByEmailOrUsername(identifier as string);
+  }
+
+  static async getUserByEmailOrUsername(emailOrUsername: string): Promise<User | null> {
+    return await UserModel.findOne({
+      $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
+    });
+  }
+
+  static async getUserByEmail(emailOrUsername: string): Promise<User | null> {
+    return await UserModel.findOne({
+      $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
+    });
   }
 
   static async getUserByUsername(username: string): Promise<User | null> {

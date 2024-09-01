@@ -1,18 +1,8 @@
-import supertest from 'supertest';
-import { app } from '@/server';
-import { success } from '../auth.constant';
 import { sign } from 'jsonwebtoken';
 import { envConstants, errorMap, ErrorTypeEnum, STATUS_CODES } from '@/constants';
-import {
-  expectOTPRequestSuccess,
-  expectOTPVerificationSuccess,
-  expectUserRetrievalSuccess,
-  requestOTP,
-  retrieveOTP,
-  retrieveUser,
-  verifyOTP,
-} from '../../../../utils/test/test.util';
-import { setupInitialRolesAndPermissions } from '../../../../script/initialize';
+import { expectSignUpSuccess, login, renewToken, signUp } from '@/utils/test';
+import { Login, loginSchema } from '../auth.validation';
+import { ZodError, ZodIssue } from 'zod';
 
 const VALID_CREDENTIALS = {
   username: 'username',
@@ -21,26 +11,24 @@ const VALID_CREDENTIALS = {
   confirmPassword: 'ValidPassword123!',
 };
 
+type ValidationResult = { success: true; data: Login } | { success: false; error: ZodIssue[] };
+// Helper function to validate schema
+const validateLoginSchema = (body: unknown): ValidationResult => {
+  try {
+    const data = loginSchema.parse(body);
+    return { success: true, data };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return { success: false, error: error.errors };
+    }
+    throw error;
+  }
+};
+
 describe('Auth Test', () => {
-  beforeAll(async () => {
-    await setupInitialRolesAndPermissions();
-  });
-
-  it('should sign up a user & send verification email', async () => {
-    const response = await supertest(app).post('/api/v1/auth/sign-up').send(VALID_CREDENTIALS);
-
-    const { statusCode, body } = response;
-
-    expect(statusCode).toBe(STATUS_CODES.CREATED);
-
-    expect(body).toMatchObject({
-      message: success.SIGN_UP_SUCCESS,
-    });
-  });
-
   it('should respond with 404 when user not found', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.USER_NOT_FOUND];
-    const response = await supertest(app).post('/api/v1/auth/login').send({
+    const response = await login({
       email: 'notRegistered@test.com',
       password: 'notRegistered123',
     });
@@ -57,13 +45,13 @@ describe('Auth Test', () => {
   it('should respond with 401 for invalid credentials', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_CREDENTIALS];
 
-    await supertest(app).post('/api/v1/auth/sign-up').send(VALID_CREDENTIALS);
-    const response = await supertest(app)
-      .post('/api/v1/auth/login')
-      .send({
-        ...VALID_CREDENTIALS,
-        password: 'notRegistered123',
-      });
+    const res = await signUp(VALID_CREDENTIALS);
+    expectSignUpSuccess(res);
+
+    const response = await login({
+      ...VALID_CREDENTIALS,
+      password: 'notRegistered123',
+    });
     expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
     expect(response.body).toMatchObject({
       message: errorObject.body.message,
@@ -72,58 +60,10 @@ describe('Auth Test', () => {
     });
   });
 
-  it('should logout a user', async () => {
-    await supertest(app).post('/api/v1/auth/sign-up').send(VALID_CREDENTIALS);
-
-    // Step 1: Request OTP
-    const otpResponse = await requestOTP(VALID_CREDENTIALS.email);
-    expectOTPRequestSuccess(otpResponse);
-
-    // Step 2: Retrieve User from database
-    const userResponse = await retrieveUser(VALID_CREDENTIALS.username);
-    expectUserRetrievalSuccess(userResponse);
-
-    // Step 2: Retrieve OTP from database
-    const otpData = await retrieveOTP(userResponse.body.user.id);
-
-    // Step 3: Verify OTP
-    const verifyResponse = await verifyOTP(otpData?.otp, VALID_CREDENTIALS.email);
-    expectOTPVerificationSuccess(verifyResponse);
-
-    const loginResponse = await supertest(app).post('/api/v1/auth/login').send(VALID_CREDENTIALS);
-
-    const authorizationHeader = `Bearer ${loginResponse.header['authorization']}`;
-
-    const response = await supertest(app).post('/api/v1/auth/logout').set('authorization', authorizationHeader);
-
-    expect(response.statusCode).toBe(STATUS_CODES.OK);
-    expect(response.body).toMatchObject({
-      message: success.LOGGED_OUT_SUCCESSFULLY,
-      status: 'success',
-    });
-  });
-
-  it('should renew token', async () => {
-    await supertest(app).post('/api/v1/auth/sign-up').send(VALID_CREDENTIALS);
-
-    const loginResponse = await supertest(app).post('/api/v1/auth/login').send(VALID_CREDENTIALS);
-
-    const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0].replace('refresh-token=', '');
-
-    const response = await supertest(app)
-      .post('/api/v1/auth/renew-token')
-      .set('authorization', `Bearer ${refreshToken}`);
-
-    expect(response.statusCode).toBe(STATUS_CODES.OK);
-    expect(response.body).toMatchObject({
-      status: 'success',
-    });
-  });
-
   it('should respond with 401 for invalid token', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_TOKEN];
 
-    const response = await supertest(app).post('/api/v1/auth/renew-token').set('authorization', 'Bearer invalidToken');
+    const response = await renewToken('Bearer invalidToken');
 
     expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
     expect(response.body).toMatchObject({
@@ -136,13 +76,8 @@ describe('Auth Test', () => {
   it('should throw an error if the token is invalid', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_TOKEN];
 
-    // Call the function that uses verifyToken with an invalid token
-    const invalidToken = 'invalidToken';
-    const response = await supertest(app)
-      .post('/api/v1/auth/renew-token')
-      .set('authorization', `Bearer ${invalidToken}`);
+    const response = await renewToken(`Bearer invalidToken`);
 
-    // Expect an error to be thrown
     expect(response.status).toBe(STATUS_CODES.UNAUTHORIZED);
     expect(response.body).toMatchObject({
       message: errorObject.body.message,
@@ -154,19 +89,12 @@ describe('Auth Test', () => {
   it('should throw an error if the token is expired', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.TOKEN_EXPIRED];
 
-    const newUserRes = await supertest(app).post('/api/v1/users').send({
-      username: 'newUserRes',
-      email: 'newUserRes@example.com',
-      password: 'ValidPassword123!',
-      confirmPassword: 'ValidPassword123!',
-    });
+    const loginResponse = await login(VALID_CREDENTIALS);
 
     // Mock verifyToken to throw a TokenExpiredError
-    const refreshToken = sign({ id: newUserRes.body.user.id }, envConstants.JWT_REFRESH_SECRET, { expiresIn: '0s' });
+    const refreshToken = sign({ id: loginResponse.body.userId }, envConstants.JWT_REFRESH_SECRET, { expiresIn: '0s' });
 
-    const response = await supertest(app)
-      .post('/api/v1/auth/renew-token')
-      .set('authorization', `Bearer ${refreshToken}`);
+    const response = await renewToken(`Bearer ${refreshToken}`);
 
     expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
     expect(response.body).toMatchObject({
@@ -174,5 +102,61 @@ describe('Auth Test', () => {
       code: errorObject.body.code,
       status: 'failed',
     });
+  });
+
+  test('should accept valid email login', () => {
+    const result = validateLoginSchema({ email: 'user@example.com', password: 'password123' });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toEqual({ email: 'user@example.com', password: 'password123' });
+    }
+  });
+
+  test('should accept valid username login', () => {
+    const result = validateLoginSchema({ username: 'user123', password: 'password123' });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toEqual({ username: 'user123', password: 'password123' });
+    }
+  });
+
+  test('should reject invalid email format', () => {
+    const result = validateLoginSchema({ email: 'invalid-email', password: 'password123' });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error[0].message).toBe('Invalid email');
+    }
+  });
+
+  test('should reject when both email and username are missing', () => {
+    const result = validateLoginSchema({ password: 'password123' });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error[0].message).toBe('Please provide either an email or a username');
+    }
+  });
+
+  test('should reject when password is missing', () => {
+    const result = validateLoginSchema({ email: 'user@example.com' });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error[0].message).toBe('Required');
+    }
+  });
+
+  test('should reject when email is empty string', () => {
+    const result = validateLoginSchema({ email: '', password: 'password123' });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error[0].message).toBe('Invalid email');
+    }
+  });
+
+  test('should reject when username is empty string', () => {
+    const result = validateLoginSchema({ username: '', password: 'password123' });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error[0].message).toBe('username must be at least 3 characters');
+    }
   });
 });

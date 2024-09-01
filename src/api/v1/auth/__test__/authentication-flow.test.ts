@@ -1,16 +1,14 @@
-import supertest from 'supertest';
-import { app } from '@/server';
-import { ErrorTypeEnum, errorMap } from '@/constants';
+import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
 import {
   expectLoginSuccess,
-  expectOTPRequestSuccess,
-  expectOTPVerificationSuccess,
-  expectUserRetrievalSuccess,
+  expectLogoutSuccess,
+  expectRenewTokenSuccess,
+  expectSignUpSuccess,
   login,
-  requestOTP,
-  retrieveOTP,
-  retrieveUser,
-  verifyOTP,
+  logoutUser,
+  renewToken,
+  signUp,
+  verifyAccount,
 } from '@/utils/test';
 
 const VALID_CREDENTIALS = {
@@ -21,8 +19,9 @@ const VALID_CREDENTIALS = {
 };
 
 describe('Authentication Flow', () => {
-  beforeEach(async () => {
-    await supertest(app).post('/api/v1/auth/sign-up').send(VALID_CREDENTIALS);
+  it('should sign up a user', async () => {
+    const response = await signUp(VALID_CREDENTIALS);
+    expectSignUpSuccess(response);
   });
 
   it('should return 403 Forbidden for unverified email', async () => {
@@ -30,7 +29,7 @@ describe('Authentication Flow', () => {
 
     const { statusCode, body } = await login({ email: VALID_CREDENTIALS.email, password: VALID_CREDENTIALS.password });
 
-    expect(statusCode).toBe(403);
+    expect(statusCode).toBe(STATUS_CODES.FORBIDDEN);
     expect(body).toMatchObject({
       code: errorObject.body.code,
       message: errorObject.body.message,
@@ -38,24 +37,37 @@ describe('Authentication Flow', () => {
     });
   });
 
-  it('should login with valid credentials', async () => {
-    // Step 1: Request OTP
-    const otpResponse = await requestOTP(VALID_CREDENTIALS.email);
-    expectOTPRequestSuccess(otpResponse);
+  it('should verify email', async () => {
+    await verifyAccount(VALID_CREDENTIALS);
+  });
 
-    // Step 2: Retrieve User from database
-    const userResponse = await retrieveUser(VALID_CREDENTIALS.username);
-    expectUserRetrievalSuccess(userResponse);
-
-    // Step 2: Retrieve OTP from database
-    const otpData = await retrieveOTP(userResponse.body.user.id);
-
-    // Step 3: Verify OTP
-    const verifyResponse = await verifyOTP(otpData?.otp, VALID_CREDENTIALS.email);
-    expectOTPVerificationSuccess(verifyResponse);
-
-    // Step 4: Login
+  it('should login with email and password', async () => {
     const loginResponse = await login({ email: VALID_CREDENTIALS.email, password: VALID_CREDENTIALS.password });
     expectLoginSuccess(loginResponse);
+  });
+
+  it('should login with username and password', async () => {
+    const loginResponse = await login({ username: VALID_CREDENTIALS.username, password: VALID_CREDENTIALS.password });
+    expectLoginSuccess(loginResponse);
+  });
+
+  it('should logout a user', async () => {
+    const loginResponse = await login(VALID_CREDENTIALS);
+    expectLoginSuccess(loginResponse);
+
+    const authorizationHeader = `Bearer ${loginResponse.header['authorization']}`;
+
+    const logoutResponse = await logoutUser(authorizationHeader);
+    expectLogoutSuccess(logoutResponse);
+  });
+
+  it('should renew token', async () => {
+    const loginResponse = await login(VALID_CREDENTIALS);
+    expectLoginSuccess(loginResponse);
+
+    const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0].replace('refresh-token=', '');
+
+    const renewTokenRes = await renewToken(`Bearer ${refreshToken}`);
+    expectRenewTokenSuccess(renewTokenRes);
   });
 });
