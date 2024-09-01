@@ -26,17 +26,28 @@ export const sendOtpSchema = z.object({
   eventType: z.enum(['signUp', 'resetPassword', 'sendEmailVerificationOTP']),
 });
 
-const emailSchema = z.object({
-  email: userSchema.shape.email,
-  password: z.string(),
-});
-
-const usernameSchema = z.object({
-  username: userSchema.shape.username,
-  password: z.string(),
-});
-
-export const loginSchema = z.union([emailSchema, usernameSchema]);
+export const loginSchema = z
+  .object({
+    email: userSchema.shape.email.optional(),
+    username: userSchema.shape.username.optional(),
+    password: z.string().min(1, 'Password is required'),
+  })
+  .superRefine((data, ctx) => {
+    if (data.email == null && data.username == null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Please provide either an email or a username',
+        path: ['email', 'username'],
+      });
+    }
+    if (data.password == null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Password is required',
+        path: ['password'],
+      });
+    }
+  });
 
 export const eventTypes = z.enum(['sendEmailVerificationOTP', 'verifyPhoneNumber']);
 

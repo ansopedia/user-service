@@ -15,7 +15,7 @@ export class UserDAL {
 
   static async getUser(validUserData: Login): Promise<User | null> {
     const identifier = 'email' in validUserData ? validUserData.email : validUserData.username;
-    return UserDAL.getUserByEmailOrUsername(identifier);
+    return UserDAL.getUserByEmailOrUsername(identifier as string);
   }
 
   static async getUserByEmailOrUsername(emailOrUsername: string): Promise<User | null> {
