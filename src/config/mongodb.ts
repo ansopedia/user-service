@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { envConstants } from '@/constants';
+// import { MongoMemoryServer } from 'mongodb-memory-server';
+import { envConstants, ErrorTypeEnum } from '@/constants';
+import { logger } from '../utils';
 
 const { DATABASE_URL, NODE_ENV } = envConstants;
 
@@ -9,20 +10,32 @@ const dbOptions = {
 };
 
 export const connectDB = async () => {
-  if (NODE_ENV === 'development') {
-    mongoose.set('debug', true);
-    await mongoose.connect(DATABASE_URL, dbOptions);
-    return;
-  }
+  try {
+    if (NODE_ENV === 'development') {
+      mongoose.set('debug', true);
+      await mongoose.connect(DATABASE_URL, dbOptions);
+      return;
+    }
 
-  if (NODE_ENV === 'test') {
-    const mongoMemoryServer = await MongoMemoryServer.create();
-    const mongoUri = mongoMemoryServer.getUri();
-    await mongoose.connect(mongoUri, dbOptions);
-    return;
-  }
+    if (NODE_ENV === 'test') {
+      // const mongoMemoryServer = await MongoMemoryServer.create();
+      // const mongoUri = mongoMemoryServer.getUri();
+      // await mongoose.connect(mongoUri, dbOptions);
 
-  if (NODE_ENV === 'production') {
-    await mongoose.connect(DATABASE_URL, dbOptions);
+      await mongoose.connect(DATABASE_URL, dbOptions);
+
+      return;
+    }
+
+    if (NODE_ENV === 'production') {
+      await mongoose.connect(DATABASE_URL, dbOptions);
+    }
+  } catch (error) {
+    logger.error(error);
+    throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
   }
+};
+
+export const disconnectDB = async () => {
+  await mongoose.disconnect();
 };

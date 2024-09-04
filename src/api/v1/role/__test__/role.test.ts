@@ -4,8 +4,8 @@ import { success } from '../role.constant';
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
 
 const VALID_ROLE = {
-  name: 'super-admin',
-  description: 'this is super admin creating first time',
+  name: 'new-role',
+  description: 'this is new-role creating first time',
   createdBy: '65f6dac9156e93e7b6f1b88d',
 };
 

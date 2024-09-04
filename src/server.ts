@@ -19,7 +19,7 @@ export const app: Application = express();
 
 (async () => {
   await connectDB();
-  if (NODE_ENV === 'test' || !INITIAL_SETUP_DONE) {
+  if (!INITIAL_SETUP_DONE) {
     await setupInitialRolesAndPermissions();
     await setupInitialUserRole();
   }

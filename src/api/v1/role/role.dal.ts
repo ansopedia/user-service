@@ -7,6 +7,10 @@ export class RoleDAL {
     return await newRole.save();
   }
 
+  static async createRoles(roles: createRole[]): Promise<Role[]> {
+    return await RoleModel.insertMany(roles.map((role) => ({ ...role, updatedBy: role.createdBy })));
+  }
+
   static async getRoles(): Promise<Role[]> {
     return await RoleModel.find({ isDeleted: false });
   }

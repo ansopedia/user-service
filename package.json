@@ -14,7 +14,8 @@
     "prettier:fix": "prettier --write .",
     "prod": "set NODE_ENV=production&& pnpm build && pnpm start",
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
-    "test": "jest --runInBand --detectOpenHandles --forceExit"
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "test:coverage": "jest --runInBand --detectOpenHandles --forceExit --coverage"
   },
   "keywords": [
     "user",
