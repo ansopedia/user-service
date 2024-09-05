@@ -14,7 +14,8 @@
     "prettier:fix": "prettier --write .",
     "prod": "set NODE_ENV=production&& pnpm build && pnpm start",
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
-    "test": "jest --runInBand --detectOpenHandles --forceExit"
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "test:coverage": "jest --runInBand --detectOpenHandles --forceExit --coverage"
   },
   "keywords": [
     "user",
@@ -55,7 +56,6 @@
     "husky": "^9.1.4",
     "jest": "^29.7.0",
     "lint-staged": "^15.2.9",
-    "mongodb-memory-server": "^10.0.0",
     "nodemon": "^3.1.4",
     "prettier": "^3.3.3",
     "supertest": "^7.0.0",

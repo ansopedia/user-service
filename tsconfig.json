@@ -27,6 +27,6 @@
     "skipLibCheck": true
   },
   "lib": ["es2021"],
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/jest.setup.ts"],
   "exclude": ["node_modules"]
 }

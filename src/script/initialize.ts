@@ -1,4 +1,6 @@
+import { PermissionDAL } from '../api/v1/permission/permission.dal';
 import { PermissionService } from '../api/v1/permission/permission.service';
+import { RoleDAL } from '../api/v1/role/role.dal';
 import { RoleService } from '../api/v1/role/role.service';
 import { RolePermissionService } from '../api/v1/rolePermission/role-permission.service';
 import { UserService } from '../api/v1/user/user.service';
@@ -13,27 +15,9 @@ import {
 import { logger } from '../utils';
 
 export async function setupInitialRolesAndPermissions() {
-  // Create permissions
-  await Promise.all(
-    defaultPermissions.map(async (permission) => {
-      try {
-        await PermissionService.createPermission(permission);
-      } catch (error) {
-        logger.error(`Permission already exists: permissionName = ${permission.name}, error = ${error}`);
-      }
-    }),
-  );
+  await PermissionDAL.createPermissions(defaultPermissions);
 
-  // Create roles
-  await Promise.all(
-    defaultRoles.map(async (role) => {
-      try {
-        await RoleService.createRole(role);
-      } catch (error) {
-        logger.error(`Role already exists: roleName = ${role.name}, error = ${error}`);
-      }
-    }),
-  );
+  await RoleDAL.createRoles(defaultRoles);
 
   const [permissions, roles] = await Promise.all([PermissionService.getPermissions(), RoleService.getRoles()]);
 

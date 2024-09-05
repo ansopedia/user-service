@@ -6,6 +6,12 @@ export class PermissionDAL {
     return await PermissionModel.create({ ...permission, updatedBy: permission.createdBy });
   }
 
+  static async createPermissions(permission: createPermission[]): Promise<Permission[]> {
+    return await PermissionModel.insertMany(
+      permission.map((permission) => ({ ...permission, updatedBy: permission.createdBy })),
+    );
+  }
+
   static async getPermissionByName(name: string): Promise<Permission | null> {
     return await PermissionModel.findOne({ name });
   }

@@ -1,5 +1,5 @@
 import supertest, { Response } from 'supertest';
-import { app } from '@/server';
+import { app } from '@/app';
 import { STATUS_CODES } from '@/constants';
 import { createPermission } from '@/api/v1/permission/permission.validation';
 import { success } from '../../api/v1/permission/permission.constant';

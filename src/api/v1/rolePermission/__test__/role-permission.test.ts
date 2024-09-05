@@ -1,5 +1,5 @@
 import supertest from 'supertest';
-import { app } from '@/server';
+import { app } from '@/app';
 import { success } from '../role-permission.constant';
 import { createRole } from '../../role/role.validation';
 import { createPermission, PermissionCategory } from '../../permission/permission.validation';
