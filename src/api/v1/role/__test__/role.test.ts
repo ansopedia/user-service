@@ -1,5 +1,5 @@
 import supertest from 'supertest';
-import { app } from '@/server';
+import { app } from '@/app';
 import { success } from '../role.constant';
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
 

@@ -1,5 +1,5 @@
 import supertest, { Response } from 'supertest';
-import { app } from '@/server';
+import { app } from '@/app';
 import { STATUS_CODES } from '@/constants';
 import { success } from '@/api/v1/auth/auth.constant';
 import { OtpDAL } from '@/api/v1/otp/otp.dal';

@@ -5,8 +5,8 @@ import { Login, loginSchema } from '../auth.validation';
 import { ZodError, ZodIssue } from 'zod';
 
 const VALID_CREDENTIALS = {
-  username: 'username',
-  email: 'validemail@example.com',
+  username: 'validUser',
+  email: 'validemail1@example.com',
   password: 'ValidPassword123@',
   confirmPassword: 'ValidPassword123@',
 };

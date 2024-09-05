@@ -1,9 +1,16 @@
-import mongoose from 'mongoose';
-import { disconnectDB } from './config';
+import { connectDB, disconnectDB } from './config';
+import { startServer, stopServer } from './server';
+import { envConstants } from './constants';
+import { setupInitialRolesAndPermissions, setupInitialUserRole } from './script/initialize';
+
+beforeAll(async () => {
+  await connectDB();
+  await setupInitialRolesAndPermissions();
+  await setupInitialUserRole();
+  startServer(envConstants.APP_PORT);
+});
 
 afterAll(async () => {
-  // Delete all test collections
-  await mongoose.connection.db?.dropDatabase();
-
   await disconnectDB();
+  stopServer();
 });

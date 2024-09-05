@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-// import { MongoMemoryServer } from 'mongodb-memory-server';
 import { envConstants, ErrorTypeEnum } from '@/constants';
 import { logger } from '../utils';
 
@@ -18,12 +17,8 @@ export const connectDB = async () => {
     }
 
     if (NODE_ENV === 'test') {
-      // const mongoMemoryServer = await MongoMemoryServer.create();
-      // const mongoUri = mongoMemoryServer.getUri();
-      // await mongoose.connect(mongoUri, dbOptions);
-
       await mongoose.connect(DATABASE_URL, dbOptions);
-
+      await mongoose.connection.db?.dropDatabase();
       return;
     }
 
@@ -37,5 +32,10 @@ export const connectDB = async () => {
 };
 
 export const disconnectDB = async () => {
-  await mongoose.disconnect();
+  try {
+    await mongoose.connection.close();
+  } catch (error) {
+    logger.error(error);
+    throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
+  }
 };

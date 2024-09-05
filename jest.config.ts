@@ -7,7 +7,7 @@ const config: Config = {
   modulePathIgnorePatterns: ['<rootDir>/build'],
   transformIgnorePatterns: ['node_modules/(?!(jest-)?ts-jest)'],
   roots: ['<rootDir>/src'],
-  setupFilesAfterEnv: ['<rootDir>/src/jest.setup.ts'], // Use setupFilesAfterEnv instead of setupFiles
+  setupFilesAfterEnv: ['<rootDir>/src/jest.setup.ts'],
   testEnvironment: 'node',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
