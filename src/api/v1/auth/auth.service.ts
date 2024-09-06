@@ -87,7 +87,7 @@ export class AuthService {
     const refreshToken = generateRefreshToken({ id: userId });
     const accessToken = generateAccessToken({ userId });
 
-    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken });
+    await AuthDAL.upsertAuthTokens({ userId, refreshToken });
 
     return { userId, accessToken, refreshToken };
   }
