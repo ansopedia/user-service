@@ -3,6 +3,14 @@ import { app } from '@/app';
 import { success } from '../role-permission.constant';
 import { createRole } from '../../role/role.validation';
 import { createPermission, PermissionCategory } from '../../permission/permission.validation';
+import {
+  createRoleRequest,
+  expectLoginSuccess,
+  expectSignUpSuccess,
+  login,
+  signUp,
+  verifyAccount,
+} from '../../../../utils/test';
 
 const VALID_ROLE: createRole = {
   name: 'new-role',
@@ -20,9 +28,28 @@ const VALID_PERMISSION: createPermission = {
   category: PermissionCategory.SYSTEM,
 };
 
+const VALID_CREDENTIALS = {
+  username: 'username',
+  email: 'validemail@example.com',
+  password: 'ValidPassword123!',
+  confirmPassword: 'ValidPassword123!',
+};
+
 describe('Role Permission Test', () => {
+  let authorizationHeader: string;
+  beforeAll(async () => {
+    const response = await signUp(VALID_CREDENTIALS);
+    expectSignUpSuccess(response);
+
+    await verifyAccount(VALID_CREDENTIALS);
+
+    const loginResponse = await login(VALID_CREDENTIALS);
+    expectLoginSuccess(loginResponse);
+    authorizationHeader = `Bearer ${loginResponse.header['authorization']}`;
+  });
+
   it('should create a new role permission', async () => {
-    const { body: roleBody } = await supertest(app).post('/api/v1/roles').send(VALID_ROLE);
+    const { body: roleBody } = await createRoleRequest(VALID_ROLE, authorizationHeader);
     const { body: permissionBody } = await supertest(app).post('/api/v1/permissions').send(VALID_PERMISSION);
 
     const rolePermission = {
