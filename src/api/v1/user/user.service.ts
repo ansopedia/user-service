@@ -2,7 +2,7 @@ import { UserDAL } from './user.dal';
 import { UserDto } from './user.dto';
 import {
   CreateUser,
-  createUserSchema,
+  validateCreateUser,
   Email,
   GetUser,
   UpdateUser,
@@ -26,17 +26,17 @@ export class UserService {
   }
 
   static async createUser(userData: CreateUser): Promise<GetUser> {
-    const validUserData = createUserSchema.parse(userData);
+    validateCreateUser(userData);
 
-    const isUserExist = await UserDAL.getUserByEmail(validUserData.email);
+    const isUserExist = await UserDAL.getUserByEmail(userData.email);
 
     if (isUserExist) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS);
 
-    const isUserNameExist = await UserDAL.getUserByUsername(validUserData.username);
+    const isUserNameExist = await UserDAL.getUserByUsername(userData.username);
 
     if (isUserNameExist) throw new Error(ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS);
 
-    const createdUser = await UserDAL.createUser(validUserData);
+    const createdUser = await UserDAL.createUser(userData);
 
     const userRole = await RoleDAL.getRoleByName(ROLES.USER);
 
