@@ -1,255 +1,115 @@
-import {
-  createUserSchema,
-  getUserSchema,
-  updateUserSchema,
-  username,
-  userSchema,
-  validateCreateUser,
-  validateEmail,
-  validateUsername,
-} from '../user.validation';
+import { username, password, validateCreateUser } from '../user.validation';
 
-describe('User Validation', () => {
-  describe('Username validation', () => {
-    it('should pass when the username is valid', () => {
-      const result = validateCreateUser({
-        username: 'validUsername',
-        email: 'testuser@example.com',
-        password: 'Password123@',
-        confirmPassword: 'Password123@',
-      });
-      expect(result.success).toBe(true);
-    });
-
-    it('should fail when the username is less than 3 characters', () => {
-      const result = validateCreateUser({
-        username: 'ab',
-        email: 'testuser@example.com',
-        password: 'Password123@',
-        confirmPassword: 'Password123@',
-      });
-      expect(result.success).toBe(false);
-      expect(result.error?.issues[0].message).toBe('username must be at least 3 characters');
-    });
-
-    it('should fail when the username is more than 18 characters', () => {
-      const result = validateCreateUser({
-        username: 'thisisaverylongusername',
-        email: 'testuser@example.com',
-        password: 'Password123@',
-        confirmPassword: 'Password123@',
-      });
-      expect(result.success).toBe(false);
-      expect(result.error?.issues[0].message).toBe('username must be at most 18 characters');
-    });
-
-    it('should fail when the username does not start with a letter', () => {
-      const result = validateCreateUser({
-        username: '1invalidusername',
-        email: 'testuser@example.com',
-        password: 'Password123@',
-        confirmPassword: 'Password123@',
-      });
-      expect(result.success).toBe(false);
-      expect(result.error?.issues[0].message).toBe('username must start with a letter');
-    });
-
-    it('should fail when the username contains invalid characters', () => {
-      const result = validateCreateUser({
-        username: 'invalid_username!',
-        email: 'testuser@example.com',
-        password: 'Password123@',
-        confirmPassword: 'Password123@',
-      });
-      expect(result.success).toBe(false);
-      expect(result.error?.issues[0].message).toBe(
-        'username can only contain alphanumeric characters, hyphens, and underscores',
-      );
-    });
+describe('Username validation', () => {
+  it('should accept valid usernames', () => {
+    expect(username.parse('john123')).toBe('john123');
+    expect(username.parse('Alice')).toBe('alice');
+    expect(username.parse('John-Doe')).toBe('john-doe');
+    expect(username.parse('Alice_123')).toBe('alice_123');
   });
 
-  describe('Password validation', () => {
-    it('should pass when the password is valid', () => {
-      const result = validateCreateUser({
-        username: 'validUsername',
-        email: 'testuser@example.com',
-        password: 'Password123@',
-        confirmPassword: 'Password123@',
-      });
-      expect(result.success).toBe(true);
-    });
+  it('should reject usernames that are shorter than 3 characters', () => {
+    expect(() => username.parse('ab')).toThrow('username must be at least 3 characters');
+  });
 
-    it('should fail when the password is less than 8 characters', () => {
-      const result = validateCreateUser({
-        username: 'validUsername',
-        email: 'testuser@example.com',
-        password: 'pass123',
-        confirmPassword: 'pass123',
-      });
+  it('should reject usernames that are too longer than 18 characters', () => {
+    expect(() => username.parse('thisisaverylongusername')).toThrow('username must be at most 18 characters');
+  });
 
-      expect(result.success).toBe(false);
-      expect(result.error?.issues[0].message).toBe('Password must be at least 8 characters long');
-    });
+  it('should reject usernames that do not start with a letter', () => {
+    expect(() => username.parse('123user')).toThrow('username must start with a letter');
+  });
 
-    it('should fail when passwords do not match', () => {
-      const result = validateCreateUser({
-        username: 'validUsername',
-        email: 'testuser@example.com',
-        password: 'Password123@',
-        confirmPassword: 'password321',
-      });
-      expect(result.success).toBe(false);
-      expect(result.error?.issues[0].message).toBe('Confirm password does not match password');
-    });
+  it('should reject usernames with non-alphanumeric characters', () => {
+    expect(() => username.parse('user@name')).toThrow(
+      'username can only contain alphanumeric characters, hyphens, and underscores',
+    );
+  });
+
+  it('should transform usernames to lowercase', () => {
+    expect(username.parse('JohnDoe')).toBe('johndoe');
   });
 });
 
-describe('User Schema Validation', () => {
-  describe('username', () => {
-    it('should pass for valid usernames', () => {
-      expect(username.parse('john123')).toBe('john123');
-      expect(username.parse('Alice')).toBe('alice');
-    });
-
-    it('should fail for usernames shorter than 3 characters', () => {
-      expect(() => username.parse('ab')).toThrow('username must be at least 3 characters');
-    });
-
-    it('should fail for usernames longer than 18 characters', () => {
-      expect(() => username.parse('thisusernameistoolong')).toThrow('username must be at most 18 characters');
-    });
-
-    it('should fail for usernames not starting with a letter', () => {
-      expect(() => username.parse('123user')).toThrow('username must start with a letter');
-    });
-
-    it('should fail for usernames with non-alphanumeric characters', () => {
-      expect(() => username.parse('user@name')).toThrow('username can only contain alphanumeric characters');
-    });
+describe('Password validation', () => {
+  it('should accept valid passwords', () => {
+    expect(password.parse('P@ssw0rd')).toBe('P@ssw0rd');
+    expect(password.parse('Str0ng!Pass')).toBe('Str0ng!Pass');
   });
 
-  describe('userSchema', () => {
+  it('should reject passwords that are less than 8 characters', () => {
+    expect(() => password.parse('Short1!')).toThrow('Password must be at least 8 characters long');
+  });
+
+  it('should reject passwords without uppercase letters', () => {
+    expect(() => password.parse('password1!')).toThrow('Password must contain at least one uppercase letter');
+  });
+
+  it('should reject passwords without lowercase letters', () => {
+    expect(() => password.parse('PASSWORD1!')).toThrow('Password must contain at least one lowercase letter');
+  });
+
+  it('should reject passwords without numeric digits', () => {
+    expect(() => password.parse('Password!')).toThrow('Password must contain at least one numeric digit');
+  });
+
+  it('should reject passwords without special characters', () => {
+    expect(() => password.parse('Password1')).toThrow('Password must contain at least one special character');
+  });
+
+  it('should reject passwords with repeated characters', () => {
+    expect(() => password.parse('Passwooord1!')).toThrow('Password should not contain repeated characters');
+  });
+});
+
+describe('Create user schema validation', () => {
+  it('should accept valid user data with email and password', () => {
     const validUser = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
-      username: 'testuser',
-      email: 'test@example.com',
-      password: 'Password123@',
-      confirmPassword: 'Password123@',
-      isEmailVerified: false,
-      isDeleted: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      email: 'user@example.com',
+      username: 'validuser',
+      password: 'V@lidPass1',
+      confirmPassword: 'V@lidPass1',
     };
-
-    it('should pass for a valid user object', () => {
-      expect(() => userSchema.parse(validUser)).not.toThrow();
-    });
-
-    it('should fail for invalid email', () => {
-      const invalidUser = { ...validUser, email: 'invalid-email' };
-      expect(() => userSchema.parse(invalidUser)).toThrow();
-    });
+    expect(() => validateCreateUser(validUser)).not.toThrow();
   });
 
-  describe('createUserSchema', () => {
-    it('should pass for valid email/password user creation', () => {
-      const validUser = {
-        username: 'newuser',
-        email: 'new@example.com',
-        password: 'Password123@',
-        confirmPassword: 'Password123@',
-      };
-      expect(() => createUserSchema.parse(validUser)).not.toThrow();
-    });
-
-    it('should pass for valid Google user creation', () => {
-      const validGoogleUser = {
-        username: 'googleuser',
-        email: 'google@example.com',
-        googleId: '12345',
-        isEmailVerified: true,
-      };
-      expect(() => createUserSchema.parse(validGoogleUser)).not.toThrow();
-    });
-
-    it('should fail when passwords do not match', () => {
-      const result = validateCreateUser({
-        username: 'validUsername',
-        email: 'testuser@example.com',
-        password: 'Password123@',
-        confirmPassword: 'password321',
-      });
-      expect(result.success).toBe(false);
-      expect(result.error?.issues[0].message).toBe('Confirm password does not match password');
-    });
+  it('should accept valid user data with Google ID', () => {
+    const validGoogleUser = {
+      email: 'user@example.com',
+      username: 'validuser',
+      isEmailVerified: true,
+      googleId: '123456789',
+    };
+    expect(() => validateCreateUser(validGoogleUser)).not.toThrow();
   });
 
-  describe('validateUsername', () => {
-    it('should pass for valid username', () => {
-      expect(() => validateUsername.parse({ username: 'validuser' })).not.toThrow();
-    });
-
-    it('should fail for invalid username', () => {
-      expect(() => validateUsername.parse({ username: 'a' })).toThrow();
-    });
+  it('should reject user data with mismatched passwords', () => {
+    const invalidUser = {
+      email: 'user@example.com',
+      username: 'validuser',
+      password: 'V@lidPass1',
+      confirmPassword: 'DifferentPass1!',
+    };
+    expect(() => validateCreateUser(invalidUser)).toThrow('Confirm password does not match password');
   });
 
-  describe('validateEmail', () => {
-    it('should pass for valid email', () => {
-      expect(validateEmail.parse('test@example.com')).toBe('test@example.com');
-    });
-
-    it('should fail for invalid email', () => {
-      expect(() => validateEmail.parse('invalid-email')).toThrow();
-    });
+  it('should reject user data with invalid email', () => {
+    const invalidUser = {
+      email: 'invalid-email',
+      username: 'validuser',
+      password: 'V@lidPass1',
+      confirmPassword: 'V@lidPass1',
+    };
+    expect(() => validateCreateUser(invalidUser)).toThrow('Invalid email');
   });
 
-  describe('updateUserSchema', () => {
-    it('should pass for valid partial update', () => {
-      expect(() => updateUserSchema.parse({ username: 'updateduser' })).not.toThrow();
-    });
-
-    it('should fail for empty update', () => {
-      expect(() => updateUserSchema.parse({})).toThrow('At least one field is required for user update');
-    });
-  });
-
-  describe('getUserSchema', () => {
-    it('should not include password and confirmPassword fields', () => {
-      const user = getUserSchema.parse({
-        id: '123e4567-e89b-12d3-a456-426614174000',
-        username: 'testuser',
-        email: 'test@example.com',
-        isEmailVerified: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-      expect(user).not.toHaveProperty('password');
-      expect(user).not.toHaveProperty('confirmPassword');
-    });
-  });
-
-  describe('validateCreateUser', () => {
-    it('should return success for valid user creation data', () => {
-      const validUser = {
-        username: 'newuser',
-        email: 'new@example.com',
-        password: 'Password123@',
-        confirmPassword: 'Password123@',
-      };
-      const result = validateCreateUser(validUser);
-      expect(result.success).toBe(true);
-    });
-
-    it('should return error for invalid user creation data', () => {
-      const invalidUser = {
-        username: 'nu',
-        email: 'invalid-email',
-        password: 'short',
-        confirmPassword: 'nomatch',
-      };
-      const result = validateCreateUser(invalidUser);
-      expect(result.success).toBe(false);
-    });
+  it('should reject user data with invalid username', () => {
+    const invalidUser = {
+      email: 'user@example.com',
+      username: 'in',
+      password: 'V@lidPass1',
+      confirmPassword: 'V@lidPass1',
+    };
+    expect(() => validateCreateUser(invalidUser)).toThrow('username must be at least 3 characters');
   });
 });

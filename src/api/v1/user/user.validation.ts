@@ -31,39 +31,37 @@ export const userSchema = z.object({
   username: username,
   email: z.string().email().trim().toLowerCase(),
   password: password,
-  confirmPassword: z.string(),
+  confirmPassword: password,
   isEmailVerified: z.boolean().default(false),
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
 
-const createUserWithGoogleSchema = userSchema.omit({
-  password: true,
-  confirmPassword: true,
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-  isDeleted: true,
-});
+const createUserWithGoogleSchema = userSchema
+  .extend({
+    googleId: z.string(),
+  })
+  .pick({
+    email: true,
+    username: true,
+    isEmailVerified: true,
+    googleId: true,
+  });
 
 const createUserWithEmailAndPasswordSchema = userSchema
-  .omit({
-    googleId: true,
-    id: true,
-    createdAt: true,
-    updatedAt: true,
-    isDeleted: true,
-  })
-  .extend({
-    confirmPassword: z.string().min(8),
+  .pick({
+    email: true,
+    username: true,
+    password: true,
+    confirmPassword: true,
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Confirm password does not match password',
     path: ['confirmPassword'],
   });
 
-export const createUserSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
+const createUserSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
 
 export const validateUsername = userSchema.pick({ username: true });
 export const validateEmail = z
@@ -90,11 +88,8 @@ export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type GetUser = z.infer<typeof getUserSchema>;
 export type Email = z.infer<typeof validateEmail>;
 
-export const validateCreateUser = (data: Partial<CreateUser>) => {
-  if ('password' in data && typeof data.password === 'string') {
-    return createUserWithEmailAndPasswordSchema.safeParse(data);
-  }
-  return createUserWithGoogleSchema.safeParse(data);
+export const validateCreateUser = (data: CreateUser) => {
+  createUserSchema.parse(data);
 };
 
 export interface UserRolePermission {
