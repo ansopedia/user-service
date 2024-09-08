@@ -1,4 +1,4 @@
-import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
+import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from '@/constants';
 import {
   expectLoginSuccess,
   expectSignUpSuccess,
@@ -9,6 +9,9 @@ import {
   expectCreateRoleSuccess,
   expectGetRolesSuccess,
   getRoles,
+  expectUnauthorizedResponseForMissingAuthorizationHeader,
+  expectUnauthorizedResponseForInvalidAuthorizationHeader,
+  expectUnauthorizedResponseWhenUserHasInsufficientPermission,
 } from '@/utils/test';
 import { createRole } from '../role.validation';
 
@@ -46,14 +49,34 @@ const testInvalidField = async (field: string, value: string, authorizationHeade
 describe('Role Service', () => {
   let authorizationHeader: string;
   beforeAll(async () => {
-    const response = await signUp(VALID_CREDENTIALS);
-    expectSignUpSuccess(response);
+    const loginResponse = await login(defaultUsers);
+    expectLoginSuccess(loginResponse);
+    authorizationHeader = `Bearer ${loginResponse.header['authorization']}`;
+  });
+
+  it('should not create a new role without authorization header', async () => {
+    const response = await createRoleRequest(VALID_ROLE, '');
+    expectUnauthorizedResponseForMissingAuthorizationHeader(response);
+  });
+
+  it('should not create a new role with invalid authorization header', async () => {
+    const response = await createRoleRequest(VALID_ROLE, 'invalid');
+    expectUnauthorizedResponseForInvalidAuthorizationHeader(response);
+  });
+
+  it('should not create a new role without create-role permission', async () => {
+    const signUpResponse = await signUp(VALID_CREDENTIALS);
+    expectSignUpSuccess(signUpResponse);
 
     await verifyAccount(VALID_CREDENTIALS);
 
     const loginResponse = await login(VALID_CREDENTIALS);
     expectLoginSuccess(loginResponse);
-    authorizationHeader = `Bearer ${loginResponse.header['authorization']}`;
+    const header = `Bearer ${loginResponse.header['authorization']}`;
+
+    const response = await createRoleRequest(VALID_ROLE, header);
+
+    expectUnauthorizedResponseWhenUserHasInsufficientPermission(response);
   });
 
   it('should create a new role', async () => {

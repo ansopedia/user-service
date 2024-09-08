@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { createRole, getRoles } from './role.controller';
-import { validateAccessToken } from '../../../middlewares';
+import { checkPermission, validateAccessToken } from '@/middlewares';
 
 const router = Router();
 
-router.post('/roles', validateAccessToken, createRole);
+router.post('/roles', validateAccessToken, checkPermission(['create-roles']), createRole);
 router.get('/roles', getRoles);
 
 export { router as roleRoutes };
