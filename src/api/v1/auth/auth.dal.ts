@@ -10,7 +10,7 @@ export class AuthDAL {
     return await AuthModel.findOne({ refreshToken });
   }
 
-  static async updateOrCreateAuthTokens({ userId, refreshToken }: Auth): Promise<Auth | null> {
+  static async upsertAuthTokens({ userId, refreshToken }: Auth): Promise<Auth | null> {
     return await AuthModel.findOneAndUpdate({ userId }, { refreshToken: refreshToken }, { upsert: true, new: true });
   }
 

@@ -1,4 +1,4 @@
-import { generateOTP, verifyOTP } from '../otp.util';
+import { generateOTP, verifyOTP } from '@/utils';
 
 describe('OTP validation', () => {
   test('generateOTP generates an OTP of the correct length', () => {

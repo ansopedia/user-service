@@ -1,7 +1,7 @@
 import path from 'path';
 import pino, { type DestinationStream } from 'pino';
 import fs from 'fs';
-import { envConstants } from '../constants';
+import { envConstants } from '@/constants';
 
 // Define the log directory path
 const logDirectory = path.join(process.cwd(), 'log');

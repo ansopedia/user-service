@@ -6,7 +6,7 @@ import {
   JwtRefreshToken,
   jwtRefreshTokenSchema,
 } from '@/api/v1/auth/auth.validation';
-import { AuthDAL } from '../api/v1/auth/auth.dal';
+import { AuthDAL } from '@/api/v1/auth/auth.dal';
 
 const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } = envConstants;
 

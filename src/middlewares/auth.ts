@@ -8,7 +8,7 @@ const parseUser = async (req: Request, _: Response, next: NextFunction, tokenTyp
   try {
     const authHeader = req.headers.authorization;
 
-    if (authHeader == null) throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
+    if (authHeader == null || authHeader === '') throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
 
     const token = extractTokenFromBearerString(authHeader);
     let user: Auth;

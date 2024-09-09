@@ -1,6 +1,6 @@
 import { connectDB } from './config';
 import { envConstants } from './constants';
-import { setupInitialRolesAndPermissions, setupInitialUserRole } from './script/initialize';
+import { setupInitialRolesAndPermissions, setupInitialUserRole } from './script';
 import { startServer } from './server';
 
 (async () => {

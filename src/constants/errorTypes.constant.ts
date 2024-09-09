@@ -30,6 +30,7 @@ const errorType = [
   'INVALID_OTP',
   'OTP_EXPIRED',
   'INITIAL_SETUP_FAILED',
+  'NOT_ENOUGH_PERMISSION',
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -157,6 +158,13 @@ export const errorMap = {
   [ErrorTypeEnum.enum.INITIAL_SETUP_FAILED]: {
     httpStatusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
     body: { code: 'initial_setup_failed', message: 'Initial setup failed' },
+  },
+  [ErrorTypeEnum.enum.NOT_ENOUGH_PERMISSION]: {
+    httpStatusCode: STATUS_CODES.FORBIDDEN,
+    body: {
+      code: 'not_enough_permission',
+      message: 'User does not have enough permission to perform this action',
+    },
   },
 };
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { objectIdSchema } from '../../../utils';
+import { objectIdSchema } from '@/utils';
 
 export enum PermissionCategory {
   'USER_MANAGEMENT' = 'USER_MANAGEMENT',
@@ -7,6 +7,7 @@ export enum PermissionCategory {
   'ROLE_MANAGEMENT' = 'ROLE_MANAGEMENT',
   'ANALYTICS' = 'ANALYTICS',
   'SYSTEM' = 'SYSTEM',
+  'PROFILE' = 'PROFILE',
 }
 
 const permissionSchema = z.object({
@@ -14,7 +15,7 @@ const permissionSchema = z.object({
   name: z
     .string()
     .min(3, 'Name must be at least 3 characters long.')
-    .max(18, 'Name must be at most 18 characters long.')
+    .max(30, 'Name must be at most 30 characters long.')
     .regex(/^[a-z][a-z-]*$/i, 'Name must start with a letter and can only contain letters and hyphens.')
     .transform((val) => val.toLowerCase().trim()),
   description: z.string().min(25).max(255),

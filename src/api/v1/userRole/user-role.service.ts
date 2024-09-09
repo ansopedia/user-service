@@ -2,7 +2,7 @@ import { ErrorTypeEnum } from '@/constants';
 import { UserRoleDAL } from './user-role.dal';
 import { UserRoleDto } from './user-role.dto';
 import { UserRole, userRoleSchema } from './user-role.validation';
-import { validateObjectId } from '../../../utils';
+import { validateObjectId } from '@/utils';
 
 export class UserRoleService {
   static async createUserRole(userRole: UserRole) {

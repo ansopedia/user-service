@@ -8,7 +8,7 @@ const PermissionSchema: Schema<Permission> = new Schema<Permission>(
       required: true,
       trim: true,
       minlength: 3,
-      maxlength: 18,
+      maxlength: 30,
       lowercase: true,
       unique: true,
     },

@@ -2,7 +2,7 @@ import supertest, { Response } from 'supertest';
 import { app } from '@/app';
 import { Login } from '@/api/v1/auth/auth.validation';
 import { STATUS_CODES } from '@/constants';
-import { success } from '../../api/v1/auth/auth.constant';
+import { success } from '@/api/v1/auth/auth.constant';
 import { expectOTPRequestSuccess, expectOTPVerificationSuccess, requestOTP, retrieveOTP, verifyOTP } from './otp.utils';
 import { expectUserRetrievalSuccess, retrieveUser } from './user.utils';
 

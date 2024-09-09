@@ -1,7 +1,7 @@
 import { envConstants, ErrorTypeEnum, FIVE_MINUTES_IN_MS } from '@/constants';
 import { generateOTP, verifyOTP } from '@/utils';
-import { success } from '../auth/auth.constant';
-import { UserService } from '../user/user.service';
+import { success } from '@/api/v1/auth/auth.constant';
+import { UserService } from '@/api/v1/user/user.service';
 import { OtpDAL } from './otp.dal';
 import { OtpEvent, otpEvent, OtpVerifyEvent, otpVerifyEvent } from './otp.validation';
 import { notificationService } from '@/services/notification.services';

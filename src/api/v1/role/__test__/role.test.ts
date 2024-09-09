@@ -1,23 +1,45 @@
-import supertest from 'supertest';
-import { app } from '@/app';
-import { success } from '../role.constant';
-import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
+import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from '@/constants';
+import {
+  expectLoginSuccess,
+  expectSignUpSuccess,
+  login,
+  signUp,
+  verifyAccount,
+  createRoleRequest,
+  expectCreateRoleSuccess,
+  expectGetRolesSuccess,
+  getRoles,
+  expectUnauthorizedResponseForMissingAuthorizationHeader,
+  expectUnauthorizedResponseForInvalidAuthorizationHeader,
+  expectUnauthorizedResponseWhenUserHasInsufficientPermission,
+} from '@/utils/test';
+import { createRole } from '../role.validation';
 
-const VALID_ROLE = {
+const VALID_ROLE: createRole = {
   name: 'new-role',
   description: 'this is new-role creating first time',
   createdBy: '65f6dac9156e93e7b6f1b88d',
+  isSystemRole: false,
+  isDeleted: false,
 };
 
-const testInvalidField = async (field: string, value: string) => {
+const VALID_CREDENTIALS = {
+  username: 'username',
+  email: 'validemail@example.com',
+  password: 'ValidPassword123!',
+  confirmPassword: 'ValidPassword123!',
+};
+
+const testInvalidField = async (field: string, value: string, authorizationHeader: string) => {
   const errorObj = errorMap[ErrorTypeEnum.enum.VALIDATION_ERROR];
 
-  const response = await supertest(app)
-    .post('/api/v1/roles')
-    .send({
+  const response = await createRoleRequest(
+    {
       ...VALID_ROLE,
       [field]: value,
-    });
+    },
+    authorizationHeader,
+  );
 
   expect(response.statusCode).toBe(STATUS_CODES.BAD_REQUEST);
   expect(response.body.message).toBe(errorObj.body.message);
@@ -25,27 +47,46 @@ const testInvalidField = async (field: string, value: string) => {
 };
 
 describe('Role Service', () => {
+  let authorizationHeader: string;
+  beforeAll(async () => {
+    const loginResponse = await login(defaultUsers);
+    expectLoginSuccess(loginResponse);
+    authorizationHeader = `Bearer ${loginResponse.header['authorization']}`;
+  });
+
+  it('should not create a new role without authorization header', async () => {
+    const response = await createRoleRequest(VALID_ROLE, '');
+    expectUnauthorizedResponseForMissingAuthorizationHeader(response);
+  });
+
+  it('should not create a new role with invalid authorization header', async () => {
+    const response = await createRoleRequest(VALID_ROLE, 'invalid');
+    expectUnauthorizedResponseForInvalidAuthorizationHeader(response);
+  });
+
+  it('should not create a new role without create-role permission', async () => {
+    const signUpResponse = await signUp(VALID_CREDENTIALS);
+    expectSignUpSuccess(signUpResponse);
+
+    await verifyAccount(VALID_CREDENTIALS);
+
+    const loginResponse = await login(VALID_CREDENTIALS);
+    expectLoginSuccess(loginResponse);
+    const header = `Bearer ${loginResponse.header['authorization']}`;
+
+    const response = await createRoleRequest(VALID_ROLE, header);
+
+    expectUnauthorizedResponseWhenUserHasInsufficientPermission(response);
+  });
+
   it('should create a new role', async () => {
-    const response = await supertest(app).post('/api/v1/roles').send(VALID_ROLE);
-    expect(response).toBeDefined();
-
-    const { statusCode, body } = response;
-
-    expect(statusCode).toBe(STATUS_CODES.CREATED);
-
-    expect(body).toMatchObject({
-      message: success.ROLE_CREATED_SUCCESSFULLY,
-      role: {
-        id: expect.any(String),
-        name: VALID_ROLE.name,
-        description: VALID_ROLE.description,
-      },
-    });
+    const response = await createRoleRequest(VALID_ROLE, authorizationHeader);
+    expectCreateRoleSuccess(response, VALID_ROLE);
   });
 
   it('should respond with 409 for duplicate role', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.ROLE_ALREADY_EXISTS];
-    const response = await supertest(app).post('/api/v1/roles').send(VALID_ROLE);
+    const response = await createRoleRequest(VALID_ROLE, authorizationHeader);
 
     expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
     expect(response.body.message).toBe(errorObject.body.message);
@@ -53,27 +94,38 @@ describe('Role Service', () => {
   });
 
   it('should respond with 400 for invalid role name', async () => {
-    await testInvalidField('name', 'a');
+    await testInvalidField('name', 'a', authorizationHeader);
   });
 
   it('should respond with 400 for invalid role description', async () => {
-    await testInvalidField('description', 'a');
+    await testInvalidField('description', 'a', authorizationHeader);
   });
 
   it('should respond with 400 for invalid createdBy', async () => {
-    await testInvalidField('createdBy', 'a');
+    await testInvalidField('createdBy', 'a', authorizationHeader);
+  });
+
+  it('should not get all roles without authorization header', async () => {
+    const response = await getRoles('');
+    expectUnauthorizedResponseForMissingAuthorizationHeader(response);
+  });
+
+  it('should not get all roles with invalid authorization header', async () => {
+    const response = await getRoles('invalid');
+    expectUnauthorizedResponseForInvalidAuthorizationHeader(response);
+  });
+
+  it('should not get all roles without view-roles permission', async () => {
+    const loginResponse = await login(VALID_CREDENTIALS);
+    expectLoginSuccess(loginResponse);
+    const header = `Bearer ${loginResponse.header['authorization']}`;
+
+    const response = await getRoles(header);
+    expectUnauthorizedResponseWhenUserHasInsufficientPermission(response);
   });
 
   it('should get all roles', async () => {
-    const response = await supertest(app).get('/api/v1/roles');
-    expect(response).toBeDefined();
-
-    const { statusCode, body } = response;
-
-    expect(statusCode).toBe(STATUS_CODES.OK);
-    expect(body).toMatchObject({
-      message: success.ROLES_FETCHED_SUCCESSFULLY,
-      roles: expect.any(Array),
-    });
+    const response = await getRoles(authorizationHeader);
+    expectGetRolesSuccess(response);
   });
 });

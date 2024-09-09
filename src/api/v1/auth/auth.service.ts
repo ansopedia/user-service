@@ -1,11 +1,11 @@
 import { ErrorTypeEnum } from '@/constants';
 import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from '@/utils';
-import { UserDAL } from '../user/user.dal';
-import { UserService } from '../user/user.service';
-import { CreateUser } from '../user/user.validation';
+import { UserDAL } from '@/api/v1/user/user.dal';
+import { UserService } from '@/api/v1/user/user.service';
+import { CreateUser } from '@/api/v1/user/user.validation';
 import { AuthDAL } from './auth.dal';
 import { loginSchema, Login, AuthToken, Auth } from './auth.validation';
-import { OtpService } from '../otp/otp.service';
+import { OtpService } from '@/api/v1/otp/otp.service';
 import { GoogleUser } from '@/types/passport-google';
 
 export class AuthService {
@@ -87,7 +87,7 @@ export class AuthService {
     const refreshToken = generateRefreshToken({ id: userId });
     const accessToken = generateAccessToken({ userId });
 
-    await AuthDAL.updateOrCreateAuthTokens({ userId, refreshToken });
+    await AuthDAL.upsertAuthTokens({ userId, refreshToken });
 
     return { userId, accessToken, refreshToken };
   }

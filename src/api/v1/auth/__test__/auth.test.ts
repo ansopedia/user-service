@@ -1,7 +1,7 @@
 import { sign } from 'jsonwebtoken';
 import { envConstants, errorMap, ErrorTypeEnum, STATUS_CODES } from '@/constants';
 import { expectSignUpSuccess, login, renewToken, signUp } from '@/utils/test';
-import { Login, loginSchema } from '../auth.validation';
+import { Login, loginSchema } from '@/api/v1/auth/auth.validation';
 import { ZodError, ZodIssue } from 'zod';
 
 const VALID_CREDENTIALS = {

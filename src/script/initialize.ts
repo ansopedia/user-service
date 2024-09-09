@@ -1,18 +1,12 @@
-import { PermissionDAL } from '../api/v1/permission/permission.dal';
-import { PermissionService } from '../api/v1/permission/permission.service';
-import { RoleDAL } from '../api/v1/role/role.dal';
-import { RoleService } from '../api/v1/role/role.service';
-import { RolePermissionService } from '../api/v1/rolePermission/role-permission.service';
-import { UserService } from '../api/v1/user/user.service';
-import { UserRoleService } from '../api/v1/userRole/user-role.service';
-import {
-  defaultPermissions,
-  defaultRolePermissions,
-  defaultRoles,
-  defaultUsers,
-  ROLES,
-} from '../constants/rbac.constants';
-import { logger } from '../utils';
+import { PermissionDAL } from '@/api/v1/permission/permission.dal';
+import { PermissionService } from '@/api/v1/permission/permission.service';
+import { RoleDAL } from '@/api/v1/role/role.dal';
+import { RoleService } from '@/api/v1/role/role.service';
+import { RolePermissionService } from '@/api/v1/rolePermission/role-permission.service';
+import { UserService } from '@/api/v1/user/user.service';
+import { UserRoleService } from '@/api/v1/userRole/user-role.service';
+import { defaultPermissions, defaultRolePermissions, defaultRoles, defaultUsers, ROLES } from '@/constants';
+import { logger } from '@/utils';
 
 export async function setupInitialRolesAndPermissions() {
   await PermissionDAL.createPermissions(defaultPermissions);

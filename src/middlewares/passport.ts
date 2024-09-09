@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
-import { envConstants } from '../constants';
+import { envConstants } from '@/constants';
 
 export const signInWithGoogle = (req: Request, res: Response, next: NextFunction) => {
   const redirectUrl = req.query.redirectUrl;

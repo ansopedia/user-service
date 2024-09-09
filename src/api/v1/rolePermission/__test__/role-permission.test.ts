@@ -1,8 +1,16 @@
-import supertest from 'supertest';
-import { app } from '@/app';
-import { success } from '../role-permission.constant';
-import { createRole } from '../../role/role.validation';
-import { createPermission, PermissionCategory } from '../../permission/permission.validation';
+import { createRole } from '@/api/v1/role/role.validation';
+import { createPermission, PermissionCategory } from '@/api/v1/permission/permission.validation';
+import {
+  createPermissionRequest,
+  createRoleRequest,
+  expectCreatePermissionSuccess,
+  expectCreateRoleSuccess,
+  expectLoginSuccess,
+  login,
+  createRolePermissionRequest,
+  expectCreateRolePermissionSuccess,
+} from '@/utils/test';
+import { defaultUsers } from '@/constants';
 
 const VALID_ROLE: createRole = {
   name: 'new-role',
@@ -21,23 +29,26 @@ const VALID_PERMISSION: createPermission = {
 };
 
 describe('Role Permission Test', () => {
+  let authorizationHeader: string;
+  beforeAll(async () => {
+    const loginResponse = await login(defaultUsers);
+    expectLoginSuccess(loginResponse);
+    authorizationHeader = `Bearer ${loginResponse.header['authorization']}`;
+  });
+
   it('should create a new role permission', async () => {
-    const { body: roleBody } = await supertest(app).post('/api/v1/roles').send(VALID_ROLE);
-    const { body: permissionBody } = await supertest(app).post('/api/v1/permissions').send(VALID_PERMISSION);
+    const roleResponse = await createRoleRequest(VALID_ROLE, authorizationHeader);
+    expectCreateRoleSuccess(roleResponse, VALID_ROLE);
+
+    const permissionRes = await createPermissionRequest(VALID_PERMISSION);
+    expectCreatePermissionSuccess(permissionRes, VALID_PERMISSION);
 
     const rolePermission = {
-      roleId: roleBody.role.id,
-      permissionId: permissionBody.permission.id,
+      roleId: roleResponse.body.role.id,
+      permissionId: permissionRes.body.permission.id,
     };
 
-    const { body } = await supertest(app).post('/api/v1/role-permissions').send(rolePermission);
-
-    expect(body).toMatchObject({
-      message: success.ROLE_PERMISSION_CREATED_SUCCESSFULLY,
-      rolePermission: {
-        roleId: rolePermission.roleId,
-        permissionId: rolePermission.permissionId,
-      },
-    });
+    const response = await createRolePermissionRequest(rolePermission, authorizationHeader);
+    expectCreateRolePermissionSuccess(response, rolePermission);
   });
 });
