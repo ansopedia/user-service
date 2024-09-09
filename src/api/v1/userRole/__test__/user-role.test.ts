@@ -6,8 +6,8 @@ import {
   createUserRoleRequest,
   expectCreateUserRoleSuccess,
 } from '@/utils/test';
-import { createRole } from '../../role/role.validation';
-import { defaultUsers } from '../../../../constants';
+import { createRole } from '@/api/v1/role/role.validation';
+import { defaultUsers } from '@/constants';
 
 const VALID_ROLE: createRole = {
   name: 'new-role',

@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { SendResponse, sendResponse } from '../sendResponse.util';
+import { SendResponse, sendResponse } from '@/utils';
 
 describe('sendResponse', () => {
   it('should return a successful response with the correct payload', () => {

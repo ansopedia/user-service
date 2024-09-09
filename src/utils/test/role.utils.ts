@@ -1,8 +1,8 @@
 import supertest, { Response } from 'supertest';
 import { app } from '@/app';
-import { createRole } from '../../api/v1/role/role.validation';
-import { STATUS_CODES } from '../../constants';
-import { success } from '../../api/v1/role/role.constant';
+import { createRole } from '@/api/v1/role/role.validation';
+import { STATUS_CODES } from '@/constants';
+import { success } from '@/api/v1/role/role.constant';
 
 export const createRoleRequest = async (role: createRole, authorizationHeader: string): Promise<Response> => {
   return supertest(app).post('/api/v1/roles').send(role).set('authorization', authorizationHeader);

@@ -1,8 +1,8 @@
 import supertest, { Response } from 'supertest';
 import { app } from '@/app';
 import { RolePermission } from '@/api/v1/rolePermission/role-permission.validation';
-import { STATUS_CODES } from '../../constants';
-import { success } from '../../api/v1/rolePermission/role-permission.constant';
+import { STATUS_CODES } from '@/constants';
+import { success } from '@/api/v1/rolePermission/role-permission.constant';
 
 export const createRolePermissionRequest = async (rolePermission: RolePermission, authorizationHeader: string) => {
   return await supertest(app)

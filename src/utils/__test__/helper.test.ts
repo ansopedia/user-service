@@ -1,5 +1,5 @@
-import { validateUsername } from '../../api/v1/user/user.validation';
-import { generateRandomUsername } from '../helper.util';
+import { validateUsername } from '@/api/v1/user/user.validation';
+import { generateRandomUsername } from '@/utils';
 
 describe('generateRandomUsername', () => {
   it('should generate a username that starts with "user_"', () => {

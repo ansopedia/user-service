@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { objectIdSchema } from '../../../utils';
+import { objectIdSchema } from '@/utils';
 
 export enum PermissionCategory {
   'USER_MANAGEMENT' = 'USER_MANAGEMENT',

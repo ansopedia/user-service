@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
-import { createPermission, PermissionCategory } from '../api/v1/permission/permission.validation';
-import { createRole } from '../api/v1/role/role.validation';
+import { createPermission, PermissionCategory } from '@/api/v1/permission/permission.validation';
+import { createRole } from '@/api/v1/role/role.validation';
 import { envConstants } from './env.constant';
 
 // Generate a unique ObjectId for the system user, which might represent a system-level action

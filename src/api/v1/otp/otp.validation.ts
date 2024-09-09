@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { userSchema, validateEmail } from '../user/user.validation';
+import { userSchema, validateEmail } from '@/api/v1/user/user.validation';
 
 const otpType = z.enum(['sendEmailVerificationOTP', 'verifyPhoneNumber', 'resetPassword', 'forgetPassword']);
 export const otp = z.string().length(6);

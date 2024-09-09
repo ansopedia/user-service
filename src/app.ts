@@ -2,13 +2,13 @@ import express, { Request, Response, NextFunction, type Application } from 'expr
 import { pinoHttp } from 'pino-http';
 import helmet from 'helmet';
 import cors from 'cors';
+import passport from 'passport';
 
 import { envConstants, ErrorTypeEnum } from '@/constants';
 import { logger } from '@/utils';
-import { errorHandler } from '@/middlewares';
+import { addAxiosHeadersMiddleware, errorHandler } from '@/middlewares';
 import { routes } from '@/routes';
-import { addAxiosHeadersMiddleware } from './middlewares/axiosHeader';
-import passport from 'passport';
+
 import './config/passport';
 
 const { NODE_ENV } = envConstants;

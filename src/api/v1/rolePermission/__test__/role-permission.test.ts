@@ -1,5 +1,5 @@
-import { createRole } from '../../role/role.validation';
-import { createPermission, PermissionCategory } from '../../permission/permission.validation';
+import { createRole } from '@/api/v1/role/role.validation';
+import { createPermission, PermissionCategory } from '@/api/v1/permission/permission.validation';
 import {
   createPermissionRequest,
   createRoleRequest,
