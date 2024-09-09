@@ -11,6 +11,11 @@
 - Even admin can't deleted if the role is `isSystemRole`
 - Add proper description about the role
 
+## Permission
+
+- export only one Get /permission route
+- protect Get /permission route
+
 ## Role-Permission
 
 - make a route for get, put, & deleted role-permission

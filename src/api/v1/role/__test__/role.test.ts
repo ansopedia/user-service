@@ -105,8 +105,27 @@ describe('Role Service', () => {
     await testInvalidField('createdBy', 'a', authorizationHeader);
   });
 
+  it('should not get all roles without authorization header', async () => {
+    const response = await getRoles('');
+    expectUnauthorizedResponseForMissingAuthorizationHeader(response);
+  });
+
+  it('should not get all roles with invalid authorization header', async () => {
+    const response = await getRoles('invalid');
+    expectUnauthorizedResponseForInvalidAuthorizationHeader(response);
+  });
+
+  it('should not get all roles without view-roles permission', async () => {
+    const loginResponse = await login(VALID_CREDENTIALS);
+    expectLoginSuccess(loginResponse);
+    const header = `Bearer ${loginResponse.header['authorization']}`;
+
+    const response = await getRoles(header);
+    expectUnauthorizedResponseWhenUserHasInsufficientPermission(response);
+  });
+
   it('should get all roles', async () => {
-    const response = await getRoles();
+    const response = await getRoles(authorizationHeader);
     expectGetRolesSuccess(response);
   });
 });

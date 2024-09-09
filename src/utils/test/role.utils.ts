@@ -25,8 +25,8 @@ export const expectCreateRoleSuccess = (response: Response, { name, description 
   });
 };
 
-export const getRoles = async (): Promise<Response> => {
-  return await supertest(app).get('/api/v1/roles');
+export const getRoles = async (authorizationHeader: string): Promise<Response> => {
+  return await supertest(app).get('/api/v1/roles').set('authorization', authorizationHeader);
 };
 
 export const expectGetRolesSuccess = (response: Response): void => {
