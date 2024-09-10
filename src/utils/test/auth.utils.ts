@@ -4,7 +4,8 @@ import { Login } from '@/api/v1/auth/auth.validation';
 import { STATUS_CODES } from '@/constants';
 import { success } from '@/api/v1/auth/auth.constant';
 import { expectOTPRequestSuccess, expectOTPVerificationSuccess, requestOTP, retrieveOTP, verifyOTP } from './otp.utils';
-import { expectUserRetrievalSuccess, retrieveUser } from './user.utils';
+import { expectFindUserByUsernameSuccess, findUserByUsername } from './user.utils';
+import { CreateUser } from '../../api/v1/user/user.validation';
 
 export async function login(loginData: Login): Promise<Response> {
   return supertest(app).post('/api/v1/auth/login').send(loginData);
@@ -77,14 +78,15 @@ export const expectRenewTokenSuccess = (response: Response) => {
   });
 };
 
-export const verifyAccount = async ({ email, username }: { email: string; username: string }) => {
+export const verifyAccount = async (user: CreateUser) => {
   // Step 1: Request OTP
+  const { email, username } = user;
   const otpResponse = await requestOTP(email);
   expectOTPRequestSuccess(otpResponse);
 
   // Step 2: Retrieve User from database
-  const userResponse = await retrieveUser(username);
-  expectUserRetrievalSuccess(userResponse);
+  const userResponse = await findUserByUsername(username);
+  expectFindUserByUsernameSuccess(userResponse, user);
 
   // Step 2: Retrieve OTP from database
   const otpData = await retrieveOTP(userResponse.body.user.id);

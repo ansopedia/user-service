@@ -1,9 +1,22 @@
 import supertest from 'supertest';
 import { app } from '@/app';
 import { success } from '../user.constant';
-import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
+import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from '@/constants';
+import {
+  createUser,
+  expectFindUserByUsernameNotFound,
+  expectFindUserByUsernameSuccess,
+  expectLoginSuccess,
+  expectUnauthorizedResponseForInvalidAuthorizationHeader,
+  expectUnauthorizedResponseForMissingAuthorizationHeader,
+  expectUnauthorizedResponseWhenUserHasInsufficientPermission,
+  expectUserCreationSuccess,
+  findUserByUsername,
+  login,
+  verifyAccount,
+} from '@/utils/test';
 
-const VALID_CREDENTIALS = {
+const newUser = {
   username: 'username',
   email: 'validemail@example.com',
   password: 'ValidPassword123!',
@@ -11,29 +24,47 @@ const VALID_CREDENTIALS = {
 };
 
 describe('User Test', () => {
+  let authorizationHeader: string;
+  beforeAll(async () => {
+    const loginResponse = await login(defaultUsers);
+    expectLoginSuccess(loginResponse);
+    authorizationHeader = `Bearer ${loginResponse.header['authorization']}`;
+  });
+
+  it('should return 401 for missing authorization header', async () => {
+    const response = await createUser(newUser, '');
+    expectUnauthorizedResponseForMissingAuthorizationHeader(response);
+  });
+
+  it('should return 401 for invalid authorization header', async () => {
+    const response = await createUser(newUser, 'invalid');
+    expectUnauthorizedResponseForInvalidAuthorizationHeader(response);
+  });
+
+  it('should not create a new user without create-user permission', async () => {
+    const unAuthorizedUser = { ...newUser, username: 'unauthorized', email: 'unauthorized@gmail.com' };
+
+    const response = await createUser(unAuthorizedUser, authorizationHeader);
+    expectUserCreationSuccess(response, unAuthorizedUser);
+
+    await verifyAccount(unAuthorizedUser);
+
+    const loginResponse = await login(unAuthorizedUser);
+    expectLoginSuccess(loginResponse);
+    const header = `Bearer ${loginResponse.header['authorization']}`;
+
+    const newUserRes = await createUser(newUser, header);
+    expectUnauthorizedResponseWhenUserHasInsufficientPermission(newUserRes);
+  });
+
   it('should create a new user with valid credentials', async () => {
-    const response = await supertest(app).post('/api/v1/users').send(VALID_CREDENTIALS);
-
-    const { statusCode, body } = response;
-
-    expect(statusCode).toBe(STATUS_CODES.CREATED);
-
-    expect(body).toMatchObject({
-      message: success.USER_CREATED_SUCCESSFULLY,
-      user: {
-        id: expect.any(String),
-        email: VALID_CREDENTIALS.email,
-        username: VALID_CREDENTIALS.username,
-      },
-    });
-
-    expect(body.user).not.toHaveProperty('password');
-    expect(body.user).not.toHaveProperty('confirmPassword');
+    const response = await createUser(newUser, authorizationHeader);
+    expectUserCreationSuccess(response, newUser);
   });
 
   it('should respond with 409 for duplicate email', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS];
-    const response = await supertest(app).post('/api/v1/users').send(VALID_CREDENTIALS);
+    const response = await createUser(newUser, authorizationHeader);
 
     expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
     expect(response.body.message).toBe(errorObject.body.message);
@@ -42,48 +73,20 @@ describe('User Test', () => {
 
   it('should respond with 409 for duplicate username', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS];
-    const response = await supertest(app)
-      .post('/api/v1/users')
-      .send({
-        ...VALID_CREDENTIALS,
-        email: 'new@gmail.com',
-      });
+    const response = await createUser({ ...newUser, email: 'new@gmail.com' }, authorizationHeader);
     expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
     expect(response.body.message).toBe(errorObject.body.message);
     expect(response.body.code).toBe(errorObject.body.code);
   });
 
   it('should find user by username', async () => {
-    const response = await supertest(app).get(`/api/v1/users/${VALID_CREDENTIALS.username}`);
-
-    const { statusCode, body } = response;
-
-    expect(statusCode).toBe(STATUS_CODES.OK);
-
-    expect(body).toMatchObject({
-      message: success.USER_FETCHED_SUCCESSFULLY,
-      user: {
-        id: expect.any(String),
-        email: VALID_CREDENTIALS.email,
-        username: VALID_CREDENTIALS.username,
-      },
-    });
-
-    expect(body.user).not.toHaveProperty('password');
-    expect(body.user).not.toHaveProperty('confirmPassword');
+    const response = await findUserByUsername(newUser.username);
+    expectFindUserByUsernameSuccess(response, newUser);
   });
 
   it('should respond with 404 for user not found', async () => {
-    const errorObject = errorMap[ErrorTypeEnum.enum.USER_NOT_FOUND];
-    const response = await supertest(app).get('/api/v1/users/invalidUsername');
-
-    expect(response.statusCode).toBe(STATUS_CODES.NOT_FOUND);
-
-    expect(response.body).toMatchObject({
-      message: errorObject.body.message,
-      code: errorObject.body.code,
-      status: 'failed',
-    });
+    const response = await findUserByUsername('invalidUsername');
+    expectFindUserByUsernameNotFound(response);
   });
 
   it('should fetch all users', async () => {
@@ -105,7 +108,7 @@ describe('User Test', () => {
   });
 
   it('should soft delete user', async () => {
-    const userResponse = await supertest(app).get(`/api/v1/users/${VALID_CREDENTIALS.username}`);
+    const userResponse = await supertest(app).get(`/api/v1/users/${newUser.username}`);
     const response = await supertest(app).delete(`/api/v1/users/${userResponse.body.user.id}`);
 
     const { statusCode, body } = response;
@@ -116,8 +119,8 @@ describe('User Test', () => {
       message: success.USER_DELETED_SUCCESSFULLY,
       user: {
         id: expect.any(String),
-        email: VALID_CREDENTIALS.email,
-        username: VALID_CREDENTIALS.username,
+        email: newUser.email,
+        username: newUser.username,
       },
     });
 
@@ -133,7 +136,7 @@ describe('User Test', () => {
       confirmPassword: 'ValidPassword123!',
     };
 
-    const userResponse = await supertest(app).post('/api/v1/users').send(newUser);
+    const userResponse = await createUser(newUser, authorizationHeader);
 
     const response = await supertest(app).patch(`/api/v1/users/${userResponse.body.user.id}/restore`);
 
