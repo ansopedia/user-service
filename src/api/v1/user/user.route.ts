@@ -7,7 +7,7 @@ const router = Router();
 router.post('/users', validateAccessToken, checkPermission(['create-users']), createUser);
 router.get('/users', getAllUsers);
 router.get('/users/:username', getUserByUsername);
-router.delete('/users/:userId', softDeleteUser);
+router.delete('/users/:userId', validateAccessToken, checkPermission(['delete-users']), softDeleteUser);
 router.patch('/users/:userId/restore', restoreUser);
 
 export { router as userRoutes };

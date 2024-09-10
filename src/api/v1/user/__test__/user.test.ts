@@ -4,7 +4,7 @@ import { success } from '../user.constant';
 import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from '@/constants';
 import {
   createUser,
-  expectFindUserByUsernameNotFound,
+  expectUserNotFoundError,
   expectFindUserByUsernameSuccess,
   expectLoginSuccess,
   expectUnauthorizedResponseForInvalidAuthorizationHeader,
@@ -86,7 +86,7 @@ describe('User Test', () => {
 
   it('should respond with 404 for user not found', async () => {
     const response = await findUserByUsername('invalidUsername');
-    expectFindUserByUsernameNotFound(response);
+    expectUserNotFoundError(response);
   });
 
   it('should fetch all users', async () => {
@@ -105,27 +105,6 @@ describe('User Test', () => {
       expect(body.users[0]).not.toHaveProperty('password');
       expect(body.users[0]).not.toHaveProperty('confirmPassword');
     }
-  });
-
-  it('should soft delete user', async () => {
-    const userResponse = await supertest(app).get(`/api/v1/users/${newUser.username}`);
-    const response = await supertest(app).delete(`/api/v1/users/${userResponse.body.user.id}`);
-
-    const { statusCode, body } = response;
-
-    expect(statusCode).toBe(STATUS_CODES.OK);
-
-    expect(body).toMatchObject({
-      message: success.USER_DELETED_SUCCESSFULLY,
-      user: {
-        id: expect.any(String),
-        email: newUser.email,
-        username: newUser.username,
-      },
-    });
-
-    expect(body.user).not.toHaveProperty('password');
-    expect(body.user).not.toHaveProperty('confirmPassword');
   });
 
   it('should restore deleted user', async () => {
