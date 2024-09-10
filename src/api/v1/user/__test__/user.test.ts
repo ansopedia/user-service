@@ -106,33 +106,4 @@ describe('User Test', () => {
       expect(body.users[0]).not.toHaveProperty('confirmPassword');
     }
   });
-
-  it('should restore deleted user', async () => {
-    const newUser = {
-      username: 'username1',
-      email: 'validemail1@example.com',
-      password: 'ValidPassword123!',
-      confirmPassword: 'ValidPassword123!',
-    };
-
-    const userResponse = await createUser(newUser, authorizationHeader);
-
-    const response = await supertest(app).patch(`/api/v1/users/${userResponse.body.user.id}/restore`);
-
-    const { statusCode, body } = response;
-
-    expect(statusCode).toBe(STATUS_CODES.OK);
-
-    expect(body).toMatchObject({
-      message: success.USER_RESTORED_SUCCESSFULLY,
-      user: {
-        id: expect.any(String),
-        email: newUser.email,
-        username: newUser.username,
-      },
-    });
-
-    expect(body.user).not.toHaveProperty('password');
-    expect(body.user).not.toHaveProperty('confirmPassword');
-  });
 });

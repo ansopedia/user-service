@@ -8,6 +8,6 @@ router.post('/users', validateAccessToken, checkPermission(['create-users']), cr
 router.get('/users', getAllUsers);
 router.get('/users/:username', getUserByUsername);
 router.delete('/users/:userId', validateAccessToken, checkPermission(['delete-users']), softDeleteUser);
-router.patch('/users/:userId/restore', restoreUser);
+router.patch('/users/:userId/restore', validateAccessToken, checkPermission(['restore-users']), restoreUser);
 
 export { router as userRoutes };

@@ -89,3 +89,22 @@ export function expectDeleteUserSuccess(response: Response): void {
   expect(body.user).not.toHaveProperty('password');
   expect(body.user).not.toHaveProperty('confirmPassword');
 }
+
+export async function restoreUser(userId: string, authorizationHeader: string): Promise<Response> {
+  return supertest(app).patch(`/api/v1/users/${userId}/restore`).set('authorization', authorizationHeader);
+}
+
+export function expectRestoreUserSuccess(response: Response): void {
+  expect(response).toBeDefined();
+  const { statusCode, body } = response;
+
+  expect(statusCode).toBe(STATUS_CODES.OK);
+
+  expect(body).toMatchObject({
+    message: success.USER_RESTORED_SUCCESSFULLY,
+    user: { id: expect.any(String) },
+  });
+
+  expect(body.user).not.toHaveProperty('password');
+  expect(body.user).not.toHaveProperty('confirmPassword');
+}
