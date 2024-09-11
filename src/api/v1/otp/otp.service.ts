@@ -22,7 +22,20 @@ export class OtpService {
 
       notificationService.sendEmail({
         to: user.email,
-        eventType: 'sendEmailVerificationOTP',
+        eventType: otpType,
+        payload: { otp },
+      });
+    }
+
+    if (otpType === 'sendForgetPasswordOTP') {
+      // TODO: If user try to forget password then logout him from all devices because of security reasons
+      // because after verifying OTP he will get a token (access token) that will allow him to access all the resources with that token that we sent to him as a response.
+      //
+      message = success.FORGET_PASSWORD_EMAIL_SENT;
+
+      notificationService.sendEmail({
+        to: user.email,
+        eventType: otpType,
         payload: { otp },
       });
     }
@@ -59,6 +72,11 @@ export class OtpService {
 
     if (otpType === 'sendEmailVerificationOTP') {
       await UserService.updateUser(user.id, { isEmailVerified: true });
+    }
+
+    if (otpType === 'sendForgetPasswordOTP') {
+      // TODO: Generate new password reset token
+      await UserService.updateUser(user.id, { password: otp });
     }
 
     await OtpDAL.deleteOtp(otpData.id);

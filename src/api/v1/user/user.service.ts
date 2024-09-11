@@ -81,7 +81,7 @@ export class UserService {
   }
 
   static async getUserByEmail(email: Email): Promise<GetUser> {
-    const validEmail = validateEmail.parse(email);
+    const validEmail = validateEmail(email);
 
     const user = await UserDAL.getUserByEmail(validEmail);
 

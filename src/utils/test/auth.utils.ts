@@ -96,3 +96,16 @@ export const verifyAccount = async (user: CreateUser) => {
 
   expectOTPVerificationSuccess(verifyResponse);
 };
+
+export async function forgetPassword(email: string): Promise<Response> {
+  return supertest(app).post('/api/v1/auth/forget-password').send({ email });
+}
+
+export function expectForgetPasswordSuccess(response: Response): void {
+  expect(response).toBeDefined();
+  const { statusCode, body } = response;
+
+  expect(statusCode).toBe(STATUS_CODES.OK);
+
+  expect(body).toMatchObject({ message: success.FORGET_PASSWORD_EMAIL_SENT });
+}

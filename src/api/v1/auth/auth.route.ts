@@ -9,6 +9,7 @@ router.post('/auth/login', AuthController.signInWithEmailOrUsernameAndPassword);
 router.post('/auth/logout', validateAccessToken, AuthController.logout);
 router.post('/auth/renew-token', validateRefreshToken, AuthController.renewToken);
 router.post('/auth/verify-token', validateAccessToken, AuthController.verifyToken);
+router.post('/auth/forget-password', AuthController.forgetPassword);
 
 router.get('/auth/google', signInWithGoogle);
 router.get('/auth/google/callback', signInWithGoogleCallback, AuthController.signInWithGoogleCallback);

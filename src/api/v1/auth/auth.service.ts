@@ -2,7 +2,7 @@ import { ErrorTypeEnum } from '@/constants';
 import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from '@/utils';
 import { UserDAL } from '@/api/v1/user/user.dal';
 import { UserService } from '@/api/v1/user/user.service';
-import { CreateUser } from '@/api/v1/user/user.validation';
+import { CreateUser, Email, validateEmail } from '@/api/v1/user/user.validation';
 import { AuthDAL } from './auth.dal';
 import { loginSchema, Login, AuthToken, Auth } from './auth.validation';
 import { OtpService } from '@/api/v1/otp/otp.service';
@@ -79,6 +79,12 @@ export class AuthService {
     if (!user) throw new Error(ErrorTypeEnum.enum.UNAUTHORIZED);
 
     return user;
+  }
+
+  public static async forgetPassword(email: Email) {
+    validateEmail(email);
+
+    await OtpService.sendOtp({ email, otpType: 'sendForgetPasswordOTP' });
   }
 
   static async generateAccessAndRefreshToken(userId: string) {

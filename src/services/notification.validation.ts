@@ -4,7 +4,7 @@ import { z } from 'zod';
 //   'sendEmailVerificationOTP',
 //   'sendEmailVerificationMagicLink',
 //   'sendEmailChangeConfirmation',
-//   'sendPasswordResetOTP',
+//   'sendForgetPasswordOTP',
 //   'sendAccountActivationEmail',
 //   'sendWelcomeEmail',
 //   'sendTwoFactorAuthCode',
@@ -68,7 +68,7 @@ const emailNotification = z.discriminatedUnion('eventType', [
   }),
   z.object({
     to: emailValidator,
-    eventType: z.literal('sendPasswordResetOTP'),
+    eventType: z.literal('sendForgetPasswordOTP'),
     subject: z.string().optional(),
     payload: passwordResetOTPPayload,
   }),

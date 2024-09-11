@@ -7,4 +7,5 @@ export const success = {
   OTP_SENT: 'OTP sent',
   OTP_VERIFIED: 'OTP verified',
   TOKEN_VERIFIED: 'Access token is verified',
+  FORGET_PASSWORD_EMAIL_SENT: 'Forget password email sent',
 };

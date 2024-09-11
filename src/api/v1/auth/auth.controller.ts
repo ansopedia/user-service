@@ -108,4 +108,18 @@ export class AuthController {
       next(error);
     }
   }
+
+  public static async forgetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      await AuthService.forgetPassword(req.body.email);
+
+      sendResponse({
+        response: res,
+        message: success.FORGET_PASSWORD_EMAIL_SENT,
+        statusCode: STATUS_CODES.OK,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
