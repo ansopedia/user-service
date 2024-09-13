@@ -13,9 +13,6 @@ router.post('/auth/forget-password', AuthController.forgetPassword);
 
 router.get('/auth/google', signInWithGoogle);
 router.get('/auth/google/callback', signInWithGoogleCallback, AuthController.signInWithGoogleCallback);
-
-// router.post('/auth/send-reset-password-email', AuthController.sendResetPasswordEmail);
-// router.post('/auth/reset-password', AuthController.resetPassword);
-// router.post('/auth/verify-email', AuthController.verifyEmail);
+router.post('/auth/reset-password', AuthController.resetPassword);
 
 export { router as authRoutes };

@@ -8,4 +8,5 @@ export const success = {
   OTP_VERIFIED: 'OTP verified',
   TOKEN_VERIFIED: 'Access token is verified',
   FORGET_PASSWORD_EMAIL_SENT: 'Forget password email sent',
+  PASSWORD_RESET_SUCCESSFULLY: 'Password reset successfully',
 };

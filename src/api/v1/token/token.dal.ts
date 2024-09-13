@@ -2,15 +2,16 @@ import { TokenModel } from './token.model';
 import { CreateToken, Token } from './token.validation';
 
 interface ITokenDal {
-  createToken(payload: Token): Promise<CreateToken>;
+  saveToken(payload: Token): Promise<CreateToken>;
   getToken(token: string): Promise<Token | null>;
   getTokensByUserId(userId: string): Promise<Token[] | null>;
   updateToken(tokenId: string, payload: Token): Promise<Token | null>;
   deleteToken(tokenId: string): Promise<Token | null>;
+  replaceTokenForUser(createTokenSchema: CreateToken): Promise<Token | null>;
 }
 
 export class TokenDAL implements ITokenDal {
-  async createToken(payload: CreateToken): Promise<Token> {
+  async saveToken(payload: CreateToken): Promise<Token> {
     return await TokenModel.create(payload);
   }
 
@@ -28,6 +29,14 @@ export class TokenDAL implements ITokenDal {
 
   async deleteToken(tokenId: string): Promise<Token | null> {
     return await TokenModel.findByIdAndDelete(tokenId);
+  }
+
+  async replaceTokenForUser(tokenSchema: CreateToken): Promise<Token | null> {
+    return await TokenModel.findOneAndUpdate(
+      { userId: tokenSchema.userId, action: tokenSchema.action },
+      { ...tokenSchema, $inc: { requestAttempts: 1 } },
+      { upsert: true, new: true },
+    );
   }
 }
 

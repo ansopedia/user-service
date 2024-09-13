@@ -33,7 +33,7 @@ export const generateTokenForAction = (payload: JwtActionToken) => {
   return jwt.sign(validPayload, JWT_TOKEN_FOR_ACTION_SECRET, { expiresIn: '5m' });
 };
 
-export const verifyToken = async <T>(token: string, tokenType: 'access' | 'refresh' | 'action'): Promise<T> => {
+export const verifyJWTToken = async <T>(token: string, tokenType: 'access' | 'refresh' | 'action'): Promise<T> => {
   try {
     const secret = tokenSecrets[tokenType];
 

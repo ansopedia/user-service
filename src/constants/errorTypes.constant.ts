@@ -32,6 +32,7 @@ const errorType = [
   'OTP_EXPIRED',
   'INITIAL_SETUP_FAILED',
   'NOT_ENOUGH_PERMISSION',
+  'TOO_MANY_REQUESTS',
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -170,6 +171,10 @@ export const errorMap = {
       code: 'not_enough_permission',
       message: 'User does not have enough permission to perform this action',
     },
+  },
+  [ErrorTypeEnum.enum.TOO_MANY_REQUESTS]: {
+    httpStatusCode: STATUS_CODES.TOO_MANY_REQUESTS,
+    body: { code: 'too_many_requests', message: 'Too many requests' },
   },
 };
 

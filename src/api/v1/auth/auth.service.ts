@@ -2,11 +2,19 @@ import { ErrorTypeEnum } from '@/constants';
 import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from '@/utils';
 import { UserDAL } from '@/api/v1/user/user.dal';
 import { UserService } from '@/api/v1/user/user.service';
-import { CreateUser, Email, validateEmail } from '@/api/v1/user/user.validation';
+import {
+  CreateUser,
+  Email,
+  ResetPassword,
+  validateEmail,
+  validateResetPasswordSchema,
+} from '@/api/v1/user/user.validation';
 import { AuthDAL } from './auth.dal';
 import { loginSchema, Login, AuthToken, Auth } from './auth.validation';
 import { OtpService } from '@/api/v1/otp/otp.service';
 import { GoogleUser } from '@/types/passport-google';
+import { TokenAction, TokenService } from '@/api/v1/token';
+import { notificationService } from '@/services';
 
 export class AuthService {
   public static async signUp(userData: CreateUser) {
@@ -83,8 +91,20 @@ export class AuthService {
 
   public static async forgetPassword(email: Email) {
     validateEmail(email);
-
     await OtpService.sendOtp({ email, otpType: 'sendForgetPasswordOTP' });
+  }
+
+  public static async resetPassword(resetPassword: ResetPassword) {
+    const { password, token } = validateResetPasswordSchema(resetPassword);
+
+    const { userId } = await new TokenService().verifyActionToken(token, TokenAction.resetPassword);
+
+    const user = await UserService.updateUser(userId, { password });
+
+    notificationService.sendEmail({
+      to: user.email,
+      eventType: 'sendPasswordChangeConfirmation',
+    });
   }
 
   static async generateAccessAndRefreshToken(userId: string) {
