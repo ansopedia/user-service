@@ -3,12 +3,20 @@ import { envConstants, ErrorTypeEnum } from '@/constants';
 import {
   JwtAccessToken,
   jwtAccessTokenSchema,
+  JwtActionToken,
+  jwtActionTokenSchema,
   JwtRefreshToken,
   jwtRefreshTokenSchema,
 } from '@/api/v1/auth/auth.validation';
 import { AuthDAL } from '@/api/v1/auth/auth.dal';
 
-const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } = envConstants;
+const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, JWT_TOKEN_FOR_ACTION_SECRET } = envConstants;
+
+export const tokenSecrets = {
+  access: JWT_ACCESS_SECRET,
+  refresh: JWT_REFRESH_SECRET,
+  action: JWT_TOKEN_FOR_ACTION_SECRET,
+};
 
 export const generateAccessToken = (payload: JwtAccessToken) => {
   const validPayload = jwtAccessTokenSchema.parse(payload);
@@ -20,10 +28,24 @@ export const generateRefreshToken = (payload: JwtRefreshToken) => {
   return jwt.sign(validPayload, JWT_REFRESH_SECRET, { expiresIn: '7d' });
 };
 
-export const verifyToken = async <T>(token: string, tokenType: 'access' | 'refresh'): Promise<T> => {
-  try {
-    const verifiedToken = jwt.verify(token, tokenType === 'access' ? JWT_ACCESS_SECRET : JWT_REFRESH_SECRET);
+export const generateTokenForAction = (payload: JwtActionToken) => {
+  const validPayload = jwtActionTokenSchema.parse(payload);
+  return jwt.sign(validPayload, JWT_TOKEN_FOR_ACTION_SECRET, { expiresIn: '5m' });
+};
 
+export const verifyToken = async <T>(token: string, tokenType: 'access' | 'refresh' | 'action'): Promise<T> => {
+  try {
+    const secret = tokenSecrets[tokenType];
+
+    if (!secret) {
+      throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
+    }
+
+    const verifiedToken = jwt.verify(token, secret);
+
+    // TODO: move fetch token details to AuthService
+    // Security: Invalidate the refresh token after it's used to obtain a new access token,
+    // to prevent token reuse attacks and ensure that only the intended user can access the system.
     if (tokenType === 'refresh') {
       const storedToken = await AuthDAL.getAuthByRefreshToken(token);
       if (!storedToken) {

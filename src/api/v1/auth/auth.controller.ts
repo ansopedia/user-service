@@ -53,6 +53,8 @@ export class AuthController {
       const { accessToken, refreshToken } = await AuthService.signInWithGoogle(googleUser);
 
       AuthController.setTokenCookies(res, accessToken, refreshToken);
+
+      // TODO: used action token instead of access token
       res.cookie('access-token', accessToken, {
         httpOnly: false,
         secure: true,

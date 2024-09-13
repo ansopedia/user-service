@@ -22,6 +22,7 @@ const errorType = [
   'INVALID_ACCESS',
   'TOKEN_EXPIRED',
   'INVALID_TOKEN',
+  'INVALID_TOKEN_TYPE',
   'ORIGIN_IS_UNDEFINED',
   'ORIGIN_NOT_ALLOWED',
   'EMAIL_ALREADY_VERIFIED',
@@ -115,6 +116,10 @@ export const errorMap = {
   [ErrorTypeEnum.enum.INVALID_TOKEN]: {
     httpStatusCode: STATUS_CODES.UNAUTHORIZED,
     body: { code: 'invalid_token', message: 'Invalid token' },
+  },
+  [ErrorTypeEnum.enum.INVALID_TOKEN_TYPE]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: { code: 'invalid_token_type', message: 'Invalid token type' },
   },
   [ErrorTypeEnum.enum.ORIGIN_IS_UNDEFINED]: {
     httpStatusCode: STATUS_CODES.BAD_REQUEST,

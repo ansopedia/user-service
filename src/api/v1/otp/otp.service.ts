@@ -1,3 +1,5 @@
+import { isPast } from 'date-fns';
+
 import { envConstants, ErrorTypeEnum, FIVE_MINUTES_IN_MS } from '@/constants';
 import { generateOTP, verifyOTP } from '@/utils';
 import { success } from '@/api/v1/auth/auth.constant';
@@ -5,6 +7,8 @@ import { UserService } from '@/api/v1/user/user.service';
 import { OtpDAL } from './otp.dal';
 import { OtpEvent, otpEvent, OtpVerifyEvent, otpVerifyEvent } from './otp.validation';
 import { notificationService } from '@/services/notification.services';
+import { TokenService } from '../token/token.service';
+import { TokenAction } from '../token/token.validation';
 
 export class OtpService {
   public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string }> {
@@ -50,12 +54,12 @@ export class OtpService {
     return { message };
   }
 
-  public static async verifyOtp(otpEvents: OtpVerifyEvent): Promise<{ message: string }> {
+  public static async verifyOtp(otpEvents: OtpVerifyEvent): Promise<{ message: string; token?: string }> {
     const { otp, email, otpType } = otpVerifyEvent.parse(otpEvents);
+    let token;
+    const isMasterOTP = envConstants.MASTER_OTP === otp;
 
     const user = await UserService.getUserByEmail(email as string);
-
-    const isMasterOTP = envConstants.MASTER_OTP === otp;
 
     const otpData = await OtpDAL.getOtp({
       userId: user.id,
@@ -68,19 +72,18 @@ export class OtpService {
 
     if (!verifyOTP(otpToVerify, otp as string)) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
 
-    if (otpData.expiryTime < new Date()) throw new Error(ErrorTypeEnum.enum.OTP_EXPIRED);
+    if (isPast(otpData.expiryTime)) throw new Error(ErrorTypeEnum.enum.OTP_EXPIRED);
 
     if (otpType === 'sendEmailVerificationOTP') {
       await UserService.updateUser(user.id, { isEmailVerified: true });
     }
 
     if (otpType === 'sendForgetPasswordOTP') {
-      // TODO: Generate new password reset token
-      await UserService.updateUser(user.id, { password: otp });
+      token = await new TokenService().createActionToken(user.id, TokenAction.resetPassword);
     }
 
     await OtpDAL.deleteOtp(otpData.id);
 
-    return { message: success.OTP_VERIFIED };
+    return { message: success.OTP_VERIFIED, token };
   }
 }

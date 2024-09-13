@@ -38,3 +38,18 @@
 
 - Define the default permissions for `admin` since super-admin have all the permission and we can't give all permission to admin. (e.g. super-admin is like a president and admin is like a PM)
 - Find a mechanism to allow user to switch their role. (Low priority).
+
+## Forget Password Schema
+
+- Handle Rate Limiting for Token Generation and Use
+- Handle Token Expiry and Auto-cleanup in Token Schema
+
+## Secure OTP
+
+- Add OTP Lock and Attempts Fields to User Schema
+- Reset OTP Attempts After Successful Verification
+- Log Failed OTP Attempts for Security Monitoring
+- Temporarily Lock User After Exceeding OTP Attempts
+- Unlock User Account Manually via Admin Control
+- Handle OTP Abuse by Tracking Failed Attempts
+- Implement OTP Cool down to Limit Requests per User

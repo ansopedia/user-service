@@ -11,6 +11,7 @@ const envSchema = z.object({
   NODE_ENV: z.string().min(1, 'NODE_ENV is required').readonly(),
   JWT_ACCESS_SECRET: z.string().min(1, 'JWT_ACCESS_SECRET is required').readonly(),
   JWT_REFRESH_SECRET: z.string().min(1, 'JWT_REFRESH_SECRET is required').readonly(),
+  JWT_TOKEN_FOR_ACTION_SECRET: z.string().min(1, 'JWT_TOKEN_FOR_ACTION_SECRET is required').readonly(),
   MASTER_OTP: z.string().min(1, 'MASTER_OTP is required').readonly(),
   INITIAL_SETUP_DONE: z
     .string()
