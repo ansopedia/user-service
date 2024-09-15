@@ -81,9 +81,9 @@ export class UserService {
   }
 
   static async getUserByEmail(email: Email): Promise<GetUser> {
-    const validEmail = validateEmail(email);
+    validateEmail(email);
 
-    const user = await UserDAL.getUserByEmail(validEmail);
+    const user = await UserDAL.getUserByEmail(email);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
@@ -111,13 +111,9 @@ export class UserService {
   }
 
   static async updateUser(userId: string, userData: UpdateUser): Promise<GetUser> {
-    const validateData = validateObjectId(userId);
+    validateObjectId(userId);
 
-    const user = await UserDAL.getUserById(validateData);
-
-    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
-
-    const updatedUser = await UserDAL.updateUser(validateData, userData);
+    const updatedUser = await UserDAL.updateUser(userId, userData);
 
     if (!updatedUser) throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
 

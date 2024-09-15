@@ -32,9 +32,9 @@ const TokenSchema: Schema<Token> = new Schema(
     requestAttempts: {
       type: Number,
       default: 0,
-    }, // Track how many times the user has requested a token
+    },
     metadata: {
-      type: Object, // Optional, for additional data like IP address, user agent, etc.
+      type: Object,
     },
   },
   { timestamps: true },

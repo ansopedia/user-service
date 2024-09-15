@@ -44,31 +44,8 @@ export class TokenService {
       throw new Error(ErrorTypeEnum.enum.TOKEN_EXPIRED);
     }
 
+    await this.tokenDAL.updateToken(storedToken.id, { isUsed: true });
+
     return verifiedToken;
   }
-
-  async markTokenAsUsed(token: string) {
-    const storedToken = await this.tokenDAL.getToken(token);
-
-    if (!storedToken) {
-      throw new Error(ErrorTypeEnum.enum.INVALID_ACCESS);
-    }
-
-    storedToken.isUsed = true;
-    await this.tokenDAL.updateToken(storedToken.id as string, storedToken);
-  }
-
-  // Method to handle rate-limiting and request attempts
-  // async handleRateLimiting(userId: string, tokenType: Token['tokenType']) {
-  //   const tokens = await this.tokenDAL.getTokensByUserId(userId);
-
-  //   const relevantTokens = tokens?.filter((token) => token.tokenType === tokenType);
-
-  //   if (relevantTokens?.length && relevantTokens.length > 5) {
-  //     // For example, max 5 attempts
-  //     throw new Error(ErrorTypeEnum.enum.RATE_LIMIT_EXCEEDED);
-  //   }
-
-  //   // You can also set a specific timeframe for the token requests (e.g., 5 tokens in 1 hour)
-  // }
 }

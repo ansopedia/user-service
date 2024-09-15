@@ -1,5 +1,5 @@
 import { TokenModel } from './token.model';
-import { CreateToken, Token } from './token.validation';
+import { CreateToken, Token, UpdateToken } from './token.validation';
 
 interface ITokenDal {
   saveToken(payload: Token): Promise<CreateToken>;
@@ -23,7 +23,7 @@ export class TokenDAL implements ITokenDal {
     return await TokenModel.find({ userId });
   }
 
-  async updateToken(tokenId: string, payload: Token): Promise<Token | null> {
+  async updateToken(tokenId: string, payload: UpdateToken): Promise<Token | null> {
     return await TokenModel.findByIdAndUpdate(tokenId, payload, { new: true });
   }
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { objectIdSchema } from '../../../utils';
+import { objectIdSchema } from '@/utils';
 
 export enum TokenAction {
   'resetPassword' = 'resetPassword',
@@ -25,9 +25,16 @@ export const createTokenSchema = tokenSchema.pick({
   expiryTime: true,
 });
 
+export const updateTokenSchema = tokenSchema
+  .pick({ isUsed: true, requestAttempts: true })
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'At least one field is required for token update',
+  });
+
 export type Token = z.infer<typeof tokenSchema>;
 export type CreateToken = z.infer<typeof createTokenSchema>;
-export type getToken = z.infer<typeof tokenSchema>;
-export type updateToken = z.infer<typeof tokenSchema>;
-export type deleteToken = z.infer<typeof tokenSchema>;
-export type getTokens = z.infer<typeof tokenSchema>;
+export type GetToken = z.infer<typeof tokenSchema>;
+export type UpdateToken = z.infer<typeof updateTokenSchema>;
+export type DeleteToken = z.infer<typeof tokenSchema>;
+export type GetTokens = z.infer<typeof tokenSchema>;
