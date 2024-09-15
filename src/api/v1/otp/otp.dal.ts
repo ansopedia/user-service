@@ -7,8 +7,8 @@ export class OtpDAL {
     return await newOtp.save();
   }
 
-  static async getOtp(otpSchema: GetOtp): Promise<OtpSchema | null> {
-    return await OtpModel.findOne(otpSchema);
+  static async getOtpDetailsByUserId(otpSchema: GetOtp): Promise<OtpSchema[] | null> {
+    return await OtpModel.find(otpSchema);
   }
 
   static async deleteOtp(otpId: string) {

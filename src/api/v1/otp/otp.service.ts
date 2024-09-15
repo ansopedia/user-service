@@ -5,7 +5,7 @@ import { generateOTP, verifyOTP } from '@/utils';
 import { success } from '@/api/v1/auth/auth.constant';
 import { UserService } from '@/api/v1/user/user.service';
 import { OtpDAL } from './otp.dal';
-import { OtpEvent, otpEvent, OtpVerifyEvent, otpVerifyEvent } from './otp.validation';
+import { GetOtp, OtpEvent, otpEvent, OtpSchema, OtpVerifyEvent, otpVerifyEvent } from './otp.validation';
 import { notificationService } from '@/services/notification.services';
 import { TokenService } from '../token/token.service';
 import { TokenAction } from '../token/token.validation';
@@ -61,10 +61,12 @@ export class OtpService {
 
     const user = await UserService.getUserByEmail(email as string);
 
-    const otpData = await OtpDAL.getOtp({
+    const otpDetails = await OtpService.getOtpDetailsByUserId({
       userId: user.id,
       otpType,
     });
+
+    const otpData = otpDetails.find((data) => data.otpType === otpType);
 
     if (!otpData) throw new Error(ErrorTypeEnum.enum.OTP_NOT_REQUESTED);
 
@@ -85,5 +87,13 @@ export class OtpService {
     await OtpDAL.deleteOtp(otpData.id);
 
     return { message: success.OTP_VERIFIED, token };
+  }
+
+  public static async getOtpDetailsByUserId(getOtpDetails: GetOtp): Promise<OtpSchema[]> {
+    const otpDetails = await OtpDAL.getOtpDetailsByUserId(getOtpDetails);
+
+    if (!otpDetails) throw new Error(ErrorTypeEnum.enum.OTP_NOT_REQUESTED);
+
+    return otpDetails;
   }
 }

@@ -2,8 +2,8 @@ import supertest, { Response } from 'supertest';
 import { app } from '@/app';
 import { STATUS_CODES } from '@/constants';
 import { success } from '@/api/v1/auth/auth.constant';
-import { OtpDAL } from '@/api/v1/otp/otp.dal';
-import { OTP, OtpSchema } from '@/api/v1/otp/otp.validation';
+import { OtpSchema, OtpType } from '@/api/v1/otp/otp.validation';
+import { OtpService } from '../../api/v1/otp/otp.service';
 
 export async function requestOTP(email: string): Promise<Response> {
   return supertest(app).post('/api/v1/otp').send({
@@ -17,16 +17,15 @@ export function expectOTPRequestSuccess(response: Response): void {
   expect(response.body.message).toBe(success.VERIFICATION_EMAIL_SENT);
 }
 
-export async function retrieveOTP(userId: string): Promise<OtpSchema | null> {
-  return OtpDAL.getOtp({
-    userId: userId,
-    otpType: 'sendEmailVerificationOTP',
-  });
+export async function retrieveOTP(userId: string, otpType: OtpType): Promise<OtpSchema> {
+  const otpDetails = await OtpService.getOtpDetailsByUserId({ userId, otpType });
+  const otpData = otpDetails.find((data) => data.otpType === otpType);
+  return otpData as OtpSchema;
 }
 
-export async function verifyOTP(otp: OTP | undefined, email: string): Promise<Response> {
+export async function verifyOTP({ otp, otpType }: OtpSchema, email: string): Promise<Response> {
   return supertest(app).post('/api/v1/otp/verify').send({
-    otpType: 'sendEmailVerificationOTP',
+    otpType,
     email,
     otp,
   });

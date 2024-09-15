@@ -1,11 +1,11 @@
 import supertest, { Response } from 'supertest';
 import { app } from '@/app';
 import { Login } from '@/api/v1/auth/auth.validation';
-import { STATUS_CODES } from '@/constants';
+import { errorMap, ErrorTypeEnum, STATUS_CODES } from '@/constants';
 import { success } from '@/api/v1/auth/auth.constant';
 import { expectOTPRequestSuccess, expectOTPVerificationSuccess, requestOTP, retrieveOTP, verifyOTP } from './otp.utils';
 import { expectFindUserByUsernameSuccess, findUserByUsername } from './user.utils';
-import { CreateUser } from '../../api/v1/user/user.validation';
+import { CreateUser, ResetPassword } from '../../api/v1/user/user.validation';
 
 export async function login(loginData: Login): Promise<Response> {
   return supertest(app).post('/api/v1/auth/login').send(loginData);
@@ -28,6 +28,14 @@ export function expectLoginSuccess(response: Response): void {
     status: 'success',
   });
 }
+
+export const expectLoginFailed = (response: Response) => {
+  const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_CREDENTIALS];
+
+  expect(response.statusCode).toBe(errorObject.httpStatusCode);
+  expect(response.body.message).toBe(errorObject.body.message);
+  expect(response.body.code).toBe(errorObject.body.code);
+};
 
 export async function signUp(signUpData: {
   email: string;
@@ -89,11 +97,10 @@ export const verifyAccount = async (user: CreateUser) => {
   expectFindUserByUsernameSuccess(userResponse, user);
 
   // Step 2: Retrieve OTP from database
-  const otpData = await retrieveOTP(userResponse.body.user.id);
+  const otpData = await retrieveOTP(userResponse.body.user.id, 'sendEmailVerificationOTP');
 
   // Step 3: Verify OTP
-  const verifyResponse = await verifyOTP(otpData?.otp, email);
-
+  const verifyResponse = await verifyOTP(otpData, email);
   expectOTPVerificationSuccess(verifyResponse);
 };
 
@@ -106,6 +113,17 @@ export function expectForgetPasswordSuccess(response: Response): void {
   const { statusCode, body } = response;
 
   expect(statusCode).toBe(STATUS_CODES.OK);
-
   expect(body).toMatchObject({ message: success.FORGET_PASSWORD_EMAIL_SENT });
+}
+
+export async function resetPassword(resetPassword: ResetPassword): Promise<Response> {
+  return supertest(app).post(`/api/v1/auth/reset-password`).send(resetPassword);
+}
+
+export function expectResetPasswordSuccess(response: Response): void {
+  expect(response).toBeDefined();
+  const { statusCode, body } = response;
+
+  expect(statusCode).toBe(STATUS_CODES.OK);
+  expect(body).toMatchObject({ message: success.PASSWORD_RESET_SUCCESSFULLY });
 }
