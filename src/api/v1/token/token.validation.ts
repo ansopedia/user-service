@@ -23,6 +23,7 @@ export const createTokenSchema = tokenSchema.pick({
   action: true,
   token: true,
   expiryTime: true,
+  isUsed: true,
 });
 
 export const updateTokenSchema = tokenSchema

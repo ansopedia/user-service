@@ -18,6 +18,7 @@ export class TokenService {
       userId,
       action,
       token,
+      isUsed: false,
       expiryTime: new Date(Date.now() + FIVE_MINUTES_IN_MS),
     };
 
