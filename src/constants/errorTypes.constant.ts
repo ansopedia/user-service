@@ -22,6 +22,7 @@ const errorType = [
   'INVALID_ACCESS',
   'TOKEN_EXPIRED',
   'INVALID_TOKEN',
+  'INVALID_TOKEN_TYPE',
   'ORIGIN_IS_UNDEFINED',
   'ORIGIN_NOT_ALLOWED',
   'EMAIL_ALREADY_VERIFIED',
@@ -31,6 +32,7 @@ const errorType = [
   'OTP_EXPIRED',
   'INITIAL_SETUP_FAILED',
   'NOT_ENOUGH_PERMISSION',
+  'TOO_MANY_REQUESTS',
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -116,6 +118,10 @@ export const errorMap = {
     httpStatusCode: STATUS_CODES.UNAUTHORIZED,
     body: { code: 'invalid_token', message: 'Invalid token' },
   },
+  [ErrorTypeEnum.enum.INVALID_TOKEN_TYPE]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: { code: 'invalid_token_type', message: 'Invalid token type' },
+  },
   [ErrorTypeEnum.enum.ORIGIN_IS_UNDEFINED]: {
     httpStatusCode: STATUS_CODES.BAD_REQUEST,
     body: { code: 'origin_is_undefined', message: 'Origin is undefined' },
@@ -165,6 +171,10 @@ export const errorMap = {
       code: 'not_enough_permission',
       message: 'User does not have enough permission to perform this action',
     },
+  },
+  [ErrorTypeEnum.enum.TOO_MANY_REQUESTS]: {
+    httpStatusCode: STATUS_CODES.TOO_MANY_REQUESTS,
+    body: { code: 'too_many_requests', message: 'Too many requests' },
   },
 };
 

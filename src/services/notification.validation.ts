@@ -4,7 +4,7 @@ import { z } from 'zod';
 //   'sendEmailVerificationOTP',
 //   'sendEmailVerificationMagicLink',
 //   'sendEmailChangeConfirmation',
-//   'sendPasswordResetOTP',
+//   'sendForgetPasswordOTP',
 //   'sendAccountActivationEmail',
 //   'sendWelcomeEmail',
 //   'sendTwoFactorAuthCode',
@@ -34,14 +34,6 @@ const emailVerificationOTPPayload = z.object({
   otp: otpValidator,
 });
 
-const emailVerificationMagicLinkPayload = z.object({
-  magicLink: z.string().url(),
-});
-
-const emailChangeConfirmationPayload = z.object({
-  newEmail: emailValidator,
-});
-
 const passwordResetOTPPayload = z.object({
   otp: otpValidator,
 });
@@ -56,21 +48,14 @@ const emailNotification = z.discriminatedUnion('eventType', [
   }),
   z.object({
     to: emailValidator,
-    eventType: z.literal('sendEmailVerificationMagicLink'),
-    subject: z.string().optional(),
-    payload: emailVerificationMagicLinkPayload,
-  }),
-  z.object({
-    to: emailValidator,
-    eventType: z.literal('sendEmailChangeConfirmation'),
-    subject: z.string().optional(),
-    payload: emailChangeConfirmationPayload,
-  }),
-  z.object({
-    to: emailValidator,
-    eventType: z.literal('sendPasswordResetOTP'),
+    eventType: z.literal('sendForgetPasswordOTP'),
     subject: z.string().optional(),
     payload: passwordResetOTPPayload,
+  }),
+  z.object({
+    to: emailValidator,
+    eventType: z.literal('sendPasswordChangeConfirmation'),
+    subject: z.string().optional(),
   }),
   // ... Add other event types and their corresponding payloads ...
 ]);

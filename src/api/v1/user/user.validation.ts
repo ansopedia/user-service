@@ -64,10 +64,16 @@ const createUserWithEmailAndPasswordSchema = userSchema
 const createUserSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
 
 export const validateUsername = userSchema.pick({ username: true });
-export const validateEmail = z
-  .string()
-  .email()
+
+export const validEmail = z
+  .string({ message: 'Email is required' })
+  .min(1, { message: 'Email is required' })
+  .email({ message: 'Invalid email format' })
   .transform((val) => val.toLowerCase().trim());
+
+export const validateEmail = (email: string): string => {
+  return validEmail.parse(email);
+};
 
 export const updateUserSchema = userSchema
   .partial() // Make all keys optional
@@ -81,15 +87,29 @@ export const updateUserSchema = userSchema
   });
 
 export const getUserSchema = userSchema.omit({ password: true, confirmPassword: true, isDeleted: true });
+export const resetPasswordSchema = userSchema
+  .pick({ password: true, confirmPassword: true })
+  .extend({
+    token: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Confirm password does not match password',
+    path: ['confirmPassword'],
+  });
 
 export type User = z.infer<typeof userSchema>;
 export type CreateUser = z.infer<typeof createUserSchema>;
 export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type GetUser = z.infer<typeof getUserSchema>;
-export type Email = z.infer<typeof validateEmail>;
+export type Email = z.infer<typeof validEmail>;
+export type ResetPassword = z.infer<typeof resetPasswordSchema>;
 
 export const validateCreateUser = (data: CreateUser) => {
   createUserSchema.parse(data);
+};
+
+export const validateResetPasswordSchema = (data: ResetPassword): { password: string; token: string } => {
+  return resetPasswordSchema.parse(data);
 };
 
 export interface UserRolePermission {

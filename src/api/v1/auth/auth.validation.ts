@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { userSchema } from '../user/user.validation';
 import { otp } from '../otp/otp.validation';
+import { tokenSchema } from '../token/token.validation';
 
 const AuthSchema = z.object({
   userId: z.string().regex(/^[a-f\d]{24}$/i, 'Invalid id'),
@@ -19,6 +20,11 @@ export const jwtAccessTokenSchema = z.object({
 
 export const jwtRefreshTokenSchema = z.object({
   id: z.string(),
+});
+
+export const jwtActionTokenSchema = z.object({
+  userId: z.string(),
+  action: tokenSchema.shape.action,
 });
 
 export const sendOtpSchema = z.object({
@@ -53,6 +59,7 @@ export const eventTypes = z.enum(['sendEmailVerificationOTP', 'verifyPhoneNumber
 
 export type JwtAccessToken = z.infer<typeof jwtAccessTokenSchema>;
 export type JwtRefreshToken = z.infer<typeof jwtRefreshTokenSchema>;
+export type JwtActionToken = z.infer<typeof jwtActionTokenSchema>;
 export type Login = z.infer<typeof loginSchema>;
 export type Auth = z.infer<typeof authenticateSchema>;
 export type AuthToken = z.infer<typeof authToken>;

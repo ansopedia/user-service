@@ -53,6 +53,8 @@ export class AuthController {
       const { accessToken, refreshToken } = await AuthService.signInWithGoogle(googleUser);
 
       AuthController.setTokenCookies(res, accessToken, refreshToken);
+
+      // TODO: used action token instead of access token
       res.cookie('access-token', accessToken, {
         httpOnly: false,
         secure: true,
@@ -102,6 +104,32 @@ export class AuthController {
       sendResponse({
         response: res,
         message: success.TOKEN_RENEWED_SUCCESSFULLY,
+        statusCode: STATUS_CODES.OK,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async forgetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      await AuthService.forgetPassword(req.body.email);
+      sendResponse({
+        response: res,
+        message: success.FORGET_PASSWORD_EMAIL_SENT,
+        statusCode: STATUS_CODES.OK,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async resetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      await AuthService.resetPassword(req.body);
+      sendResponse({
+        response: res,
+        message: success.PASSWORD_RESET_SUCCESSFULLY,
         statusCode: STATUS_CODES.OK,
       });
     } catch (error) {

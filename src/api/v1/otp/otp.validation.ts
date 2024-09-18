@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { userSchema, validateEmail } from '@/api/v1/user/user.validation';
 
-const otpType = z.enum(['sendEmailVerificationOTP', 'verifyPhoneNumber', 'resetPassword', 'forgetPassword']);
+const otpType = z.enum(['sendEmailVerificationOTP', 'verifyPhoneNumber', 'sendForgetPasswordOTP']);
 export const otp = z.string().length(6);
 
 const baseSchema = z.object({
@@ -13,9 +13,9 @@ const baseSchema = z.object({
 type BaseSchema = z.infer<typeof baseSchema>;
 
 const validateOtpEvent = (data: BaseSchema) => {
-  if (['sendEmailVerificationOTP', 'resetPassword', 'forgetPassword'].includes(data.otpType)) {
+  if (['sendEmailVerificationOTP', 'sendForgetPasswordOTP'].includes(data.otpType)) {
     if (data.email !== undefined) {
-      return validateEmail.parse(data.email);
+      return validateEmail(data.email);
     } else {
       const error = new z.ZodError([]);
       error.addIssue({

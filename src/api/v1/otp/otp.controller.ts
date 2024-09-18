@@ -20,12 +20,22 @@ export class OtpController {
 
   public static async verifyOtp(req: Request, res: Response, next: NextFunction) {
     try {
-      const { message } = await OtpService.verifyOtp(req.body);
+      const { message, token } = await OtpService.verifyOtp(req.body);
+
+      if (token != null) {
+        res.cookie('action-token', token, {
+          httpOnly: false,
+          secure: true,
+          sameSite: 'strict',
+          maxAge: 60000, // 1 minute
+        });
+      }
 
       sendResponse({
         response: res,
         message: message,
         statusCode: STATUS_CODES.OK,
+        payload: { token },
       });
     } catch (error) {
       next(error);

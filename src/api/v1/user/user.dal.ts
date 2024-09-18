@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { UserModel } from './user.model';
 import { CreateUser, UpdateUser, User, UserRolePermission } from './user.validation';
 import { Login } from '../auth/auth.validation';
+import { hashPassword } from '../../../utils';
 
 export class UserDAL {
   static async createUser(userData: CreateUser): Promise<User> {
@@ -51,6 +52,9 @@ export class UserDAL {
   }
 
   static async updateUser(userId: string, userData: UpdateUser): Promise<User | null> {
+    if (userData.password !== null && userData.password !== undefined) {
+      userData.password = await hashPassword(userData.password);
+    }
     return await UserModel.findByIdAndUpdate(userId, userData, { new: true });
   }
 
