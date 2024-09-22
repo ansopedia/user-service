@@ -1,20 +1,22 @@
 import supertest from "supertest";
+
 import { app } from "@/app";
-import { success } from "../user.constant";
 import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
 import {
   createUser,
-  expectUserNotFoundError,
   expectFindUserByUsernameSuccess,
   expectLoginSuccess,
   expectUnauthorizedResponseForInvalidAuthorizationHeader,
   expectUnauthorizedResponseForMissingAuthorizationHeader,
   expectUnauthorizedResponseWhenUserHasInsufficientPermission,
   expectUserCreationSuccess,
+  expectUserNotFoundError,
   findUserByUsername,
   login,
   verifyAccount,
 } from "@/utils/test";
+
+import { success } from "../user.constant";
 
 const newUser = {
   username: "username",

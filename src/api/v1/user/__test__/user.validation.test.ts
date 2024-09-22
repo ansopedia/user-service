@@ -1,4 +1,4 @@
-import { username, password, validateCreateUser } from "../user.validation";
+import { password, username, validateCreateUser } from "../user.validation";
 
 describe("Username validation", () => {
   it("should accept valid usernames", () => {

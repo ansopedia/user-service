@@ -1,14 +1,15 @@
 import jwt from "jsonwebtoken";
-import { envConstants, ErrorTypeEnum } from "@/constants";
+
+import { AuthDAL } from "@/api/v1/auth/auth.dal";
 import {
   JwtAccessToken,
-  jwtAccessTokenSchema,
   JwtActionToken,
-  jwtActionTokenSchema,
   JwtRefreshToken,
+  jwtAccessTokenSchema,
+  jwtActionTokenSchema,
   jwtRefreshTokenSchema,
 } from "@/api/v1/auth/auth.validation";
-import { AuthDAL } from "@/api/v1/auth/auth.dal";
+import { ErrorTypeEnum, envConstants } from "@/constants";
 
 const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, JWT_TOKEN_FOR_ACTION_SECRET } = envConstants;
 

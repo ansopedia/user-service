@@ -1,6 +1,8 @@
 import { Schema, model } from "mongoose";
-import { UserRole } from "./user-role.validation";
+
 import { ErrorTypeEnum } from "@/constants";
+
+import { UserRole } from "./user-role.validation";
 
 const UserRoleSchema = new Schema(
   {

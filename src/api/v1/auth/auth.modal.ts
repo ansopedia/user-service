@@ -1,4 +1,5 @@
 import { Schema, Types, model } from "mongoose";
+
 import { Auth } from "./auth.validation";
 
 const AuthSchema = new Schema(

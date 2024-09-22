@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { OtpService } from "./otp.service";
-import { sendResponse } from "@/utils";
+
 import { STATUS_CODES } from "@/constants";
+import { sendResponse } from "@/utils";
+
+import { OtpService } from "./otp.service";
 
 export class OtpController {
   public static async sendOtp(req: Request, res: Response, next: NextFunction) {

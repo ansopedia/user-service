@@ -1,4 +1,5 @@
 import { Model, Schema, Types, model } from "mongoose";
+
 import { Permission, PermissionCategory } from "./permission.validation";
 
 const PermissionSchema: Schema<Permission> = new Schema<Permission>(

@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import { success } from "./auth.constant";
+
+import { STATUS_CODES, envConstants } from "@/constants";
+import { GoogleUser } from "@/types/passport-google";
 import { sendResponse } from "@/utils";
-import { envConstants, STATUS_CODES } from "@/constants";
+
+import { success } from "./auth.constant";
 import { AuthService } from "./auth.service";
 import { AuthToken } from "./auth.validation";
-import { GoogleUser } from "@/types/passport-google";
 
 export class AuthController {
   private static setTokenCookies(res: Response, accessToken: string, refreshToken: string) {

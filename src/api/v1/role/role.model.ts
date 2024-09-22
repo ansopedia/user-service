@@ -1,4 +1,5 @@
-import { Schema, model, Model, Types } from "mongoose";
+import { Model, Schema, Types, model } from "mongoose";
+
 import { Role } from "./role.validation";
 
 const RoleSchema: Schema<Role> = new Schema(

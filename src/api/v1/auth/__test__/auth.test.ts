@@ -1,5 +1,8 @@
 import { sign } from "jsonwebtoken";
-import { envConstants, errorMap, ErrorTypeEnum, STATUS_CODES } from "@/constants";
+import { ZodError, ZodIssue } from "zod";
+
+import { Login, loginSchema } from "@/api/v1/auth/auth.validation";
+import { ErrorTypeEnum, STATUS_CODES, envConstants, errorMap } from "@/constants";
 import {
   expectSignUpSuccess,
   expectUnauthorizedResponseForInvalidToken,
@@ -7,8 +10,6 @@ import {
   renewToken,
   signUp,
 } from "@/utils/test";
-import { Login, loginSchema } from "@/api/v1/auth/auth.validation";
-import { ZodError, ZodIssue } from "zod";
 
 const VALID_CREDENTIALS = {
   username: "validUser",

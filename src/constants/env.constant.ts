@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
-dotenv.config();
-
 import { z } from "zod";
+
 import { userSchema } from "@/api/v1/user/user.validation";
+
+dotenv.config();
 
 const envSchema = z.object({
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required").readonly(),

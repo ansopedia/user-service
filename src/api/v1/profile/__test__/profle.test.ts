@@ -1,3 +1,4 @@
+import { defaultUsers } from "@/constants";
 import {
   expectBadRequestResponseForValidationError,
   expectLoginSuccess,
@@ -8,7 +9,7 @@ import {
   login,
   upSertProfileData,
 } from "@/utils/test";
-import { defaultUsers } from "@/constants";
+
 import { CreateProfileData } from "../profile.validation";
 
 const profileData: CreateProfileData = {

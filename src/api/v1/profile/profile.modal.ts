@@ -1,7 +1,8 @@
-import { model, Schema, Types } from "mongoose";
+import { Schema, Types, model } from "mongoose";
+
 import { ProfileData } from "./profile.validation";
 
-const ProfileData = new Schema<ProfileData>(
+const ProfileSchema = new Schema<ProfileData>(
   {
     userId: {
       type: String,
@@ -44,4 +45,4 @@ const ProfileData = new Schema<ProfileData>(
   { timestamps: true }
 );
 
-export const ProfileDataModel = model<ProfileData>("Profile", ProfileData);
+export const ProfileDataModel = model<ProfileData>("Profile", ProfileSchema);

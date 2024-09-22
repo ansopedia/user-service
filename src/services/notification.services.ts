@@ -1,7 +1,9 @@
 import axios from "axios";
-import { EmailNotification } from "./notification.validation";
-import { logger } from "@/utils";
+
 import { envConstants } from "@/constants";
+import { logger } from "@/utils";
+
+import { EmailNotification } from "./notification.validation";
 
 const sendEmail = async (body: EmailNotification) => {
   try {

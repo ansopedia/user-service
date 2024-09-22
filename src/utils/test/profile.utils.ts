@@ -1,4 +1,5 @@
 import supertest, { Response } from "supertest";
+
 import { CreateProfileData, ProfileData, success } from "@/api/v1/profile";
 import { app } from "@/app";
 import { STATUS_CODES } from "@/constants";

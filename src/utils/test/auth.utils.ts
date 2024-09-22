@@ -1,17 +1,19 @@
 import supertest, { Response } from "supertest";
-import { app } from "@/app";
-import { Login } from "@/api/v1/auth/auth.validation";
-import { errorMap, ErrorTypeEnum, STATUS_CODES } from "@/constants";
+
 import { success } from "@/api/v1/auth/auth.constant";
+import { Login } from "@/api/v1/auth/auth.validation";
+import { app } from "@/app";
+import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
+
+import { CreateUser, ResetPassword } from "../../api/v1/user/user.validation";
 import { expectOTPRequestSuccess, expectOTPVerificationSuccess, requestOTP, retrieveOTP, verifyOTP } from "./otp.utils";
 import { expectFindUserByUsernameSuccess, findUserByUsername } from "./user.utils";
-import { CreateUser, ResetPassword } from "../../api/v1/user/user.validation";
 
-export async function login(loginData: Login): Promise<Response> {
+export const login = async (loginData: Login): Promise<Response> => {
   return supertest(app).post("/api/v1/auth/login").send(loginData);
-}
+};
 
-export function expectLoginSuccess(response: Response): void {
+export const expectLoginSuccess = (response: Response): void => {
   const { statusCode, headers, body } = response;
 
   expect(statusCode).toBe(STATUS_CODES.OK);
@@ -27,7 +29,7 @@ export function expectLoginSuccess(response: Response): void {
     message: success.LOGGED_IN_SUCCESSFULLY,
     status: "success",
   });
-}
+};
 
 export const expectLoginFailed = (response: Response) => {
   const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_CREDENTIALS];
@@ -37,16 +39,16 @@ export const expectLoginFailed = (response: Response) => {
   expect(response.body.code).toBe(errorObject.body.code);
 };
 
-export async function signUp(signUpData: {
+export const signUp = async (signUpData: {
   email: string;
   username: string;
   password: string;
   confirmPassword: string;
-}) {
+}): Promise<Response> => {
   return await supertest(app).post("/api/v1/auth/sign-up").send(signUpData);
-}
+};
 
-export async function expectSignUpSuccess(response: Response) {
+export const expectSignUpSuccess = (response: Response): void => {
   const { statusCode, body } = response;
 
   expect(statusCode).toBe(STATUS_CODES.CREATED);
@@ -54,7 +56,7 @@ export async function expectSignUpSuccess(response: Response) {
   expect(body).toMatchObject({
     message: success.SIGN_UP_SUCCESS,
   });
-}
+};
 
 export const logoutUser = async (authorizationHeader: string) => {
   return await supertest(app).post("/api/v1/auth/logout").set("authorization", authorizationHeader);
@@ -104,26 +106,26 @@ export const verifyAccount = async (user: CreateUser) => {
   expectOTPVerificationSuccess(verifyResponse);
 };
 
-export async function forgetPassword(email: string): Promise<Response> {
+export const forgetPassword = async (email: string): Promise<Response> => {
   return supertest(app).post("/api/v1/auth/forget-password").send({ email });
-}
+};
 
-export function expectForgetPasswordSuccess(response: Response): void {
+export const expectForgetPasswordSuccess = (response: Response): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
 
   expect(statusCode).toBe(STATUS_CODES.OK);
   expect(body).toMatchObject({ message: success.FORGET_PASSWORD_EMAIL_SENT });
-}
+};
 
-export async function resetPassword(resetPassword: ResetPassword): Promise<Response> {
-  return supertest(app).post(`/api/v1/auth/reset-password`).send(resetPassword);
-}
+export const resetPassword = async (resetPassword: ResetPassword): Promise<Response> => {
+  return supertest(app).post("/api/v1/auth/reset-password").send(resetPassword);
+};
 
-export function expectResetPasswordSuccess(response: Response): void {
+export const expectResetPasswordSuccess = (response: Response): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
 
   expect(statusCode).toBe(STATUS_CODES.OK);
   expect(body).toMatchObject({ message: success.PASSWORD_RESET_SUCCESSFULLY });
-}
+};

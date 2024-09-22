@@ -1,22 +1,24 @@
+import mongoose from "mongoose";
+
 import { defaultUsers } from "@/constants";
 import {
   createUser,
-  expectUserNotFoundError,
+  expectBadRequestResponseForValidationError,
   expectFindUserByUsernameSuccess,
   expectLoginSuccess,
+  expectRestoreUserSuccess,
   expectUnauthorizedResponseForInvalidAuthorizationHeader,
   expectUnauthorizedResponseForMissingAuthorizationHeader,
   expectUnauthorizedResponseWhenUserHasInsufficientPermission,
   expectUserCreationSuccess,
+  expectUserNotFoundError,
   findUserByUsername,
   login,
-  verifyAccount,
-  expectBadRequestResponseForValidationError,
   restoreUser,
-  expectRestoreUserSuccess,
+  verifyAccount,
 } from "@/utils/test";
+
 import { GetUser } from "../user.validation";
-import mongoose from "mongoose";
 
 const newUser = {
   username: "username",

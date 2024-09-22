@@ -1,8 +1,9 @@
-import { NextFunction, Response, Request } from "express";
-import { extractTokenFromBearerString, verifyJWTToken } from "@/utils/jwt.util";
-import { ErrorTypeEnum } from "@/constants";
-import { Auth, JwtAccessToken, JwtRefreshToken } from "@/api/v1/auth/auth.validation";
+import { NextFunction, Request, Response } from "express";
+
 import { AuthService } from "@/api/v1/auth/auth.service";
+import { Auth, JwtAccessToken, JwtRefreshToken } from "@/api/v1/auth/auth.validation";
+import { ErrorTypeEnum } from "@/constants";
+import { extractTokenFromBearerString, verifyJWTToken } from "@/utils/jwt.util";
 
 const parseUser = async (req: Request, _: Response, next: NextFunction, tokenType: "access" | "refresh") => {
   try {

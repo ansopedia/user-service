@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import { envConstants, ErrorTypeEnum } from "@/constants";
+
+import { ErrorTypeEnum, envConstants } from "@/constants";
 import { logger } from "@/utils";
 
 const { DATABASE_URL, NODE_ENV } = envConstants;

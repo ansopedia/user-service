@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import { createPermission, getPermissions } from "./permission.controller";
 
 const router = Router();

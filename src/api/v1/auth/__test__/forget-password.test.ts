@@ -1,10 +1,10 @@
+import { defaultUsers } from "@/constants";
 import {
   expectBadRequestResponseForValidationError,
   expectForgetPasswordSuccess,
   expectUserNotFoundError,
   forgetPassword,
 } from "@/utils/test";
-import { defaultUsers } from "@/constants";
 
 describe("Forget Password", () => {
   it("should throw error if email is not provided", async () => {

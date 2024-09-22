@@ -1,6 +1,8 @@
 import { Router } from "express";
-import { createRolePermission } from "./role-permission.controller";
+
 import { checkPermission, validateAccessToken } from "@/middlewares";
+
+import { createRolePermission } from "./role-permission.controller";
 
 const router = Router();
 

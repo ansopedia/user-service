@@ -1,4 +1,5 @@
 import { ZodError } from "zod";
+
 import { OtpEvent, otpEvent } from "../otp.validation";
 
 describe("Test OTP validation", () => {

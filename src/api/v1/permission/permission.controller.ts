@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { sendResponse } from "@/utils";
+
 import { STATUS_CODES } from "@/constants";
+import { sendResponse } from "@/utils";
+
 import { success } from "./permission.constant";
 import { PermissionService } from "./permission.service";
 

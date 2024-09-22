@@ -1,6 +1,8 @@
 import { Schema, model } from "mongoose";
-import { RolePermission } from "./role-permission.validation";
+
 import { ErrorTypeEnum } from "@/constants";
+
+import { RolePermission } from "./role-permission.validation";
 
 const RolePermissionSchema = new Schema(
   {

@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { objectIdSchema } from "@/utils";
 
 export const profileSchema = z.object({

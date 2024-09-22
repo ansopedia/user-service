@@ -1,7 +1,7 @@
 import { connectDB, disconnectDB } from "./config";
-import { startServer, stopServer } from "./server";
 import { envConstants } from "./constants";
 import { setupInitialRolesAndPermissions, setupInitialUserRole } from "./script";
+import { startServer, stopServer } from "./server";
 
 beforeAll(async () => {
   await connectDB();

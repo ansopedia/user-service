@@ -1,5 +1,6 @@
-import { NextFunction, Request, Response } from "express";
 import axios from "axios";
+import { NextFunction, Request, Response } from "express";
+
 import { getServerURL } from "@/utils";
 
 export const addAxiosHeadersMiddleware = (req: Request, _: Response, next: NextFunction) => {

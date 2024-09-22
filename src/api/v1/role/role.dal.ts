@@ -1,5 +1,5 @@
 import { RoleModel } from "./role.model";
-import { createRole, Role } from "./role.validation";
+import { Role, createRole } from "./role.validation";
 
 export class RoleDAL {
   static async createRole(userData: createRole): Promise<Role> {

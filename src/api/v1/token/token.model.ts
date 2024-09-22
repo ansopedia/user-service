@@ -1,4 +1,5 @@
-import { model, Model, Schema, Types } from "mongoose";
+import { Model, Schema, Types, model } from "mongoose";
+
 import { Token, TokenAction } from "./token.validation";
 
 const TokenSchema: Schema<Token> = new Schema(

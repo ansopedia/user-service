@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { sendResponse } from "@/utils";
+
 import { STATUS_CODES } from "@/constants";
-import { UserService } from "./user.service";
+import { sendResponse } from "@/utils";
+
 import { success } from "./user.constant";
+import { UserService } from "./user.service";
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {

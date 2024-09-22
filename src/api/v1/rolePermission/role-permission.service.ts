@@ -1,4 +1,5 @@
 import { ErrorTypeEnum } from "@/constants";
+
 import { RolePermissionDAL } from "./role-permission.dal";
 import { RolePermissionDto } from "./role-permission.dto";
 import { RolePermission, rolePermissionSchema } from "./role-permission.validation";

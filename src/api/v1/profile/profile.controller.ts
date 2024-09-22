@@ -1,7 +1,9 @@
-import { sendResponse } from "@/utils";
 import { NextFunction, Request, Response } from "express";
-import { ProfileService } from "./profile.service";
+
+import { sendResponse } from "@/utils";
+
 import { success } from "./profile.constant";
+import { ProfileService } from "./profile.service";
 
 export class ProfileController {
   static upSertProfile = async (req: Request, res: Response, next: NextFunction) => {

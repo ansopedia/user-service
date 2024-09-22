@@ -1,14 +1,15 @@
 import { isPast } from "date-fns";
 
-import { envConstants, ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
-import { generateOTP, verifyOTP } from "@/utils";
 import { success } from "@/api/v1/auth/auth.constant";
 import { UserService } from "@/api/v1/user/user.service";
-import { OtpDAL } from "./otp.dal";
-import { GetOtp, OtpEvent, otpEvent, OtpSchema, OtpVerifyEvent, otpVerifyEvent } from "./otp.validation";
+import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, envConstants } from "@/constants";
 import { notificationService } from "@/services/notification.services";
+import { generateOTP, verifyOTP } from "@/utils";
+
 import { TokenService } from "../token/token.service";
 import { TokenAction } from "../token/token.validation";
+import { OtpDAL } from "./otp.dal";
+import { GetOtp, OtpEvent, OtpSchema, OtpVerifyEvent, otpEvent, otpVerifyEvent } from "./otp.validation";
 
 export class OtpService {
   public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string }> {

@@ -1,11 +1,12 @@
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
-import { createPermission, PermissionCategory } from "../permission.validation";
 import {
   createPermissionRequest,
   expectCreatePermissionSuccess,
   expectGetPermissionsSuccess,
   getPermissions,
 } from "@/utils/test";
+
+import { PermissionCategory, createPermission } from "../permission.validation";
 
 const VALID_PERMISSION: createPermission = {
   name: "create-permission",

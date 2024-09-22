@@ -5,10 +5,10 @@ import { RoleService } from "@/api/v1/role/role.service";
 import { RolePermissionService } from "@/api/v1/rolePermission/role-permission.service";
 import { UserService } from "@/api/v1/user/user.service";
 import { UserRoleService } from "@/api/v1/userRole/user-role.service";
-import { defaultPermissions, defaultRolePermissions, defaultRoles, defaultUsers, ROLES } from "@/constants";
+import { ROLES, defaultPermissions, defaultRolePermissions, defaultRoles, defaultUsers } from "@/constants";
 import { logger } from "@/utils";
 
-export async function setupInitialRolesAndPermissions() {
+export const setupInitialRolesAndPermissions = async () => {
   await PermissionDAL.createPermissions(defaultPermissions);
 
   await RoleDAL.createRoles(defaultRoles);
@@ -44,9 +44,9 @@ export async function setupInitialRolesAndPermissions() {
       }
     });
   });
-}
+};
 
-export async function setupInitialUserRole() {
+export const setupInitialUserRole = async () => {
   try {
     const user = await UserService.createUser(defaultUsers);
 
@@ -63,4 +63,4 @@ export async function setupInitialUserRole() {
   } catch (error) {
     logger.error(`Error while creating user role: error = ${error}`);
   }
-}
+};

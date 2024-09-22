@@ -1,5 +1,5 @@
-import { ErrorTypeEnum } from "@/constants";
-import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from "@/utils";
+import { OtpService } from "@/api/v1/otp/otp.service";
+import { TokenAction, TokenService } from "@/api/v1/token";
 import { UserDAL } from "@/api/v1/user/user.dal";
 import { UserService } from "@/api/v1/user/user.service";
 import {
@@ -9,12 +9,13 @@ import {
   validateEmail,
   validateResetPasswordSchema,
 } from "@/api/v1/user/user.validation";
-import { AuthDAL } from "./auth.dal";
-import { loginSchema, Login, AuthToken, Auth } from "./auth.validation";
-import { OtpService } from "@/api/v1/otp/otp.service";
-import { GoogleUser } from "@/types/passport-google";
-import { TokenAction, TokenService } from "@/api/v1/token";
+import { ErrorTypeEnum } from "@/constants";
 import { notificationService } from "@/services";
+import { GoogleUser } from "@/types/passport-google";
+import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from "@/utils";
+
+import { AuthDAL } from "./auth.dal";
+import { Auth, AuthToken, Login, loginSchema } from "./auth.validation";
 
 export class AuthService {
   public static async signUp(userData: CreateUser) {
@@ -46,14 +47,14 @@ export class AuthService {
 
   public static async signInWithGoogle(googleUser: GoogleUser): Promise<AuthToken> {
     const { id: googleId, emails, name } = googleUser;
-    const primaryEmail = emails[0];
+    const [{ value, verified }] = emails;
 
-    if (!primaryEmail?.value) {
+    if (value === null || value === undefined) {
       throw new Error("Email not provided by Google authentication");
     }
 
-    const email = primaryEmail.value;
-    const isEmailVerified = primaryEmail.verified;
+    const email = value;
+    const isEmailVerified = verified;
 
     // Check if the user exists by Google ID
     let userRecord = await UserService.getUserByGoogleId(googleId);

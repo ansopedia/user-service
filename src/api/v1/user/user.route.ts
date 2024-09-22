@@ -1,6 +1,8 @@
 import { Router } from "express";
-import { createUser, getAllUsers, getUserByUsername, softDeleteUser, restoreUser } from "./user.controller";
+
 import { checkPermission, validateAccessToken } from "@/middlewares";
+
+import { createUser, getAllUsers, getUserByUsername, restoreUser, softDeleteUser } from "./user.controller";
 
 const router = Router();
 

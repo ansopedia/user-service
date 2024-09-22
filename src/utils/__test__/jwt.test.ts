@@ -1,6 +1,6 @@
 import { JwtAccessToken } from "@/api/v1/auth/auth.validation";
-import { extractTokenFromBearerString, generateAccessToken, generateRefreshToken } from "@/utils";
 import { ErrorTypeEnum } from "@/constants";
+import { extractTokenFromBearerString, generateAccessToken, generateRefreshToken } from "@/utils";
 
 jest.mock("jsonwebtoken", () => ({
   sign: jest.fn(),

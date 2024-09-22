@@ -1,4 +1,5 @@
 import { ZodError } from "zod";
+
 import { password } from "../user.validation";
 
 describe("Password Schema", () => {

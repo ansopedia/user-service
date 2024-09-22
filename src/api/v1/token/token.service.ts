@@ -1,8 +1,10 @@
+import { isPast } from "date-fns";
+
+import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
 import { generateTokenForAction, verifyJWTToken } from "@/utils";
+
 import { TokenDAL } from "./token.dal";
 import { CreateToken, Token, TokenAction } from "./token.validation";
-import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
-import { isPast } from "date-fns";
 
 export class TokenService {
   private tokenDAL: TokenDAL;

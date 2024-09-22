@@ -1,14 +1,14 @@
-import express, { Request, Response, NextFunction, type Application } from "express";
-import { pinoHttp } from "pino-http";
-import helmet from "helmet";
 import cors from "cors";
-import passport from "passport";
+import express, { type Application, NextFunction, Request, Response } from "express";
 import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import passport from "passport";
+import { pinoHttp } from "pino-http";
 
-import { envConstants, ErrorTypeEnum, FIFTEEN_MINUTES_IN_MS } from "@/constants";
-import { logger } from "@/utils";
+import { ErrorTypeEnum, FIFTEEN_MINUTES_IN_MS, envConstants } from "@/constants";
 import { addAxiosHeadersMiddleware, errorHandler } from "@/middlewares";
 import { routes } from "@/routes";
+import { logger } from "@/utils";
 
 import "./config/passport";
 

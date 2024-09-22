@@ -5,6 +5,6 @@ export const generateOTP = (length: number = 6): OTP => {
   return Math.floor(factor + Math.random() * 9 * factor).toString();
 };
 
-export const verifyOTP = (otp: OTP, input: OTP) => {
+export const verifyOTP = (otp: OTP, input: OTP): boolean => {
   return otp === input;
 };

@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { userSchema } from "../user/user.validation";
+
 import { otp } from "../otp/otp.validation";
 import { tokenSchema } from "../token/token.validation";
+import { userSchema } from "../user/user.validation";
 
 const AuthSchema = z.object({
   userId: z.string().regex(/^[a-f\d]{24}$/i, "Invalid id"),

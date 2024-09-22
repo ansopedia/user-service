@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
+
+import { hashPassword } from "../../../utils";
+import { Login } from "../auth/auth.validation";
 import { UserModel } from "./user.model";
 import { CreateUser, UpdateUser, User, UserRolePermission } from "./user.validation";
-import { Login } from "../auth/auth.validation";
-import { hashPassword } from "../../../utils";
 
 export class UserDAL {
   static async createUser(userData: CreateUser): Promise<User> {

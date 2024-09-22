@@ -1,8 +1,10 @@
 import supertest, { Response } from "supertest";
+
 import { app } from "@/app";
-import { errorMap, ErrorTypeEnum, STATUS_CODES } from "@/constants";
-import { CreateUser } from "../../api/v1/user/user.validation";
+import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
+
 import { success } from "../../api/v1/user/user.constant";
+import { CreateUser } from "../../api/v1/user/user.validation";
 
 export const expectBadRequestResponseForValidationError = (response: Response): void => {
   const errorObject = errorMap[ErrorTypeEnum.enum.VALIDATION_ERROR];
@@ -15,11 +17,11 @@ export const expectBadRequestResponseForValidationError = (response: Response): 
   });
 };
 
-export async function createUser(user: CreateUser, authorizationHeader: string): Promise<Response> {
+export const createUser = async (user: CreateUser, authorizationHeader: string): Promise<Response> => {
   return supertest(app).post("/api/v1/users").send(user).set("authorization", authorizationHeader);
-}
+};
 
-export function expectUserCreationSuccess(response: Response, user: CreateUser): void {
+export const expectUserCreationSuccess = (response: Response, user: CreateUser): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
 
@@ -35,13 +37,13 @@ export function expectUserCreationSuccess(response: Response, user: CreateUser):
 
   expect(body.user).not.toHaveProperty("password");
   expect(body.user).not.toHaveProperty("confirmPassword");
-}
+};
 
-export async function findUserByUsername(username: string): Promise<Response> {
+export const findUserByUsername = async (username: string): Promise<Response> => {
   return supertest(app).get(`/api/v1/users/${username}`);
-}
+};
 
-export function expectUserNotFoundError(response: Response): void {
+export const expectUserNotFoundError = (response: Response): void => {
   const errorObject = errorMap[ErrorTypeEnum.enum.USER_NOT_FOUND];
 
   expect(response).toBeDefined();
@@ -51,9 +53,9 @@ export function expectUserNotFoundError(response: Response): void {
     code: errorObject.body.code,
     status: "failed",
   });
-}
+};
 
-export function expectFindUserByUsernameSuccess(response: Response, user: CreateUser): void {
+export const expectFindUserByUsernameSuccess = (response: Response, user: CreateUser): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
 
@@ -69,13 +71,13 @@ export function expectFindUserByUsernameSuccess(response: Response, user: Create
 
   expect(body.user).not.toHaveProperty("password");
   expect(body.user).not.toHaveProperty("confirmPassword");
-}
+};
 
-export async function deleteUser(userId: string, authorizationHeader: string): Promise<Response> {
+export const deleteUser = async (userId: string, authorizationHeader: string): Promise<Response> => {
   return supertest(app).delete(`/api/v1/users/${userId}`).set("authorization", authorizationHeader);
-}
+};
 
-export function expectDeleteUserSuccess(response: Response): void {
+export const expectDeleteUserSuccess = (response: Response): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
 
@@ -88,13 +90,13 @@ export function expectDeleteUserSuccess(response: Response): void {
 
   expect(body.user).not.toHaveProperty("password");
   expect(body.user).not.toHaveProperty("confirmPassword");
-}
+};
 
-export async function restoreUser(userId: string, authorizationHeader: string): Promise<Response> {
+export const restoreUser = async (userId: string, authorizationHeader: string): Promise<Response> => {
   return supertest(app).patch(`/api/v1/users/${userId}/restore`).set("authorization", authorizationHeader);
-}
+};
 
-export function expectRestoreUserSuccess(response: Response): void {
+export const expectRestoreUserSuccess = (response: Response): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
 
@@ -107,4 +109,4 @@ export function expectRestoreUserSuccess(response: Response): void {
 
   expect(body.user).not.toHaveProperty("password");
   expect(body.user).not.toHaveProperty("confirmPassword");
-}
+};

@@ -1,6 +1,8 @@
 import { Router } from "express";
-import { AuthController } from "./auth.controller";
+
 import { signInWithGoogle, signInWithGoogleCallback, validateAccessToken, validateRefreshToken } from "@/middlewares";
+
+import { AuthController } from "./auth.controller";
 
 const router = Router();
 

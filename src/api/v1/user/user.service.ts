@@ -1,18 +1,19 @@
+import { ErrorTypeEnum, ROLES } from "@/constants";
+import { generateRandomUsername, validateObjectId } from "@/utils";
+
+import { RoleDAL } from "../role/role.dal";
+import { UserRoleService } from "../userRole/user-role.service";
 import { UserDAL } from "./user.dal";
 import { UserDto } from "./user.dto";
 import {
   CreateUser,
-  validateCreateUser,
   Email,
   GetUser,
   UpdateUser,
+  validateCreateUser,
   validateEmail,
   validateUsername,
 } from "./user.validation";
-import { UserRoleService } from "../userRole/user-role.service";
-import { generateRandomUsername, validateObjectId } from "@/utils";
-import { ErrorTypeEnum, ROLES } from "@/constants";
-import { RoleDAL } from "../role/role.dal";
 
 export class UserService {
   static async generateUniqueUsername(username: string): Promise<string> {

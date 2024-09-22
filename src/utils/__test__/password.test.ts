@@ -1,4 +1,4 @@
-import { hashPassword, comparePassword } from "@/utils";
+import { comparePassword, hashPassword } from "@/utils";
 
 describe("Password Utility", () => {
   it("should hash a password", async () => {

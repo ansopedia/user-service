@@ -1,6 +1,8 @@
 import { Schema, model } from "mongoose";
-import { User } from "./user.validation";
+
 import { hashPassword } from "@/utils";
+
+import { User } from "./user.validation";
 
 const UserSchema = new Schema<User>(
   {

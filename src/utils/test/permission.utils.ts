@@ -1,8 +1,9 @@
 import supertest, { Response } from "supertest";
+
+import { success } from "@/api/v1/permission/permission.constant";
+import { createPermission } from "@/api/v1/permission/permission.validation";
 import { app } from "@/app";
 import { STATUS_CODES } from "@/constants";
-import { createPermission } from "@/api/v1/permission/permission.validation";
-import { success } from "@/api/v1/permission/permission.constant";
 
 export const createPermissionRequest = async (permission: createPermission): Promise<Response> => {
   return await supertest(app).post("/api/v1/permissions").send(permission);

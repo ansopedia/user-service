@@ -1,7 +1,8 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { envConstants } from "@/constants";
+
 import { UserService } from "@/api/v1/user/user.service";
+import { envConstants } from "@/constants";
 
 passport.serializeUser((user, done) => {
   done(null, user);

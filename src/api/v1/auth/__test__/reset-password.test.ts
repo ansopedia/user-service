@@ -1,3 +1,5 @@
+import { Response } from "supertest";
+
 import {
   expectBadRequestResponseForValidationError,
   expectFindUserByUsernameSuccess,
@@ -16,7 +18,7 @@ import {
   verifyAccount,
   verifyOTP,
 } from "@/utils/test";
-import { Response } from "supertest";
+
 import { GetUser } from "../../user/user.validation";
 
 const user = {

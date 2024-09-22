@@ -1,16 +1,16 @@
+import { PermissionCategory, createPermission } from "@/api/v1/permission/permission.validation";
 import { createRole } from "@/api/v1/role/role.validation";
-import { createPermission, PermissionCategory } from "@/api/v1/permission/permission.validation";
+import { defaultUsers } from "@/constants";
 import {
   createPermissionRequest,
+  createRolePermissionRequest,
   createRoleRequest,
   expectCreatePermissionSuccess,
+  expectCreateRolePermissionSuccess,
   expectCreateRoleSuccess,
   expectLoginSuccess,
   login,
-  createRolePermissionRequest,
-  expectCreateRolePermissionSuccess,
 } from "@/utils/test";
-import { defaultUsers } from "@/constants";
 
 const VALID_ROLE: createRole = {
   name: "new-role",
