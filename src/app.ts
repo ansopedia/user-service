@@ -3,8 +3,9 @@ import { pinoHttp } from 'pino-http';
 import helmet from 'helmet';
 import cors from 'cors';
 import passport from 'passport';
+import rateLimit from 'express-rate-limit';
 
-import { envConstants, ErrorTypeEnum } from '@/constants';
+import { envConstants, ErrorTypeEnum, FIFTEEN_MINUTES_IN_MS } from '@/constants';
 import { logger } from '@/utils';
 import { addAxiosHeadersMiddleware, errorHandler } from '@/middlewares';
 import { routes } from '@/routes';
@@ -55,6 +56,16 @@ if (NODE_ENV !== 'test') {
     return;
   });
 }
+
+const globalLimiter = rateLimit({
+  windowMs: FIFTEEN_MINUTES_IN_MS, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  message: 'Too many requests from this IP, please try again after 15 minutes',
+});
+
+app.use(globalLimiter);
 
 app.use(express.json());
 app.use(passport.initialize());
