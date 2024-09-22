@@ -17,6 +17,14 @@ export const expectUnauthorizedResponseForInvalidAuthorizationHeader = async (re
   expect(response.body.code).toBe(errorObject.body.code);
 };
 
+export const expectUnauthorizedResponseForInvalidToken = async (response: Response) => {
+  const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_TOKEN];
+
+  expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
+  expect(response.body.message).toBe(errorObject.body.message);
+  expect(response.body.code).toBe(errorObject.body.code);
+};
+
 export const expectUnauthorizedResponseWhenUserHasInsufficientPermission = async (response: Response) => {
   const errorObject = errorMap[ErrorTypeEnum.enum.NOT_ENOUGH_PERMISSION];
 

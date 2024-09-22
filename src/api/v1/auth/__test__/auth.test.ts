@@ -1,6 +1,12 @@
 import { sign } from 'jsonwebtoken';
 import { envConstants, errorMap, ErrorTypeEnum, STATUS_CODES } from '@/constants';
-import { expectSignUpSuccess, login, renewToken, signUp } from '@/utils/test';
+import {
+  expectSignUpSuccess,
+  expectUnauthorizedResponseForInvalidToken,
+  login,
+  renewToken,
+  signUp,
+} from '@/utils/test';
 import { Login, loginSchema } from '@/api/v1/auth/auth.validation';
 import { ZodError, ZodIssue } from 'zod';
 
@@ -61,29 +67,8 @@ describe('Auth Test', () => {
   });
 
   it('should respond with 401 for invalid token', async () => {
-    const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_TOKEN];
-
     const response = await renewToken('Bearer invalidToken');
-
-    expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
-    expect(response.body).toMatchObject({
-      message: errorObject.body.message,
-      code: errorObject.body.code,
-      status: 'failed',
-    });
-  });
-
-  it('should throw an error if the token is invalid', async () => {
-    const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_TOKEN];
-
-    const response = await renewToken(`Bearer invalidToken`);
-
-    expect(response.status).toBe(STATUS_CODES.UNAUTHORIZED);
-    expect(response.body).toMatchObject({
-      message: errorObject.body.message,
-      code: errorObject.body.code,
-      status: 'failed',
-    });
+    expectUnauthorizedResponseForInvalidToken(response);
   });
 
   it('should throw an error if the token is expired', async () => {

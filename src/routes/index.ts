@@ -6,6 +6,7 @@ import { rolePermissionRoutes } from '@/api/v1/rolePermission/role-permission.ro
 import { authRoutes } from '@/api/v1/auth/auth.route';
 import { userRoleRoutes } from '@/api/v1/userRole/user-role.route';
 import { otpRoutes } from '@/api/v1/otp/otp.route';
+import { profileRoutes } from '@/api/v1/profile/profile.route';
 
 export const routes = Router();
 
@@ -18,4 +19,5 @@ routes.use(
   userRoleRoutes,
   authRoutes,
   otpRoutes,
+  profileRoutes,
 );
