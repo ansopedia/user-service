@@ -1,7 +1,7 @@
-import { z } from 'zod';
-import { userSchema, validateEmail } from '@/api/v1/user/user.validation';
+import { z } from "zod";
+import { userSchema, validateEmail } from "@/api/v1/user/user.validation";
 
-const otpType = z.enum(['sendEmailVerificationOTP', 'verifyPhoneNumber', 'sendForgetPasswordOTP']);
+const otpType = z.enum(["sendEmailVerificationOTP", "verifyPhoneNumber", "sendForgetPasswordOTP"]);
 export const otp = z.string().length(6);
 
 const baseSchema = z.object({
@@ -13,30 +13,30 @@ const baseSchema = z.object({
 type BaseSchema = z.infer<typeof baseSchema>;
 
 const validateOtpEvent = (data: BaseSchema) => {
-  if (['sendEmailVerificationOTP', 'sendForgetPasswordOTP'].includes(data.otpType)) {
+  if (["sendEmailVerificationOTP", "sendForgetPasswordOTP"].includes(data.otpType)) {
     if (data.email !== undefined) {
       return validateEmail(data.email);
     } else {
       const error = new z.ZodError([]);
       error.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Email is required',
-        path: ['email'],
+        message: "Email is required",
+        path: ["email"],
       });
       throw error;
     }
-  } else if (data.otpType === 'verifyPhoneNumber') {
+  } else if (data.otpType === "verifyPhoneNumber") {
     if (data.phoneNumber !== undefined) {
       // TODO: Add phone number validation
       try {
-        return z.string().startsWith('91').parse(data.phoneNumber);
+        return z.string().startsWith("91").parse(data.phoneNumber);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         const error = new z.ZodError([]);
         error.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Invalid Phone number',
-          path: ['phoneNumber'],
+          message: "Invalid Phone number",
+          path: ["phoneNumber"],
         });
         throw error;
       }
@@ -44,8 +44,8 @@ const validateOtpEvent = (data: BaseSchema) => {
       const error = new z.ZodError([]);
       error.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Phone number is required',
-        path: ['phoneNumber'],
+        message: "Phone number is required",
+        path: ["phoneNumber"],
       });
       throw error;
     }
@@ -54,8 +54,8 @@ const validateOtpEvent = (data: BaseSchema) => {
 };
 
 export const otpEvent = baseSchema.refine(validateOtpEvent, {
-  message: 'Invalid payload for the given optType',
-  path: ['optType'],
+  message: "Invalid payload for the given optType",
+  path: ["optType"],
 });
 
 export const otpVerifyEvent = baseSchema
@@ -63,20 +63,24 @@ export const otpVerifyEvent = baseSchema
     otp,
   })
   .refine(validateOtpEvent, {
-    message: 'Invalid payload for the given optType',
-    path: ['optType'],
+    message: "Invalid payload for the given optType",
+    path: ["optType"],
   });
 
 export const otpSchema = z.object({
   id: z.string(),
   otp,
-  userId: z.string().regex(/^[a-f\d]{24}$/i, 'Invalid id'),
+  userId: z.string().regex(/^[a-f\d]{24}$/i, "Invalid id"),
   expiryTime: z.date(),
   otpType,
 });
 
 export const saveOtpSchema = otpSchema.omit({ id: true });
-export const getOtpSchema = otpSchema.omit({ expiryTime: true, otp: true, id: true });
+export const getOtpSchema = otpSchema.omit({
+  expiryTime: true,
+  otp: true,
+  id: true,
+});
 
 export type OtpSchema = z.infer<typeof otpSchema>;
 export type OTP = z.infer<typeof otp>;

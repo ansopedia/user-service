@@ -1,26 +1,29 @@
-import { ErrorTypeEnum } from '@/constants';
-import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from '@/utils';
-import { UserDAL } from '@/api/v1/user/user.dal';
-import { UserService } from '@/api/v1/user/user.service';
+import { ErrorTypeEnum } from "@/constants";
+import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from "@/utils";
+import { UserDAL } from "@/api/v1/user/user.dal";
+import { UserService } from "@/api/v1/user/user.service";
 import {
   CreateUser,
   Email,
   ResetPassword,
   validateEmail,
   validateResetPasswordSchema,
-} from '@/api/v1/user/user.validation';
-import { AuthDAL } from './auth.dal';
-import { loginSchema, Login, AuthToken, Auth } from './auth.validation';
-import { OtpService } from '@/api/v1/otp/otp.service';
-import { GoogleUser } from '@/types/passport-google';
-import { TokenAction, TokenService } from '@/api/v1/token';
-import { notificationService } from '@/services';
+} from "@/api/v1/user/user.validation";
+import { AuthDAL } from "./auth.dal";
+import { loginSchema, Login, AuthToken, Auth } from "./auth.validation";
+import { OtpService } from "@/api/v1/otp/otp.service";
+import { GoogleUser } from "@/types/passport-google";
+import { TokenAction, TokenService } from "@/api/v1/token";
+import { notificationService } from "@/services";
 
 export class AuthService {
   public static async signUp(userData: CreateUser) {
     await UserService.createUser(userData);
 
-    await OtpService.sendOtp({ email: userData.email, otpType: 'sendEmailVerificationOTP' });
+    await OtpService.sendOtp({
+      email: userData.email,
+      otpType: "sendEmailVerificationOTP",
+    });
   }
 
   public static async signInWithEmailOrUsernameAndPassword(userData: Login): Promise<AuthToken> {
@@ -46,7 +49,7 @@ export class AuthService {
     const primaryEmail = emails[0];
 
     if (!primaryEmail?.value) {
-      throw new Error('Email not provided by Google authentication');
+      throw new Error("Email not provided by Google authentication");
     }
 
     const email = primaryEmail.value;
@@ -60,9 +63,12 @@ export class AuthService {
       const existingUser = await UserDAL.getUserByEmail(email);
 
       if (existingUser) {
-        userRecord = await UserService.updateUser(existingUser.id, { googleId, email });
+        userRecord = await UserService.updateUser(existingUser.id, {
+          googleId,
+          email,
+        });
       } else {
-        const username = await UserService.generateUniqueUsername(name.givenName.replace(' ', '-'));
+        const username = await UserService.generateUniqueUsername(name.givenName.replace(" ", "-"));
         userRecord = await UserService.createUser({
           email,
           username,
@@ -91,7 +97,7 @@ export class AuthService {
 
   public static async forgetPassword(email: Email) {
     validateEmail(email);
-    await OtpService.sendOtp({ email, otpType: 'sendForgetPasswordOTP' });
+    await OtpService.sendOtp({ email, otpType: "sendForgetPasswordOTP" });
   }
 
   public static async resetPassword(resetPassword: ResetPassword) {
@@ -103,7 +109,7 @@ export class AuthService {
 
     notificationService.sendEmail({
       to: user.email,
-      eventType: 'sendPasswordChangeConfirmation',
+      eventType: "sendPasswordChangeConfirmation",
     });
   }
 

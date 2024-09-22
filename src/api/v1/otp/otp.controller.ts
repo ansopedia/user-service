@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
-import { OtpService } from './otp.service';
-import { sendResponse } from '@/utils';
-import { STATUS_CODES } from '@/constants';
+import { NextFunction, Request, Response } from "express";
+import { OtpService } from "./otp.service";
+import { sendResponse } from "@/utils";
+import { STATUS_CODES } from "@/constants";
 
 export class OtpController {
   public static async sendOtp(req: Request, res: Response, next: NextFunction) {
@@ -23,10 +23,10 @@ export class OtpController {
       const { message, token } = await OtpService.verifyOtp(req.body);
 
       if (token != null) {
-        res.cookie('action-token', token, {
+        res.cookie("action-token", token, {
           httpOnly: false,
           secure: true,
-          sameSite: 'strict',
+          sameSite: "strict",
           maxAge: 60000, // 1 minute
         });
       }

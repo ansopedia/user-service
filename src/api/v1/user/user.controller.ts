@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
-import { sendResponse } from '@/utils';
-import { STATUS_CODES } from '@/constants';
-import { UserService } from './user.service';
-import { success } from './user.constant';
+import { NextFunction, Request, Response } from "express";
+import { sendResponse } from "@/utils";
+import { STATUS_CODES } from "@/constants";
+import { UserService } from "./user.service";
+import { success } from "./user.constant";
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {

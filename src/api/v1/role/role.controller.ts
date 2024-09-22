@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
-import { sendResponse } from '@/utils';
-import { STATUS_CODES } from '@/constants';
-import { RoleService } from './role.service';
-import { success } from './role.constant';
+import { NextFunction, Request, Response } from "express";
+import { sendResponse } from "@/utils";
+import { STATUS_CODES } from "@/constants";
+import { RoleService } from "./role.service";
+import { success } from "./role.constant";
 
 export const createRole = async (req: Request, res: Response, next: NextFunction) => {
   try {

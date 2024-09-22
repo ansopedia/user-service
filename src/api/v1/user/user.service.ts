@@ -1,5 +1,5 @@
-import { UserDAL } from './user.dal';
-import { UserDto } from './user.dto';
+import { UserDAL } from "./user.dal";
+import { UserDto } from "./user.dto";
 import {
   CreateUser,
   validateCreateUser,
@@ -8,11 +8,11 @@ import {
   UpdateUser,
   validateEmail,
   validateUsername,
-} from './user.validation';
-import { UserRoleService } from '../userRole/user-role.service';
-import { generateRandomUsername, validateObjectId } from '@/utils';
-import { ErrorTypeEnum, ROLES } from '@/constants';
-import { RoleDAL } from '../role/role.dal';
+} from "./user.validation";
+import { UserRoleService } from "../userRole/user-role.service";
+import { generateRandomUsername, validateObjectId } from "@/utils";
+import { ErrorTypeEnum, ROLES } from "@/constants";
+import { RoleDAL } from "../role/role.dal";
 
 export class UserService {
   static async generateUniqueUsername(username: string): Promise<string> {
@@ -42,7 +42,10 @@ export class UserService {
 
     if (!userRole) throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
 
-    await UserRoleService.createUserRole({ userId: createdUser.id, roleId: userRole.id });
+    await UserRoleService.createUserRole({
+      userId: createdUser.id,
+      roleId: userRole.id,
+    });
 
     return UserDto(createdUser).getUser();
   }

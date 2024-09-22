@@ -1,11 +1,11 @@
-import supertest, { Response } from 'supertest';
-import { app } from '@/app';
-import { createRole } from '@/api/v1/role/role.validation';
-import { STATUS_CODES } from '@/constants';
-import { success } from '@/api/v1/role/role.constant';
+import supertest, { Response } from "supertest";
+import { app } from "@/app";
+import { createRole } from "@/api/v1/role/role.validation";
+import { STATUS_CODES } from "@/constants";
+import { success } from "@/api/v1/role/role.constant";
 
 export const createRoleRequest = async (role: createRole, authorizationHeader: string): Promise<Response> => {
-  return supertest(app).post('/api/v1/roles').send(role).set('authorization', authorizationHeader);
+  return supertest(app).post("/api/v1/roles").send(role).set("authorization", authorizationHeader);
 };
 
 export const expectCreateRoleSuccess = (response: Response, { name, description }: createRole): void => {
@@ -26,7 +26,7 @@ export const expectCreateRoleSuccess = (response: Response, { name, description 
 };
 
 export const getRoles = async (authorizationHeader: string): Promise<Response> => {
-  return await supertest(app).get('/api/v1/roles').set('authorization', authorizationHeader);
+  return await supertest(app).get("/api/v1/roles").set("authorization", authorizationHeader);
 };
 
 export const expectGetRolesSuccess = (response: Response): void => {

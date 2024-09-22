@@ -1,4 +1,4 @@
-import { defaultUsers } from '@/constants';
+import { defaultUsers } from "@/constants";
 import {
   createUser,
   expectUserNotFoundError,
@@ -14,25 +14,25 @@ import {
   expectBadRequestResponseForValidationError,
   restoreUser,
   expectRestoreUserSuccess,
-} from '@/utils/test';
-import { GetUser } from '../user.validation';
-import mongoose from 'mongoose';
+} from "@/utils/test";
+import { GetUser } from "../user.validation";
+import mongoose from "mongoose";
 
 const newUser = {
-  username: 'username',
-  email: 'validemail@example.com',
-  password: 'ValidPassword123!',
-  confirmPassword: 'ValidPassword123!',
+  username: "username",
+  email: "validemail@example.com",
+  password: "ValidPassword123!",
+  confirmPassword: "ValidPassword123!",
 };
 
-describe('Restore User', () => {
+describe("Restore User", () => {
   let authorizationHeader: string;
   let userToDelete: GetUser;
 
   beforeAll(async () => {
     const loginResponse = await login(defaultUsers);
     expectLoginSuccess(loginResponse);
-    authorizationHeader = `Bearer ${loginResponse.header['authorization']}`;
+    authorizationHeader = `Bearer ${loginResponse.header["authorization"]}`;
 
     const userResponse = await createUser(newUser, authorizationHeader);
     expectUserCreationSuccess(userResponse, newUser);
@@ -43,28 +43,32 @@ describe('Restore User', () => {
     userToDelete = foundUserRes.body.user;
   });
 
-  it('should return 401 for missing authorization header', async () => {
-    const response = await restoreUser(userToDelete.id, '');
+  it("should return 401 for missing authorization header", async () => {
+    const response = await restoreUser(userToDelete.id, "");
     expectUnauthorizedResponseForMissingAuthorizationHeader(response);
   });
 
-  it('should return 401 for invalid authorization header', async () => {
-    const response = await restoreUser(userToDelete.id, 'invalid');
+  it("should return 401 for invalid authorization header", async () => {
+    const response = await restoreUser(userToDelete.id, "invalid");
     expectUnauthorizedResponseForInvalidAuthorizationHeader(response);
   });
 
-  it('should return 400 for invalid user id', async () => {
-    const response = await restoreUser('invalid', authorizationHeader);
+  it("should return 400 for invalid user id", async () => {
+    const response = await restoreUser("invalid", authorizationHeader);
     expectBadRequestResponseForValidationError(response);
   });
 
-  it('should return 404 for user not found', async () => {
+  it("should return 404 for user not found", async () => {
     const response = await restoreUser(new mongoose.Types.ObjectId().toHexString(), authorizationHeader);
     expectUserNotFoundError(response);
   });
 
-  it('should return 403 for unauthorized user', async () => {
-    const unAuthorizedUser = { ...newUser, username: 'unauthorized', email: 'unauthorized@gmail.com' };
+  it("should return 403 for unauthorized user", async () => {
+    const unAuthorizedUser = {
+      ...newUser,
+      username: "unauthorized",
+      email: "unauthorized@gmail.com",
+    };
 
     const createUserRes = await createUser(unAuthorizedUser, authorizationHeader);
     expectUserCreationSuccess(createUserRes, unAuthorizedUser);
@@ -73,13 +77,13 @@ describe('Restore User', () => {
 
     const loginResponse = await login(unAuthorizedUser);
     expectLoginSuccess(loginResponse);
-    const header = `Bearer ${loginResponse.header['authorization']}`;
+    const header = `Bearer ${loginResponse.header["authorization"]}`;
 
     const restoreUserRes = await restoreUser(userToDelete.id, header);
     expectUnauthorizedResponseWhenUserHasInsufficientPermission(restoreUserRes);
   });
 
-  it('should soft delete user', async () => {
+  it("should soft delete user", async () => {
     const response = await restoreUser(userToDelete.id, authorizationHeader);
     expectRestoreUserSuccess(response);
   });

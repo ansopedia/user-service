@@ -1,5 +1,5 @@
-import { model, Schema } from 'mongoose';
-import { OtpSchema } from './otp.validation';
+import { model, Schema } from "mongoose";
+import { OtpSchema } from "./otp.validation";
 
 const OtpSchema = new Schema(
   {
@@ -9,7 +9,7 @@ const OtpSchema = new Schema(
     },
     userId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     expiryTime: {
@@ -21,7 +21,7 @@ const OtpSchema = new Schema(
       required: true,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-export const OtpModel = model<OtpSchema>('Otp', OtpSchema);
+export const OtpModel = model<OtpSchema>("Otp", OtpSchema);

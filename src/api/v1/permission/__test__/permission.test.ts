@@ -1,18 +1,18 @@
-import { ErrorTypeEnum, STATUS_CODES, errorMap } from '@/constants';
-import { createPermission, PermissionCategory } from '../permission.validation';
+import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
+import { createPermission, PermissionCategory } from "../permission.validation";
 import {
   createPermissionRequest,
   expectCreatePermissionSuccess,
   expectGetPermissionsSuccess,
   getPermissions,
-} from '@/utils/test';
+} from "@/utils/test";
 
 const VALID_PERMISSION: createPermission = {
-  name: 'create-permission',
-  description: 'this is crete permission creating first time',
+  name: "create-permission",
+  description: "this is crete permission creating first time",
   category: PermissionCategory.SYSTEM,
   isDeleted: false,
-  createdBy: '65f6dac9156e93e7b6f1b88d',
+  createdBy: "65f6dac9156e93e7b6f1b88d",
 };
 
 const testInvalidPermissionField = async (field: string, value: string) => {
@@ -28,13 +28,13 @@ const testInvalidPermissionField = async (field: string, value: string) => {
   expect(response.body.code).toBe(errorObj.body.code);
 };
 
-describe('Permission Service', () => {
-  it('should create a new permission', async () => {
+describe("Permission Service", () => {
+  it("should create a new permission", async () => {
     const response = await createPermissionRequest(VALID_PERMISSION);
     expectCreatePermissionSuccess(response, VALID_PERMISSION);
   });
 
-  it('should respond with 409 for duplicate permission', async () => {
+  it("should respond with 409 for duplicate permission", async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.PERMISSION_ALREADY_EXISTS];
     const response = await createPermissionRequest(VALID_PERMISSION);
 
@@ -43,19 +43,19 @@ describe('Permission Service', () => {
     expect(response.body.code).toBe(errorObject.body.code);
   });
 
-  it('should respond with 400 for invalid permission name', async () => {
-    await testInvalidPermissionField('name', 'a');
+  it("should respond with 400 for invalid permission name", async () => {
+    await testInvalidPermissionField("name", "a");
   });
 
-  it('should respond with 400 for invalid permission description', async () => {
-    await testInvalidPermissionField('description', 'a');
+  it("should respond with 400 for invalid permission description", async () => {
+    await testInvalidPermissionField("description", "a");
   });
 
-  it('should respond with 400 for invalid createdBy', async () => {
-    await testInvalidPermissionField('createdBy', 'a');
+  it("should respond with 400 for invalid createdBy", async () => {
+    await testInvalidPermissionField("createdBy", "a");
   });
 
-  it('should get all permissions', async () => {
+  it("should get all permissions", async () => {
     const response = await getPermissions();
     expectGetPermissionsSuccess(response);
   });

@@ -1,5 +1,5 @@
-import { AuthModel } from './auth.modal';
-import { Auth } from './auth.validation';
+import { AuthModel } from "./auth.modal";
+import { Auth } from "./auth.validation";
 
 export class AuthDAL {
   static async getAuthByUserId(userId: string): Promise<Auth | null> {

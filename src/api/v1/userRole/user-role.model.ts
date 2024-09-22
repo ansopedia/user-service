@@ -1,28 +1,28 @@
-import { Schema, model } from 'mongoose';
-import { UserRole } from './user-role.validation';
-import { ErrorTypeEnum } from '@/constants';
+import { Schema, model } from "mongoose";
+import { UserRole } from "./user-role.validation";
+import { ErrorTypeEnum } from "@/constants";
 
 const UserRoleSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     roleId: {
       type: Schema.Types.ObjectId,
-      ref: 'Role',
+      ref: "Role",
       required: true,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 UserRoleSchema.index({ roleId: 1, userId: 1 }, { unique: true });
 
-UserRoleSchema.pre('save', async function (next) {
-  const userExists = await model('User').exists({ _id: this.userId });
-  const roleExists = await model('Role').exists({ _id: this.roleId });
+UserRoleSchema.pre("save", async function (next) {
+  const userExists = await model("User").exists({ _id: this.userId });
+  const roleExists = await model("Role").exists({ _id: this.roleId });
 
   if (!userExists) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
@@ -31,4 +31,4 @@ UserRoleSchema.pre('save', async function (next) {
   next();
 });
 
-export const UserRoleModel = model<UserRole>('UserRole', UserRoleSchema);
+export const UserRoleModel = model<UserRole>("UserRole", UserRoleSchema);

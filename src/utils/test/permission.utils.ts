@@ -1,11 +1,11 @@
-import supertest, { Response } from 'supertest';
-import { app } from '@/app';
-import { STATUS_CODES } from '@/constants';
-import { createPermission } from '@/api/v1/permission/permission.validation';
-import { success } from '@/api/v1/permission/permission.constant';
+import supertest, { Response } from "supertest";
+import { app } from "@/app";
+import { STATUS_CODES } from "@/constants";
+import { createPermission } from "@/api/v1/permission/permission.validation";
+import { success } from "@/api/v1/permission/permission.constant";
 
 export const createPermissionRequest = async (permission: createPermission): Promise<Response> => {
-  return await supertest(app).post('/api/v1/permissions').send(permission);
+  return await supertest(app).post("/api/v1/permissions").send(permission);
 };
 
 export const expectCreatePermissionSuccess = (response: Response, permission: createPermission): void => {
@@ -25,7 +25,7 @@ export const expectCreatePermissionSuccess = (response: Response, permission: cr
 };
 
 export const getPermissions = async (): Promise<Response> => {
-  return await supertest(app).get('/api/v1/permissions');
+  return await supertest(app).get("/api/v1/permissions");
 };
 
 export const expectGetPermissionsSuccess = (response: Response): void => {

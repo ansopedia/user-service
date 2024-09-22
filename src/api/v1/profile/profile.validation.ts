@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { objectIdSchema } from '@/utils';
+import { z } from "zod";
+import { objectIdSchema } from "@/utils";
 
 export const profileSchema = z.object({
   userId: objectIdSchema,
@@ -26,15 +26,15 @@ export const profileSchema = z.object({
 export const validateProfileSchema = (data: ProfileData) => {
   // Check if at least one key from profileSchema is present in the data, excluding userId
   const hasAnyKey = Object.keys(profileSchema.shape)
-    .filter((key) => key !== 'userId')
+    .filter((key) => key !== "userId")
     .some((key) => key in data && data[key as keyof ProfileData] !== undefined);
 
   if (!hasAnyKey) {
     throw new z.ZodError([
       {
         code: z.ZodIssueCode.custom,
-        path: Object.keys(profileSchema.shape).filter((key) => key !== 'userId'),
-        message: 'At least one field from the profile schema must be provided',
+        path: Object.keys(profileSchema.shape).filter((key) => key !== "userId"),
+        message: "At least one field from the profile schema must be provided",
       },
     ]);
   }
@@ -43,4 +43,4 @@ export const validateProfileSchema = (data: ProfileData) => {
 };
 
 export type ProfileData = z.infer<typeof profileSchema>;
-export type CreateProfileData = Omit<ProfileData, 'userId'>;
+export type CreateProfileData = Omit<ProfileData, "userId">;

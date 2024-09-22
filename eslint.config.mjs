@@ -1,10 +1,10 @@
-import typescriptEslint from '@typescript-eslint/eslint-plugin';
-import globals from 'globals';
-import tsParser from '@typescript-eslint/parser';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import js from '@eslint/js';
-import { FlatCompat } from '@eslint/eslintrc';
+import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import globals from "globals";
+import tsParser from "@typescript-eslint/parser";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import js from "@eslint/js";
+import { FlatCompat } from "@eslint/eslintrc";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,30 +16,30 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['**/.eslintrc.js', '**/*.config.js', '**/*.md', '**/build', 'eslint.config.mjs', 'coverage**/*'],
+    ignores: ["**/.eslintrc.js", "**/*.config.js", "**/*.md", "**/build", "eslint.config.mjs", "coverage**/*"],
   },
-  ...compat.extends('eslint:recommended', 'plugin:@typescript-eslint/recommended'),
+  ...compat.extends("eslint:recommended", "plugin:@typescript-eslint/recommended"),
   {
     plugins: {
-      '@typescript-eslint': typescriptEslint,
+      "@typescript-eslint": typescriptEslint,
     },
     languageOptions: {
       globals: {
         ...globals.browser,
       },
       parser: tsParser,
-      ecmaVersion: 'latest',
-      sourceType: 'module',
+      ecmaVersion: "latest",
+      sourceType: "module",
       parserOptions: {
-        project: './tsconfig.eslint.json',
+        project: "./tsconfig.eslint.json",
       },
     },
 
     rules: {
-      indent: ['error', 2],
-      '@typescript-eslint/prefer-nullish-coalescing': 'error',
-      '@typescript-eslint/strict-boolean-expressions': 'error',
-      'no-console': 'error',
+      indent: ["error", 2],
+      "@typescript-eslint/prefer-nullish-coalescing": "error",
+      "@typescript-eslint/strict-boolean-expressions": "error",
+      "no-console": "error",
     },
   },
 ];

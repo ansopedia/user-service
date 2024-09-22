@@ -1,7 +1,7 @@
-import { connectDB } from './config';
-import { envConstants } from './constants';
-import { setupInitialRolesAndPermissions, setupInitialUserRole } from './script';
-import { startServer } from './server';
+import { connectDB } from "./config";
+import { envConstants } from "./constants";
+import { setupInitialRolesAndPermissions, setupInitialUserRole } from "./script";
+import { startServer } from "./server";
 
 (async () => {
   await connectDB();

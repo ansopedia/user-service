@@ -1,5 +1,5 @@
-import { model, Schema, Types } from 'mongoose';
-import { ProfileData } from './profile.validation';
+import { model, Schema, Types } from "mongoose";
+import { ProfileData } from "./profile.validation";
 
 const ProfileData = new Schema<ProfileData>(
   {
@@ -8,9 +8,9 @@ const ProfileData = new Schema<ProfileData>(
       required: true,
       validate: {
         validator: (v: string) => Types.ObjectId.isValid(v),
-        message: 'userId must be a valid MongoDB ObjectId string',
+        message: "userId must be a valid MongoDB ObjectId string",
       },
-      ref: 'User',
+      ref: "User",
     },
     avatar: {
       type: String,
@@ -41,7 +41,7 @@ const ProfileData = new Schema<ProfileData>(
       },
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-export const ProfileDataModel = model<ProfileData>('Profile', ProfileData);
+export const ProfileDataModel = model<ProfileData>("Profile", ProfileData);

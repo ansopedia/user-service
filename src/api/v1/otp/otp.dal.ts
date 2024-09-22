@@ -1,5 +1,5 @@
-import { OtpModel } from './otp.modal';
-import { GetOtp, OtpSchema, SaveOtp } from './otp.validation';
+import { OtpModel } from "./otp.modal";
+import { GetOtp, OtpSchema, SaveOtp } from "./otp.validation";
 
 export class OtpDAL {
   static async saveOtp(otpSchema: SaveOtp) {
@@ -23,7 +23,7 @@ export class OtpDAL {
     return await OtpModel.findOneAndUpdate(
       { userId: otpSchema.userId, otpType: otpSchema.otpType },
       { ...otpSchema },
-      { upsert: true, new: true },
+      { upsert: true, new: true }
     );
   }
 }

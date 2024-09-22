@@ -1,7 +1,7 @@
-import { validateUsername } from '@/api/v1/user/user.validation';
-import { generateRandomUsername } from '@/utils';
+import { validateUsername } from "@/api/v1/user/user.validation";
+import { generateRandomUsername } from "@/utils";
 
-describe('generateRandomUsername', () => {
+describe("generateRandomUsername", () => {
   it('should generate a username that starts with "user_"', () => {
     const randomUsername = generateRandomUsername();
     expect(randomUsername).toMatch(/^user_/);
@@ -14,7 +14,7 @@ describe('generateRandomUsername', () => {
     expect(suffix).toMatch(/^[a-z0-9]+$/i);
   });
 
-  it('should generate a valid username that validates against the username schema', () => {
+  it("should generate a valid username that validates against the username schema", () => {
     const username = generateRandomUsername();
     const result = validateUsername.safeParse({ username });
     expect(result.success).toBe(true);

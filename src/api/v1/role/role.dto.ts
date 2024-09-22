@@ -1,4 +1,4 @@
-import { getRole, Role } from './role.validation';
+import { getRole, Role } from "./role.validation";
 
 export const RoleDto = (role: Role) => ({
   getRole: (): getRole => {

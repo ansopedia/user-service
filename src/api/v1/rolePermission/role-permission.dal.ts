@@ -1,5 +1,5 @@
-import { RolePermissionModel } from './role-permission.model';
-import { RolePermission } from './role-permission.validation';
+import { RolePermissionModel } from "./role-permission.model";
+import { RolePermission } from "./role-permission.validation";
 
 export class RolePermissionDAL {
   static async createRolePermission(rolePermissionData: RolePermission) {

@@ -1,5 +1,5 @@
-import { TokenModel } from './token.model';
-import { CreateToken, Token, UpdateToken } from './token.validation';
+import { TokenModel } from "./token.model";
+import { CreateToken, Token, UpdateToken } from "./token.validation";
 
 interface ITokenDal {
   saveToken(payload: Token): Promise<CreateToken>;
@@ -35,7 +35,7 @@ export class TokenDAL implements ITokenDal {
     return await TokenModel.findOneAndUpdate(
       { userId: tokenSchema.userId, action: tokenSchema.action },
       { ...tokenSchema, $inc: { requestAttempts: 1 } },
-      { upsert: true, new: true },
+      { upsert: true, new: true }
     );
   }
 }

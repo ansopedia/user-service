@@ -1,3 +1,3 @@
 export const success = {
-  PROFILE_UPDATED_SUCCESSFULLY: 'Profile updated successfully',
+  PROFILE_UPDATED_SUCCESSFULLY: "Profile updated successfully",
 };

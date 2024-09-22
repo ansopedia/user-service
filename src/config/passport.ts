@@ -1,7 +1,7 @@
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { envConstants } from '@/constants';
-import { UserService } from '@/api/v1/user/user.service';
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { envConstants } from "@/constants";
+import { UserService } from "@/api/v1/user/user.service";
 
 passport.serializeUser((user, done) => {
   done(null, user);
@@ -25,6 +25,6 @@ passport.use(
     },
     async (_, __, profile, cb) => {
       return cb(null, profile);
-    },
-  ),
+    }
+  )
 );

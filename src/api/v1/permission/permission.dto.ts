@@ -1,4 +1,4 @@
-import { Permission, getPermission } from './permission.validation';
+import { Permission, getPermission } from "./permission.validation";
 
 export const PermissionDto = (permission: Permission) => ({
   getPermission: (): getPermission => ({

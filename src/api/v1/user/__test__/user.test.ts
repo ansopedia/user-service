@@ -1,7 +1,7 @@
-import supertest from 'supertest';
-import { app } from '@/app';
-import { success } from '../user.constant';
-import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from '@/constants';
+import supertest from "supertest";
+import { app } from "@/app";
+import { success } from "../user.constant";
+import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
 import {
   createUser,
   expectUserNotFoundError,
@@ -14,35 +14,39 @@ import {
   findUserByUsername,
   login,
   verifyAccount,
-} from '@/utils/test';
+} from "@/utils/test";
 
 const newUser = {
-  username: 'username',
-  email: 'validemail@example.com',
-  password: 'ValidPassword123!',
-  confirmPassword: 'ValidPassword123!',
+  username: "username",
+  email: "validemail@example.com",
+  password: "ValidPassword123!",
+  confirmPassword: "ValidPassword123!",
 };
 
-describe('User Test', () => {
+describe("User Test", () => {
   let authorizationHeader: string;
   beforeAll(async () => {
     const loginResponse = await login(defaultUsers);
     expectLoginSuccess(loginResponse);
-    authorizationHeader = `Bearer ${loginResponse.header['authorization']}`;
+    authorizationHeader = `Bearer ${loginResponse.header["authorization"]}`;
   });
 
-  it('should return 401 for missing authorization header', async () => {
-    const response = await createUser(newUser, '');
+  it("should return 401 for missing authorization header", async () => {
+    const response = await createUser(newUser, "");
     expectUnauthorizedResponseForMissingAuthorizationHeader(response);
   });
 
-  it('should return 401 for invalid authorization header', async () => {
-    const response = await createUser(newUser, 'invalid');
+  it("should return 401 for invalid authorization header", async () => {
+    const response = await createUser(newUser, "invalid");
     expectUnauthorizedResponseForInvalidAuthorizationHeader(response);
   });
 
-  it('should not create a new user without create-user permission', async () => {
-    const unAuthorizedUser = { ...newUser, username: 'unauthorized', email: 'unauthorized@gmail.com' };
+  it("should not create a new user without create-user permission", async () => {
+    const unAuthorizedUser = {
+      ...newUser,
+      username: "unauthorized",
+      email: "unauthorized@gmail.com",
+    };
 
     const response = await createUser(unAuthorizedUser, authorizationHeader);
     expectUserCreationSuccess(response, unAuthorizedUser);
@@ -51,18 +55,18 @@ describe('User Test', () => {
 
     const loginResponse = await login(unAuthorizedUser);
     expectLoginSuccess(loginResponse);
-    const header = `Bearer ${loginResponse.header['authorization']}`;
+    const header = `Bearer ${loginResponse.header["authorization"]}`;
 
     const newUserRes = await createUser(newUser, header);
     expectUnauthorizedResponseWhenUserHasInsufficientPermission(newUserRes);
   });
 
-  it('should create a new user with valid credentials', async () => {
+  it("should create a new user with valid credentials", async () => {
     const response = await createUser(newUser, authorizationHeader);
     expectUserCreationSuccess(response, newUser);
   });
 
-  it('should respond with 409 for duplicate email', async () => {
+  it("should respond with 409 for duplicate email", async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS];
     const response = await createUser(newUser, authorizationHeader);
 
@@ -71,26 +75,26 @@ describe('User Test', () => {
     expect(response.body.code).toBe(errorObject.body.code);
   });
 
-  it('should respond with 409 for duplicate username', async () => {
+  it("should respond with 409 for duplicate username", async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS];
-    const response = await createUser({ ...newUser, email: 'new@gmail.com' }, authorizationHeader);
+    const response = await createUser({ ...newUser, email: "new@gmail.com" }, authorizationHeader);
     expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
     expect(response.body.message).toBe(errorObject.body.message);
     expect(response.body.code).toBe(errorObject.body.code);
   });
 
-  it('should find user by username', async () => {
+  it("should find user by username", async () => {
     const response = await findUserByUsername(newUser.username);
     expectFindUserByUsernameSuccess(response, newUser);
   });
 
-  it('should respond with 404 for user not found', async () => {
-    const response = await findUserByUsername('invalidUsername');
+  it("should respond with 404 for user not found", async () => {
+    const response = await findUserByUsername("invalidUsername");
     expectUserNotFoundError(response);
   });
 
-  it('should fetch all users', async () => {
-    const response = await supertest(app).get('/api/v1/users');
+  it("should fetch all users", async () => {
+    const response = await supertest(app).get("/api/v1/users");
 
     const { statusCode, body } = response;
 
@@ -102,8 +106,8 @@ describe('User Test', () => {
     });
 
     if (body.users.length > 0) {
-      expect(body.users[0]).not.toHaveProperty('password');
-      expect(body.users[0]).not.toHaveProperty('confirmPassword');
+      expect(body.users[0]).not.toHaveProperty("password");
+      expect(body.users[0]).not.toHaveProperty("confirmPassword");
     }
   });
 });

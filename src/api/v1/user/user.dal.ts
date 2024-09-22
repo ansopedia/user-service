@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import { UserModel } from './user.model';
-import { CreateUser, UpdateUser, User, UserRolePermission } from './user.validation';
-import { Login } from '../auth/auth.validation';
-import { hashPassword } from '../../../utils';
+import mongoose from "mongoose";
+import { UserModel } from "./user.model";
+import { CreateUser, UpdateUser, User, UserRolePermission } from "./user.validation";
+import { Login } from "../auth/auth.validation";
+import { hashPassword } from "../../../utils";
 
 export class UserDAL {
   static async createUser(userData: CreateUser): Promise<User> {
@@ -15,7 +15,7 @@ export class UserDAL {
   }
 
   static async getUser(validUserData: Login): Promise<User | null> {
-    const identifier = 'email' in validUserData ? validUserData.email : validUserData.username;
+    const identifier = "email" in validUserData ? validUserData.email : validUserData.username;
     return UserDAL.getUserByEmailOrUsername(identifier as string);
   }
 
@@ -67,35 +67,35 @@ export class UserDAL {
       },
       {
         $lookup: {
-          from: 'userroles',
-          localField: '_id',
-          foreignField: 'userId',
-          as: 'userRoles',
+          from: "userroles",
+          localField: "_id",
+          foreignField: "userId",
+          as: "userRoles",
           pipeline: [
             {
               $lookup: {
-                from: 'roles',
-                localField: 'roleId',
-                foreignField: '_id',
-                as: 'roleDetails',
+                from: "roles",
+                localField: "roleId",
+                foreignField: "_id",
+                as: "roleDetails",
               },
             },
             {
-              $unwind: '$roleDetails',
+              $unwind: "$roleDetails",
             },
             {
               $lookup: {
-                from: 'rolepermissions',
-                localField: 'roleId',
-                foreignField: 'roleId',
-                as: 'userPermissions',
+                from: "rolepermissions",
+                localField: "roleId",
+                foreignField: "roleId",
+                as: "userPermissions",
                 pipeline: [
                   {
                     $lookup: {
-                      from: 'permissions',
-                      localField: 'permissionId',
-                      foreignField: '_id',
-                      as: 'permissions',
+                      from: "permissions",
+                      localField: "permissionId",
+                      foreignField: "_id",
+                      as: "permissions",
                       pipeline: [
                         {
                           $project: {
@@ -107,11 +107,11 @@ export class UserDAL {
                     },
                   },
                   {
-                    $unwind: '$permissions',
+                    $unwind: "$permissions",
                   },
                   {
                     $replaceRoot: {
-                      newRoot: '$permissions',
+                      newRoot: "$permissions",
                     },
                   },
                 ],
@@ -121,9 +121,9 @@ export class UserDAL {
               $project: {
                 _id: 0,
                 roleId: 1,
-                roleName: '$roleDetails.name',
-                roleDescription: '$roleDetails.description',
-                permissions: '$userPermissions',
+                roleName: "$roleDetails.name",
+                roleDescription: "$roleDetails.description",
+                permissions: "$userPermissions",
               },
             },
           ],
@@ -134,13 +134,13 @@ export class UserDAL {
           _id: 1,
           username: 1,
           email: 1,
-          roles: '$userRoles',
+          roles: "$userRoles",
           allPermissions: {
             $reduce: {
-              input: '$userRoles',
+              input: "$userRoles",
               initialValue: [],
               in: {
-                $setUnion: ['$$value', '$$this.permissions'],
+                $setUnion: ["$$value", "$$this.permissions"],
               },
             },
           },

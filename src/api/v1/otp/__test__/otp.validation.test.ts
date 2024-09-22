@@ -1,13 +1,13 @@
-import { ZodError } from 'zod';
-import { OtpEvent, otpEvent } from '../otp.validation';
+import { ZodError } from "zod";
+import { OtpEvent, otpEvent } from "../otp.validation";
 
-describe('Test OTP validation', () => {
+describe("Test OTP validation", () => {
   const otpTypes: OtpEvent = {
-    otpType: 'sendEmailVerificationOTP',
-    email: 'example@gmail.com',
+    otpType: "sendEmailVerificationOTP",
+    email: "example@gmail.com",
   };
 
-  it('should validate sendOtpSchema', () => {
+  it("should validate sendOtpSchema", () => {
     const res = otpEvent.safeParse(otpTypes);
     expect(res.success).toBe(true);
   });
@@ -18,27 +18,30 @@ describe('Test OTP validation', () => {
     try {
       otpEvent.parse(otpTypesWithoutEmail);
     } catch (error) {
-      expect((error as ZodError).errors[0].message).toBe('Email is required');
+      expect((error as ZodError).errors[0].message).toBe("Email is required");
     }
   });
 
-  it('should throw error if phone number is not provided', () => {
-    const otpTypesWithoutPhoneNumber = { otpType: 'verifyPhoneNumber' };
+  it("should throw error if phone number is not provided", () => {
+    const otpTypesWithoutPhoneNumber = { otpType: "verifyPhoneNumber" };
 
     try {
       otpEvent.parse(otpTypesWithoutPhoneNumber);
     } catch (error) {
-      expect((error as ZodError).errors[0].message).toBe('Phone number is required');
+      expect((error as ZodError).errors[0].message).toBe("Phone number is required");
     }
   });
 
-  it('should throw error if phone number is invalid', () => {
-    const otpTypesWithInvalidPhoneNumber = { otpType: 'verifyPhoneNumber', phoneNumber: '1234567890' };
+  it("should throw error if phone number is invalid", () => {
+    const otpTypesWithInvalidPhoneNumber = {
+      otpType: "verifyPhoneNumber",
+      phoneNumber: "1234567890",
+    };
 
     try {
       otpEvent.parse(otpTypesWithInvalidPhoneNumber);
     } catch (error) {
-      expect((error as ZodError).errors[0].message).toBe('Invalid Phone number');
+      expect((error as ZodError).errors[0].message).toBe("Invalid Phone number");
     }
   });
 });

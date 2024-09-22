@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
-import { STATUS_CODES } from '@/constants';
-import { sendResponse } from '@/utils';
-import { success } from './role-permission.constant';
-import { RolePermissionService } from './role-permission.service';
+import { NextFunction, Request, Response } from "express";
+import { STATUS_CODES } from "@/constants";
+import { sendResponse } from "@/utils";
+import { success } from "./role-permission.constant";
+import { RolePermissionService } from "./role-permission.service";
 
 export const createRolePermission = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

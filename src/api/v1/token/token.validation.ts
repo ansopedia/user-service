@@ -1,10 +1,10 @@
-import { z } from 'zod';
-import { objectIdSchema } from '@/utils';
+import { z } from "zod";
+import { objectIdSchema } from "@/utils";
 
 export enum TokenAction {
-  'resetPassword' = 'resetPassword',
-  'deleteAccount' = 'deleteAccount',
-  'changeSubscription' = 'changeSubscription',
+  "resetPassword" = "resetPassword",
+  "deleteAccount" = "deleteAccount",
+  "changeSubscription" = "changeSubscription",
 }
 
 export const tokenSchema = z.object({
@@ -30,7 +30,7 @@ export const updateTokenSchema = tokenSchema
   .pick({ isUsed: true, requestAttempts: true })
   .partial()
   .refine((data) => Object.keys(data).length > 0, {
-    message: 'At least one field is required for token update',
+    message: "At least one field is required for token update",
   });
 
 export type Token = z.infer<typeof tokenSchema>;

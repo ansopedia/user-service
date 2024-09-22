@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
-import { sendResponse } from '@/utils';
-import { STATUS_CODES } from '@/constants';
-import { success } from './permission.constant';
-import { PermissionService } from './permission.service';
+import { NextFunction, Request, Response } from "express";
+import { sendResponse } from "@/utils";
+import { STATUS_CODES } from "@/constants";
+import { success } from "./permission.constant";
+import { PermissionService } from "./permission.service";
 
 export const createPermission = async (req: Request, res: Response, next: NextFunction) => {
   try {

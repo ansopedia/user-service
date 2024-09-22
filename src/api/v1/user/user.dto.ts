@@ -1,4 +1,4 @@
-import { GetUser, User } from './user.validation';
+import { GetUser, User } from "./user.validation";
 
 export const UserDto = (user: User) => ({
   getUser: (): GetUser => {

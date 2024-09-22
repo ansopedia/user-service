@@ -1,14 +1,14 @@
-import supertest, { Response } from 'supertest';
-import { app } from '@/app';
-import { Login } from '@/api/v1/auth/auth.validation';
-import { errorMap, ErrorTypeEnum, STATUS_CODES } from '@/constants';
-import { success } from '@/api/v1/auth/auth.constant';
-import { expectOTPRequestSuccess, expectOTPVerificationSuccess, requestOTP, retrieveOTP, verifyOTP } from './otp.utils';
-import { expectFindUserByUsernameSuccess, findUserByUsername } from './user.utils';
-import { CreateUser, ResetPassword } from '../../api/v1/user/user.validation';
+import supertest, { Response } from "supertest";
+import { app } from "@/app";
+import { Login } from "@/api/v1/auth/auth.validation";
+import { errorMap, ErrorTypeEnum, STATUS_CODES } from "@/constants";
+import { success } from "@/api/v1/auth/auth.constant";
+import { expectOTPRequestSuccess, expectOTPVerificationSuccess, requestOTP, retrieveOTP, verifyOTP } from "./otp.utils";
+import { expectFindUserByUsernameSuccess, findUserByUsername } from "./user.utils";
+import { CreateUser, ResetPassword } from "../../api/v1/user/user.validation";
 
 export async function login(loginData: Login): Promise<Response> {
-  return supertest(app).post('/api/v1/auth/login').send(loginData);
+  return supertest(app).post("/api/v1/auth/login").send(loginData);
 }
 
 export function expectLoginSuccess(response: Response): void {
@@ -16,16 +16,16 @@ export function expectLoginSuccess(response: Response): void {
 
   expect(statusCode).toBe(STATUS_CODES.OK);
 
-  const authorizationHeader = headers['authorization'];
+  const authorizationHeader = headers["authorization"];
   expect(authorizationHeader).toBeDefined();
 
-  const setCookieHeader = response.get('set-cookie')?.[0];
-  expect(setCookieHeader).toContain('refresh-token=');
+  const setCookieHeader = response.get("set-cookie")?.[0];
+  expect(setCookieHeader).toContain("refresh-token=");
   expect(setCookieHeader).toMatch(/HttpOnly; Secure/);
 
   expect(body).toMatchObject({
     message: success.LOGGED_IN_SUCCESSFULLY,
-    status: 'success',
+    status: "success",
   });
 }
 
@@ -43,7 +43,7 @@ export async function signUp(signUpData: {
   password: string;
   confirmPassword: string;
 }) {
-  return await supertest(app).post('/api/v1/auth/sign-up').send(signUpData);
+  return await supertest(app).post("/api/v1/auth/sign-up").send(signUpData);
 }
 
 export async function expectSignUpSuccess(response: Response) {
@@ -57,19 +57,19 @@ export async function expectSignUpSuccess(response: Response) {
 }
 
 export const logoutUser = async (authorizationHeader: string) => {
-  return await supertest(app).post('/api/v1/auth/logout').set('authorization', authorizationHeader);
+  return await supertest(app).post("/api/v1/auth/logout").set("authorization", authorizationHeader);
 };
 
 export const expectLogoutSuccess = (response: Response) => {
   expect(response.statusCode).toBe(STATUS_CODES.OK);
   expect(response.body).toMatchObject({
     message: success.LOGGED_OUT_SUCCESSFULLY,
-    status: 'success',
+    status: "success",
   });
 };
 
 export const renewToken = async (refreshToken: string) => {
-  return await supertest(app).post('/api/v1/auth/renew-token').set('authorization', refreshToken);
+  return await supertest(app).post("/api/v1/auth/renew-token").set("authorization", refreshToken);
 };
 
 export const expectRenewTokenSuccess = (response: Response) => {
@@ -77,12 +77,12 @@ export const expectRenewTokenSuccess = (response: Response) => {
 
   expect(statusCode).toBe(STATUS_CODES.OK);
 
-  const newRefreshToken = headers['authorization'];
+  const newRefreshToken = headers["authorization"];
   expect(newRefreshToken).toBeDefined();
 
   expect(response.body).toMatchObject({
     message: success.TOKEN_RENEWED_SUCCESSFULLY,
-    status: 'success',
+    status: "success",
   });
 };
 
@@ -97,7 +97,7 @@ export const verifyAccount = async (user: CreateUser) => {
   expectFindUserByUsernameSuccess(userResponse, user);
 
   // Step 2: Retrieve OTP from database
-  const otpData = await retrieveOTP(userResponse.body.user.id, 'sendEmailVerificationOTP');
+  const otpData = await retrieveOTP(userResponse.body.user.id, "sendEmailVerificationOTP");
 
   // Step 3: Verify OTP
   const verifyResponse = await verifyOTP(otpData, email);
@@ -105,7 +105,7 @@ export const verifyAccount = async (user: CreateUser) => {
 };
 
 export async function forgetPassword(email: string): Promise<Response> {
-  return supertest(app).post('/api/v1/auth/forget-password').send({ email });
+  return supertest(app).post("/api/v1/auth/forget-password").send({ email });
 }
 
 export function expectForgetPasswordSuccess(response: Response): void {

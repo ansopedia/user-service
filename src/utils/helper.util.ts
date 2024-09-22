@@ -1,7 +1,7 @@
-import { Request } from 'express';
+import { Request } from "express";
 
 export const getServerURL = (req: Request) => {
-  return `${req.protocol}://${req.get('host')}`;
+  return `${req.protocol}://${req.get("host")}`;
 };
 
 export const generateRandomUsername = (): string => {

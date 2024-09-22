@@ -1,28 +1,28 @@
-import mongoose from 'mongoose';
-import { envConstants, ErrorTypeEnum } from '@/constants';
-import { logger } from '@/utils';
+import mongoose from "mongoose";
+import { envConstants, ErrorTypeEnum } from "@/constants";
+import { logger } from "@/utils";
 
 const { DATABASE_URL, NODE_ENV } = envConstants;
 
 const dbOptions = {
-  dbName: 'users-service',
+  dbName: "users-service",
 };
 
 export const connectDB = async () => {
   try {
-    if (NODE_ENV === 'development') {
-      mongoose.set('debug', true);
+    if (NODE_ENV === "development") {
+      mongoose.set("debug", true);
       await mongoose.connect(DATABASE_URL, dbOptions);
       return;
     }
 
-    if (NODE_ENV === 'test') {
+    if (NODE_ENV === "test") {
       await mongoose.connect(DATABASE_URL, dbOptions);
       await mongoose.connection.db?.dropDatabase();
       return;
     }
 
-    if (NODE_ENV === 'production') {
+    if (NODE_ENV === "production") {
       await mongoose.connect(DATABASE_URL, dbOptions);
     }
   } catch (error) {

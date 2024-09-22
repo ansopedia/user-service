@@ -1,7 +1,7 @@
-import { createPermission, createPermissionSchema, getPermission } from './permission.validation';
-import { ErrorTypeEnum } from '@/constants';
-import { PermissionDAL } from './permission.dal';
-import { PermissionDto } from './permission.dto';
+import { createPermission, createPermissionSchema, getPermission } from "./permission.validation";
+import { ErrorTypeEnum } from "@/constants";
+import { PermissionDAL } from "./permission.dal";
+import { PermissionDto } from "./permission.dto";
 
 export class PermissionService {
   static async createPermission(createPermission: createPermission): Promise<getPermission> {

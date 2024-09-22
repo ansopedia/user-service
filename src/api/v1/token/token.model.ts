@@ -1,5 +1,5 @@
-import { model, Model, Schema, Types } from 'mongoose';
-import { Token, TokenAction } from './token.validation';
+import { model, Model, Schema, Types } from "mongoose";
+import { Token, TokenAction } from "./token.validation";
 
 const TokenSchema: Schema<Token> = new Schema(
   {
@@ -8,9 +8,9 @@ const TokenSchema: Schema<Token> = new Schema(
       required: true,
       validate: {
         validator: (v: string) => Types.ObjectId.isValid(v),
-        message: 'userId must be a valid MongoDB ObjectId string',
+        message: "userId must be a valid MongoDB ObjectId string",
       },
-      ref: 'User',
+      ref: "User",
     },
     action: {
       type: String,
@@ -37,7 +37,7 @@ const TokenSchema: Schema<Token> = new Schema(
       type: Object,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-export const TokenModel: Model<Token> = model<Token>('Token', TokenSchema);
+export const TokenModel: Model<Token> = model<Token>("Token", TokenSchema);

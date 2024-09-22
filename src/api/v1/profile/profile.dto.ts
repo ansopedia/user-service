@@ -1,4 +1,4 @@
-import { ProfileData } from './profile.validation';
+import { ProfileData } from "./profile.validation";
 
 export const ProfileDto = (profile: ProfileData) => ({
   getProfile: () => {

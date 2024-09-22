@@ -1,14 +1,14 @@
-import { isPast } from 'date-fns';
+import { isPast } from "date-fns";
 
-import { envConstants, ErrorTypeEnum, FIVE_MINUTES_IN_MS } from '@/constants';
-import { generateOTP, verifyOTP } from '@/utils';
-import { success } from '@/api/v1/auth/auth.constant';
-import { UserService } from '@/api/v1/user/user.service';
-import { OtpDAL } from './otp.dal';
-import { GetOtp, OtpEvent, otpEvent, OtpSchema, OtpVerifyEvent, otpVerifyEvent } from './otp.validation';
-import { notificationService } from '@/services/notification.services';
-import { TokenService } from '../token/token.service';
-import { TokenAction } from '../token/token.validation';
+import { envConstants, ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
+import { generateOTP, verifyOTP } from "@/utils";
+import { success } from "@/api/v1/auth/auth.constant";
+import { UserService } from "@/api/v1/user/user.service";
+import { OtpDAL } from "./otp.dal";
+import { GetOtp, OtpEvent, otpEvent, OtpSchema, OtpVerifyEvent, otpVerifyEvent } from "./otp.validation";
+import { notificationService } from "@/services/notification.services";
+import { TokenService } from "../token/token.service";
+import { TokenAction } from "../token/token.validation";
 
 export class OtpService {
   public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string }> {
@@ -19,7 +19,7 @@ export class OtpService {
     let message: string = success.OTP_SENT;
     const user = await UserService.getUserByEmail(email as string);
 
-    if (otpType === 'sendEmailVerificationOTP') {
+    if (otpType === "sendEmailVerificationOTP") {
       if (user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED);
 
       message = success.VERIFICATION_EMAIL_SENT;
@@ -31,7 +31,7 @@ export class OtpService {
       });
     }
 
-    if (otpType === 'sendForgetPasswordOTP') {
+    if (otpType === "sendForgetPasswordOTP") {
       // TODO: If user try to forget password then logout him from all devices because of security reasons
       // because after verifying OTP he will get a token (access token) that will allow him to access all the resources with that token that we sent to him as a response.
       //
@@ -70,17 +70,17 @@ export class OtpService {
 
     if (!otpData) throw new Error(ErrorTypeEnum.enum.OTP_NOT_REQUESTED);
 
-    const otpToVerify = isMasterOTP && envConstants.NODE_ENV !== 'production' ? envConstants.MASTER_OTP : otpData.otp;
+    const otpToVerify = isMasterOTP && envConstants.NODE_ENV !== "production" ? envConstants.MASTER_OTP : otpData.otp;
 
     if (!verifyOTP(otpToVerify, otp as string)) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
 
     if (isPast(otpData.expiryTime)) throw new Error(ErrorTypeEnum.enum.OTP_EXPIRED);
 
-    if (otpType === 'sendEmailVerificationOTP') {
+    if (otpType === "sendEmailVerificationOTP") {
       await UserService.updateUser(user.id, { isEmailVerified: true });
     }
 
-    if (otpType === 'sendForgetPasswordOTP') {
+    if (otpType === "sendForgetPasswordOTP") {
       token = await new TokenService().createActionToken(user.id, TokenAction.resetPassword);
     }
 

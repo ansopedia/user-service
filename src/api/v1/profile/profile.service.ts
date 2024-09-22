@@ -1,6 +1,6 @@
-import { ProfileDataDAL } from './profile.dal';
-import { ProfileDto } from './profile.dto';
-import { ProfileData, validateProfileSchema } from './profile.validation';
+import { ProfileDataDAL } from "./profile.dal";
+import { ProfileDto } from "./profile.dto";
+import { ProfileData, validateProfileSchema } from "./profile.validation";
 
 export class ProfileService {
   private profileDataDal: ProfileDataDAL;

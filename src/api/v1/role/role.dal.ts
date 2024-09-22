@@ -1,9 +1,12 @@
-import { RoleModel } from './role.model';
-import { createRole, Role } from './role.validation';
+import { RoleModel } from "./role.model";
+import { createRole, Role } from "./role.validation";
 
 export class RoleDAL {
   static async createRole(userData: createRole): Promise<Role> {
-    const newRole = new RoleModel({ ...userData, updatedBy: userData.createdBy });
+    const newRole = new RoleModel({
+      ...userData,
+      updatedBy: userData.createdBy,
+    });
     return await newRole.save();
   }
 

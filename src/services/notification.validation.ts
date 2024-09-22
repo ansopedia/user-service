@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // const EmailEventType = z.enum([
 //   'sendEmailVerificationOTP',
@@ -27,7 +27,7 @@ export const emailValidator = z
   .email()
   .transform((val) => val.toLowerCase().trim());
 
-export const otpValidator = z.string().length(6, 'OTP must be exactly 6 characters');
+export const otpValidator = z.string().length(6, "OTP must be exactly 6 characters");
 
 //  Specific payload schemas
 const emailVerificationOTPPayload = z.object({
@@ -39,22 +39,22 @@ const passwordResetOTPPayload = z.object({
 });
 
 // Define the email notification schema
-const emailNotification = z.discriminatedUnion('eventType', [
+const emailNotification = z.discriminatedUnion("eventType", [
   z.object({
     to: emailValidator,
-    eventType: z.literal('sendEmailVerificationOTP'),
+    eventType: z.literal("sendEmailVerificationOTP"),
     subject: z.string().optional(),
     payload: emailVerificationOTPPayload,
   }),
   z.object({
     to: emailValidator,
-    eventType: z.literal('sendForgetPasswordOTP'),
+    eventType: z.literal("sendForgetPasswordOTP"),
     subject: z.string().optional(),
     payload: passwordResetOTPPayload,
   }),
   z.object({
     to: emailValidator,
-    eventType: z.literal('sendPasswordChangeConfirmation'),
+    eventType: z.literal("sendPasswordChangeConfirmation"),
     subject: z.string().optional(),
   }),
   // ... Add other event types and their corresponding payloads ...
@@ -67,7 +67,7 @@ export const validateEmailNotification = (data: EmailNotification) => {
     if (error instanceof z.ZodError) {
       // Customize error messages
       const customErrors = error.issues.map((issue) => {
-        if (issue.code === 'invalid_type' && issue.path.includes('payload')) {
+        if (issue.code === "invalid_type" && issue.path.includes("payload")) {
           const fieldName = issue.path[issue.path.length - 1];
           return {
             ...issue,

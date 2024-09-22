@@ -1,8 +1,8 @@
-import supertest, { Response } from 'supertest';
-import { app } from '@/app';
-import { errorMap, ErrorTypeEnum, STATUS_CODES } from '@/constants';
-import { CreateUser } from '../../api/v1/user/user.validation';
-import { success } from '../../api/v1/user/user.constant';
+import supertest, { Response } from "supertest";
+import { app } from "@/app";
+import { errorMap, ErrorTypeEnum, STATUS_CODES } from "@/constants";
+import { CreateUser } from "../../api/v1/user/user.validation";
+import { success } from "../../api/v1/user/user.constant";
 
 export const expectBadRequestResponseForValidationError = (response: Response): void => {
   const errorObject = errorMap[ErrorTypeEnum.enum.VALIDATION_ERROR];
@@ -16,7 +16,7 @@ export const expectBadRequestResponseForValidationError = (response: Response): 
 };
 
 export async function createUser(user: CreateUser, authorizationHeader: string): Promise<Response> {
-  return supertest(app).post('/api/v1/users').send(user).set('authorization', authorizationHeader);
+  return supertest(app).post("/api/v1/users").send(user).set("authorization", authorizationHeader);
 }
 
 export function expectUserCreationSuccess(response: Response, user: CreateUser): void {
@@ -33,8 +33,8 @@ export function expectUserCreationSuccess(response: Response, user: CreateUser):
     },
   });
 
-  expect(body.user).not.toHaveProperty('password');
-  expect(body.user).not.toHaveProperty('confirmPassword');
+  expect(body.user).not.toHaveProperty("password");
+  expect(body.user).not.toHaveProperty("confirmPassword");
 }
 
 export async function findUserByUsername(username: string): Promise<Response> {
@@ -49,7 +49,7 @@ export function expectUserNotFoundError(response: Response): void {
   expect(response.body).toMatchObject({
     message: errorObject.body.message,
     code: errorObject.body.code,
-    status: 'failed',
+    status: "failed",
   });
 }
 
@@ -67,12 +67,12 @@ export function expectFindUserByUsernameSuccess(response: Response, user: Create
     },
   });
 
-  expect(body.user).not.toHaveProperty('password');
-  expect(body.user).not.toHaveProperty('confirmPassword');
+  expect(body.user).not.toHaveProperty("password");
+  expect(body.user).not.toHaveProperty("confirmPassword");
 }
 
 export async function deleteUser(userId: string, authorizationHeader: string): Promise<Response> {
-  return supertest(app).delete(`/api/v1/users/${userId}`).set('authorization', authorizationHeader);
+  return supertest(app).delete(`/api/v1/users/${userId}`).set("authorization", authorizationHeader);
 }
 
 export function expectDeleteUserSuccess(response: Response): void {
@@ -86,12 +86,12 @@ export function expectDeleteUserSuccess(response: Response): void {
     user: { id: expect.any(String) },
   });
 
-  expect(body.user).not.toHaveProperty('password');
-  expect(body.user).not.toHaveProperty('confirmPassword');
+  expect(body.user).not.toHaveProperty("password");
+  expect(body.user).not.toHaveProperty("confirmPassword");
 }
 
 export async function restoreUser(userId: string, authorizationHeader: string): Promise<Response> {
-  return supertest(app).patch(`/api/v1/users/${userId}/restore`).set('authorization', authorizationHeader);
+  return supertest(app).patch(`/api/v1/users/${userId}/restore`).set("authorization", authorizationHeader);
 }
 
 export function expectRestoreUserSuccess(response: Response): void {
@@ -105,6 +105,6 @@ export function expectRestoreUserSuccess(response: Response): void {
     user: { id: expect.any(String) },
   });
 
-  expect(body.user).not.toHaveProperty('password');
-  expect(body.user).not.toHaveProperty('confirmPassword');
+  expect(body.user).not.toHaveProperty("password");
+  expect(body.user).not.toHaveProperty("confirmPassword");
 }

@@ -1,19 +1,19 @@
-import { NextFunction, Request, Response } from 'express';
-import { success } from './auth.constant';
-import { sendResponse } from '@/utils';
-import { envConstants, STATUS_CODES } from '@/constants';
-import { AuthService } from './auth.service';
-import { AuthToken } from './auth.validation';
-import { GoogleUser } from '@/types/passport-google';
+import { NextFunction, Request, Response } from "express";
+import { success } from "./auth.constant";
+import { sendResponse } from "@/utils";
+import { envConstants, STATUS_CODES } from "@/constants";
+import { AuthService } from "./auth.service";
+import { AuthToken } from "./auth.validation";
+import { GoogleUser } from "@/types/passport-google";
 
 export class AuthController {
   private static setTokenCookies(res: Response, accessToken: string, refreshToken: string) {
-    res.header('Access-Control-Expose-Headers', 'set-cookie, authorization');
-    res.setHeader('authorization', accessToken);
-    res.cookie('refresh-token', refreshToken, {
+    res.header("Access-Control-Expose-Headers", "set-cookie, authorization");
+    res.setHeader("authorization", accessToken);
+    res.cookie("refresh-token", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: "strict",
     });
   }
 
@@ -33,7 +33,7 @@ export class AuthController {
   public static async signInWithEmailOrUsernameAndPassword(req: Request, res: Response, next: NextFunction) {
     try {
       const { accessToken, refreshToken, userId }: AuthToken = await AuthService.signInWithEmailOrUsernameAndPassword(
-        req.body,
+        req.body
       );
       AuthController.setTokenCookies(res, accessToken, refreshToken);
       sendResponse({
@@ -55,10 +55,10 @@ export class AuthController {
       AuthController.setTokenCookies(res, accessToken, refreshToken);
 
       // TODO: used action token instead of access token
-      res.cookie('access-token', accessToken, {
+      res.cookie("access-token", accessToken, {
         httpOnly: false,
         secure: true,
-        sameSite: 'strict',
+        sameSite: "strict",
         maxAge: 60000, // 1 minute
       });
 
@@ -98,7 +98,7 @@ export class AuthController {
   public static async renewToken(req: Request, res: Response, next: NextFunction) {
     try {
       const { accessToken, refreshToken }: AuthToken = await AuthService.generateAccessAndRefreshToken(
-        req.body.loggedInUser.userId,
+        req.body.loggedInUser.userId
       );
       AuthController.setTokenCookies(res, accessToken, refreshToken);
       sendResponse({

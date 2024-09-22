@@ -1,5 +1,5 @@
-import { Response } from 'supertest';
-import { errorMap, ErrorTypeEnum, STATUS_CODES } from '@/constants';
+import { Response } from "supertest";
+import { errorMap, ErrorTypeEnum, STATUS_CODES } from "@/constants";
 
 export const expectUnauthorizedResponseForMissingAuthorizationHeader = async (response: Response) => {
   const errorObject = errorMap[ErrorTypeEnum.enum.NO_AUTH_HEADER];

@@ -1,5 +1,5 @@
-import { ProfileDataModel } from './profile.modal';
-import { ProfileData } from './profile.validation';
+import { ProfileDataModel } from "./profile.modal";
+import { ProfileData } from "./profile.validation";
 
 interface IProfileDataDal {
   upSertProfileData(payload: ProfileData): Promise<ProfileData>;

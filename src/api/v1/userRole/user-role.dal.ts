@@ -1,5 +1,5 @@
-import { UserRoleModel } from './user-role.model';
-import { UserRole } from './user-role.validation';
+import { UserRoleModel } from "./user-role.model";
+import { UserRole } from "./user-role.validation";
 
 export class UserRoleDAL {
   static async createUserRole(userRole: UserRole) {
