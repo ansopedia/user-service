@@ -5,11 +5,6 @@
 ## Role
 
 - should protect get Roles, Update, & delete role
-- Default roles can't be deleted
-- Only the role created by user can be deleted
-- Add a flag `canBeDeleted`. If it is true then only alow to deleted
-- Even admin can't deleted if the role is `isSystemRole`
-- Add proper description about the role
 
 ## Permission
 

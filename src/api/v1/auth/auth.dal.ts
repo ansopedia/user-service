@@ -11,7 +11,7 @@ export class AuthDAL {
   }
 
   static async upsertAuthTokens({ userId, refreshToken }: Auth): Promise<Auth | null> {
-    return await AuthModel.findOneAndUpdate({ userId }, { refreshToken: refreshToken }, { upsert: true, new: true });
+    return await AuthModel.findOneAndUpdate({ userId }, { refreshToken }, { upsert: true, new: true });
   }
 
   static async deleteAuth(userId: string): Promise<Auth | null> {
