@@ -58,14 +58,17 @@ export class AuthController {
 
       // TODO: used action token instead of access token
       res.cookie("access-token", accessToken, {
-        httpOnly: false,
+        httpOnly: true,
         secure: true,
         sameSite: "strict",
         maxAge: 60000, // 1 minute
       });
 
       // Instead of sending a JSON response, redirect to the client's URL
-      res.redirect(`${envConstants.CLIENT_URL}/login?success=true`);
+      const state = req.query.state as string;
+      const redirectUrl = Buffer.from(state, "base64").toString("utf-8");
+
+      res.redirect(redirectUrl ?? `${envConstants.CLIENT_URL}/login?success=true`);
     } catch (error) {
       next(error);
     }
