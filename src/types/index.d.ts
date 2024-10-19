@@ -4,9 +4,5 @@ declare global {
     interface Request {
       user: CreateUser;
     }
-
-    interface User extends GoogleUser {
-      id: string;
-    }
   }
 }

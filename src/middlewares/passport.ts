@@ -19,5 +19,7 @@ export const signInWithGoogleCallback = (req: Request, res: Response, next: Next
   passport.authenticate("google", {
     session: false,
     failureRedirect: `${envConstants.CLIENT_URL}/login?error=failed`,
+    // Pass the state parameter to the callback
+    state: req.query.state as string | undefined,
   })(req, res, next);
 };
