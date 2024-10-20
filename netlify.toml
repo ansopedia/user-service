@@ -1,10 +1,11 @@
 [build]
-  command = "pnpm netlify:build"
+  command = "pnpm install && pnpm netlify:build"
   publish = "build"
   functions = "build/netlify/functions"
 
 [functions]
   node_bundler = "esbuild"
+  external_node_modules = ["bcrypt"]
 
 [[redirects]]
   from = "/*"
