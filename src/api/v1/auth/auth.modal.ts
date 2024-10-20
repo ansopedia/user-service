@@ -1,11 +1,11 @@
-import { Schema, Types, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 import { Auth } from "./auth.validation";
 
 const AuthSchema = new Schema(
   {
     userId: {
-      type: Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
