@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2021",
     "module": "CommonJS",
-    "rootDir": "./src",
+    "rootDir": ".",
     "moduleResolution": "Node",
     "baseUrl": ".",
     "paths": {
@@ -27,6 +27,6 @@
     "skipLibCheck": true
   },
   "lib": ["es2021"],
-  "include": ["src/**/*", "src/jest.setup.ts"],
+  "include": ["src/**/*", "src/jest.setup.ts", "netlify", "netlify/functions/**/*"],
   "exclude": ["node_modules"]
 }

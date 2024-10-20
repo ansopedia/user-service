@@ -1,6 +1,6 @@
 {
   "name": "user",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "user service for ansopedia",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,8 @@
     "prod": "set NODE_ENV=production&& pnpm build && pnpm start",
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "test": "jest --runInBand --detectOpenHandles --forceExit",
-    "test:coverage": "jest --runInBand --detectOpenHandles --forceExit --coverage"
+    "test:coverage": "jest --runInBand --detectOpenHandles --forceExit --coverage",
+    "netlify:build": "pnpm build"
   },
   "keywords": [
     "user",
@@ -62,6 +63,7 @@
     "lint-staged": "^15.2.9",
     "nodemon": "^3.1.4",
     "prettier": "^3.3.3",
+    "serverless-http": "^3.2.0",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.4",
     "ts-node": "^10.9.2",

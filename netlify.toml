@@ -1,0 +1,17 @@
+[build]
+  command = "pnpm netlify:build"
+  publish = "build"
+  functions = "build/netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[dev]
+  command = "pnpm dev"
+  port = 8000
+  publish = "build"

@@ -7,10 +7,10 @@ beforeAll(async () => {
   await connectDB();
   await setupInitialRolesAndPermissions();
   await setupInitialUserRole();
-  startServer(envConstants.APP_PORT);
+  await startServer(envConstants.APP_PORT);
 });
 
 afterAll(async () => {
   await disconnectDB();
-  stopServer();
+  await stopServer();
 });
