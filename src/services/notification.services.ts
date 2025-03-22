@@ -5,7 +5,7 @@ import { EmailNotification } from "./notification.validation";
 
 const sendEmail = async (body: EmailNotification) => {
   try {
-    await fetch(`${envConstants.NOTIFICATION_SERVICE_BASE_URL}/api/v1/emails`, {
+    const response = await fetch(`${envConstants.NOTIFICATION_SERVICE_BASE_URL}/api/v1/emails`, {
       method: "POST",
       body: JSON.stringify(body),
       headers: {
@@ -13,8 +13,25 @@ const sendEmail = async (body: EmailNotification) => {
         origin: envConstants.USER_SERVICE_BASE_URL,
       },
     });
+
+    if (!response.ok) {
+      const responseBody = await response.text();
+      logger.error({
+        message: "Email notification service responded with an error",
+        status: response.status,
+        statusText: response.statusText,
+        responseBody,
+        requestBody: body,
+      });
+      throw new Error(`Notification service error: ${response.status} ${response.statusText}`);
+    }
   } catch (error) {
-    logger.error(`Error while sending email, ${error}`);
+    logger.error({
+      message: "Exception while sending email",
+      error,
+      requestBody: body,
+    });
+    throw error;
   }
 };
 

@@ -117,7 +117,7 @@ export class AuthService {
 
     const user = await UserService.updateUser(userId, { password });
 
-    notificationService.sendEmail({
+    await notificationService.sendEmail({
       to: user.email,
       eventType: "sendPasswordChangeConfirmation",
       payload: { recipientName: user.username },
