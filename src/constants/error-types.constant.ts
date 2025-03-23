@@ -36,6 +36,8 @@ const errorType = [
   "TOO_MANY_REQUESTS",
   "TOKEN_NOT_ACTIVE",
   "INVALID_TOKEN_AUDIENCE",
+  "NOTIFICATION_SERVICE_UNAVAILABLE",
+  "NOTIFICATION_SERVICE_MISCONFIGURED",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -207,6 +209,20 @@ export const errorMap = {
   [ErrorTypeEnum.enum.INVALID_TOKEN_AUDIENCE]: {
     httpStatusCode: STATUS_CODES.UNAUTHORIZED,
     body: { code: "invalid_token_audience", message: "Invalid token audience" },
+  },
+  [ErrorTypeEnum.enum.NOTIFICATION_SERVICE_UNAVAILABLE]: {
+    httpStatusCode: STATUS_CODES.SERVICE_UNAVAILABLE,
+    body: {
+      code: "notification_service_unavailable",
+      message: "Notification service unavailable",
+    },
+  },
+  [ErrorTypeEnum.enum.NOTIFICATION_SERVICE_MISCONFIGURED]: {
+    httpStatusCode: STATUS_CODES.SERVICE_UNAVAILABLE,
+    body: {
+      code: "notification_service_misconfigured",
+      message: "Notification service configuration mismatch",
+    },
   },
 };
 

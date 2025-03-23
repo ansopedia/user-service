@@ -25,7 +25,7 @@ export class OtpService {
 
       message = success.VERIFICATION_EMAIL_SENT;
 
-      notificationService.sendEmail({
+      await notificationService.sendEmail({
         to: user.email,
         eventType: otpType,
         payload: { otp, recipientName: user.username },
@@ -38,7 +38,7 @@ export class OtpService {
       //
       message = success.FORGET_PASSWORD_EMAIL_SENT;
 
-      notificationService.sendEmail({
+      await notificationService.sendEmail({
         to: user.email,
         eventType: otpType,
         payload: { otp },
