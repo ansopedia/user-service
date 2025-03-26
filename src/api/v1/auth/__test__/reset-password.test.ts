@@ -15,6 +15,7 @@ import {
   verifyOTP,
 } from "@/utils/test";
 
+import { EmailEventType } from "../../../../services";
 import { GetUser } from "../../user/user.validation";
 
 const user = {
@@ -72,7 +73,7 @@ describe("Reset Password", () => {
       expectFindUserByUsernameSuccess(userResponse, user);
       const userDetails: GetUser = userResponse.body.data;
 
-      const otpData = await retrieveOTP(userDetails.id, "sendForgetPasswordOTP");
+      const otpData = await retrieveOTP(userDetails.id, EmailEventType.sendForgetPasswordOTP);
       verifiedOTPResponse = await verifyOTP(otpData, user.email);
       expectOTPVerificationSuccess(verifiedOTPResponse);
     });

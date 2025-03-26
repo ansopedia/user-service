@@ -6,6 +6,7 @@ import { app } from "@/app";
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 
 import { CreateUser, ResetPassword } from "../../api/v1/user/user.validation";
+import { EmailEventType } from "../../services";
 import { expectOTPRequestSuccess, expectOTPVerificationSuccess, requestOTP, retrieveOTP, verifyOTP } from "./otp.utils";
 import { expectFindUserByUsernameSuccess, findUserByUsername } from "./user.utils";
 
@@ -99,7 +100,7 @@ export const verifyAccount = async (user: CreateUser) => {
   expectFindUserByUsernameSuccess(userResponse, user);
 
   // Step 2: Retrieve OTP from database
-  const otpData = await retrieveOTP(userResponse.body.data.id, "sendEmailVerificationOTP");
+  const otpData = await retrieveOTP(userResponse.body.data.id, EmailEventType.sendEmailVerificationOTP);
 
   // Step 3: Verify OTP
   const verifyResponse = await verifyOTP(otpData, email);
