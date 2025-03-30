@@ -6,10 +6,11 @@ import { app } from "@/app";
 import { STATUS_CODES } from "@/constants";
 
 import { OtpService } from "../../api/v1/otp/otp.service";
+import { EmailEventType } from "../../services";
 
 export const requestOTP = async (email: string): Promise<Response> => {
   return supertest(app).post("/api/v1/otp").send({
-    otpType: "sendEmailVerificationOTP",
+    otpType: EmailEventType.sendEmailVerificationOTP,
     email,
   });
 };

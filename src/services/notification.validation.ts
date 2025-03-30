@@ -1,26 +1,29 @@
 import { z } from "zod";
 
-// const EmailEventType = z.enum([
-//   'sendEmailVerificationOTP',
-//   'sendEmailVerificationMagicLink',
-//   'sendEmailChangeConfirmation',
-//   'sendPasswordResetOTP',
-//   'sendAccountActivationEmail',
-//   'sendWelcomeEmail',
-//   'sendTwoFactorAuthCode',
-//   'sendLoginAttemptAlert',
-//   'sendPasswordChangeConfirmation',
-//   'sendAccountDeletionConfirmation',
-//   'sendEmailSubscriptionConfirmation',
-//   'sendProfileUpdateNotification',
-//   'sendSecurityAlertEmail',
-//   'sendInactiveAccountReminder',
-//   'sendPaymentConfirmationEmail',
-//   'sendOrderShippingUpdate',
-//   'sendNewsletterOptInConfirmation',
-//   'sendAccountLockoutNotification',
-//   'sendPasswordExpirationReminder',
-// ]);
+const emailEventType = [
+  "sendEmailVerificationOTP",
+  "sendEmailVerificationMagicLink",
+  "sendEmailChangeConfirmation",
+  "sendForgetPasswordOTP",
+  "sendPasswordChangeConfirmation",
+  // 'sendPasswordResetOTP',
+  // 'sendAccountActivationEmail',
+  // 'sendWelcomeEmail',
+  // 'sendTwoFactorAuthCode',
+  // 'sendLoginAttemptAlert',
+  // 'sendAccountDeletionConfirmation',
+  // 'sendEmailSubscriptionConfirmation',
+  // 'sendProfileUpdateNotification',
+  // 'sendSecurityAlertEmail',
+  // 'sendInactiveAccountReminder',
+  // 'sendPaymentConfirmationEmail',
+  // 'sendOrderShippingUpdate',
+  // 'sendNewsletterOptInConfirmation',
+  // 'sendAccountLockoutNotification',
+  // 'sendPasswordExpirationReminder',
+] as const;
+
+export const EmailEventType = z.enum(emailEventType).Enum;
 
 export const emailValidator = z
   .string()
@@ -45,6 +48,7 @@ const emailChangeConfirmationPayload = z.object({
 
 const passwordResetOTPPayload = z.object({
   otp: otpValidator,
+  recipientName: z.string().min(1, "Recipient name is required"),
 });
 
 const passwordChangeConfirmationPayload = z.object({
@@ -55,31 +59,31 @@ const passwordChangeConfirmationPayload = z.object({
 const emailNotification = z.discriminatedUnion("eventType", [
   z.object({
     to: emailValidator,
-    eventType: z.literal("sendEmailVerificationOTP"),
+    eventType: z.literal(EmailEventType.sendEmailVerificationOTP),
     subject: z.string().optional(),
     payload: emailVerificationOTPPayload,
   }),
   z.object({
     to: emailValidator,
-    eventType: z.literal("sendEmailVerificationMagicLink"),
+    eventType: z.literal(EmailEventType.sendEmailVerificationMagicLink),
     payload: emailVerificationMagicLinkPayload,
     subject: z.string().optional(),
   }),
   z.object({
     to: emailValidator,
-    eventType: z.literal("sendEmailChangeConfirmation"),
+    eventType: z.literal(EmailEventType.sendEmailChangeConfirmation),
     payload: emailChangeConfirmationPayload,
     subject: z.string().optional(),
   }),
   z.object({
     to: emailValidator,
-    eventType: z.literal("sendForgetPasswordOTP"),
+    eventType: z.literal(EmailEventType.sendForgetPasswordOTP),
     payload: passwordResetOTPPayload,
     subject: z.string().optional(),
   }),
   z.object({
     to: emailValidator,
-    eventType: z.literal("sendPasswordChangeConfirmation"),
+    eventType: z.literal(EmailEventType.sendPasswordChangeConfirmation),
     subject: z.string().optional(),
     payload: passwordChangeConfirmationPayload,
   }),

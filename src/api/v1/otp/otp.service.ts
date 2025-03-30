@@ -6,6 +6,7 @@ import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, envConstants } from "@/constants";
 import { notificationService } from "@/services/notification.services";
 import { generateOTP, verifyOTP } from "@/utils";
 
+import { EmailEventType } from "../../../services";
 import { TokenService } from "../token/token.service";
 import { TokenAction } from "../token/token.validation";
 import { OtpDAL } from "./otp.dal";
@@ -20,7 +21,7 @@ export class OtpService {
     let message: string = success.OTP_SENT;
     const user = await UserService.getUserByEmail(email as string);
 
-    if (otpType === "sendEmailVerificationOTP") {
+    if (otpType === EmailEventType.sendEmailVerificationOTP) {
       if (user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED);
 
       message = success.VERIFICATION_EMAIL_SENT;
@@ -32,16 +33,13 @@ export class OtpService {
       });
     }
 
-    if (otpType === "sendForgetPasswordOTP") {
-      // TODO: If user try to forget password then logout him from all devices because of security reasons
-      // because after verifying OTP he will get a token (access token) that will allow him to access all the resources with that token that we sent to him as a response.
-      //
+    if (otpType === EmailEventType.sendForgetPasswordOTP) {
       message = success.FORGET_PASSWORD_EMAIL_SENT;
 
       await notificationService.sendEmail({
         to: user.email,
         eventType: otpType,
-        payload: { otp },
+        payload: { otp, recipientName: user.username },
       });
     }
 
@@ -77,11 +75,11 @@ export class OtpService {
 
     if (isPast(otpData.expiryTime)) throw new Error(ErrorTypeEnum.enum.OTP_EXPIRED);
 
-    if (otpType === "sendEmailVerificationOTP") {
+    if (otpType === EmailEventType.sendEmailVerificationOTP) {
       await UserService.updateUser(user.id, { isEmailVerified: true });
     }
 
-    if (otpType === "sendForgetPasswordOTP") {
+    if (otpType === EmailEventType.sendForgetPasswordOTP) {
       token = await new TokenService().createActionToken(user.id, TokenAction.resetPassword);
     }
 

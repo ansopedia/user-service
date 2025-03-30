@@ -1,10 +1,11 @@
 import { ZodError } from "zod";
 
+import { EmailEventType } from "../../../../services";
 import { OtpEvent, otpEvent } from "../otp.validation";
 
 describe("Test OTP validation", () => {
   const otpTypes: OtpEvent = {
-    otpType: "sendEmailVerificationOTP",
+    otpType: EmailEventType.sendEmailVerificationOTP,
     email: "example@gmail.com",
   };
 
@@ -13,7 +14,7 @@ describe("Test OTP validation", () => {
     expect(res.success).toBe(true);
   });
 
-  it('should throw error if email is not provided with otpType of "sendEmailVerificationOTP"', () => {
+  it(`should throw error if email is not provided with otpType of ${EmailEventType.sendEmailVerificationOTP}`, () => {
     const otpTypesWithoutEmail = { ...otpTypes, email: undefined };
 
     try {

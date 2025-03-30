@@ -10,7 +10,7 @@ import {
   validateResetPasswordSchema,
 } from "@/api/v1/user/user.validation";
 import { ErrorTypeEnum, Permission } from "@/constants";
-import { notificationService } from "@/services";
+import { EmailEventType, notificationService } from "@/services";
 import { GoogleUser } from "@/types/passport-google";
 import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from "@/utils";
 
@@ -24,7 +24,7 @@ export class AuthService {
 
     await OtpService.sendOtp({
       email: userData.email,
-      otpType: "sendEmailVerificationOTP",
+      otpType: EmailEventType.sendEmailVerificationOTP,
     });
   }
 
@@ -119,7 +119,7 @@ export class AuthService {
 
     await notificationService.sendEmail({
       to: user.email,
-      eventType: "sendPasswordChangeConfirmation",
+      eventType: EmailEventType.sendPasswordChangeConfirmation,
       payload: { recipientName: user.username },
     });
   }
