@@ -7,8 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2025-02-14
 
+### Fixed
+
+- Enhanced notification system with improved error handling and service integration
+
 ### Added
 
+- Implemented multi-environment configuration system with automated setup (#111)
+  - Added support for test, development, and local environment configurations
+  - Created scripts to automatically generate environment files from templates
+  - Integrated RSA key generation into environment setup process
+  - Added comprehensive documentation for environment management
 - Added username availability check endpoint (#103)
   - New GET `/users/check-username/:username` endpoint
   - Comprehensive test coverage for validation cases
