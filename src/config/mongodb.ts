@@ -3,10 +3,10 @@ import mongoose, { ConnectOptions } from "mongoose";
 import { ErrorTypeEnum, envConstants } from "@/constants";
 import { logger } from "@/utils";
 
-const { DATABASE_URL, NODE_ENV, DB_NAME, TEST_DB_NAME, TEST_DATABASE_URL } = envConstants;
+const { DATABASE_URL, NODE_ENV, DB_NAME } = envConstants;
 
 const dbOptions: ConnectOptions = {
-  dbName: NODE_ENV === "development" ? DB_NAME : TEST_DB_NAME,
+  dbName: DB_NAME,
 };
 
 export const connectDB = async () => {
@@ -18,7 +18,7 @@ export const connectDB = async () => {
     }
 
     if (NODE_ENV === "test") {
-      await mongoose.connect(TEST_DATABASE_URL, dbOptions);
+      await mongoose.connect(DATABASE_URL, dbOptions);
       await mongoose.connection.db?.dropDatabase();
       return;
     }

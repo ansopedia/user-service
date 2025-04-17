@@ -1,17 +1,26 @@
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 import { z } from "zod";
 
 import { userSchema } from "@/api/v1/user/user.validation";
 
-dotenv.config();
+// Load environment variables based on NODE_ENV
+const nodeEnv = process.env.NODE_ENV ?? "development";
+const envPath = path.resolve(process.cwd(), "environments", `.env.${nodeEnv.toLowerCase()}`);
 
+// Check if environment file exists before loading
+if (!fs.existsSync(envPath)) {
+  throw new Error(`Environment file ${envPath} not found`);
+}
+
+dotenv.config({ path: envPath });
+
+// Define environment schema with optional() for development flexibility
 const envSchema = z.object({
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required").readonly(),
   APP_PORT: z.coerce.number().min(1, "APP_PORT is required and must be a number greater than 0").readonly(),
-  TEST_PORT: z.coerce.number().min(1, "TEST_PORT is required and must be a number greater than 0").readonly(),
-  TEST_DATABASE_URL: z.string().min(1, "TEST_DATABASE_URL is required").readonly(),
   DB_NAME: z.string().min(1, "DB_NAME is required").readonly(),
-  TEST_DB_NAME: z.string().min(1, "TEST_DB_NAME is required").readonly(),
   PINO_LOG_LEVEL: z.string().min(1, "PINO_LOG_LEVEL is required").readonly(),
   NODE_ENV: z.string().min(1, "NODE_ENV is required").readonly(),
   JWT_ACCESS_SECRET: z.string().min(1, "JWT_ACCESS_SECRET is required").readonly(),

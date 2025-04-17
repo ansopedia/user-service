@@ -7,7 +7,7 @@ beforeAll(async () => {
   await connectDB();
   await setupInitialRolesAndPermissions();
   await setupInitialUserRole();
-  await startServer(envConstants.TEST_PORT);
+  await startServer(envConstants.APP_PORT);
 });
 
 afterAll(async () => {

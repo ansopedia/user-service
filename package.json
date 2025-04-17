@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon",
+    "dev:local": "cross-env NODE_ENV=local nodemon",
+    "dev:development": "cross-env NODE_ENV=development nodemon",
     "generate-keys": "ts-node scripts/generate-keys.ts",
     "lint:fix": "eslint --fix .",
     "lint": "eslint src .",
@@ -16,7 +17,7 @@
     "prod": "set NODE_ENV=production&& pnpm build && pnpm start",
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "test:coverage": "jest --runInBand --detectOpenHandles --forceExit --coverage",
-    "test": "jest --runInBand --detectOpenHandles --forceExit"
+    "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit"
   },
   "keywords": [
     "user",
@@ -56,6 +57,7 @@
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
+    "cross-env": "^7.0.3",
     "eslint": "^9.17.0",
     "eslint-plugin-check-file": "^2.8.0",
     "globals": "^15.13.0",
