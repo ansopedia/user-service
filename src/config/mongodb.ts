@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
+import mongoose, { ConnectOptions } from "mongoose";
 
 import { ErrorTypeEnum, envConstants } from "@/constants";
 import { logger } from "@/utils";
 
-const { DATABASE_URL, NODE_ENV } = envConstants;
+const { DATABASE_URL, NODE_ENV, DB_NAME } = envConstants;
 
-const dbOptions = {
-  dbName: "users-service",
+const dbOptions: ConnectOptions = {
+  dbName: DB_NAME,
 };
 
 export const connectDB = async () => {

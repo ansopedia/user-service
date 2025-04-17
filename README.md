@@ -12,7 +12,11 @@ The Ansopedia User Service is a backend service responsible for managing user ac
 Before we dive into the setup steps, let's break down the scripts in your `package.json` file:
 
 - **build:** Transpiles TypeScript code to JavaScript.
-- **dev:** Starts the development server with nodemon for hot reloading.
+- **dev:local:** Starts the development server with nodemon in local environment.
+- **dev:development:** Starts the development server with nodemon in development environment.
+- **generate-keys:** Generates RSA keys for JWT authentication.
+- **generate-env:** Generates environment files from the example template.
+- **setup:** Runs a complete project setup (generates environment files and RSA keys).
 - **lint:** Lints the codebase using ESLint.
 - **lint:fix:** Automatically fixes lint errors.
 - **prepare:** Runs husky pre-commit hooks.
@@ -34,46 +38,25 @@ Follow these steps to set up the project:
    cd user-service
    ```
 
-2. **Set up environment variables:**
-
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Install dependencies:**
+2. **Install dependencies:**
 
    ```bash
    pnpm install
    ```
 
-4. **Generate RSA Keys:**
+3. **Automated Setup:**
 
    ```bash
-   pnpm generate-keys
+   pnpm setup
    ```
 
-   This script generates RSA keys and saves them to the `keys` directory.
+   **This script:**
 
-5. **Add RSA Keys to Environment:**
+   - Generates environment files for test, development, and local environments
+   - Generates RSA keys for JWT authentication
+   - Automatically updates environment files with the generated RSA keys
 
-   - Open your `.env` file
-   - Copy the contents of `private.pem` to the `PRIVATE_KEY` variable
-   - Copy the contents of `public.pem` to the `PUBLIC_KEY` variable
-   - Make sure to maintain the PEM format, including the BEGIN and END lines
-
-   Example format in `.env`:
-
-   ```env
-   PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
-   MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSj...
-   -----END PRIVATE KEY-----"
-
-   PUBLIC_KEY="-----BEGIN PUBLIC KEY-----
-   MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgK...
-   -----END PUBLIC KEY-----"
-   ```
-
-6. **Verify Setup:**
+4. **Verify Setup:**
 
    ```bash
    pnpm test
@@ -81,17 +64,32 @@ Follow these steps to set up the project:
 
    All test cases should pass if the setup is correct.
 
-7. **Start Development Server:**
+5. **Start Development Server:**
 
    ```bash
-   pnpm dev
+   pnpm dev:local
    ```
+
+   or
+
+   ```bash
+   pnpm dev:development
+   ```
+
+   Your server should now be running locally.
 
 ## Available Scripts
 
+- **Setup:**
+
+  - `pnpm setup`: Complete project setup (environment files and RSA keys)
+  - `pnpm generate-env`: Generate environment files only
+  - `pnpm generate-keys`: Generate RSA keys only
+
 - **Development:**
 
-  - `pnpm dev`: Start development server with hot reload
+  - `pnpm dev:local`: Start development server in local environment
+  - `pnpm dev:development`: Start development server in development environment
   - `pnpm start`: Start server using ts-node
 
 - **Production:**
@@ -102,12 +100,24 @@ Follow these steps to set up the project:
 - **Testing:**
 
   - `pnpm test`: Run test suite
+  - `pnpm test:coverage`: Run tests with coverage report
 
 - **Code Quality:**
   - `pnpm lint`: Check code style
   - `pnpm lint:fix`: Fix code style issues
   - `pnpm prettier:check`: Check formatting
   - `pnpm prettier:fix`: Fix formatting issues
+
+## Environment Configuration
+
+The project uses different environment configurations for various deployment scenarios:
+
+- **Local**: For local development (.env.local)
+- **Development**: For development server deployment (.env.development)
+- **Test**: For running tests (.env.test)
+- **Production**: For production deployment (configure manually)
+
+The environment files are stored in the **environments** directory and are automatically loaded based on the **NODE_ENV** value.
 
 ## Security Notes
 
