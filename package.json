@@ -16,7 +16,7 @@
     "pretest": "pnpm build",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "prod": "set NODE_ENV=production&& pnpm build && pnpm start",
+    "prod": "set NODE_ENV=production && pnpm build && pnpm start",
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "test:coverage": "jest --runInBand --detectOpenHandles --forceExit --coverage",
     "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit"

@@ -22,7 +22,11 @@ const envSchema = z.object({
   APP_PORT: z.coerce.number().min(1, "APP_PORT is required and must be a number greater than 0").readonly(),
   DB_NAME: z.string().min(1, "DB_NAME is required").readonly(),
   PINO_LOG_LEVEL: z.string().min(1, "PINO_LOG_LEVEL is required").readonly(),
-  NODE_ENV: z.string().min(1, "NODE_ENV is required").readonly(),
+  NODE_ENV: z
+    .enum(["development", "stage", "local", "test", "production"], {
+      required_error: "NODE_ENV is required and must be one of development, stage, local, test, or production",
+    })
+    .readonly(),
   JWT_ACCESS_SECRET: z.string().min(1, "JWT_ACCESS_SECRET is required").readonly(),
   JWT_REFRESH_SECRET: z.string().min(1, "JWT_REFRESH_SECRET is required").readonly(),
   JWT_TOKEN_FOR_ACTION_SECRET: z.string().min(1, "JWT_TOKEN_FOR_ACTION_SECRET is required").readonly(),

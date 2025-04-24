@@ -42,15 +42,6 @@ const generateEnvFiles = () => {
       console.info(`Generated environment file: ${envFilePath}`);
     });
 
-    // Also create a .env file in the root directory
-    // const rootEnvPath = path.join(__dirname, "..", ".env");
-    // if (!fs.existsSync(rootEnvPath)) {
-    //   fs.writeFileSync(rootEnvPath, exampleEnvContent);
-    //   console.info(`Generated root .env file: ${rootEnvPath}`);
-    // } else {
-    //   console.info(`Root .env file already exists. Skipping.`);
-    // }
-
     console.info("Environment files generation completed successfully!");
   } catch (error) {
     console.error(`Error generating environment files: ${error}`);

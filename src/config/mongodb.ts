@@ -11,7 +11,7 @@ const dbOptions: ConnectOptions = {
 
 export const connectDB = async () => {
   try {
-    if (NODE_ENV === "development") {
+    if (NODE_ENV === "development" || NODE_ENV === "local") {
       mongoose.set("debug", true);
       await mongoose.connect(DATABASE_URL, dbOptions);
       return;
