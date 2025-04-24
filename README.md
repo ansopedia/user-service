@@ -47,7 +47,7 @@ Follow these steps to set up the project:
 3. **Automated Setup:**
 
    ```bash
-   pnpm setup
+   pnpm run setup
    ```
 
    **This script:**
@@ -82,7 +82,7 @@ Follow these steps to set up the project:
 
 - **Setup:**
 
-  - `pnpm setup`: Complete project setup (environment files and RSA keys)
+  - `pnpm run setup`: Complete project setup (environment files and RSA keys)
   - `pnpm generate-env`: Generate environment files only
   - `pnpm generate-keys`: Generate RSA keys only
 
