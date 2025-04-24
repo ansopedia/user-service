@@ -14,9 +14,7 @@ export class CryptoUtil {
   private constructor() {}
 
   static getInstance(): CryptoUtil {
-    if (CryptoUtil.instance === null) {
-      CryptoUtil.instance = new CryptoUtil();
-    }
+    CryptoUtil.instance ??= new CryptoUtil();
     return CryptoUtil.instance;
   }
 
