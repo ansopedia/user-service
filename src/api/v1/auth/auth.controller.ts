@@ -10,8 +10,9 @@ import { AuthToken } from "./auth.validation";
 
 export class AuthController {
   private static setTokenCookies(res: Response, accessToken: string, refreshToken: string) {
-    res.header("Access-Control-Expose-Headers", "set-cookie, authorization");
+    res.header("Access-Control-Expose-Headers", "set-cookie, authorization, refresh-token");
     res.setHeader("authorization", accessToken);
+    res.setHeader("refresh-token", refreshToken);
     res.cookie("refresh-token", refreshToken, {
       httpOnly: true,
       secure: true,

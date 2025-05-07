@@ -22,6 +22,9 @@ export const expectLoginSuccess = (response: Response): void => {
   const authorizationHeader = headers["authorization"];
   expect(authorizationHeader).toBeDefined();
 
+  const refreshToken = headers["refresh-token"];
+  expect(refreshToken).toBeDefined();
+
   const setCookieHeader = response.get("set-cookie")?.[0];
   expect(setCookieHeader).toContain("refresh-token=");
   expect(setCookieHeader).toMatch(/HttpOnly; Secure/);
