@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Updated dependencies to latest versions
+- Rename login endpoint to sign-in for consistency
 
 ### Fixed
 
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add refresh-token header to login response
 - Implemented multi-environment configuration system with automated setup (#111)
   - Added support for test, development, and local environment configurations
   - Created scripts to automatically generate environment files from templates

@@ -11,7 +11,7 @@ import { expectOTPRequestSuccess, expectOTPVerificationSuccess, requestOTP, retr
 import { expectFindUserByUsernameSuccess, findUserByUsername } from "./user.utils";
 
 export const login = async (loginData: Login): Promise<Response> => {
-  return supertest(app).post("/api/v1/auth/login").send(loginData);
+  return supertest(app).post("/api/v1/auth/sign-in").send(loginData);
 };
 
 export const expectLoginSuccess = (response: Response): void => {

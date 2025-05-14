@@ -7,7 +7,7 @@ import { AuthController } from "./auth.controller";
 const router = Router();
 
 router.post("/auth/sign-up", AuthController.signUp);
-router.post("/auth/login", AuthController.signInWithEmailOrUsernameAndPassword);
+router.post("/auth/sign-in", AuthController.signInWithEmailOrUsernameAndPassword);
 router.post("/auth/logout", validateAccessToken, AuthController.logout);
 router.post("/auth/refresh-token", validateRefreshToken, AuthController.renewToken);
 router.post("/auth/verify-access-token", validateAccessToken, AuthController.verifyToken);
