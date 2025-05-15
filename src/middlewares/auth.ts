@@ -8,14 +8,10 @@ import { extractTokenFromBearerString, verifyJWTToken } from "@/utils/jwt.util";
 const parseUser = async (req: Request, _: Response, next: NextFunction, tokenType: "access" | "refresh") => {
   try {
     const authHeader = req.headers.authorization;
-    if (authHeader == null || authHeader === "") {
-      throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
-    }
+    if (authHeader == null || authHeader === "") throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
 
     const token = extractTokenFromBearerString(authHeader);
-    if (!token) {
-      throw new Error(ErrorTypeEnum.enum.INVALID_ACCESS);
-    }
+    if (!token) throw new Error(ErrorTypeEnum.enum.INVALID_ACCESS);
 
     let user: Auth;
     try {
@@ -23,14 +19,12 @@ const parseUser = async (req: Request, _: Response, next: NextFunction, tokenTyp
         const { id } = await verifyJWTToken<JwtRefreshToken>(token, tokenType);
         user = await AuthService.verifyToken(id);
       } else {
-        const res = await verifyJWTToken<JwtAccessToken>(token, tokenType);
-        const { userId } = res;
+        const { userId } = await verifyJWTToken<JwtAccessToken>(token, tokenType);
         user = await AuthService.verifyToken(userId);
       }
     } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      }
+      if (error instanceof Error) throw error;
+
       throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
     }
 

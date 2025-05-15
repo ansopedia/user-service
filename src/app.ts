@@ -2,6 +2,7 @@ import cors from "cors";
 import express, { type Application, NextFunction, Request, Response } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
+import morgan from "morgan";
 import passport from "passport";
 import { pinoHttp } from "pino-http";
 
@@ -71,6 +72,7 @@ app.use(express.json());
 app.use(passport.initialize());
 app.use(pinoHttp({ logger }));
 app.use(addAxiosHeadersMiddleware);
+app.use(morgan("dev"));
 
 app.use("/api/v1", routes);
 
