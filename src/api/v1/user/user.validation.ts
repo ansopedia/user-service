@@ -31,7 +31,7 @@ export const userSchema = z.object({
   id: z.string().uuid(),
   googleId: z.string().optional(),
   username: username,
-  email: z.string().email().trim().toLowerCase(),
+  email: z.string().email().trim().toLowerCase().min(1, "Email is required"),
   password: password,
   confirmPassword: password,
   isEmailVerified: z.boolean().default(false),

@@ -59,6 +59,7 @@ export const expectSignUpSuccess = (response: Response): void => {
 
   expect(body).toMatchObject({
     message: success.SIGN_UP_SUCCESS,
+    data: { emailVerificationToken: expect.any(String) },
   });
 };
 
@@ -98,6 +99,8 @@ export const verifyAccount = async (user: CreateUser) => {
   const otpResponse = await requestOTP(email);
   expectOTPRequestSuccess(otpResponse);
 
+  const { token } = otpResponse.body.data;
+
   // Step 2: Retrieve User from database
   const userResponse = await findUserByUsername(username);
   expectFindUserByUsernameSuccess(userResponse, user);
@@ -106,7 +109,11 @@ export const verifyAccount = async (user: CreateUser) => {
   const otpData = await retrieveOTP(userResponse.body.data.id, EmailEventType.sendEmailVerificationOTP);
 
   // Step 3: Verify OTP
-  const verifyResponse = await verifyOTP(otpData, email);
+  const verifyResponse = await verifyOTP({
+    otp: otpData.otp,
+    token: token,
+    otpType: EmailEventType.sendEmailVerificationOTP,
+  });
   expectOTPVerificationSuccess(verifyResponse);
 };
 

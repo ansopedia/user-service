@@ -20,12 +20,19 @@ import { Auth, AuthToken, Login, loginSchema } from "./auth.validation";
 
 export class AuthService {
   public static async signUp(userData: CreateUser) {
-    await UserService.createUser(userData);
+    const newUser = await UserService.createUser(userData);
 
     await OtpService.sendOtp({
       email: userData.email,
       otpType: EmailEventType.sendEmailVerificationOTP,
     });
+
+    // Generate a temporary token for email verification
+    const tokenService = new TokenService();
+    const emailVerificationToken = await tokenService.createActionToken(newUser.id, TokenAction.verifyEmail);
+
+    // Return the verification token along with the success message
+    return { emailVerificationToken };
   }
 
   public static async signInWithEmailOrUsernameAndPassword(userData: Login): Promise<AuthToken> {
@@ -107,7 +114,7 @@ export class AuthService {
 
   public static async forgetPassword(email: Email) {
     validateEmail(email);
-    await OtpService.sendOtp({ email, otpType: "sendForgetPasswordOTP" });
+    return await OtpService.sendOtp({ email, otpType: "sendForgetPasswordOTP" });
   }
 
   public static async resetPassword(resetPassword: ResetPassword) {

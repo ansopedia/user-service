@@ -24,7 +24,7 @@ export class TokenService {
       expiryTime: new Date(Date.now() + FIVE_MINUTES_IN_MS),
     };
 
-    await this.tokenDAL.replaceTokenForUser(tokenPayload);
+    await this.tokenDAL.upsertToken(tokenPayload);
     return token;
   }
 

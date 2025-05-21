@@ -6,7 +6,13 @@ import morgan from "morgan";
 import passport from "passport";
 import { pinoHttp } from "pino-http";
 
-import { ErrorTypeEnum, FIFTEEN_MINUTES_IN_MS, envConstants } from "@/constants";
+import {
+  ErrorTypeEnum,
+  RATE_LIMIT_MAX_REQUESTS,
+  RATE_LIMIT_MESSAGE,
+  RATE_LIMIT_WINDOW_MS,
+  envConstants,
+} from "@/constants";
 import { addAxiosHeadersMiddleware, errorHandler } from "@/middlewares";
 import { routes } from "@/routes";
 import { logger } from "@/utils";
@@ -22,7 +28,7 @@ if (NODE_ENV !== "test") {
   app.use(helmet());
 
   // Apply CORS middleware with a whitelist (adjust origins as needed)
-  const allowedOrigins = ["http://localhost:3000", "http://192.168.1.233:3000"];
+  const allowedOrigins = ["http://localhost:3000"];
   const allowedPathsWithoutOrigin = ["/api/v1/auth/google/callback", "/api/v1/auth/google"];
 
   const corsOptions = {
@@ -59,11 +65,11 @@ if (NODE_ENV !== "test") {
 }
 
 const globalLimiter = rateLimit({
-  windowMs: FIFTEEN_MINUTES_IN_MS, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  windowMs: RATE_LIMIT_WINDOW_MS, // RATE_LIMIT_WINDOW_MS minutes
+  max: RATE_LIMIT_MAX_REQUESTS, // Limit each IP to RATE_LIMIT_MAX_REQUESTS requests per windowMs
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  message: "Too many requests from this IP, please try again after 15 minutes",
+  message: RATE_LIMIT_MESSAGE,
 });
 
 app.use(globalLimiter);

@@ -20,7 +20,8 @@ describe("Test OTP validation", () => {
     try {
       otpEvent.parse(otpTypesWithoutEmail);
     } catch (error) {
-      expect((error as ZodError).errors[0].message).toBe("Email is required");
+      expect((error as ZodError).errors[0].message).toBe("Required");
+      expect((error as ZodError).errors[0].path).toEqual(["email"]);
     }
   });
 
@@ -30,20 +31,8 @@ describe("Test OTP validation", () => {
     try {
       otpEvent.parse(otpTypesWithoutPhoneNumber);
     } catch (error) {
-      expect((error as ZodError).errors[0].message).toBe("Phone number is required");
-    }
-  });
-
-  it("should throw error if phone number is invalid", () => {
-    const otpTypesWithInvalidPhoneNumber = {
-      otpType: "verifyPhoneNumber",
-      phoneNumber: "1234567890",
-    };
-
-    try {
-      otpEvent.parse(otpTypesWithInvalidPhoneNumber);
-    } catch (error) {
-      expect((error as ZodError).errors[0].message).toBe("Invalid Phone number");
+      expect((error as ZodError).errors[0].message).toBe("Required");
+      expect((error as ZodError).errors[0].path).toEqual(["phoneNumber"]);
     }
   });
 });

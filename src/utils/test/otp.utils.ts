@@ -1,7 +1,7 @@
 import supertest, { Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant";
-import { OtpSchema, OtpType } from "@/api/v1/otp/otp.validation";
+import { OtpSchema, OtpType, OtpVerifyEvent } from "@/api/v1/otp/otp.validation";
 import { app } from "@/app";
 import { STATUS_CODES } from "@/constants";
 
@@ -17,7 +17,12 @@ export const requestOTP = async (email: string): Promise<Response> => {
 
 export const expectOTPRequestSuccess = (response: Response): void => {
   expect(response.statusCode).toBe(STATUS_CODES.OK);
-  expect(response.body.message).toBe(success.VERIFICATION_EMAIL_SENT);
+  expect(response.body).toMatchObject({
+    message: success.VERIFICATION_EMAIL_SENT,
+    data: {
+      token: expect.any(String),
+    },
+  });
 };
 
 export const retrieveOTP = async (userId: string, otpType: OtpType): Promise<OtpSchema> => {
@@ -29,12 +34,8 @@ export const retrieveOTP = async (userId: string, otpType: OtpType): Promise<Otp
   return otpData as OtpSchema;
 };
 
-export const verifyOTP = async ({ otp, otpType }: OtpSchema, email: string): Promise<Response> => {
-  return supertest(app).post("/api/v1/otp/verify").send({
-    otpType,
-    email,
-    otp,
-  });
+export const verifyOTP = async (data: OtpVerifyEvent): Promise<Response> => {
+  return supertest(app).post("/api/v1/otp/verify").send(data);
 };
 
 export const expectOTPVerificationSuccess = (response: Response): void => {

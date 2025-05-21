@@ -22,11 +22,12 @@ export class AuthController {
 
   public static async signUp(req: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.signUp(req.body);
+      const { emailVerificationToken } = await AuthService.signUp(req.body);
       sendResponse({
         response: res,
         message: success.SIGN_UP_SUCCESS,
         statusCode: STATUS_CODES.CREATED,
+        data: { emailVerificationToken },
       });
     } catch (error) {
       next(error);
@@ -126,11 +127,12 @@ export class AuthController {
 
   public static async forgetPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.forgetPassword(req.body.email);
+      const { message, token: forgetPasswordToken } = await AuthService.forgetPassword(req.body.email);
       sendResponse({
         response: res,
-        message: success.FORGET_PASSWORD_EMAIL_SENT,
+        message,
         statusCode: STATUS_CODES.OK,
+        data: { forgetPasswordToken },
       });
     } catch (error) {
       next(error);

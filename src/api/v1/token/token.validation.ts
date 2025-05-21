@@ -6,6 +6,7 @@ export enum TokenAction {
   "resetPassword" = "resetPassword",
   "deleteAccount" = "deleteAccount",
   "changeSubscription" = "changeSubscription",
+  "verifyEmail" = "verifyEmail",
 }
 
 export const tokenSchema = z.object({

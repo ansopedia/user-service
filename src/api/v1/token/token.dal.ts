@@ -7,7 +7,7 @@ interface ITokenDal {
   getTokensByUserId(userId: string): Promise<Token[] | null>;
   updateToken(tokenId: string, data: Token): Promise<Token | null>;
   deleteToken(tokenId: string): Promise<Token | null>;
-  replaceTokenForUser(createTokenSchema: CreateToken): Promise<Token | null>;
+  upsertToken(createTokenSchema: CreateToken): Promise<Token | null>;
 }
 
 export class TokenDAL implements ITokenDal {
@@ -31,7 +31,7 @@ export class TokenDAL implements ITokenDal {
     return await TokenModel.findByIdAndDelete(tokenId);
   }
 
-  async replaceTokenForUser(tokenSchema: CreateToken): Promise<Token | null> {
+  async upsertToken(tokenSchema: CreateToken): Promise<Token | null> {
     return await TokenModel.findOneAndUpdate(
       { userId: tokenSchema.userId, action: tokenSchema.action },
       { ...tokenSchema, $inc: { requestAttempts: 1 } },
