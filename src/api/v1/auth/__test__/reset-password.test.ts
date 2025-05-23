@@ -77,7 +77,7 @@ describe("Reset Password", () => {
     const otpData = await retrieveOTP(userDetails.id, EmailEventType.sendForgetPasswordOTP);
     verifiedOTPResponse = await verifyOTP({
       otp: otpData.otp,
-      token: res.body.data.forgetPasswordToken,
+      token: res.body.data.token,
       otpType: EmailEventType.sendForgetPasswordOTP,
     });
     expectOTPVerificationSuccess(verifiedOTPResponse);

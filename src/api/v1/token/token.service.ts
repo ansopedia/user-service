@@ -45,11 +45,14 @@ export class TokenService {
         throw new Error(ErrorTypeEnum.enum.TOKEN_EXPIRED);
       }
 
-      await this.tokenDAL.updateToken(storedToken.id, { isUsed: true });
       return verifiedToken;
     } catch (error) {
       logger.error(`Action token verification error: ${error}`);
       throw error;
     }
+  }
+
+  async invalidateToken(tokenId: string) {
+    await this.tokenDAL.updateToken(tokenId, { isUsed: true });
   }
 }

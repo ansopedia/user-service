@@ -1,12 +1,14 @@
 import { ZodError } from "zod";
 
 import { EmailEventType } from "../../../../services";
+import { TokenAction } from "../../token";
 import { OtpEvent, otpEvent } from "../otp.validation";
 
 describe("Test OTP validation", () => {
   const otpTypes: OtpEvent = {
     otpType: EmailEventType.sendEmailVerificationOTP,
     email: "example@gmail.com",
+    actionTokenType: TokenAction.verifyEmail,
   };
 
   it("should validate sendOtpSchema", () => {

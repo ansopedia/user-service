@@ -59,7 +59,7 @@ export const expectSignUpSuccess = (response: Response): void => {
 
   expect(body).toMatchObject({
     message: success.SIGN_UP_SUCCESS,
-    data: { emailVerificationToken: expect.any(String) },
+    data: { token: expect.any(String) },
   });
 };
 

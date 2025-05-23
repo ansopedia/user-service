@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { TokenAction } from "@/api/v1/token/token.validation";
 import { userSchema } from "@/api/v1/user/user.validation";
 
 export const otpType = ["sendEmailVerificationOTP", "verifyPhoneNumber", "sendForgetPasswordOTP"] as const;
@@ -12,16 +13,19 @@ export const otp = z.string().length(6);
 const sendEmailVerificationOtpSchema = z.object({
   otpType: z.literal(OtpType.enum.sendEmailVerificationOTP), // Use .enum to access the literal value
   email: userSchema.shape.email, // Use the existing email schema and make it required
+  actionTokenType: z.literal(TokenAction.verifyEmail),
 });
 
 const sendForgetPasswordOtpSchema = z.object({
   otpType: z.literal(OtpType.enum.sendForgetPasswordOTP), // Use .enum to access the literal value
   email: userSchema.shape.email, // Use the existing email schema and make it required
+  actionTokenType: z.literal(TokenAction.resetPassword),
 });
 
 const phoneOtpSchema = z.object({
   otpType: z.literal(OtpType.enum.verifyPhoneNumber), // Use .enum to access the literal value
   phoneNumber: z.string().min(1, "Phone number is required"), // Make phone number required
+  actionTokenType: z.nativeEnum(TokenAction),
 });
 
 // Use discriminatedUnion with the separate schemas

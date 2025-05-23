@@ -15,7 +15,7 @@ import { GetOtp, OtpEvent, OtpSchema, OtpVerifyEvent, otpEvent, otpVerifyEvent }
 export class OtpService {
   public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string; token: string }> {
     const validOtpEvent = otpEvent.parse(otpEvents);
-    const { otpType } = validOtpEvent;
+    const { otpType, actionTokenType } = validOtpEvent;
 
     const otp = generateOTP();
 
@@ -56,7 +56,7 @@ export class OtpService {
     });
 
     // Generate a temporary token for the user
-    const token = await new TokenService().createActionToken(user.id, TokenAction.verifyEmail);
+    const token = await new TokenService().createActionToken(user.id, actionTokenType);
 
     return { message, token };
   }
@@ -70,16 +70,13 @@ export class OtpService {
 
     // Validate the temporary email verification token first
     const tokenService = new TokenService();
-    const verifiedActionToken = await tokenService.verifyActionToken(
+    const { userId, id: tokenId } = await tokenService.verifyActionToken(
       verificationToken,
       TokenAction.verifyEmail // Validate against the email verification action type
     );
 
-    // Use the user ID from the verified token
-    const user = await UserService.getUserById(verifiedActionToken.userId);
-
     const otpDetails = await OtpService.getOtpDetailsByUserId({
-      userId: user.id,
+      userId,
       otpType,
     });
 
@@ -94,17 +91,17 @@ export class OtpService {
     if (isPast(otpData.expiryTime)) throw new Error(ErrorTypeEnum.enum.OTP_EXPIRED);
 
     if (otpType === EmailEventType.sendEmailVerificationOTP) {
-      await UserService.updateUser(user.id, { isEmailVerified: true });
+      await UserService.updateUser(userId, { isEmailVerified: true });
     } else if (otpType === EmailEventType.sendForgetPasswordOTP) {
       // This part remains the same, generating a new token for password reset
-      actionToken = await tokenService.createActionToken(user.id, TokenAction.resetPassword);
+      actionToken = await tokenService.createActionToken(userId, TokenAction.resetPassword);
     }
 
     // Delete the OTP record after successful verification
     await OtpDAL.deleteOtp(otpData.id);
 
-    // The email verification token is marked as used by tokenService.verifyActionToken
-    // No need to explicitly delete it here.
+    // Invalidate the temporary access token
+    await tokenService.invalidateToken(tokenId);
 
     return { message: success.OTP_VERIFIED, token: actionToken }; // Return the action token if generated
   }

@@ -25,14 +25,15 @@ export class AuthService {
     await OtpService.sendOtp({
       email: userData.email,
       otpType: EmailEventType.sendEmailVerificationOTP,
+      actionTokenType: TokenAction.verifyEmail,
     });
 
     // Generate a temporary token for email verification
     const tokenService = new TokenService();
-    const emailVerificationToken = await tokenService.createActionToken(newUser.id, TokenAction.verifyEmail);
+    const token = await tokenService.createActionToken(newUser.id, TokenAction.verifyEmail);
 
     // Return the verification token along with the success message
-    return { emailVerificationToken };
+    return { token };
   }
 
   public static async signInWithEmailOrUsernameAndPassword(userData: Login): Promise<AuthToken> {
@@ -114,15 +115,22 @@ export class AuthService {
 
   public static async forgetPassword(email: Email) {
     validateEmail(email);
-    return await OtpService.sendOtp({ email, otpType: "sendForgetPasswordOTP" });
+    return await OtpService.sendOtp({
+      email,
+      otpType: "sendForgetPasswordOTP",
+      actionTokenType: TokenAction.resetPassword,
+    });
   }
 
   public static async resetPassword(resetPassword: ResetPassword) {
     const { password, token } = validateResetPasswordSchema(resetPassword);
 
-    const { userId } = await new TokenService().verifyActionToken(token, TokenAction.resetPassword);
+    const tokenService = new TokenService();
+    const { userId, id: tokenId } = await tokenService.verifyActionToken(token, TokenAction.resetPassword);
 
     const user = await UserService.updateUser(userId, { password });
+
+    await tokenService.invalidateToken(tokenId);
 
     await notificationService.sendEmail({
       to: user.email,

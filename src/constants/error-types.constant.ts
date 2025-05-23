@@ -158,7 +158,7 @@ export const errorMap = {
   },
   [ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED]: {
     httpStatusCode: STATUS_CODES.CONFLICT,
-    body: { code: "EMAIL_already_verified", message: "Email already verified" },
+    body: { code: "email_already_verified", message: "Email already verified" },
   },
   [ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED]: {
     httpStatusCode: STATUS_CODES.FORBIDDEN,
@@ -227,6 +227,7 @@ export const errorMap = {
 };
 
 export type ErrorTypeEnum = z.infer<typeof ErrorTypeEnum>;
+export type ErrorCode = (typeof errorMap)[keyof typeof errorMap]["body"]["code"];
 
 export const getErrorObject = (type: ErrorTypeEnum) => {
   const validateErrorType = ErrorTypeEnum.safeParse(type);

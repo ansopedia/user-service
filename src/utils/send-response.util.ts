@@ -1,13 +1,13 @@
 import { Response, request } from "express";
 import { ZodIssue } from "zod";
 
-import { envConstants } from "@/constants";
+import { ErrorCode, envConstants } from "@/constants";
 
 import { errorLogger } from "./logger";
 
 export interface SendResponse<T = undefined> {
   response: Response;
-  code?: string;
+  code?: ErrorCode;
   statusCode: number;
   status?: "success" | "failed";
   message: string;
@@ -16,17 +16,29 @@ export interface SendResponse<T = undefined> {
   errors?: ZodIssue[];
 }
 
+// Define the type for response body including optional errorDetails
+type ResponseBody<T> = {
+  status: "success" | "failed";
+  message: string;
+  data?: T;
+  code?: ErrorCode;
+  errors?: ZodIssue[];
+  errorDetails?: {
+    name: string;
+    message: string;
+    stack?: string;
+  };
+};
+
 export const sendResponse = <T>(responseData: SendResponse<T>) => {
   const { response, statusCode, message, errorDetails, status = "success", data, errors, code } = responseData;
   const isProduction = envConstants.NODE_ENV === "production";
 
-  const responseBody: Record<string, unknown> = { status, message, data, code, errors };
+  // Initialize response body with required fields
+  const responseBody: ResponseBody<T> = { status, message, data, code, errors };
 
   if (!isProduction && errorDetails) {
-    responseBody.errorDetails = {
-      message: errorDetails.message,
-      stack: errorDetails.stack,
-    };
+    responseBody.errorDetails = errorDetails;
   }
 
   if (errorDetails && statusCode >= 500) {
