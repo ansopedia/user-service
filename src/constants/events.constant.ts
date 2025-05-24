@@ -21,17 +21,17 @@ export enum UserActionType {
 export enum NotificationType {
   // Email verification
   EMAIL_VERIFICATION_OTP = "emailVerificationOtp",
-  EMAIL_VERIFICATION_MAGIC_LINK = "emailVerificationMagicLink",
+  // EMAIL_VERIFICATION_MAGIC_LINK = 'emailVerificationMagicLink',
 
   // Email changes
-  EMAIL_CHANGE_CONFIRMATION = "emailChangeConfirmation",
+  // EMAIL_CHANGE_CONFIRMATION = 'emailChangeConfirmation',
 
   // Password operations
   FORGET_PASSWORD_OTP = "forgetPasswordOtp",
   PASSWORD_CHANGE_CONFIRMATION = "passwordChangeConfirmation",
 
   // Phone verification
-  PHONE_VERIFICATION = "phoneVerification",
+  // PHONE_VERIFICATION = 'phoneVerification',
 
   // Future events (commented until implemented)
   // ACCOUNT_ACTIVATION = "accountActivation",
@@ -56,11 +56,11 @@ export enum NotificationType {
  */
 export const notificationToActionMap: Record<NotificationType, UserActionType> = {
   [NotificationType.EMAIL_VERIFICATION_OTP]: UserActionType.VERIFY_EMAIL,
-  [NotificationType.EMAIL_VERIFICATION_MAGIC_LINK]: UserActionType.VERIFY_EMAIL,
+  // [NotificationType.EMAIL_VERIFICATION_MAGIC_LINK]: UserActionType.VERIFY_EMAIL,
   [NotificationType.FORGET_PASSWORD_OTP]: UserActionType.RESET_PASSWORD,
   [NotificationType.PASSWORD_CHANGE_CONFIRMATION]: UserActionType.RESET_PASSWORD,
-  [NotificationType.EMAIL_CHANGE_CONFIRMATION]: UserActionType.VERIFY_EMAIL,
-  [NotificationType.PHONE_VERIFICATION]: UserActionType.VERIFY_PHONE,
+  // [NotificationType.EMAIL_CHANGE_CONFIRMATION]: UserActionType.VERIFY_EMAIL,
+  // [NotificationType.PHONE_VERIFICATION]: UserActionType.VERIFY_PHONE,
 };
 
 // Zod schemas for validation

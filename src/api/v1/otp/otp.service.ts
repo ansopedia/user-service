@@ -18,9 +18,9 @@ export class OtpService {
 
     const otp = generateOTP();
 
-    if (validOtpEvent.otpType === NotificationType.PHONE_VERIFICATION) {
-      throw new Error("Phone number verification is not currently supported.");
-    }
+    // if (validOtpEvent.otpType === NotificationType.PHONE_VERIFICATION) {
+    //   throw new Error("Phone number verification is not currently supported.");
+    // }
 
     let message: string = success.OTP_SENT;
     const user = await UserService.getUserByEmail(validOtpEvent.email as string);
@@ -34,6 +34,7 @@ export class OtpService {
         to: user.email,
         eventType: otpType,
         payload: { otp, recipientName: user.username },
+        subject: "Email Verification OTP",
       });
     }
 
@@ -44,6 +45,7 @@ export class OtpService {
         to: user.email,
         eventType: otpType,
         payload: { otp, recipientName: user.username },
+        subject: "Forget Password OTP",
       });
     }
 

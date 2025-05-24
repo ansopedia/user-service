@@ -15,13 +15,13 @@ const emailVerificationOTPPayload = z.object({
   recipientName: z.string().min(1, "Recipient name is required"),
 });
 
-const emailVerificationMagicLinkPayload = z.object({
-  magicLink: z.string().url(),
-});
+// const emailVerificationMagicLinkPayload = z.object({
+//   magicLink: z.string().url(),
+// });
 
-const emailChangeConfirmationPayload = z.object({
-  newEmail: emailValidator,
-});
+// const emailChangeConfirmationPayload = z.object({
+//   newEmail: emailValidator,
+// });
 
 const passwordResetOTPPayload = z.object({
   otp: otpValidator,
@@ -37,31 +37,31 @@ const emailNotification = z.discriminatedUnion("eventType", [
   z.object({
     to: emailValidator,
     eventType: z.literal(NotificationType.EMAIL_VERIFICATION_OTP),
-    subject: z.string().optional(),
+    subject: z.string(),
     payload: emailVerificationOTPPayload,
   }),
-  z.object({
-    to: emailValidator,
-    eventType: z.literal(NotificationType.EMAIL_VERIFICATION_MAGIC_LINK),
-    payload: emailVerificationMagicLinkPayload,
-    subject: z.string().optional(),
-  }),
-  z.object({
-    to: emailValidator,
-    eventType: z.literal(NotificationType.EMAIL_CHANGE_CONFIRMATION),
-    payload: emailChangeConfirmationPayload,
-    subject: z.string().optional(),
-  }),
+  // z.object({
+  //   to: emailValidator,
+  //   eventType: z.literal(NotificationType.EMAIL_VERIFICATION_MAGIC_LINK),
+  //   payload: emailVerificationMagicLinkPayload,
+  //   subject: z.string(),
+  // }),
+  // z.object({
+  //   to: emailValidator,
+  //   eventType: z.literal(NotificationType.EMAIL_CHANGE_CONFIRMATION),
+  //   payload: emailChangeConfirmationPayload,
+  //   subject: z.string(),
+  // }),
   z.object({
     to: emailValidator,
     eventType: z.literal(NotificationType.FORGET_PASSWORD_OTP),
     payload: passwordResetOTPPayload,
-    subject: z.string().optional(),
+    subject: z.string(),
   }),
   z.object({
     to: emailValidator,
     eventType: z.literal(NotificationType.PASSWORD_CHANGE_CONFIRMATION),
-    subject: z.string().optional(),
+    subject: z.string(),
     payload: passwordChangeConfirmationPayload,
   }),
   // ... Add other event types and their corresponding payloads ...

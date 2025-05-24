@@ -137,6 +137,7 @@ export class AuthService {
       to: user.email,
       eventType: NotificationType.PASSWORD_CHANGE_CONFIRMATION,
       payload: { recipientName: user.username },
+      subject: "Password Changed",
     });
 
     return await this.generateAccessAndRefreshToken(userId);

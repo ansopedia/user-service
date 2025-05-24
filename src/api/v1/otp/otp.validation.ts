@@ -18,17 +18,17 @@ const forgetPasswordOtpSchema = z.object({
   actionType: z.literal(UserActionType.RESET_PASSWORD),
 });
 
-const phoneVerificationOtpSchema = z.object({
-  otpType: z.literal(NotificationType.PHONE_VERIFICATION),
-  phoneNumber: z.string().min(1, "Phone number is required"),
-  actionType: z.literal(UserActionType.VERIFY_PHONE),
-});
+// const phoneVerificationOtpSchema = z.object({
+//   otpType: z.literal(NotificationType.PHONE_VERIFICATION),
+//   phoneNumber: z.string().min(1, "Phone number is required"),
+//   actionType: z.literal(UserActionType.VERIFY_PHONE),
+// });
 
 // Use discriminatedUnion with the separate schemas
 export const otpEvent = z.discriminatedUnion("otpType", [
   emailVerificationOtpSchema,
   forgetPasswordOtpSchema,
-  phoneVerificationOtpSchema,
+  // phoneVerificationOtpSchema,
 ]);
 
 export const otpVerifyEvent = z.object({

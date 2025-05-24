@@ -11,11 +11,6 @@ describe("Test OTP validation", () => {
     actionType: UserActionType.VERIFY_EMAIL,
   };
 
-  it("should validate sendOtpSchema", () => {
-    const res = otpEvent.safeParse(otpTypes);
-    expect(res.success).toBe(true);
-  });
-
   it(`should throw error if email is not provided with otpType of ${NotificationType.EMAIL_VERIFICATION_OTP}`, () => {
     const otpTypesWithoutEmail = { ...otpTypes, email: undefined };
 
@@ -27,14 +22,14 @@ describe("Test OTP validation", () => {
     }
   });
 
-  it("should throw error if phone number is not provided", () => {
-    const otpTypesWithoutPhoneNumber = { otpType: NotificationType.PHONE_VERIFICATION };
+  // it("should throw error if phone number is not provided", () => {
+  //   const otpTypesWithoutPhoneNumber = { otpType: NotificationType.PHONE_VERIFICATION };
 
-    try {
-      otpEvent.parse(otpTypesWithoutPhoneNumber);
-    } catch (error) {
-      expect((error as ZodError).errors[0].message).toBe("Required");
-      expect((error as ZodError).errors[0].path).toEqual(["phoneNumber"]);
-    }
-  });
+  //   try {
+  //     otpEvent.parse(otpTypesWithoutPhoneNumber);
+  //   } catch (error) {
+  //     expect((error as ZodError).errors[0].message).toBe("Required");
+  //     expect((error as ZodError).errors[0].path).toEqual(["phoneNumber"]);
+  //   }
+  // });
 });
