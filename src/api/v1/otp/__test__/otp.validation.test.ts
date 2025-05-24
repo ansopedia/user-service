@@ -1,14 +1,14 @@
 import { ZodError } from "zod";
 
-import { EmailEventType } from "../../../../services";
-import { TokenAction } from "../../token";
+import { NotificationType, UserActionType } from "@/constants/events.constant";
+
 import { OtpEvent, otpEvent } from "../otp.validation";
 
 describe("Test OTP validation", () => {
   const otpTypes: OtpEvent = {
-    otpType: EmailEventType.sendEmailVerificationOTP,
+    otpType: NotificationType.EMAIL_VERIFICATION_OTP,
     email: "example@gmail.com",
-    actionTokenType: TokenAction.verifyEmail,
+    actionType: UserActionType.VERIFY_EMAIL,
   };
 
   it("should validate sendOtpSchema", () => {
@@ -16,7 +16,7 @@ describe("Test OTP validation", () => {
     expect(res.success).toBe(true);
   });
 
-  it(`should throw error if email is not provided with otpType of ${EmailEventType.sendEmailVerificationOTP}`, () => {
+  it(`should throw error if email is not provided with otpType of ${NotificationType.EMAIL_VERIFICATION_OTP}`, () => {
     const otpTypesWithoutEmail = { ...otpTypes, email: undefined };
 
     try {
@@ -28,7 +28,7 @@ describe("Test OTP validation", () => {
   });
 
   it("should throw error if phone number is not provided", () => {
-    const otpTypesWithoutPhoneNumber = { otpType: "verifyPhoneNumber" };
+    const otpTypesWithoutPhoneNumber = { otpType: NotificationType.PHONE_VERIFICATION };
 
     try {
       otpEvent.parse(otpTypesWithoutPhoneNumber);

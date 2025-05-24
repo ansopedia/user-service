@@ -3,30 +3,29 @@ import { isPast } from "date-fns";
 import { success } from "@/api/v1/auth/auth.constant";
 import { UserService } from "@/api/v1/user/user.service";
 import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, envConstants } from "@/constants";
+import { NotificationType, UserActionType, notificationToActionMap } from "@/constants/events.constant";
 import { notificationService } from "@/services/notification.services";
 import { generateOTP, verifyOTP } from "@/utils";
 
-import { EmailEventType } from "../../../services";
 import { TokenService } from "../token/token.service";
-import { TokenAction } from "../token/token.validation";
 import { OtpDAL } from "./otp.dal";
 import { GetOtp, OtpEvent, OtpSchema, OtpVerifyEvent, otpEvent, otpVerifyEvent } from "./otp.validation";
 
 export class OtpService {
   public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string; token: string }> {
     const validOtpEvent = otpEvent.parse(otpEvents);
-    const { otpType, actionTokenType } = validOtpEvent;
+    const { otpType, actionType } = validOtpEvent;
 
     const otp = generateOTP();
 
-    if (validOtpEvent.otpType === "verifyPhoneNumber") {
+    if (validOtpEvent.otpType === NotificationType.PHONE_VERIFICATION) {
       throw new Error("Phone number verification is not currently supported.");
     }
 
     let message: string = success.OTP_SENT;
     const user = await UserService.getUserByEmail(validOtpEvent.email as string);
 
-    if (otpType === EmailEventType.sendEmailVerificationOTP) {
+    if (otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
       if (user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED);
 
       message = success.VERIFICATION_EMAIL_SENT;
@@ -38,7 +37,7 @@ export class OtpService {
       });
     }
 
-    if (otpType === EmailEventType.sendForgetPasswordOTP) {
+    if (otpType === NotificationType.FORGET_PASSWORD_OTP) {
       message = success.FORGET_PASSWORD_EMAIL_SENT;
 
       await notificationService.sendEmail({
@@ -56,7 +55,7 @@ export class OtpService {
     });
 
     // Generate a temporary token for the user
-    const token = await new TokenService().createActionToken(user.id, actionTokenType);
+    const token = await new TokenService().createActionToken(user.id, actionType);
 
     return { message, token };
   }
@@ -72,7 +71,7 @@ export class OtpService {
     const tokenService = new TokenService();
     const { userId, id: tokenId } = await tokenService.verifyActionToken(
       verificationToken,
-      TokenAction.verifyEmail // Validate against the email verification action type
+      notificationToActionMap[otpType] // Dynamically determine the action type based on otpType
     );
 
     const otpDetails = await OtpService.getOtpDetailsByUserId({
@@ -90,11 +89,11 @@ export class OtpService {
 
     if (isPast(otpData.expiryTime)) throw new Error(ErrorTypeEnum.enum.OTP_EXPIRED);
 
-    if (otpType === EmailEventType.sendEmailVerificationOTP) {
+    if (otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
       await UserService.updateUser(userId, { isEmailVerified: true });
-    } else if (otpType === EmailEventType.sendForgetPasswordOTP) {
+    } else if (otpType === NotificationType.FORGET_PASSWORD_OTP) {
       // This part remains the same, generating a new token for password reset
-      actionToken = await tokenService.createActionToken(userId, TokenAction.resetPassword);
+      actionToken = await tokenService.createActionToken(userId, UserActionType.RESET_PASSWORD);
     }
 
     // Delete the OTP record after successful verification

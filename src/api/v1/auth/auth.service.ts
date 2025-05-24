@@ -1,5 +1,5 @@
 import { OtpService } from "@/api/v1/otp/otp.service";
-import { TokenAction, TokenService } from "@/api/v1/token";
+import { TokenService } from "@/api/v1/token";
 import { UserDAL } from "@/api/v1/user/user.dal";
 import { UserService } from "@/api/v1/user/user.service";
 import {
@@ -10,30 +10,31 @@ import {
   validateResetPasswordSchema,
 } from "@/api/v1/user/user.validation";
 import { ErrorTypeEnum, Permission } from "@/constants";
-import { EmailEventType, notificationService } from "@/services";
+import { notificationService } from "@/services";
 import { GoogleUser } from "@/types/passport-google";
 import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from "@/utils";
 
+import { NotificationType, UserActionType } from "../../../constants/events.constant";
 import { ProfileService } from "../profile";
 import { AuthDAL } from "./auth.dal";
-import { Auth, AuthToken, Login, loginSchema } from "./auth.validation";
+import { Auth, AuthToken, Login, SignUpResponse, loginSchema } from "./auth.validation";
 
 export class AuthService {
-  public static async signUp(userData: CreateUser) {
+  public static async signUp(userData: CreateUser): Promise<SignUpResponse> {
     const newUser = await UserService.createUser(userData);
 
     await OtpService.sendOtp({
       email: userData.email,
-      otpType: EmailEventType.sendEmailVerificationOTP,
-      actionTokenType: TokenAction.verifyEmail,
+      otpType: NotificationType.EMAIL_VERIFICATION_OTP,
+      actionType: UserActionType.VERIFY_EMAIL,
     });
 
     // Generate a temporary token for email verification
     const tokenService = new TokenService();
-    const token = await tokenService.createActionToken(newUser.id, TokenAction.verifyEmail);
+    const token = await tokenService.createActionToken(newUser.id, UserActionType.VERIFY_EMAIL);
 
     // Return the verification token along with the success message
-    return { token };
+    return { token, userId: newUser.id };
   }
 
   public static async signInWithEmailOrUsernameAndPassword(userData: Login): Promise<AuthToken> {
@@ -117,16 +118,16 @@ export class AuthService {
     validateEmail(email);
     return await OtpService.sendOtp({
       email,
-      otpType: "sendForgetPasswordOTP",
-      actionTokenType: TokenAction.resetPassword,
+      otpType: NotificationType.FORGET_PASSWORD_OTP,
+      actionType: UserActionType.RESET_PASSWORD,
     });
   }
 
-  public static async resetPassword(resetPassword: ResetPassword) {
+  public static async resetPassword(resetPassword: ResetPassword): Promise<AuthToken> {
     const { password, token } = validateResetPasswordSchema(resetPassword);
 
     const tokenService = new TokenService();
-    const { userId, id: tokenId } = await tokenService.verifyActionToken(token, TokenAction.resetPassword);
+    const { userId, id: tokenId } = await tokenService.verifyActionToken(token, UserActionType.RESET_PASSWORD);
 
     const user = await UserService.updateUser(userId, { password });
 
@@ -134,9 +135,11 @@ export class AuthService {
 
     await notificationService.sendEmail({
       to: user.email,
-      eventType: EmailEventType.sendPasswordChangeConfirmation,
+      eventType: NotificationType.PASSWORD_CHANGE_CONFIRMATION,
       payload: { recipientName: user.username },
     });
+
+    return await this.generateAccessAndRefreshToken(userId);
   }
 
   static async generateAccessAndRefreshToken(userId: string) {

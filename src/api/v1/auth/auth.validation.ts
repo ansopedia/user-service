@@ -70,6 +70,13 @@ export const loginSchema = z
 
 export const eventTypes = z.enum(["sendEmailVerificationOTP", "verifyPhoneNumber"]);
 
+const SignUpResponse = z.object({
+  userId: z.string(),
+  token: z.string(),
+});
+
+export type SignUpResponse = z.infer<typeof SignUpResponse>;
+
 export type JwtAccessToken = z.infer<typeof jwtAccessTokenSchema>;
 export type JwtRefreshToken = z.infer<typeof jwtRefreshTokenSchema>;
 export type JwtActionToken = z.infer<typeof jwtActionTokenSchema>;

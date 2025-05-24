@@ -1,6 +1,7 @@
 import { Model, Schema, Types, model } from "mongoose";
 
-import { Token, TokenAction } from "./token.validation";
+import { UserActionType } from "../../../constants/events.constant";
+import { Token } from "./token.validation";
 
 const TokenSchema: Schema<Token> = new Schema(
   {
@@ -15,7 +16,7 @@ const TokenSchema: Schema<Token> = new Schema(
     },
     action: {
       type: String,
-      enum: Object.values(TokenAction),
+      enum: Object.values(UserActionType),
       required: true,
     },
     token: {

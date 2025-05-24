@@ -19,7 +19,7 @@ import {
   verifyOTP,
 } from "@/utils/test";
 
-import { EmailEventType } from "../../../../services";
+import { NotificationType } from "../../../../constants/events.constant";
 import { GetUser } from "../../user/user.validation";
 
 const user = {
@@ -31,10 +31,10 @@ const user = {
 
 describe("Reset Password", () => {
   beforeAll(async () => {
-    const response = await signUp(user);
-    expectSignUpSuccess(response);
+    const signUpResponse = await signUp(user);
+    expectSignUpSuccess(signUpResponse);
 
-    verifyAccount(user);
+    verifyAccount(signUpResponse.body.data);
   });
 
   it("should throw error if token, password, confirmPassword is not provided", async () => {
@@ -72,13 +72,14 @@ describe("Reset Password", () => {
 
     const userResponse = await findUserByUsername(user.username);
     expectFindUserByUsernameSuccess(userResponse, user);
-    const userDetails: GetUser = userResponse.body.data;
 
-    const otpData = await retrieveOTP(userDetails.id, EmailEventType.sendForgetPasswordOTP);
+    const userDetails: GetUser = userResponse.body.data;
+    const otpData = await retrieveOTP(userDetails.id, NotificationType.FORGET_PASSWORD_OTP);
+
     verifiedOTPResponse = await verifyOTP({
       otp: otpData.otp,
       token: res.body.data.token,
-      otpType: EmailEventType.sendForgetPasswordOTP,
+      otpType: NotificationType.FORGET_PASSWORD_OTP,
     });
     expectOTPVerificationSuccess(verifiedOTPResponse);
   });

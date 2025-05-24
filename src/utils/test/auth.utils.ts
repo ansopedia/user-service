@@ -1,14 +1,13 @@
 import supertest, { Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant";
-import { Login } from "@/api/v1/auth/auth.validation";
+import { Login, SignUpResponse } from "@/api/v1/auth/auth.validation";
 import { app } from "@/app";
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
+import { NotificationType } from "@/constants/events.constant";
 
-import { CreateUser, ResetPassword } from "../../api/v1/user/user.validation";
-import { EmailEventType } from "../../services";
-import { expectOTPRequestSuccess, expectOTPVerificationSuccess, requestOTP, retrieveOTP, verifyOTP } from "./otp.utils";
-import { expectFindUserByUsernameSuccess, findUserByUsername } from "./user.utils";
+import { ResetPassword } from "../../api/v1/user/user.validation";
+import { expectOTPVerificationSuccess, retrieveOTP, verifyOTP } from "./otp.utils";
 
 export const login = async (loginData: Login): Promise<Response> => {
   return supertest(app).post("/api/v1/auth/sign-in").send(loginData);
@@ -25,13 +24,12 @@ export const expectLoginSuccess = (response: Response): void => {
   const refreshToken = headers["refresh-token"];
   expect(refreshToken).toBeDefined();
 
-  const setCookieHeader = response.get("set-cookie")?.[0];
-  expect(setCookieHeader).toContain("refresh-token=");
-  expect(setCookieHeader).toMatch(/HttpOnly; Secure/);
-
   expect(body).toMatchObject({
     message: success.LOGGED_IN_SUCCESSFULLY,
     status: "success",
+    data: {
+      userId: expect.any(String),
+    },
   });
 };
 
@@ -59,7 +57,10 @@ export const expectSignUpSuccess = (response: Response): void => {
 
   expect(body).toMatchObject({
     message: success.SIGN_UP_SUCCESS,
-    data: { token: expect.any(String) },
+    data: {
+      token: expect.any(String),
+      userId: expect.any(String),
+    },
   });
 };
 
@@ -84,35 +85,30 @@ export const expectRenewTokenSuccess = (response: Response) => {
 
   expect(statusCode).toBe(STATUS_CODES.OK);
 
-  const newRefreshToken = headers["authorization"];
-  expect(newRefreshToken).toBeDefined();
+  const authorizationHeader = headers["authorization"];
+  expect(authorizationHeader).toBeDefined();
+
+  const refreshToken = headers["refresh-token"];
+  expect(refreshToken).toBeDefined();
 
   expect(response.body).toMatchObject({
     message: success.TOKEN_RENEWED_SUCCESSFULLY,
     status: "success",
+    data: {
+      userId: expect.any(String),
+    },
   });
 };
 
-export const verifyAccount = async (user: CreateUser) => {
-  // Step 1: Request OTP
-  const { email, username } = user;
-  const otpResponse = await requestOTP(email);
-  expectOTPRequestSuccess(otpResponse);
+export const verifyAccount = async ({ userId, token }: SignUpResponse) => {
+  // Step 1: Retrieve OTP from database
+  const otpData = await retrieveOTP(userId, NotificationType.EMAIL_VERIFICATION_OTP);
 
-  const { token } = otpResponse.body.data;
-
-  // Step 2: Retrieve User from database
-  const userResponse = await findUserByUsername(username);
-  expectFindUserByUsernameSuccess(userResponse, user);
-
-  // Step 2: Retrieve OTP from database
-  const otpData = await retrieveOTP(userResponse.body.data.id, EmailEventType.sendEmailVerificationOTP);
-
-  // Step 3: Verify OTP
+  // Step 2: Verify OTP
   const verifyResponse = await verifyOTP({
     otp: otpData.otp,
     token: token,
-    otpType: EmailEventType.sendEmailVerificationOTP,
+    otpType: NotificationType.EMAIL_VERIFICATION_OTP,
   });
   expectOTPVerificationSuccess(verifyResponse);
 };
@@ -126,7 +122,10 @@ export const expectForgetPasswordSuccess = (response: Response): void => {
   const { statusCode, body } = response;
 
   expect(statusCode).toBe(STATUS_CODES.OK);
-  expect(body).toMatchObject({ message: success.FORGET_PASSWORD_EMAIL_SENT });
+  expect(body).toMatchObject({
+    message: success.FORGET_PASSWORD_EMAIL_SENT,
+    data: { token: expect.any(String) },
+  });
 };
 
 export const resetPassword = async (resetPassword: ResetPassword): Promise<Response> => {

@@ -1,18 +1,15 @@
 import supertest, { Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant";
-import { OtpSchema, OtpType, OtpVerifyEvent } from "@/api/v1/otp/otp.validation";
+import { OtpEvent, OtpSchema, OtpVerifyEvent } from "@/api/v1/otp/otp.validation";
 import { app } from "@/app";
 import { STATUS_CODES } from "@/constants";
 
 import { OtpService } from "../../api/v1/otp/otp.service";
-import { EmailEventType } from "../../services";
+import { NotificationType } from "../../constants/events.constant";
 
-export const requestOTP = async (email: string): Promise<Response> => {
-  return supertest(app).post("/api/v1/otp").send({
-    otpType: EmailEventType.sendEmailVerificationOTP,
-    email,
-  });
+export const requestOTP = async (otpEvents: OtpEvent): Promise<Response> => {
+  return supertest(app).post("/api/v1/otp").send(otpEvents);
 };
 
 export const expectOTPRequestSuccess = (response: Response): void => {
@@ -25,7 +22,7 @@ export const expectOTPRequestSuccess = (response: Response): void => {
   });
 };
 
-export const retrieveOTP = async (userId: string, otpType: OtpType): Promise<OtpSchema> => {
+export const retrieveOTP = async (userId: string, otpType: NotificationType): Promise<OtpSchema> => {
   const otpDetails = await OtpService.getOtpDetailsByUserId({
     userId,
     otpType,

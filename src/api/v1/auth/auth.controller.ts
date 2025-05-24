@@ -6,28 +6,23 @@ import { isValidRedirectUrl, sendResponse } from "@/utils";
 
 import { success } from "./auth.constant";
 import { AuthService } from "./auth.service";
-import { AuthToken } from "./auth.validation";
+import { AuthToken, SignUpResponse } from "./auth.validation";
 
 export class AuthController {
   private static setTokenCookies(res: Response, accessToken: string, refreshToken: string) {
     res.header("Access-Control-Expose-Headers", "set-cookie, authorization, refresh-token");
     res.setHeader("authorization", accessToken);
     res.setHeader("refresh-token", refreshToken);
-    res.cookie("refresh-token", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-    });
   }
 
   public static async signUp(req: Request, res: Response, next: NextFunction) {
     try {
-      const { token } = await AuthService.signUp(req.body);
-      sendResponse({
+      const signUpResponse = await AuthService.signUp(req.body);
+      sendResponse<SignUpResponse>({
         response: res,
         message: success.SIGN_UP_SUCCESS,
         statusCode: STATUS_CODES.CREATED,
-        data: { token },
+        data: signUpResponse,
       });
     } catch (error) {
       next(error);
@@ -58,12 +53,17 @@ export class AuthController {
 
       AuthController.setTokenCookies(res, accessToken, refreshToken);
 
-      // TODO: used action token instead of access token
       res.cookie("authorization", accessToken, {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
         maxAge: 1000 * 60 * 60, // 1hr
+      });
+
+      res.cookie("refresh-token", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
       });
 
       // Validate and sanitize the redirect URL
@@ -111,7 +111,7 @@ export class AuthController {
 
   public static async renewToken(req: Request, res: Response, next: NextFunction) {
     try {
-      const { accessToken, refreshToken }: AuthToken = await AuthService.generateAccessAndRefreshToken(
+      const { accessToken, refreshToken, userId }: AuthToken = await AuthService.generateAccessAndRefreshToken(
         req.body.loggedInUser.userId
       );
       AuthController.setTokenCookies(res, accessToken, refreshToken);
@@ -119,6 +119,7 @@ export class AuthController {
         response: res,
         message: success.TOKEN_RENEWED_SUCCESSFULLY,
         statusCode: STATUS_CODES.OK,
+        data: { userId },
       });
     } catch (error) {
       next(error);
@@ -141,11 +142,13 @@ export class AuthController {
 
   public static async resetPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.resetPassword(req.body);
-      sendResponse({
+      const authToken = await AuthService.resetPassword(req.body);
+
+      sendResponse<AuthToken>({
         response: res,
         message: success.PASSWORD_RESET_SUCCESSFULLY,
         statusCode: STATUS_CODES.OK,
+        data: authToken,
       });
     } catch (error) {
       next(error);

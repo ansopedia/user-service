@@ -22,7 +22,7 @@ const sendEmail = async (body: EmailNotification) => {
   } catch (error) {
     if (error instanceof Error) {
       if (error.message === "fetch failed") {
-        throw new Error(ErrorTypeEnum.Enum.NOTIFICATION_SERVICE_UNAVAILABLE);
+        // throw new Error(ErrorTypeEnum.Enum.NOTIFICATION_SERVICE_UNAVAILABLE);
       }
     } else {
       // TODO: fix with appropriate error message
