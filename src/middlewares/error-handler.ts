@@ -12,7 +12,6 @@ export const errorHandler = (err: Error, _: Request, res: Response, next: NextFu
       response: res,
       statusCode: errorObj.httpStatusCode,
       message: errorObj.body.message,
-      errorDetails: err,
       code: errorObj.body.code,
       errors: err.issues,
     });
@@ -25,8 +24,8 @@ export const errorHandler = (err: Error, _: Request, res: Response, next: NextFu
     response: res,
     statusCode: errorObj.httpStatusCode,
     message: errorObj.body.message,
-    errorDetails: err,
     code: errorObj.body.code,
+    errors: [],
   });
-  next();
+  return next();
 };
