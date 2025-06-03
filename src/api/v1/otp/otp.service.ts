@@ -14,7 +14,7 @@ import { GetOtp, OtpEvent, OtpSchema, OtpVerifyEvent, otpEvent, otpVerifyEvent }
 export class OtpService {
   public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string; token: string }> {
     const validOtpEvent = otpEvent.parse(otpEvents);
-    const { otpType, actionType } = validOtpEvent;
+    const { otpType } = validOtpEvent;
 
     const otp = generateOTP();
 
@@ -57,7 +57,7 @@ export class OtpService {
     });
 
     // Generate a temporary token for the user
-    const token = await new TokenService().createActionToken(user.id, actionType);
+    const token = await new TokenService().createActionToken(user.id, notificationToActionMap[otpType]);
 
     return { message, token };
   }

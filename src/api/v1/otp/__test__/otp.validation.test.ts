@@ -1,6 +1,6 @@
 import { ZodError } from "zod";
 
-import { NotificationType, UserActionType } from "@/constants/events.constant";
+import { NotificationType } from "@/constants/events.constant";
 
 import { OtpEvent, otpEvent } from "../otp.validation";
 
@@ -8,7 +8,6 @@ describe("Test OTP validation", () => {
   const otpTypes: OtpEvent = {
     otpType: NotificationType.EMAIL_VERIFICATION_OTP,
     email: "example@gmail.com",
-    actionType: UserActionType.VERIFY_EMAIL,
   };
 
   it(`should throw error if email is not provided with otpType of ${NotificationType.EMAIL_VERIFICATION_OTP}`, () => {

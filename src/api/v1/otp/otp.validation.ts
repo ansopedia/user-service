@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { userSchema } from "@/api/v1/user/user.validation";
-import { NotificationType, UserActionType, notificationTypeSchema } from "@/constants/events.constant";
+import { NotificationType, notificationTypeSchema } from "@/constants/events.constant";
 
 export const otp = z.string().length(6);
 
@@ -9,19 +9,16 @@ export const otp = z.string().length(6);
 const emailVerificationOtpSchema = z.object({
   otpType: z.literal(NotificationType.EMAIL_VERIFICATION_OTP),
   email: userSchema.shape.email,
-  actionType: z.literal(UserActionType.VERIFY_EMAIL),
 });
 
 const forgetPasswordOtpSchema = z.object({
   otpType: z.literal(NotificationType.FORGET_PASSWORD_OTP),
   email: userSchema.shape.email,
-  actionType: z.literal(UserActionType.RESET_PASSWORD),
 });
 
 // const phoneVerificationOtpSchema = z.object({
 //   otpType: z.literal(NotificationType.PHONE_VERIFICATION),
 //   phoneNumber: z.string().min(1, "Phone number is required"),
-//   actionType: z.literal(UserActionType.VERIFY_PHONE),
 // });
 
 // Use discriminatedUnion with the separate schemas

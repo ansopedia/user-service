@@ -26,7 +26,6 @@ export class AuthService {
     await OtpService.sendOtp({
       email: userData.email,
       otpType: NotificationType.EMAIL_VERIFICATION_OTP,
-      actionType: UserActionType.VERIFY_EMAIL,
     });
 
     // Generate a temporary token for email verification
@@ -119,7 +118,6 @@ export class AuthService {
     return await OtpService.sendOtp({
       email,
       otpType: NotificationType.FORGET_PASSWORD_OTP,
-      actionType: UserActionType.RESET_PASSWORD,
     });
   }
 
