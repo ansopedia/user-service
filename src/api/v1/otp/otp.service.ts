@@ -5,8 +5,10 @@ import { UserService } from "@/api/v1/user/user.service";
 import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, envConstants } from "@/constants";
 import { NotificationType, UserActionType, notificationToActionMap } from "@/constants/events.constant";
 import { notificationService } from "@/services/notification.services";
-import { generateOTP, generateRefreshToken, verifyOTP } from "@/utils";
+import { generateOTP, verifyOTP } from "@/utils";
 
+import { AuthService } from "../auth/auth.service";
+import { AuthToken } from "../auth/auth.validation";
 import { TokenService } from "../token/token.service";
 import { OtpDAL } from "./otp.dal";
 import { GetOtp, OtpEvent, OtpSchema, OtpVerifyEvent, otpEvent, otpVerifyEvent } from "./otp.validation";
@@ -62,10 +64,12 @@ export class OtpService {
     return { message, token };
   }
 
-  public static async verifyOtp(otpEvents: OtpVerifyEvent): Promise<{ message: string; actionToken: string }> {
+  public static async verifyOtp(
+    otpEvents: OtpVerifyEvent
+  ): Promise<{ message: string; actionToken: string | AuthToken }> {
     // Extract the token from the parsed event data
     const { otp, otpType, token: verificationToken } = otpVerifyEvent.parse(otpEvents);
-    let actionToken: string = "";
+    let actionToken: string | AuthToken = "";
     let message: string = success.OTP_VERIFIED_SUCCESSFULLY;
 
     const isMasterOTP = envConstants.MASTER_OTP === otp;
@@ -95,7 +99,7 @@ export class OtpService {
     if (otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
       await UserService.updateUser(userId, { isEmailVerified: true });
       message = success.EMAIL_VERIFIED_SUCCESSFULLY;
-      actionToken = await generateRefreshToken({ id: userId });
+      actionToken = await AuthService.generateAccessAndRefreshToken(userId);
     } else if (otpType === NotificationType.FORGET_PASSWORD_OTP) {
       actionToken = await tokenService.createActionToken(userId, UserActionType.RESET_PASSWORD);
       message = success.PASSWORD_RESET_SUCCESSFULLY;

@@ -141,7 +141,7 @@ export class AuthService {
     return await this.generateAccessAndRefreshToken(userId);
   }
 
-  static async generateAccessAndRefreshToken(userId: string) {
+  public static async generateAccessAndRefreshToken(userId: string) {
     validateObjectId(userId);
     const userRolePermissions = await UserDAL.getUserRolesAndPermissionsByUserId(userId);
 
