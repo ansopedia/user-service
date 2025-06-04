@@ -35,7 +35,20 @@ export const verifyOTP = async (data: OtpVerifyEvent): Promise<Response> => {
   return supertest(app).post("/api/v1/otp/verify").send(data);
 };
 
-export const expectOTPVerificationSuccess = (response: Response): void => {
+export const expectOTPVerificationSuccess = (otpType: NotificationType, response: Response): void => {
   expect(response.statusCode).toBe(STATUS_CODES.OK);
-  expect(response.body.message).toBe(success.OTP_VERIFIED);
+
+  const expectedMessages = new Map<NotificationType, string>([
+    [NotificationType.EMAIL_VERIFICATION_OTP, success.EMAIL_VERIFIED_SUCCESSFULLY],
+    [NotificationType.FORGET_PASSWORD_OTP, success.PASSWORD_RESET_SUCCESSFULLY],
+  ]);
+
+  const expectedMessage = expectedMessages.get(otpType) ?? success.OTP_VERIFIED_SUCCESSFULLY;
+
+  expect(response.body).toMatchObject({
+    message: expectedMessage,
+    data: {
+      actionToken: expect.any(String),
+    },
+  });
 };

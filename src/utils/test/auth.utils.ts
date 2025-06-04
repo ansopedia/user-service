@@ -101,16 +101,17 @@ export const expectRenewTokenSuccess = (response: Response) => {
 };
 
 export const verifyAccount = async ({ userId, token }: SignUpResponse) => {
+  const otpType = NotificationType.EMAIL_VERIFICATION_OTP;
   // Step 1: Retrieve OTP from database
-  const otpData = await retrieveOTP(userId, NotificationType.EMAIL_VERIFICATION_OTP);
+  const otpData = await retrieveOTP(userId, otpType);
 
   // Step 2: Verify OTP
   const verifyResponse = await verifyOTP({
     otp: otpData.otp,
     token: token,
-    otpType: NotificationType.EMAIL_VERIFICATION_OTP,
+    otpType,
   });
-  expectOTPVerificationSuccess(verifyResponse);
+  expectOTPVerificationSuccess(otpType, verifyResponse);
 };
 
 export const forgetPassword = async (email: string): Promise<Response> => {
@@ -133,9 +134,21 @@ export const resetPassword = async (resetPassword: ResetPassword): Promise<Respo
 };
 
 export const expectResetPasswordSuccess = (response: Response): void => {
-  expect(response).toBeDefined();
-  const { statusCode, body } = response;
+  const { statusCode, headers } = response;
 
   expect(statusCode).toBe(STATUS_CODES.OK);
-  expect(body).toMatchObject({ message: success.PASSWORD_RESET_SUCCESSFULLY });
+
+  const authorizationHeader = headers["authorization"];
+  expect(authorizationHeader).toBeDefined();
+
+  const refreshToken = headers["refresh-token"];
+  expect(refreshToken).toBeDefined();
+
+  expect(response.body).toMatchObject({
+    message: success.PASSWORD_RESET_SUCCESSFULLY,
+    status: "success",
+    data: {
+      userId: expect.any(String),
+    },
+  });
 };

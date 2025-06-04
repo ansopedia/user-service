@@ -5,7 +5,7 @@ import { UserService } from "@/api/v1/user/user.service";
 import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, envConstants } from "@/constants";
 import { NotificationType, UserActionType, notificationToActionMap } from "@/constants/events.constant";
 import { notificationService } from "@/services/notification.services";
-import { generateOTP, verifyOTP } from "@/utils";
+import { generateOTP, generateRefreshToken, verifyOTP } from "@/utils";
 
 import { TokenService } from "../token/token.service";
 import { OtpDAL } from "./otp.dal";
@@ -62,10 +62,11 @@ export class OtpService {
     return { message, token };
   }
 
-  public static async verifyOtp(otpEvents: OtpVerifyEvent): Promise<{ message: string; token?: string }> {
+  public static async verifyOtp(otpEvents: OtpVerifyEvent): Promise<{ message: string; actionToken: string }> {
     // Extract the token from the parsed event data
     const { otp, otpType, token: verificationToken } = otpVerifyEvent.parse(otpEvents);
-    let actionToken; // Renamed to avoid conflict
+    let actionToken: string = "";
+    let message: string = success.OTP_VERIFIED_SUCCESSFULLY;
 
     const isMasterOTP = envConstants.MASTER_OTP === otp;
 
@@ -93,9 +94,11 @@ export class OtpService {
 
     if (otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
       await UserService.updateUser(userId, { isEmailVerified: true });
+      message = success.EMAIL_VERIFIED_SUCCESSFULLY;
+      actionToken = await generateRefreshToken({ id: userId });
     } else if (otpType === NotificationType.FORGET_PASSWORD_OTP) {
-      // This part remains the same, generating a new token for password reset
       actionToken = await tokenService.createActionToken(userId, UserActionType.RESET_PASSWORD);
+      message = success.PASSWORD_RESET_SUCCESSFULLY;
     }
 
     // Delete the OTP record after successful verification
@@ -104,7 +107,7 @@ export class OtpService {
     // Invalidate the temporary access token
     await tokenService.invalidateToken(tokenId);
 
-    return { message: success.OTP_VERIFIED, token: actionToken }; // Return the action token if generated
+    return { message, actionToken };
   }
 
   public static async getOtpDetailsByUserId(getOtpDetails: GetOtp): Promise<OtpSchema[]> {

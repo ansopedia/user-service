@@ -142,13 +142,14 @@ export class AuthController {
 
   public static async resetPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      const authToken = await AuthService.resetPassword(req.body);
+      const { accessToken, refreshToken, userId } = await AuthService.resetPassword(req.body);
+      AuthController.setTokenCookies(res, accessToken, refreshToken);
 
-      sendResponse<AuthToken>({
+      sendResponse({
         response: res,
         message: success.PASSWORD_RESET_SUCCESSFULLY,
         statusCode: STATUS_CODES.OK,
-        data: authToken,
+        data: { userId },
       });
     } catch (error) {
       next(error);

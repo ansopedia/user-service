@@ -72,23 +72,24 @@ describe("Reset Password", () => {
 
     const userResponse = await findUserByUsername(user.username);
     expectFindUserByUsernameSuccess(userResponse, user);
+    const otpType = NotificationType.FORGET_PASSWORD_OTP; // Assuming otpType is defined somewhere in your code
 
     const userDetails: GetUser = userResponse.body.data;
-    const otpData = await retrieveOTP(userDetails.id, NotificationType.FORGET_PASSWORD_OTP);
+    const otpData = await retrieveOTP(userDetails.id, otpType);
 
     verifiedOTPResponse = await verifyOTP({
       otp: otpData.otp,
       token: res.body.data.token,
-      otpType: NotificationType.FORGET_PASSWORD_OTP,
+      otpType,
     });
-    expectOTPVerificationSuccess(verifiedOTPResponse);
+    expectOTPVerificationSuccess(otpType, verifiedOTPResponse);
   });
 
   it("should reset password successfully", async () => {
-    const { token } = verifiedOTPResponse.body.data;
+    const { actionToken } = verifiedOTPResponse.body.data;
 
     const res = await resetPassword({
-      token,
+      token: actionToken,
       password: "ValidPassword123@",
       confirmPassword: "ValidPassword123@",
     });

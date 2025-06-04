@@ -24,14 +24,14 @@ export class OtpController {
   public static async verifyOtp(req: Request, res: Response, next: NextFunction) {
     try {
       // Pass the token from the request body to the service
-      const { message, token: actionToken } = await OtpService.verifyOtp(req.body);
+      const { message, actionToken } = await OtpService.verifyOtp(req.body);
 
       // The token returned here is the action token for forget password,
       sendResponse({
         response: res,
         message: message,
         statusCode: STATUS_CODES.OK,
-        data: { token: actionToken },
+        data: { actionToken },
       });
     } catch (error) {
       next(error);
