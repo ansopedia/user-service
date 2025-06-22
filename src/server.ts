@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import consola from "consola";
 import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 
@@ -31,7 +32,7 @@ export const startServer = async (port: number): Promise<void> => {
         // Initialize Socket.IO
         io = initializeSocket(server);
 
-        console.log(`🚀 Server is running on port ${port}`);
+        consola.box(`🚀 Server is running on port ${port}`);
         resolve();
       });
 
