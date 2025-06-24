@@ -1,6 +1,5 @@
-import consola from "consola";
 import cors from "cors";
-import express, { type Application, NextFunction, Request, Response } from "express";
+import express, { type Application } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -24,14 +23,9 @@ const { NODE_ENV } = envConstants;
 
 export const app: Application = express();
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-  consola.debug(`Request Method: ${req.method}, Request URL: ${req.url} , Request Headers: ${res.links}`);
-  next();
-});
-
 if (NODE_ENV !== "test") {
   // Apply Helmet middleware with default options
-  app.use(helmet()); // Remove '*' as it doesn't work with credentials: true
+  app.use(helmet());
   const allowedOrigins = [envConstants.CLIENT_URL, envConstants.USER_SERVICE_BASE_URL].filter(Boolean);
 
   const corsOptions = {
@@ -48,7 +42,7 @@ if (NODE_ENV !== "test") {
       }
 
       if (envConstants.NODE_ENV !== "development") {
-        consola.error(`origin ${origin} is not allowed. Allowed origins: ${JSON.stringify(allowedOrigins)}`);
+        logger.warn(`CORS request from disallowed origin: ${origin}`);
       }
       return callback(new Error(ErrorTypeEnum.enum.ORIGIN_NOT_ALLOWED), false);
     },

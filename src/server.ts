@@ -1,10 +1,9 @@
-/* eslint-disable no-console */
-import consola from "consola";
 import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 
 import { app } from "./app";
 import { initializeSocket } from "./config";
+import { logger } from "./utils";
 import { CryptoUtil } from "./utils/crypto.util";
 
 const server = http.createServer(app);
@@ -15,9 +14,9 @@ const initializeCryptoKeys = async () => {
   try {
     const cryptoUtil = CryptoUtil.getInstance();
     await cryptoUtil.loadKeys();
-    console.log("Crypto keys loaded successfully");
+    logger.info("Crypto keys loaded successfully");
   } catch (error) {
-    console.error("Failed to load crypto keys:", error);
+    logger.error("Failed to load crypto keys:", error);
     process.exit(1); // Exit if we can't load the keys
   }
 };
@@ -32,23 +31,23 @@ export const startServer = async (port: number): Promise<void> => {
         // Initialize Socket.IO
         io = initializeSocket(server);
 
-        consola.box(`🚀 Server is running on port ${port}`);
+        logger.info(`🚀 Server is running on port ${port}`);
         resolve();
       });
 
       server.on("error", (error) => {
-        console.error("Server error:", error);
+        logger.error("Server error:", error);
         reject(error);
       });
     } catch (error) {
-      console.error("Failed to start server:", error);
+      logger.error("Failed to start server:", error);
       reject(error);
     }
   });
 };
 
 export const stopServer = (): Promise<void> => {
-  console.log("Server is shutting down...");
+  logger.info("Server is shutting down...");
 
   return new Promise((resolve, reject) => {
     if (io) {

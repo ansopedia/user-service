@@ -24,7 +24,6 @@ const errorType = [
   "TOKEN_EXPIRED",
   "INVALID_TOKEN",
   "INVALID_TOKEN_TYPE",
-  "ORIGIN_IS_UNDEFINED",
   "ORIGIN_NOT_ALLOWED",
   "EMAIL_ALREADY_VERIFIED",
   "EMAIL_NOT_VERIFIED",
@@ -188,13 +187,6 @@ export const errorMap = {
     body: {
       code: "invalid_token_type",
       message: "Unsupported token type.",
-    },
-  },
-  [ErrorTypeEnum.enum.ORIGIN_IS_UNDEFINED]: {
-    httpStatusCode: STATUS_CODES.BAD_REQUEST,
-    body: {
-      code: "origin_is_undefined",
-      message: "Missing origin header.",
     },
   },
   [ErrorTypeEnum.enum.ORIGIN_NOT_ALLOWED]: {
