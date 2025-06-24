@@ -42,7 +42,7 @@ if (NODE_ENV !== "test") {
       }
 
       if (envConstants.NODE_ENV !== "development") {
-        logger.warn(`CORS request from disallowed origin: ${origin}`);
+        logger.error(`origin ${origin} is not allowed. Allowed origins: ${JSON.stringify(allowedOrigins)}`);
       }
       return callback(new Error(ErrorTypeEnum.enum.ORIGIN_NOT_ALLOWED), false);
     },
