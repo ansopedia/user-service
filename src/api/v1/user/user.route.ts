@@ -1,7 +1,6 @@
 import { Router } from "express";
 
 import { checkPermission, validateAccessToken } from "@/middlewares";
-import { logger } from "@/utils";
 
 import {
   checkUsernameAvailability,
@@ -13,11 +12,6 @@ import {
 } from "./user.controller";
 
 const router = Router();
-
-router.get("/users/health-check", (req, res) => {
-  logger.info("User service health check endpoint info", req.path);
-  res.status(200).json({ message: "User service is healthy" });
-});
 
 router.post("/users", validateAccessToken, checkPermission(["create-users"]), createUser);
 router.get("/users", getAllUsers);
