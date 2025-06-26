@@ -2,6 +2,7 @@ import { connectDB } from "./config";
 import { envConstants } from "./constants";
 import { setupInitialRolesAndPermissions, setupInitialUserRole } from "./script";
 import { startServer } from "./server";
+import { logger } from "./utils";
 
 (async () => {
   try {
@@ -12,8 +13,7 @@ import { startServer } from "./server";
     }
     await startServer(envConstants.APP_PORT);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Failed to setup initial data:", error);
+    logger.error("Failed to setup initial data:", error);
     process.exit(1);
   }
 })();

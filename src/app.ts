@@ -1,5 +1,5 @@
 import cors from "cors";
-import express, { type Application, NextFunction, Request, Response } from "express";
+import express, { type Application } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -26,42 +26,31 @@ export const app: Application = express();
 if (NODE_ENV !== "test") {
   // Apply Helmet middleware with default options
   app.use(helmet());
-
-  // Apply CORS middleware with a whitelist (adjust origins as needed)
-  const allowedOrigins = ["http://localhost:3000"];
-  const allowedPathsWithoutOrigin = ["/api/v1/auth/google/callback", "/api/v1/auth/google"];
+  const allowedOrigins = [envConstants.CLIENT_URL, envConstants.USER_SERVICE_BASE_URL].filter(Boolean);
 
   const corsOptions = {
     origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-      if (origin === undefined) {
-        callback(new Error(ErrorTypeEnum.enum.ORIGIN_IS_UNDEFINED));
-      } else if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error(ErrorTypeEnum.enum.ORIGIN_NOT_ALLOWED));
+      // Allow requests with no origin (mobile apps, Postman, etc.)
+      if (origin === undefined || origin === null) {
+        return callback(null, true);
       }
+
+      // Check if origin is in allowed list
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      if (envConstants.NODE_ENV !== "development") {
+        logger.error(`origin ${origin} is not allowed. Allowed origins: ${JSON.stringify(allowedOrigins)}`);
+      }
+      return callback(new Error(ErrorTypeEnum.enum.ORIGIN_NOT_ALLOWED), false);
     },
     credentials: true,
   };
 
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    const origin = req.get("Origin");
-    if (origin == undefined && !allowedPathsWithoutOrigin.includes(req.path)) {
-      throw new Error(ErrorTypeEnum.enum.ORIGIN_IS_UNDEFINED);
-    }
-
-    cors(corsOptions)(req, res, (err) => {
-      if (err instanceof Error && err.message === ErrorTypeEnum.enum.ORIGIN_NOT_ALLOWED) {
-        next(err);
-      } else {
-        next();
-      }
-    });
-
-    cors(corsOptions);
-
-    return;
-  });
+  // Apply CORS middleware
+  app.use(cors(corsOptions));
 }
 
 const globalLimiter = rateLimit({
