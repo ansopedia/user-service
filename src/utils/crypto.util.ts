@@ -1,6 +1,6 @@
 import { ErrorTypeEnum, envConstants } from "@/constants";
 
-import logger from "./logger";
+import { logger } from "./logger";
 
 interface KeyPair {
   publicKey: string;

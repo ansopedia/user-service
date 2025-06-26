@@ -19,7 +19,7 @@ try {
 }
 
 // Configure transport based on environment
-const isDevelopment = process.env.NODE_ENV === "development";
+const isDevelopment = ["development", "test", "local"].includes(envConstants.NODE_ENV);
 
 let transport: DestinationStream;
 
@@ -51,7 +51,7 @@ if (isDevelopment) {
   });
 }
 
-const logger = pino(
+export const logger = pino(
   {
     level: envConstants.PINO_LOG_LEVEL ?? "info",
     timestamp: pino.stdTimeFunctions.isoTime,
@@ -74,7 +74,3 @@ export const errorLogger = pino(
   },
   errorTransport
 );
-
-logger.info("Logger is ready to use");
-
-export default logger;

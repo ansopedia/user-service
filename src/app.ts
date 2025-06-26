@@ -4,7 +4,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
 import passport from "passport";
-import { pinoHttp } from "pino-http";
+import pinoHttp from "pino-http";
 
 import {
   ErrorTypeEnum,
@@ -72,8 +72,8 @@ app.use(morgan("dev"));
 app.use("/api/v1", routes);
 
 // Handling non matching request from the client
-app.use("*", () => {
-  throw new Error(ErrorTypeEnum.enum.RESOURCE_NOT_FOUND);
+app.use((_req, _res, next) => {
+  next(new Error(ErrorTypeEnum.enum.RESOURCE_NOT_FOUND));
 });
 
 app.use(errorHandler);

@@ -1,5 +1,5 @@
 import { CustomSocket } from "@/types/socket.types";
-import logger from "@/utils/logger";
+import { logger } from "@/utils";
 
 export const setupEventHandlers = (socket: CustomSocket) => {
   const { userId } = socket.data;

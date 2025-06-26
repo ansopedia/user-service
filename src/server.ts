@@ -22,7 +22,6 @@ const initializeCryptoKeys = async () => {
 };
 
 // Call this before starting your server
-
 export const startServer = async (port: number): Promise<void> => {
   await initializeCryptoKeys();
   return new Promise((resolve, reject) => {

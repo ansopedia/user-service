@@ -1,6 +1,36 @@
 import { z } from "zod";
 
-import { NotificationType } from "../constants/events.constant";
+export enum NotificationType {
+  // Email verification
+  EMAIL_VERIFICATION_OTP = "emailVerificationOtp",
+  // EMAIL_VERIFICATION_MAGIC_LINK = 'emailVerificationMagicLink',
+
+  // Email changes
+  // EMAIL_CHANGE_CONFIRMATION = 'emailChangeConfirmation',
+
+  // Password operations
+  FORGET_PASSWORD_OTP = "forgetPasswordOtp",
+  PASSWORD_CHANGE_CONFIRMATION = "passwordChangeConfirmation",
+
+  // Phone verification
+  // PHONE_VERIFICATION = 'phoneVerification',
+
+  // Future events (commented until implemented)
+  // ACCOUNT_ACTIVATION = "accountActivation",
+  // WELCOME = "welcome",
+  // TWO_FACTOR_AUTH = "twoFactorAuth",
+  // LOGIN_ATTEMPT_ALERT = "loginAttemptAlert",
+  // ACCOUNT_DELETION_CONFIRMATION = "accountDeletionConfirmation",
+  // EMAIL_SUBSCRIPTION_CONFIRMATION = "emailSubscriptionConfirmation",
+  // PROFILE_UPDATE = "profileUpdate",
+  // SECURITY_ALERT = "securityAlert",
+  // INACTIVE_ACCOUNT_REMINDER = "inactiveAccountReminder",
+  // PAYMENT_CONFIRMATION = "paymentConfirmation",
+  // ORDER_SHIPPING_UPDATE = "orderShippingUpdate",
+  // NEWSLETTER_OPT_IN = "newsletterOptIn",
+  // ACCOUNT_LOCKOUT = "accountLockout",
+  // PASSWORD_EXPIRATION_REMINDER = "passwordExpirationReminder",
+}
 
 export const emailValidator = z
   .string()
@@ -13,6 +43,7 @@ export const otpValidator = z.string().length(6, "OTP must be exactly 6 characte
 const emailVerificationOTPPayload = z.object({
   otp: otpValidator,
   recipientName: z.string().min(1, "Recipient name is required"),
+  otpTTL: z.string().min(1, "otpTTL must be a non-empty string"), // (TTL = Time To Live)
 });
 
 // const emailVerificationMagicLinkPayload = z.object({
@@ -26,6 +57,7 @@ const emailVerificationOTPPayload = z.object({
 const passwordResetOTPPayload = z.object({
   otp: otpValidator,
   recipientName: z.string().min(1, "Recipient name is required"),
+  otpTTL: z.string().min(1, "otpTTL must be a non-empty string"), // (TTL = Time To Live)
 });
 
 const passwordChangeConfirmationPayload = z.object({

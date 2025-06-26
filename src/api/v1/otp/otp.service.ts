@@ -1,4 +1,5 @@
 import { isPast } from "date-fns";
+import { formatDuration, intervalToDuration } from "date-fns";
 
 import { success } from "@/api/v1/auth/auth.constant";
 import { UserService } from "@/api/v1/user/user.service";
@@ -19,6 +20,8 @@ export class OtpService {
     const { otpType } = validOtpEvent;
 
     const otp = generateOTP();
+    const otpTTLDuration = intervalToDuration({ start: 0, end: FIVE_MINUTES_IN_MS });
+    const otpTTL = formatDuration(otpTTLDuration);
 
     // if (validOtpEvent.otpType === NotificationType.PHONE_VERIFICATION) {
     //   throw new Error("Phone number verification is not currently supported.");
@@ -35,7 +38,7 @@ export class OtpService {
       await notificationService.sendEmail({
         to: user.email,
         eventType: otpType,
-        payload: { otp, recipientName: user.username },
+        payload: { otp, recipientName: user.username, otpTTL },
         subject: "Email Verification OTP",
       });
     }
@@ -46,7 +49,7 @@ export class OtpService {
       await notificationService.sendEmail({
         to: user.email,
         eventType: otpType,
-        payload: { otp, recipientName: user.username },
+        payload: { otp, recipientName: user.username, otpTTL },
         subject: "Forget Password OTP",
       });
     }
