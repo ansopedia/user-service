@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 
 import { STATUS_CODES, envConstants } from "@/constants";
 import { GoogleUser } from "@/types/passport-google";
@@ -15,144 +15,112 @@ export class AuthController {
     res.setHeader("refresh-token", refreshToken);
   }
 
-  public static async signUp(req: Request, res: Response, next: NextFunction) {
-    try {
-      const signUpResponse = await AuthService.signUp(req.body);
-      sendResponse<SignUpResponse>({
-        response: res,
-        message: success.SIGN_UP_SUCCESS,
-        statusCode: STATUS_CODES.CREATED,
-        data: signUpResponse,
-      });
-    } catch (error) {
-      next(error);
-    }
+  public static async signUp(req: Request, res: Response) {
+    const signUpResponse = await AuthService.signUp(req.body);
+    sendResponse<SignUpResponse>({
+      response: res,
+      message: success.SIGN_UP_SUCCESS,
+      statusCode: STATUS_CODES.CREATED,
+      data: signUpResponse,
+    });
   }
 
-  public static async signInWithEmailOrUsernameAndPassword(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { accessToken, refreshToken, userId }: AuthToken = await AuthService.signInWithEmailOrUsernameAndPassword(
-        req.body
-      );
-      AuthController.setTokenCookies(res, accessToken, refreshToken);
-      sendResponse({
-        response: res,
-        message: success.LOGGED_IN_SUCCESSFULLY,
-        statusCode: STATUS_CODES.OK,
-        data: { userId },
-      });
-    } catch (error) {
-      next(error);
-    }
+  public static async signInWithEmailOrUsernameAndPassword(req: Request, res: Response) {
+    const { accessToken, refreshToken, userId }: AuthToken = await AuthService.signInWithEmailOrUsernameAndPassword(
+      req.body
+    );
+    AuthController.setTokenCookies(res, accessToken, refreshToken);
+    sendResponse({
+      response: res,
+      message: success.LOGGED_IN_SUCCESSFULLY,
+      statusCode: STATUS_CODES.OK,
+      data: { userId },
+    });
   }
 
-  public static async signInWithGoogleCallback(req: Request, res: Response, next: NextFunction) {
-    try {
-      const googleUser = req.user as GoogleUser;
-      const { accessToken, refreshToken } = await AuthService.signInWithGoogle(googleUser);
+  public static async signInWithGoogleCallback(req: Request, res: Response) {
+    const googleUser = req.user as GoogleUser;
+    const { accessToken, refreshToken } = await AuthService.signInWithGoogle(googleUser);
 
-      AuthController.setTokenCookies(res, accessToken, refreshToken);
+    AuthController.setTokenCookies(res, accessToken, refreshToken);
 
-      res.cookie("authorization", accessToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-        maxAge: 1000 * 60 * 60, // 1hr
-      });
+    res.cookie("authorization", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 1000 * 60 * 60, // 1hr
+    });
 
-      res.cookie("refresh-token", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-      });
+    res.cookie("refresh-token", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
 
-      // Validate and sanitize the redirect URL
-      const state = req.query.state as string;
-      let redirectUrl = `${envConstants.CLIENT_URL}/profile?success=true`; // Default redirect URL
+    // Validate and sanitize the redirect URL
+    const state = req.query.state as string;
+    let redirectUrl = `${envConstants.CLIENT_URL}/profile?success=true`; // Default redirect URL
 
-      if (state) {
-        const decodedUrl = Buffer.from(state, "base64").toString("utf-8");
-        if (isValidRedirectUrl(decodedUrl)) {
-          redirectUrl = decodedUrl;
-        }
+    if (state) {
+      const decodedUrl = Buffer.from(state, "base64").toString("utf-8");
+      if (isValidRedirectUrl(decodedUrl)) {
+        redirectUrl = decodedUrl;
       }
-
-      res.redirect(redirectUrl);
-    } catch (error) {
-      next(error);
     }
+
+    res.redirect(redirectUrl);
   }
 
-  public static async logout(_: Request, res: Response, next: NextFunction) {
-    try {
-      await AuthService.logout(res.locals.loggedInUser.userId);
-      sendResponse({
-        response: res,
-        message: success.LOGGED_OUT_SUCCESSFULLY,
-        statusCode: STATUS_CODES.OK,
-      });
-    } catch (error) {
-      next(error);
-    }
+  public static async logout(_: Request, res: Response) {
+    await AuthService.logout(res.locals.loggedInUser.userId);
+    sendResponse({
+      response: res,
+      message: success.LOGGED_OUT_SUCCESSFULLY,
+      statusCode: STATUS_CODES.OK,
+    });
   }
 
-  public static async verifyToken(_: Request, res: Response, next: NextFunction) {
-    try {
-      await AuthService.verifyToken(res.locals.loggedInUser.userId);
-      sendResponse({
-        response: res,
-        message: success.TOKEN_VERIFIED,
-        statusCode: STATUS_CODES.OK,
-      });
-    } catch (error) {
-      next(error);
-    }
+  public static async verifyToken(_: Request, res: Response) {
+    await AuthService.verifyToken(res.locals.loggedInUser.userId);
+    sendResponse({
+      response: res,
+      message: success.TOKEN_VERIFIED,
+      statusCode: STATUS_CODES.OK,
+    });
   }
 
-  public static async renewToken(_: Request, res: Response, next: NextFunction) {
-    try {
-      const { accessToken, refreshToken, userId }: AuthToken = await AuthService.generateAccessAndRefreshToken(
-        res.locals.loggedInUser.userId
-      );
-      AuthController.setTokenCookies(res, accessToken, refreshToken);
-      sendResponse({
-        response: res,
-        message: success.TOKEN_RENEWED_SUCCESSFULLY,
-        statusCode: STATUS_CODES.OK,
-        data: { userId },
-      });
-    } catch (error) {
-      next(error);
-    }
+  public static async renewToken(_: Request, res: Response) {
+    const { accessToken, refreshToken, userId }: AuthToken = await AuthService.generateAccessAndRefreshToken(
+      res.locals.loggedInUser.userId
+    );
+    AuthController.setTokenCookies(res, accessToken, refreshToken);
+    sendResponse({
+      response: res,
+      message: success.TOKEN_RENEWED_SUCCESSFULLY,
+      statusCode: STATUS_CODES.OK,
+      data: { userId },
+    });
   }
 
-  public static async forgetPassword(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { message, token } = await AuthService.forgetPassword(req.body.email);
-      sendResponse({
-        response: res,
-        message,
-        statusCode: STATUS_CODES.OK,
-        data: { token },
-      });
-    } catch (error) {
-      next(error);
-    }
+  public static async forgetPassword(req: Request, res: Response) {
+    const { message, token } = await AuthService.forgetPassword(req.body.email);
+    sendResponse({
+      response: res,
+      message,
+      statusCode: STATUS_CODES.OK,
+      data: { token },
+    });
   }
 
-  public static async resetPassword(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { accessToken, refreshToken, userId } = await AuthService.resetPassword(req.body);
-      AuthController.setTokenCookies(res, accessToken, refreshToken);
+  public static async resetPassword(req: Request, res: Response) {
+    const { accessToken, refreshToken, userId } = await AuthService.resetPassword(req.body);
+    AuthController.setTokenCookies(res, accessToken, refreshToken);
 
-      sendResponse({
-        response: res,
-        message: success.PASSWORD_RESET_SUCCESSFULLY,
-        statusCode: STATUS_CODES.OK,
-        data: { userId },
-      });
-    } catch (error) {
-      next(error);
-    }
+    sendResponse({
+      response: res,
+      message: success.PASSWORD_RESET_SUCCESSFULLY,
+      statusCode: STATUS_CODES.OK,
+      data: { userId },
+    });
   }
 }
