@@ -1,8 +1,8 @@
 import { connectDB } from "./config";
 import { envConstants } from "./constants";
-import { setupInitialRolesAndPermissions, setupInitialUserRole } from "./script";
 import { startServer } from "./server";
 import { logger } from "./utils";
+import { setupInitialRolesAndPermissions, setupInitialUserRole } from "./utils/initialize-db";
 
 (async () => {
   try {

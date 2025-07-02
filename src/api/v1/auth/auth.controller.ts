@@ -83,9 +83,9 @@ export class AuthController {
     }
   }
 
-  public static async logout(req: Request, res: Response, next: NextFunction) {
+  public static async logout(_: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.logout(req.body.loggedInUser.userId);
+      await AuthService.logout(res.locals.loggedInUser.userId);
       sendResponse({
         response: res,
         message: success.LOGGED_OUT_SUCCESSFULLY,
@@ -96,9 +96,9 @@ export class AuthController {
     }
   }
 
-  public static async verifyToken(req: Request, res: Response, next: NextFunction) {
+  public static async verifyToken(_: Request, res: Response, next: NextFunction) {
     try {
-      await AuthService.verifyToken(req.body.loggedInUser.userId);
+      await AuthService.verifyToken(res.locals.loggedInUser.userId);
       sendResponse({
         response: res,
         message: success.TOKEN_VERIFIED,
@@ -109,10 +109,10 @@ export class AuthController {
     }
   }
 
-  public static async renewToken(req: Request, res: Response, next: NextFunction) {
+  public static async renewToken(_: Request, res: Response, next: NextFunction) {
     try {
       const { accessToken, refreshToken, userId }: AuthToken = await AuthService.generateAccessAndRefreshToken(
-        req.body.loggedInUser.userId
+        res.locals.loggedInUser.userId
       );
       AuthController.setTokenCookies(res, accessToken, refreshToken);
       sendResponse({

@@ -5,7 +5,7 @@ import { Auth, JwtAccessToken, JwtRefreshToken } from "@/api/v1/auth/auth.valida
 import { ErrorTypeEnum } from "@/constants";
 import { extractTokenFromBearerString, verifyJWTToken } from "@/utils/jwt.util";
 
-const parseUser = async (req: Request, _: Response, next: NextFunction, tokenType: "access" | "refresh") => {
+const parseUser = async (req: Request, res: Response, next: NextFunction, tokenType: "access" | "refresh") => {
   try {
     const authHeader = req.headers.authorization;
     if (authHeader == null || authHeader === "") throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
@@ -32,7 +32,7 @@ const parseUser = async (req: Request, _: Response, next: NextFunction, tokenTyp
       throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
     }
 
-    req.body.loggedInUser = { ...user, userId: user.userId.toString() };
+    res.locals.loggedInUser = { ...user, userId: user.userId.toString() };
     next();
   } catch (error) {
     next(error);

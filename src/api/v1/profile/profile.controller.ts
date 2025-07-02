@@ -10,7 +10,7 @@ export class ProfileController {
   static upSertProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const profile = await new ProfileService().upSertProfileData({
-        userId: req.body.loggedInUser.userId,
+        userId: res.locals.loggedInUser.userId,
         ...req.body,
       });
       sendResponse({
@@ -24,10 +24,10 @@ export class ProfileController {
     }
   };
 
-  static getProfile = async (req: Request, res: Response, next: NextFunction) => {
+  static getProfile = async (_: Request, res: Response, next: NextFunction) => {
     try {
-      const profile = await new ProfileService().getProfileData(req.body.loggedInUser.userId);
-      const user = await UserService.getUserById(req.body.loggedInUser.userId);
+      const profile = await new ProfileService().getProfileData(res.locals.loggedInUser.userId);
+      const user = await UserService.getUserById(res.locals.loggedInUser.userId);
       sendResponse({
         response: res,
         message: success.PROFILE_FETCHED_SUCCESSFULLY,

@@ -9,6 +9,7 @@
     "dev:development": "cross-env NODE_ENV=development nodemon",
     "generate-keys": "ts-node scripts/generate-keys.ts",
     "generate-env": "ts-node scripts/generate-env-files.ts",
+    "migrate": "cross-env NODE_ENV=local ts-node -r tsconfig-paths/register src/config/migrate.ts",
     "setup": "ts-node scripts/setup-project.ts",
     "lint:fix": "eslint --fix .",
     "lint": "eslint src .",
