@@ -9,7 +9,7 @@ import { AuthService } from "./auth.service";
 import { AuthToken, SignUpResponse } from "./auth.validation";
 
 export class AuthController {
-  private static setTokenCookies(res: Response, accessToken: string, refreshToken: string) {
+  private static setAuthTokenHeaders(res: Response, accessToken: string, refreshToken: string) {
     res.header("Access-Control-Expose-Headers", "set-cookie, authorization, refresh-token");
     res.setHeader("authorization", accessToken);
     res.setHeader("refresh-token", refreshToken);
@@ -29,7 +29,7 @@ export class AuthController {
     const { accessToken, refreshToken, userId }: AuthToken = await AuthService.signInWithEmailOrUsernameAndPassword(
       req.body
     );
-    AuthController.setTokenCookies(res, accessToken, refreshToken);
+    AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
     sendResponse({
       response: res,
       message: success.LOGGED_IN_SUCCESSFULLY,
@@ -42,7 +42,7 @@ export class AuthController {
     const googleUser = req.user as GoogleUser;
     const { accessToken, refreshToken } = await AuthService.signInWithGoogle(googleUser);
 
-    AuthController.setTokenCookies(res, accessToken, refreshToken);
+    AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
 
     res.cookie("authorization", accessToken, {
       httpOnly: true,
@@ -93,7 +93,7 @@ export class AuthController {
     const { accessToken, refreshToken, userId }: AuthToken = await AuthService.generateAccessAndRefreshToken(
       res.locals.loggedInUser.userId
     );
-    AuthController.setTokenCookies(res, accessToken, refreshToken);
+    AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
     sendResponse({
       response: res,
       message: success.TOKEN_RENEWED_SUCCESSFULLY,
@@ -114,7 +114,7 @@ export class AuthController {
 
   public static async resetPassword(req: Request, res: Response) {
     const { accessToken, refreshToken, userId } = await AuthService.resetPassword(req.body);
-    AuthController.setTokenCookies(res, accessToken, refreshToken);
+    AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
 
     sendResponse({
       response: res,
