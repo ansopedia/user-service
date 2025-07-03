@@ -11,6 +11,8 @@ import {
   verifyAccount,
 } from "@/utils/test";
 
+import { SignUpResponse } from "../auth.validation";
+
 const VALID_CREDENTIALS = {
   username: "username",
   email: "validemail@example.com",
@@ -19,9 +21,11 @@ const VALID_CREDENTIALS = {
 };
 
 describe("Authentication Flow", () => {
+  let signUpResponse: SignUpResponse;
   it("should sign up a user", async () => {
     const response = await signUp(VALID_CREDENTIALS);
     expectSignUpSuccess(response);
+    signUpResponse = response.body.data;
   });
 
   it("should return 403 Forbidden for unverified email", async () => {
@@ -41,7 +45,7 @@ describe("Authentication Flow", () => {
   });
 
   it("should verify email", async () => {
-    await verifyAccount(VALID_CREDENTIALS);
+    await verifyAccount(signUpResponse);
   });
 
   it("should login with email and password", async () => {
@@ -74,7 +78,7 @@ describe("Authentication Flow", () => {
     const loginResponse = await login(VALID_CREDENTIALS);
     expectLoginSuccess(loginResponse);
 
-    const refreshToken = loginResponse.headers["set-cookie"][0].split(";")[0].replace("refresh-token=", "");
+    const refreshToken = loginResponse.headers["refresh-token"];
 
     const renewTokenRes = await renewToken(`Bearer ${refreshToken}`);
     expectRenewTokenSuccess(renewTokenRes);

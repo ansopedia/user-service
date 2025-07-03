@@ -1,7 +1,7 @@
 import mongoose, { ConnectOptions } from "mongoose";
 
 import { ErrorTypeEnum, envConstants } from "@/constants";
-import { logger } from "@/utils";
+import { errorLogger } from "@/utils";
 
 const { DATABASE_URL, NODE_ENV, DB_NAME } = envConstants;
 
@@ -27,7 +27,7 @@ export const connectDB = async () => {
       await mongoose.connect(DATABASE_URL, dbOptions);
     }
   } catch (error) {
-    logger.error(error);
+    errorLogger.error(error);
     throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
   }
 };
@@ -36,7 +36,7 @@ export const disconnectDB = async () => {
   try {
     await mongoose.connection.close();
   } catch (error) {
-    logger.error(error);
+    errorLogger.error(error);
     throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
   }
 };

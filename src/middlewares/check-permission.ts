@@ -1,13 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 
-import { Auth } from "@/api/v1/auth/auth.validation";
 import { UserDAL } from "@/api/v1/user/user.dal";
 import { ErrorTypeEnum, Permission } from "@/constants";
 
 export const checkPermission = (requiredPermissions: Permission[]) => {
-  return async (req: Request, _: Response, next: NextFunction) => {
+  return async (_: Request, res: Response, next: NextFunction) => {
     try {
-      const { loggedInUser } = req.body as { loggedInUser: Auth };
+      const { loggedInUser } = res.locals;
 
       const userRolePermissions = await UserDAL.getUserRolesAndPermissionsByUserId(loggedInUser.userId);
 

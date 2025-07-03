@@ -69,7 +69,7 @@ describe("Role Service", () => {
     const signUpResponse = await signUp(VALID_CREDENTIALS);
     expectSignUpSuccess(signUpResponse);
 
-    await verifyAccount(VALID_CREDENTIALS);
+    await verifyAccount(signUpResponse.body.data);
 
     const loginResponse = await login(VALID_CREDENTIALS);
     expectLoginSuccess(loginResponse);

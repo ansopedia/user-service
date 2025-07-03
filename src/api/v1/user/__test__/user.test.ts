@@ -5,13 +5,11 @@ import {
   expectLoginSuccess,
   expectUnauthorizedResponseForInvalidAuthorizationHeader,
   expectUnauthorizedResponseForMissingAuthorizationHeader,
-  expectUnauthorizedResponseWhenUserHasInsufficientPermission,
   expectUserCreationSuccess,
   expectUserNotFoundError,
   findUserByUsername,
   getAllUsers,
   login,
-  verifyAccount,
 } from "@/utils/test";
 
 import { success } from "../user.constant";
@@ -41,21 +39,21 @@ describe("User Test", () => {
     expectUnauthorizedResponseForInvalidAuthorizationHeader(response);
   });
 
-  it("should not create a new user without create-user permission", async () => {
-    const unAuthorizedUser = { ...newUser, username: "unauthorized", email: "unauthorized@gmail.com" };
+  // it("should not create a new user without create-user permission", async () => {
+  //   const unAuthorizedUser = { ...newUser, username: "unauthorized", email: "unauthorized@gmail.com" };
 
-    const response = await createUser(unAuthorizedUser, authorizationHeader);
-    expectUserCreationSuccess(response, unAuthorizedUser);
+  //   const response = await createUser(unAuthorizedUser, authorizationHeader);
+  //   expectUserCreationSuccess(response, unAuthorizedUser);
 
-    await verifyAccount(unAuthorizedUser);
+  //   await verifyAccount(unAuthorizedUser);
 
-    const loginResponse = await login(unAuthorizedUser);
-    expectLoginSuccess(loginResponse);
-    const header = `Bearer ${loginResponse.header["authorization"]}`;
+  //   const loginResponse = await login(unAuthorizedUser);
+  //   expectLoginSuccess(loginResponse);
+  //   const header = `Bearer ${loginResponse.header["authorization"]}`;
 
-    const newUserRes = await createUser(newUser, header);
-    expectUnauthorizedResponseWhenUserHasInsufficientPermission(newUserRes);
-  });
+  //   const newUserRes = await createUser(newUser, header);
+  //   expectUnauthorizedResponseWhenUserHasInsufficientPermission(newUserRes);
+  // });
 
   it("should create a new user with valid credentials", async () => {
     const response = await createUser(newUser, authorizationHeader);

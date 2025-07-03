@@ -1,91 +1,56 @@
 import { z } from "zod";
 
-import { userSchema, validateEmail } from "@/api/v1/user/user.validation";
+import { userSchema } from "@/api/v1/user/user.validation";
+import { NotificationType, notificationTypeSchema } from "@/constants/events.constant";
 
-const otpType = z.enum(["sendEmailVerificationOTP", "verifyPhoneNumber", "sendForgetPasswordOTP"]);
 export const otp = z.string().length(6);
 
-const baseSchema = z.object({
-  otpType,
-  email: userSchema.shape.email.optional(),
-  phoneNumber: z.string().optional(),
+// Define separate schemas for each OTP type
+const emailVerificationOtpSchema = z.object({
+  otpType: z.literal(NotificationType.EMAIL_VERIFICATION_OTP),
+  email: userSchema.shape.email,
 });
 
-type BaseSchema = z.infer<typeof baseSchema>;
-
-const validateOtpEvent = (data: BaseSchema) => {
-  if (["sendEmailVerificationOTP", "sendForgetPasswordOTP"].includes(data.otpType)) {
-    if (data.email !== undefined) {
-      return validateEmail(data.email);
-    } else {
-      const error = new z.ZodError([]);
-      error.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Email is required",
-        path: ["email"],
-      });
-      throw error;
-    }
-  } else if (data.otpType === "verifyPhoneNumber") {
-    if (data.phoneNumber !== undefined) {
-      // TODO: Add phone number validation
-      try {
-        return z.string().startsWith("91").parse(data.phoneNumber);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (err) {
-        const error = new z.ZodError([]);
-        error.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Invalid Phone number",
-          path: ["phoneNumber"],
-        });
-        throw error;
-      }
-    } else {
-      const error = new z.ZodError([]);
-      error.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Phone number is required",
-        path: ["phoneNumber"],
-      });
-      throw error;
-    }
-  }
-  return false;
-};
-
-export const otpEvent = baseSchema.refine(validateOtpEvent, {
-  message: "Invalid data for the given optType",
-  path: ["optType"],
+const forgetPasswordOtpSchema = z.object({
+  otpType: z.literal(NotificationType.FORGET_PASSWORD_OTP),
+  email: userSchema.shape.email,
 });
 
-export const otpVerifyEvent = baseSchema
-  .extend({
-    otp,
-  })
-  .refine(validateOtpEvent, {
-    message: "Invalid data for the given optType",
-    path: ["optType"],
-  });
+// const phoneVerificationOtpSchema = z.object({
+//   otpType: z.literal(NotificationType.PHONE_VERIFICATION),
+//   phoneNumber: z.string().min(1, "Phone number is required"),
+// });
+
+// Use discriminatedUnion with the separate schemas
+export const otpEvent = z.discriminatedUnion("otpType", [
+  emailVerificationOtpSchema,
+  forgetPasswordOtpSchema,
+  // phoneVerificationOtpSchema,
+]);
+
+export const otpVerifyEvent = z.object({
+  otp,
+  otpType: notificationTypeSchema,
+  token: z.string().min(1, "Token is required"),
+});
 
 export const otpSchema = z.object({
   id: z.string(),
   otp,
   userId: z.string().regex(/^[a-f\d]{24}$/i, "Invalid id"),
   expiryTime: z.date(),
-  otpType,
+  otpType: notificationTypeSchema,
 });
 
 export const saveOtpSchema = otpSchema.omit({ id: true });
-export const getOtpSchema = otpSchema.omit({
-  expiryTime: true,
-  otp: true,
-  id: true,
+export const getOtpSchema = otpSchema.pick({
+  userId: true,
+  otpType: true,
 });
 
+// Update types based on the new schemas
 export type OtpSchema = z.infer<typeof otpSchema>;
 export type OTP = z.infer<typeof otp>;
-export type OtpType = z.infer<typeof otpType>;
 export type OtpEvent = z.infer<typeof otpEvent>;
 export type GetOtp = z.infer<typeof getOtpSchema>;
 export type SaveOtp = z.infer<typeof saveOtpSchema>;

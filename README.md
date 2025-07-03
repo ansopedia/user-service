@@ -51,12 +51,19 @@ Follow these steps to set up the project:
    ```
 
    **This script:**
-
    - Generates environment files for test, development, and local environments
    - Generates RSA keys for JWT authentication
    - Automatically updates environment files with the generated RSA keys
 
-4. **Verify Setup:**
+4. **Migrate Database:**
+
+   ```bash
+   pnpm run migrate
+   ```
+
+   This command runs database migrations to set up the necessary tables and schema.
+
+5. **Verify Setup:**
 
    ```bash
    pnpm test
@@ -64,7 +71,7 @@ Follow these steps to set up the project:
 
    All test cases should pass if the setup is correct.
 
-5. **Start Development Server:**
+6. **Start Development Server:**
 
    ```bash
    pnpm dev:local
@@ -81,24 +88,20 @@ Follow these steps to set up the project:
 ## Available Scripts
 
 - **Setup:**
-
   - `pnpm run setup`: Complete project setup (environment files and RSA keys)
   - `pnpm generate-env`: Generate environment files only
   - `pnpm generate-keys`: Generate RSA keys only
 
 - **Development:**
-
   - `pnpm dev:local`: Start development server in local environment
   - `pnpm dev:development`: Start development server in development environment
   - `pnpm start`: Start server using ts-node
 
 - **Production:**
-
   - `pnpm build`: Build the project
   - `pnpm prod`: Run in production mode
 
 - **Testing:**
-
   - `pnpm test`: Run test suite
   - `pnpm test:coverage`: Run tests with coverage report
 

@@ -5,20 +5,34 @@ All notable changes to the User Service will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - 2025-07-03
 
 ### Changed
 
-- Updated dependencies to latest versions
+- Updated dependencies to latest versions (#113)
+  - Notable: `Express - v5x`, `bcrypt - v6x`, `jest - v30x`, `dotenv - v17x` & more.
+- Use upsert operations for token and OTP database interactions for better consistency.
+- Standardize token names and improve token invalidation logic.
+- Centralize event type definitions for better maintainability.
+- Improve OTP verification response and `AuthService` method accessibility.
+- Refactor logger and utility imports for consistency.
 
 ### Fixed
 
 - Enhanced notification system with improved error handling and service integration
 - Validate NODE_ENV with enum in env.constant.ts
 - Extend MongoDB debug mode to include "local" environment
+- Improve error handling for unmatched API routes.
+- Correct logger configuration for multi-environment setup.
 
 ### Added
 
+- Optimize test script. (#110)
+- Improve error logging for 500 errors (#108)
+- Migrate Initial Data Setup to Migration Script (#116)
+  - remove initial setup flag and related code
+- Add `morgan` logger for request logging
+- Add `refresh-token` & `user-id` cookies to `login` response
 - Implemented multi-environment configuration system with automated setup (#111)
   - Added support for test, development, and local environment configurations
   - Created scripts to automatically generate environment files from templates
@@ -31,6 +45,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added name fields to profile schema (name, givenName, familyName)
   - Store Google user's display name and name components
   - Update profile dto to include name fields
+- Improve OTP verification flow with descriptive success messages and appropriate token returns.
+  - Include `OTP Time-to-Live (TTL)` in email payloads.
+  - Add `otpTTL` field to notification validation.
+
+### Removed
+
+- Remove deprecated phone verification and email magic link features.
 
 ## [1.0.1] - 2025-01-03
 

@@ -1,10 +1,11 @@
 import { isPast } from "date-fns";
 
 import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
-import { generateTokenForAction, logger, verifyJWTToken } from "@/utils";
+import { errorLogger, generateTokenForAction, verifyJWTToken } from "@/utils";
 
+import { UserActionType } from "../../../constants/events.constant";
 import { TokenDAL } from "./token.dal";
-import { CreateToken, Token, TokenAction } from "./token.validation";
+import { CreateToken, Token } from "./token.validation";
 
 export class TokenService {
   private tokenDAL: TokenDAL;
@@ -13,7 +14,7 @@ export class TokenService {
     this.tokenDAL = new TokenDAL();
   }
 
-  async createActionToken(userId: string, action: TokenAction) {
+  async createActionToken(userId: string, action: UserActionType) {
     const token = generateTokenForAction({ userId, action });
 
     const tokenPayload: CreateToken = {
@@ -24,11 +25,11 @@ export class TokenService {
       expiryTime: new Date(Date.now() + FIVE_MINUTES_IN_MS),
     };
 
-    await this.tokenDAL.replaceTokenForUser(tokenPayload);
+    await this.tokenDAL.upsertToken(tokenPayload);
     return token;
   }
 
-  async verifyActionToken(token: string, action: TokenAction): Promise<Token> {
+  async verifyActionToken(token: string, action: UserActionType): Promise<Token> {
     try {
       const verifiedToken = await verifyJWTToken<Token>(token, "action");
 
@@ -45,11 +46,14 @@ export class TokenService {
         throw new Error(ErrorTypeEnum.enum.TOKEN_EXPIRED);
       }
 
-      await this.tokenDAL.updateToken(storedToken.id, { isUsed: true });
       return verifiedToken;
     } catch (error) {
-      logger.error(`Action token verification error: ${error}`);
+      errorLogger.error(`Action token verification error: ${error}`);
       throw error;
     }
+  }
+
+  async invalidateToken(tokenId: string) {
+    await this.tokenDAL.updateToken(tokenId, { isUsed: true });
   }
 }

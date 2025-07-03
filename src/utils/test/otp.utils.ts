@@ -1,26 +1,28 @@
 import supertest, { Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant";
-import { OtpSchema, OtpType } from "@/api/v1/otp/otp.validation";
+import { OtpEvent, OtpSchema, OtpVerifyEvent } from "@/api/v1/otp/otp.validation";
 import { app } from "@/app";
 import { STATUS_CODES } from "@/constants";
 
 import { OtpService } from "../../api/v1/otp/otp.service";
-import { EmailEventType } from "../../services";
+import { NotificationType } from "../../constants/events.constant";
 
-export const requestOTP = async (email: string): Promise<Response> => {
-  return supertest(app).post("/api/v1/otp").send({
-    otpType: EmailEventType.sendEmailVerificationOTP,
-    email,
-  });
+export const requestOTP = async (otpEvents: OtpEvent): Promise<Response> => {
+  return supertest(app).post("/api/v1/otp").send(otpEvents);
 };
 
 export const expectOTPRequestSuccess = (response: Response): void => {
   expect(response.statusCode).toBe(STATUS_CODES.OK);
-  expect(response.body.message).toBe(success.VERIFICATION_EMAIL_SENT);
+  expect(response.body).toMatchObject({
+    message: success.VERIFICATION_EMAIL_SENT,
+    data: {
+      token: expect.any(String),
+    },
+  });
 };
 
-export const retrieveOTP = async (userId: string, otpType: OtpType): Promise<OtpSchema> => {
+export const retrieveOTP = async (userId: string, otpType: NotificationType): Promise<OtpSchema> => {
   const otpDetails = await OtpService.getOtpDetailsByUserId({
     userId,
     otpType,
@@ -29,15 +31,30 @@ export const retrieveOTP = async (userId: string, otpType: OtpType): Promise<Otp
   return otpData as OtpSchema;
 };
 
-export const verifyOTP = async ({ otp, otpType }: OtpSchema, email: string): Promise<Response> => {
-  return supertest(app).post("/api/v1/otp/verify").send({
-    otpType,
-    email,
-    otp,
-  });
+export const verifyOTP = async (data: OtpVerifyEvent): Promise<Response> => {
+  return supertest(app).post("/api/v1/otp/verify").send(data);
 };
 
-export const expectOTPVerificationSuccess = (response: Response): void => {
+export const expectOTPVerificationSuccess = (otpType: NotificationType, response: Response): void => {
   expect(response.statusCode).toBe(STATUS_CODES.OK);
-  expect(response.body.message).toBe(success.OTP_VERIFIED);
+
+  const expectedMessages = new Map<NotificationType, string>([
+    [NotificationType.EMAIL_VERIFICATION_OTP, success.EMAIL_VERIFIED_SUCCESSFULLY],
+    [NotificationType.FORGET_PASSWORD_OTP, success.PASSWORD_RESET_SUCCESSFULLY],
+  ]);
+
+  const expectedMessage = expectedMessages.get(otpType) ?? success.OTP_VERIFIED_SUCCESSFULLY;
+
+  const emailVerificationSuccess = {
+    userId: expect.any(String),
+    accessToken: expect.any(String),
+    refreshToken: expect.any(String),
+  };
+
+  expect(response.body).toMatchObject({
+    message: expectedMessage,
+    data: {
+      actionToken: otpType === NotificationType.EMAIL_VERIFICATION_OTP ? emailVerificationSuccess : expect.any(String),
+    },
+  });
 };

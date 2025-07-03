@@ -19,7 +19,7 @@ export class OtpDAL {
     return await OtpModel.deleteMany({ userId });
   }
 
-  static async replaceOtpForUser(otpSchema: SaveOtp) {
+  static async upsertOTP(otpSchema: SaveOtp) {
     return await OtpModel.findOneAndUpdate(
       { userId: otpSchema.userId, otpType: otpSchema.otpType },
       { ...otpSchema },

@@ -1,6 +1,6 @@
 import { ErrorTypeEnum, envConstants } from "@/constants";
 
-import logger from "./logger";
+import { errorLogger } from "./logger";
 
 interface KeyPair {
   publicKey: string;
@@ -26,14 +26,14 @@ export class CryptoUtil {
       const privateKey = envConstants.PRIVATE_KEY;
 
       if (publicKey.length === 0 || privateKey.length === 0) {
-        logger.error("Public or private key not found in environment variables");
+        errorLogger.error("Public or private key not found in environment variables");
         throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
       }
 
       this.keyPair = { publicKey, privateKey };
       return this.keyPair;
     } catch (error) {
-      logger.error(`Error loading keys: ${error}`);
+      errorLogger.error(`Error loading keys: ${error}`);
       throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
     }
   }

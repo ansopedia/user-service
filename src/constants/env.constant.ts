@@ -31,11 +31,6 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(1, "JWT_REFRESH_SECRET is required").readonly(),
   JWT_TOKEN_FOR_ACTION_SECRET: z.string().min(1, "JWT_TOKEN_FOR_ACTION_SECRET is required").readonly(),
   MASTER_OTP: z.string().min(1, "MASTER_OTP is required").readonly(),
-  INITIAL_SETUP_DONE: z
-    .string()
-    .min(1, "INITIAL_SETUP_DONE is required")
-    .transform((value) => value === "true")
-    .readonly(),
   DEFAULT_SUPER_ADMIN_USERNAME: userSchema.shape.username.readonly(),
   DEFAULT_SUPER_ADMIN_EMAIL: z.string().email().readonly(),
   DEFAULT_SUPER_ADMIN_PASSWORD: userSchema.shape.password.readonly(),
