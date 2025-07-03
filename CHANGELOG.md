@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated dependencies to latest versions (#113)
   - Notable: `Express - v5x`, `bcrypt - v6x`, `jest - v30x`, `dotenv - v17x` & more.
-- Rename login endpoint to `sign-in` for consistency
 - Use upsert operations for token and OTP database interactions for better consistency.
 - Standardize token names and improve token invalidation logic.
 - Centralize event type definitions for better maintainability.
@@ -33,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrate Initial Data Setup to Migration Script (#116)
   - remove initial setup flag and related code
 - Add `morgan` logger for request logging
-- Add `refresh-token` header to `sign-in` response
+- Add `refresh-token` & `user-id` cookies to `login` response
 - Implemented multi-environment configuration system with automated setup (#111)
   - Added support for test, development, and local environment configurations
   - Created scripts to automatically generate environment files from templates

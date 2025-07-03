@@ -40,7 +40,7 @@ export class AuthController {
 
   public static async signInWithGoogleCallback(req: Request, res: Response) {
     const googleUser = req.user as GoogleUser;
-    const { accessToken, refreshToken } = await AuthService.signInWithGoogle(googleUser);
+    const { accessToken, refreshToken, userId } = await AuthService.signInWithGoogle(googleUser);
 
     AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
 
@@ -55,15 +55,24 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
+      maxAge: 1000 * 60 * 60, // 1hr
+    });
+
+    res.cookie("user-id", userId, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 1000 * 60 * 60, // 1hr
     });
 
     // Validate and sanitize the redirect URL
     const state = req.query.state as string;
+    const allowedRedirects = [`${envConstants.CLIENT_URL}/profile`, `${envConstants.CLIENT_URL}/dashboard`];
     let redirectUrl = `${envConstants.CLIENT_URL}/profile?success=true`; // Default redirect URL
 
     if (state) {
       const decodedUrl = Buffer.from(state, "base64").toString("utf-8");
-      if (isValidRedirectUrl(decodedUrl)) {
+      if (isValidRedirectUrl(decodedUrl) && allowedRedirects.some((url) => decodedUrl.startsWith(url))) {
         redirectUrl = decodedUrl;
       }
     }

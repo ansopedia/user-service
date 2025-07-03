@@ -15,7 +15,7 @@ import {
 } from "@/constants";
 import { addAxiosHeadersMiddleware, errorHandler } from "@/middlewares";
 import { routes } from "@/routes";
-import { logger } from "@/utils";
+import { errorLogger, logger } from "@/utils";
 
 import "./config/passport";
 
@@ -42,7 +42,7 @@ if (NODE_ENV !== "test") {
       }
 
       if (envConstants.NODE_ENV !== "development") {
-        logger.error(`origin ${origin} is not allowed. Allowed origins: ${JSON.stringify(allowedOrigins)}`);
+        errorLogger.error(`origin ${origin} is not allowed. Allowed origins: ${JSON.stringify(allowedOrigins)}`);
       }
       return callback(new Error(ErrorTypeEnum.enum.ORIGIN_NOT_ALLOWED), false);
     },

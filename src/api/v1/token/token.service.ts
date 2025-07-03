@@ -1,7 +1,7 @@
 import { isPast } from "date-fns";
 
 import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
-import { generateTokenForAction, logger, verifyJWTToken } from "@/utils";
+import { errorLogger, generateTokenForAction, verifyJWTToken } from "@/utils";
 
 import { UserActionType } from "../../../constants/events.constant";
 import { TokenDAL } from "./token.dal";
@@ -48,7 +48,7 @@ export class TokenService {
 
       return verifiedToken;
     } catch (error) {
-      logger.error(`Action token verification error: ${error}`);
+      errorLogger.error(`Action token verification error: ${error}`);
       throw error;
     }
   }

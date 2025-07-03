@@ -17,8 +17,8 @@ import {
   envConstants,
 } from "@/constants";
 
-import { logger } from ".";
 import { CryptoUtil } from "./crypto.util";
+import { errorLogger } from "./logger";
 
 const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, JWT_TOKEN_FOR_ACTION_SECRET } = envConstants;
 
@@ -49,7 +49,7 @@ export const generateAccessToken = async (payload: { userId: string; permissions
       issuer: CURRENT_SERVICE,
     });
   } catch (error) {
-    logger.error(`Access token generation error: ${error}`);
+    errorLogger.error(`Access token generation error: ${error}`);
     throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
   }
 };

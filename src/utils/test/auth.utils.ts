@@ -10,7 +10,7 @@ import { ResetPassword } from "../../api/v1/user/user.validation";
 import { expectOTPVerificationSuccess, retrieveOTP, verifyOTP } from "./otp.utils";
 
 export const login = async (loginData: Login): Promise<Response> => {
-  return supertest(app).post("/api/v1/auth/sign-in").send(loginData);
+  return supertest(app).post("/api/v1/auth/login").send(loginData);
 };
 
 export const expectLoginSuccess = (response: Response): void => {

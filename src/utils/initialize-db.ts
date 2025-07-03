@@ -6,7 +6,7 @@ import { RolePermissionService } from "@/api/v1/rolePermission/role-permission.s
 import { UserService } from "@/api/v1/user/user.service";
 import { UserRoleService } from "@/api/v1/userRole/user-role.service";
 import { ROLES, defaultPermissions, defaultRolePermissions, defaultRoles, defaultUsers } from "@/constants";
-import { logger } from "@/utils";
+import { errorLogger, logger } from "@/utils";
 
 export const setupInitialRolesAndPermissions = async () => {
   await PermissionDAL.createPermissions(defaultPermissions);
@@ -20,7 +20,7 @@ export const setupInitialRolesAndPermissions = async () => {
     const role = roles.find((role) => role.name === roleName);
 
     if (!role) {
-      logger.error(`Role not found for: roleName =  ${roleName}`);
+      errorLogger.error(`Role not found for: roleName =  ${roleName}`);
       return;
     }
 
@@ -38,7 +38,7 @@ export const setupInitialRolesAndPermissions = async () => {
           permissionId: permission.id,
         });
       } catch (error) {
-        logger.error(
+        errorLogger.error(
           `Role permission already exists: roleName =  ${roleName}, permissionName = ${defaultRolePermission}, error = ${error}`
         );
       }
@@ -55,12 +55,12 @@ export const setupInitialUserRole = async () => {
     const role = roles.find((role) => role.name === ROLES.SUPER_ADMIN);
 
     if (!role) {
-      logger.error(`Role not found for: roleName =  ${ROLES.SUPER_ADMIN}`);
+      errorLogger.error(`Role not found for: roleName =  ${ROLES.SUPER_ADMIN}`);
       return;
     }
 
     await UserRoleService.createUserRole({ userId: user.id, roleId: role.id });
   } catch (error) {
-    logger.error(`Error while creating user role: error = ${error}`);
+    errorLogger.error(`Error while creating user role: error = ${error}`);
   }
 };

@@ -3,7 +3,7 @@ import { Server as SocketIOServer } from "socket.io";
 
 import { app } from "./app";
 import { initializeSocket } from "./config";
-import { logger } from "./utils";
+import { errorLogger, logger } from "./utils";
 import { CryptoUtil } from "./utils/crypto.util";
 
 const server = http.createServer(app);
@@ -16,7 +16,7 @@ const initializeCryptoKeys = async () => {
     await cryptoUtil.loadKeys();
     logger.info("Crypto keys loaded successfully");
   } catch (error) {
-    logger.error("Failed to load crypto keys:", error);
+    errorLogger.error("Failed to load crypto keys:", error);
     process.exit(1); // Exit if we can't load the keys
   }
 };
@@ -35,11 +35,11 @@ export const startServer = async (port: number): Promise<void> => {
       });
 
       server.on("error", (error) => {
-        logger.error("Server error:", error);
+        errorLogger.error("Server error:", error);
         reject(error);
       });
     } catch (error) {
-      logger.error("Failed to start server:", error);
+      errorLogger.error("Failed to start server:", error);
       reject(error);
     }
   });
