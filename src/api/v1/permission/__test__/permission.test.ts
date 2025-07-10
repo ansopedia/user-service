@@ -1,9 +1,13 @@
-import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
+import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
 import {
   createPermissionRequest,
   expectCreatePermissionSuccess,
   expectGetPermissionsSuccess,
-  getPermissions,
+  expectLoginSuccess,
+  expectUnauthorizedResponseForInvalidAuthorizationHeader,
+  expectUnauthorizedResponseForMissingAuthorizationHeader,
+  getPermissionsRequest,
+  login,
 } from "@/utils/test";
 
 import { CreatePermission, PermissionCategory } from "../permission.validation";
@@ -30,6 +34,13 @@ const testInvalidPermissionField = async (field: string, value: string) => {
 };
 
 describe("Permission Service", () => {
+  let authorizationHeader: string;
+  beforeAll(async () => {
+    const loginResponse = await login(defaultUsers);
+    expectLoginSuccess(loginResponse);
+    authorizationHeader = `Bearer ${loginResponse.header["authorization"]}`;
+  });
+
   it("should create a new permission", async () => {
     const response = await createPermissionRequest(VALID_PERMISSION);
     expectCreatePermissionSuccess(response, VALID_PERMISSION);
@@ -56,8 +67,18 @@ describe("Permission Service", () => {
     await testInvalidPermissionField("createdBy", "a");
   });
 
+  it("should not get all permissions without authorization header", async () => {
+    const response = await getPermissionsRequest("");
+    expectUnauthorizedResponseForMissingAuthorizationHeader(response);
+  });
+
+  it("should not get all permissions with invalid authorization header", async () => {
+    const response = await getPermissionsRequest("invalid");
+    expectUnauthorizedResponseForInvalidAuthorizationHeader(response);
+  });
+
   it("should get all permissions", async () => {
-    const response = await getPermissions();
+    const response = await getPermissionsRequest(authorizationHeader);
     expectGetPermissionsSuccess(response);
   });
 });

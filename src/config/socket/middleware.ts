@@ -2,8 +2,7 @@ import { Server } from "socket.io";
 
 import { JwtAccessToken } from "@/api/v1/auth/auth.validation";
 import { CustomSocket } from "@/types/socket.types";
-import { verifyJWTToken } from "@/utils/jwt.util";
-import logger from "@/utils/logger";
+import { logger, verifyJWTToken } from "@/utils";
 
 export const setupSocketMiddleware = (io: Server) => {
   io.use(async (socket: CustomSocket, next) => {

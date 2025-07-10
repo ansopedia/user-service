@@ -4,6 +4,9 @@ import { objectIdSchema } from "@/utils";
 
 export const profileSchema = z.object({
   userId: objectIdSchema,
+  name: z.string().optional(),
+  givenName: z.string().optional(),
+  familyName: z.string().optional(),
   avatar: z.string().url().optional(),
   bio: z.string().max(500).optional(),
   address: z

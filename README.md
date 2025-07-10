@@ -9,10 +9,14 @@ The Ansopedia User Service is a backend service responsible for managing user ac
 
 ## Understanding the Scripts
 
-Before we dive into the steps, let's break down the scripts in your `package.json` file:
+Before we dive into the setup steps, let's break down the scripts in your `package.json` file:
 
 - **build:** Transpiles TypeScript code to JavaScript.
-- **dev:** Starts the development server with nodemon for hot reloading.
+- **dev:local:** Starts the development server with nodemon in local environment.
+- **dev:development:** Starts the development server with nodemon in development environment.
+- **generate-keys:** Generates RSA keys for JWT authentication.
+- **generate-env:** Generates environment files from the example template.
+- **setup:** Runs a complete project setup (generates environment files and RSA keys).
 - **lint:** Lints the codebase using ESLint.
 - **lint:fix:** Automatically fixes lint errors.
 - **prepare:** Runs husky pre-commit hooks.
@@ -23,92 +27,122 @@ Before we dive into the steps, let's break down the scripts in your `package.jso
 - **start:** Starts the development server using ts-node.
 - **test:** Runs the test suite.
 
-### Development Environment
+## Project Setup
 
-1. **Install dependencies:**
+Follow these steps to set up the project:
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/ansopedia/user-service.git
+   cd user-service
+   ```
+
+2. **Install dependencies:**
 
    ```bash
    pnpm install
    ```
 
-2. **Start development server:**
+3. **Automated Setup:**
 
    ```bash
-   pnpm dev
+   pnpm run setup
    ```
 
-   This command will start a nodemon server, which will watch for changes in your TypeScript files and automatically restart the server.
+   **This script:**
+   - Generates environment files for test, development, and local environments
+   - Generates RSA keys for JWT authentication
+   - Automatically updates environment files with the generated RSA keys
 
-### Production Environment
-
-1. **Start the production server:**
+4. **Migrate Database:**
 
    ```bash
-   pnpm prod
+   pnpm run migrate
    ```
 
-   This command sets the `NODE_ENV` to `production`, builds the project, and starts the server.
+   This command runs database migrations to set up the necessary tables and schema.
 
-#### Test Environment
-
-1. **Run tests:**
+5. **Verify Setup:**
 
    ```bash
    pnpm test
    ```
 
-### Additional Scripts
+   All test cases should pass if the setup is correct.
 
-- **Linting:**
-  - Check for code style issues: `pnpm lint`
-  - Automatically fix code style issues: `pnpm lint:fix`
-- **Formatting:**
-  - Check for code formatting issues: `pnpm prettier:check`
-  - Automatically fix code formatting issues: `pnpm prettier:fix`
+6. **Start Development Server:**
 
-## License
+   ```bash
+   pnpm dev:local
+   ```
 
-By contributing, you agree that your contributions will be licensed under the project's [LICENSE](./LICENSE).
+   or
+
+   ```bash
+   pnpm dev:development
+   ```
+
+   Your server should now be running locally.
+
+## Available Scripts
+
+- **Setup:**
+  - `pnpm run setup`: Complete project setup (environment files and RSA keys)
+  - `pnpm generate-env`: Generate environment files only
+  - `pnpm generate-keys`: Generate RSA keys only
+
+- **Development:**
+  - `pnpm dev:local`: Start development server in local environment
+  - `pnpm dev:development`: Start development server in development environment
+  - `pnpm start`: Start server using ts-node
+
+- **Production:**
+  - `pnpm build`: Build the project
+  - `pnpm prod`: Run in production mode
+
+- **Testing:**
+  - `pnpm test`: Run test suite
+  - `pnpm test:coverage`: Run tests with coverage report
+
+- **Code Quality:**
+  - `pnpm lint`: Check code style
+  - `pnpm lint:fix`: Fix code style issues
+  - `pnpm prettier:check`: Check formatting
+  - `pnpm prettier:fix`: Fix formatting issues
+
+## Environment Configuration
+
+The project uses different environment configurations for various deployment scenarios:
+
+- **Local**: For local development (.env.local)
+- **Development**: For development server deployment (.env.development)
+- **Test**: For running tests (.env.test)
+- **Production**: For production deployment (configure manually)
+
+The environment files are stored in the **environments** directory and are automatically loaded based on the **NODE_ENV** value.
+
+## Security Notes
+
+- Never commit your RSA keys to version control
+- In production, use a secure key management service
+- Rotate keys periodically following security best practices
+- Keep your private key secure and restrict access
 
 ## Contributing
 
-We welcome contributions to the Ansopedia Creator Studio! Please read our [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
+We welcome contributions! Please read our [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
 
 ## Code of Conduct
 
-We have a [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) that outlines our expectations for behavior in the community. Please read it.
+Please read our [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for community guidelines.
 
 ## Contributors
-
-We welcome and recognize all contributors to the Ansopedia Creator Studio.
 
 <a href="https://github.com/ansopedia/user-service/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=ansopedia/user-service" />
 </a>
 
-## Security Keys Setup
+## License
 
-For JWT token signing and verification, this service requires RSA key pairs.
-
-### Development Setup
-
-1. Create a `keys` directory in the project root
-2. Run the key generation script:
-
-```bash
-npm run generate-keys
-```
-
-### Production Setup
-
-For production environments, keys should be:
-
-- Generated securely offline
-- Stored in a secure key management service
-- Mounted as secrets in the container/environment
-- Never committed to version control
-
-The expected key files are:
-
-- `/keys/private.pem` - RSA private key (keep secure!)
-- `/keys/public.pem` - RSA public key (can be distributed)
+This project is licensed under the terms specified in [LICENSE](./LICENSE).

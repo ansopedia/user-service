@@ -27,8 +27,8 @@ export const expectCreatePermissionSuccess = (response: Response, permission: Cr
   });
 };
 
-export const getPermissions = async (): Promise<Response> => {
-  return await supertest(app).get("/api/v1/permissions");
+export const getPermissionsRequest = async (authorizationHeader: string): Promise<Response> => {
+  return await supertest(app).get("/api/v1/permissions").set("Authorization", authorizationHeader);
 };
 
 export const expectGetPermissionsSuccess = (response: Response): void => {

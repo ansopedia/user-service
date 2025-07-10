@@ -20,6 +20,9 @@ export const expectProfileData = (response: Response, data: ProfileData) => {
 
   if (data.avatar != null) expectedBody.avatar = data.avatar;
   if (data.bio != null) expectedBody.bio = data.bio;
+  if (data.name != null) expectedBody.name = data.name;
+  if (data.givenName != null) expectedBody.givenName = data.givenName;
+  if (data.familyName != null) expectedBody.familyName = data.familyName;
   if (data.phoneNumber != null) expectedBody.phoneNumber = data.phoneNumber;
   if (data.address) expectedBody.address = data.address;
   if (data.socialLinks) expectedBody.socialLinks = data.socialLinks;

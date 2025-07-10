@@ -128,4 +128,12 @@ export class UserService {
 
     return UserDto(updatedUser).getUser();
   }
+
+  static async checkUsernameAvailability(username: string): Promise<boolean> {
+    validateUsername.parse({ username });
+    const user = await UserDAL.getUserByUsername(username);
+    // If user is null/undefined, !user returns true meaning username is available
+    // If user exists, !user returns false meaning username is taken
+    return !user;
+  }
 }

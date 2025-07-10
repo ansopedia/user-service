@@ -5,8 +5,9 @@ export const success = {
   TOKEN_RENEWED_SUCCESSFULLY: "Token renewed successfully",
   VERIFICATION_EMAIL_SENT: "Verification email sent",
   OTP_SENT: "OTP sent",
-  OTP_VERIFIED: "OTP verified",
+  OTP_VERIFIED_SUCCESSFULLY: "OTP verified successfully",
   TOKEN_VERIFIED: "Access token is verified",
   FORGET_PASSWORD_EMAIL_SENT: "Forget password email sent",
   PASSWORD_RESET_SUCCESSFULLY: "Password reset successfully",
+  EMAIL_VERIFIED_SUCCESSFULLY: "Email verified successfully",
 };

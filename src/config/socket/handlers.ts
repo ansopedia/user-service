@@ -1,5 +1,5 @@
 import { CustomSocket } from "@/types/socket.types";
-import logger from "@/utils/logger";
+import { errorLogger, logger } from "@/utils";
 
 export const setupEventHandlers = (socket: CustomSocket) => {
   const { userId } = socket.data;
@@ -14,7 +14,7 @@ export const setupEventHandlers = (socket: CustomSocket) => {
     },
 
     handleError: (error: Error) => {
-      logger.error(`Socket error for user ${userId}:`, error);
+      errorLogger.error(`Socket error for user ${userId}; error: ${error}`);
     },
   };
 

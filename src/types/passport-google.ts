@@ -5,9 +5,14 @@ export interface GoogleUser {
     familyName: string;
     givenName: string;
   };
-  emails: Array<{ value: string; verified: boolean }>;
-  photos: Array<{ value: string }>;
-  provider: "google";
+  emails: Array<{
+    value: string;
+    verified: boolean;
+  }>;
+  photos: Array<{
+    value: string;
+  }>;
+  provider: string;
   _raw: string;
   _json: {
     sub: string;

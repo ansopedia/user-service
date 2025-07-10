@@ -1,17 +1,12 @@
 import { z } from "zod";
 
+import { userActionTypeSchema } from "@/constants/events.constant";
 import { objectIdSchema } from "@/utils";
-
-export enum TokenAction {
-  "resetPassword" = "resetPassword",
-  "deleteAccount" = "deleteAccount",
-  "changeSubscription" = "changeSubscription",
-}
 
 export const tokenSchema = z.object({
   id: objectIdSchema,
   userId: objectIdSchema,
-  action: z.nativeEnum(TokenAction),
+  action: userActionTypeSchema,
   token: z.string(),
   isUsed: z.boolean(),
   expiryTime: z.date(),

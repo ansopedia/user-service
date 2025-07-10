@@ -15,6 +15,9 @@ import { CreateProfileData } from "../profile.validation";
 const profileData: CreateProfileData = {
   avatar: "http://avatar.com",
   bio: "bio",
+  name: "name",
+  givenName: "givenName",
+  familyName: "familyName",
   phoneNumber: "phoneNumber",
 };
 

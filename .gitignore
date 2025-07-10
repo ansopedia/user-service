@@ -9,6 +9,7 @@
 
 # environment variables
 .env
+/environments
 
 # IDEs and editors
 /.idea

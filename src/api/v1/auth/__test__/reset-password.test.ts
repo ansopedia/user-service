@@ -4,10 +4,14 @@ import {
   expectBadRequestResponseForValidationError,
   expectFindUserByUsernameSuccess,
   expectForgetPasswordSuccess,
+  expectLoginFailed,
+  expectLoginSuccess,
   expectOTPVerificationSuccess,
+  expectResetPasswordSuccess,
   expectSignUpSuccess,
   findUserByUsername,
   forgetPassword,
+  login,
   resetPassword,
   retrieveOTP,
   signUp,
@@ -15,6 +19,7 @@ import {
   verifyOTP,
 } from "@/utils/test";
 
+import { NotificationType } from "../../../../constants/events.constant";
 import { GetUser } from "../../user/user.validation";
 
 const user = {
@@ -26,10 +31,10 @@ const user = {
 
 describe("Reset Password", () => {
   beforeAll(async () => {
-    const response = await signUp(user);
-    expectSignUpSuccess(response);
+    const signUpResponse = await signUp(user);
+    expectSignUpSuccess(signUpResponse);
 
-    verifyAccount(user);
+    verifyAccount(signUpResponse.body.data);
   });
 
   it("should throw error if token, password, confirmPassword is not provided", async () => {
@@ -59,44 +64,45 @@ describe("Reset Password", () => {
     expectBadRequestResponseForValidationError(res);
   });
 
-  // Running these test twice to ensure that after user can successfully reset password
   // should reset password again after isUsed flag is reset
-  for (let i = 0; i < 2; i++) {
-    let verifiedOTPResponse: Response;
+  let verifiedOTPResponse: Response;
+  it("should verify OTP successfully", async () => {
+    const res = await forgetPassword(user.email);
+    expectForgetPasswordSuccess(res);
 
-    it("should verify OTP successfully", async () => {
-      const res = await forgetPassword(user.email);
-      expectForgetPasswordSuccess(res);
+    const userResponse = await findUserByUsername(user.username);
+    expectFindUserByUsernameSuccess(userResponse, user);
+    const otpType = NotificationType.FORGET_PASSWORD_OTP; // Assuming otpType is defined somewhere in your code
 
-      const userResponse = await findUserByUsername(user.username);
-      expectFindUserByUsernameSuccess(userResponse, user);
-      const userDetails: GetUser = userResponse.body.data;
+    const userDetails: GetUser = userResponse.body.data;
+    const otpData = await retrieveOTP(userDetails.id, otpType);
 
-      const otpData = await retrieveOTP(userDetails.id, "sendForgetPasswordOTP");
-      verifiedOTPResponse = await verifyOTP(otpData, user.email);
-      expectOTPVerificationSuccess(verifiedOTPResponse);
+    verifiedOTPResponse = await verifyOTP({
+      otp: otpData.otp,
+      token: res.body.data.token,
+      otpType,
     });
+    expectOTPVerificationSuccess(otpType, verifiedOTPResponse);
+  });
 
-    // it("should reset password successfully", async () => {
-    //   const { token } = verifiedOTPResponse.body.data;
-    //   console.log({ token });
+  it("should reset password successfully", async () => {
+    const { actionToken } = verifiedOTPResponse.body.data;
 
-    //   const res = await resetPassword({
-    //     token,
-    //     password: "ValidPassword123@",
-    //     confirmPassword: "ValidPassword123@",
-    //   });
-    //   expectResetPasswordSuccess(res);
-    // });
+    const res = await resetPassword({
+      token: actionToken,
+      password: "ValidPassword123@",
+      confirmPassword: "ValidPassword123@",
+    });
+    expectResetPasswordSuccess(res);
+  });
 
-    // it("should not login with old password", async () => {
-    //   const res = await login(user);
-    //   expectLoginFailed(res);
-    // });
+  it("should not login with old password", async () => {
+    const res = await login(user);
+    expectLoginFailed(res);
+  });
 
-    // it("should login with new password", async () => {
-    //   const res = await login({ ...user, password: "ValidPassword123@" });
-    //   expectLoginSuccess(res);
-    // });
-  }
+  it("should login with new password", async () => {
+    const res = await login({ ...user, password: "ValidPassword123@" });
+    expectLoginSuccess(res);
+  });
 });

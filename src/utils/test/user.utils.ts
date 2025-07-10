@@ -118,3 +118,19 @@ export const expectRestoreUserSuccess = (response: Response): void => {
   expect(body.data.user).not.toHaveProperty("password");
   expect(body.data.user).not.toHaveProperty("confirmPassword");
 };
+
+export const checkUsernameAvailability = (username: string) => {
+  return supertest(app).get(`/api/v1/users/check-username/${username}`);
+};
+
+export const expectUsernameAvailabilityResponse = (response: Response, expectedAvailability: boolean) => {
+  const { statusCode, body } = response;
+
+  expect(statusCode).toBe(STATUS_CODES.OK);
+  expect(body).toMatchObject({
+    message: expectedAvailability ? success.USERNAME_AVAILABLE : success.USERNAME_UNAVAILABLE,
+    data: {
+      isAvailable: expectedAvailability,
+    },
+  });
+};

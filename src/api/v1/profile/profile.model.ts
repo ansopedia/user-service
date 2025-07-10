@@ -13,6 +13,18 @@ const ProfileSchema = new Schema<ProfileData>(
       },
       ref: "User",
     },
+    name: {
+      type: String,
+      trim: true,
+    },
+    givenName: {
+      type: String,
+      trim: true,
+    },
+    familyName: {
+      type: String,
+      trim: true,
+    },
     avatar: {
       type: String,
       trim: true,
