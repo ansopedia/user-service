@@ -7,14 +7,15 @@ import { userSchema } from "@/api/v1/user/user.validation";
 
 // Load environment variables based on NODE_ENV
 const nodeEnv = process.env.NODE_ENV ?? "development";
-const envPath = path.resolve(process.cwd(), "environments", `.env.${nodeEnv.toLowerCase()}`);
-
-// Check if environment file exists before loading
-if (!fs.existsSync(envPath)) {
-  throw new Error(`Environment file ${envPath} not found`);
+if (nodeEnv !== "production") {
+  const envPath = path.resolve(process.cwd(), "environments", `.env.${nodeEnv.toLowerCase()}`);
+  if (!fs.existsSync(envPath)) {
+    throw new Error(`Environment file ${envPath} not found`);
+  }
+  dotenv.config({ path: envPath });
+} else {
+  dotenv.config(); // Loads from process.env (Netlify dashboard)
 }
-
-dotenv.config({ path: envPath });
 
 // Define environment schema with optional() for development flexibility
 const envSchema = z.object({
