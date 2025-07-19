@@ -37,7 +37,7 @@ describe("Restore User", () => {
     const userResponse = await createUser(newUser, authorizationHeader);
     expectUserCreationSuccess(userResponse, newUser);
 
-    const foundUserRes = await findUserByUsername(newUser.username);
+    const foundUserRes = await findUserByUsername(newUser.username, authorizationHeader);
     expectFindUserByUsernameSuccess(foundUserRes, newUser);
 
     userToDelete = foundUserRes.body.data;

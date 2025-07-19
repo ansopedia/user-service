@@ -41,12 +41,12 @@ export const expectUserCreationSuccess = (response: Response, user: CreateUser):
   expect(body.data.user).not.toHaveProperty("confirmPassword");
 };
 
-export const findUserByUsername = async (username: string): Promise<Response> => {
-  return supertest(app).get(`/api/v1/users/${username}`);
+export const findUserByUsername = async (username: string, authorizationHeader: string): Promise<Response> => {
+  return supertest(app).get(`/api/v1/users/${username}`).set("authorization", authorizationHeader);
 };
 
-export const getAllUsers = (queryParams: Pagination): Promise<Response> => {
-  return supertest(app).get(`/api/v1/users`).query(queryParams);
+export const getAllUsers = (queryParams: Pagination, authorizationHeader: string): Promise<Response> => {
+  return supertest(app).get(`/api/v1/users`).set("authorization", authorizationHeader).query(queryParams);
 };
 
 export const expectUserNotFoundError = (response: Response): void => {
