@@ -14,9 +14,9 @@ import {
 const router = Router();
 
 router.post("/users", validateAccessToken, checkPermission(["create-users"]), createUser);
-router.get("/users", getAllUsers);
+router.get("/users", validateAccessToken, getAllUsers);
 router.get("/users/check-username/:username", checkUsernameAvailability);
-router.get("/users/:username", getUserByUsername);
+router.get("/users/:username", validateAccessToken, getUserByUsername);
 router.delete("/users/:userId", validateAccessToken, checkPermission(["delete-users"]), softDeleteUser);
 router.patch("/users/:userId/restore", validateAccessToken, checkPermission(["restore-users"]), restoreUser);
 

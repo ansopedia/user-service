@@ -2,25 +2,22 @@ import { Response } from "supertest";
 
 import {
   expectBadRequestResponseForValidationError,
-  expectFindUserByUsernameSuccess,
   expectForgetPasswordSuccess,
   expectLoginFailed,
   expectLoginSuccess,
   expectOTPVerificationSuccess,
   expectResetPasswordSuccess,
   expectSignUpSuccess,
-  findUserByUsername,
   forgetPassword,
   login,
   resetPassword,
-  retrieveOTP,
   signUp,
   verifyAccount,
   verifyOTP,
 } from "@/utils/test";
 
+import { envConstants } from "../../../../constants";
 import { NotificationType } from "../../../../constants/events.constant";
-import { GetUser } from "../../user/user.validation";
 
 const user = {
   username: "username",
@@ -70,15 +67,10 @@ describe("Reset Password", () => {
     const res = await forgetPassword(user.email);
     expectForgetPasswordSuccess(res);
 
-    const userResponse = await findUserByUsername(user.username);
-    expectFindUserByUsernameSuccess(userResponse, user);
-    const otpType = NotificationType.FORGET_PASSWORD_OTP; // Assuming otpType is defined somewhere in your code
-
-    const userDetails: GetUser = userResponse.body.data;
-    const otpData = await retrieveOTP(userDetails.id, otpType);
+    const otpType = NotificationType.FORGET_PASSWORD_OTP;
 
     verifiedOTPResponse = await verifyOTP({
-      otp: otpData.otp,
+      otp: envConstants.MASTER_OTP,
       token: res.body.data.token,
       otpType,
     });

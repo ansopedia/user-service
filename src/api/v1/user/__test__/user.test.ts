@@ -1,4 +1,4 @@
-import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
+import { DEFAULT_PAGINATION_LIMIT, ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
 import {
   createUser,
   expectFindUserByUsernameSuccess,
@@ -76,19 +76,29 @@ describe("User Test", () => {
     expect(response.body.code).toBe(errorObject.body.code);
   });
 
-  it("should find user by username", async () => {
-    const response = await findUserByUsername(newUser.username);
+  it("should return 401 for missing authorization header", async () => {
+    const response = await findUserByUsername(newUser.username, "");
+    expectUnauthorizedResponseForMissingAuthorizationHeader(response);
+  });
+
+  it("should return 401 for missing authorization header", async () => {
+    const response = await getAllUsers({ limit: DEFAULT_PAGINATION_LIMIT, offset: 0 }, "");
+    expectUnauthorizedResponseForMissingAuthorizationHeader(response);
+  });
+
+  it("logged in user should find user by username", async () => {
+    const response = await findUserByUsername(newUser.username, authorizationHeader);
     expectFindUserByUsernameSuccess(response, newUser);
   });
 
-  it("should respond with 404 for user not found", async () => {
-    const response = await findUserByUsername("invalidUsername");
+  it("logged in should respond with 404 for user not found", async () => {
+    const response = await findUserByUsername("invalidUsername", authorizationHeader);
     expectUserNotFoundError(response);
   });
 
   it("should fetch all users", async () => {
-    const limit = 5;
-    const response = await getAllUsers({ limit, offset: 0 });
+    const limit = DEFAULT_PAGINATION_LIMIT;
+    const response = await getAllUsers({ limit, offset: 0 }, authorizationHeader);
 
     const { statusCode, body } = response;
 
