@@ -76,12 +76,12 @@ describe("User Test", () => {
     expect(response.body.code).toBe(errorObject.body.code);
   });
 
-  it("should return 401 for missing authorization header", async () => {
+  it("should return 401 when finding a user by username without an authorization header", async () => {
     const response = await findUserByUsername(newUser.username, "");
     expectUnauthorizedResponseForMissingAuthorizationHeader(response);
   });
 
-  it("should return 401 for missing authorization header", async () => {
+  it("should return 401 when getting all users without an authorization header", async () => {
     const response = await getAllUsers({ limit: DEFAULT_PAGINATION_LIMIT, offset: 0 }, "");
     expectUnauthorizedResponseForMissingAuthorizationHeader(response);
   });
