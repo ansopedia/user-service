@@ -53,6 +53,10 @@ const ProfileSchema = new Schema<ProfileData>(
         github: { type: String },
       },
     },
+    isPublic: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );

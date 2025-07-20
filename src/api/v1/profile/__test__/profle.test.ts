@@ -3,10 +3,12 @@ import {
   expectBadRequestResponseForValidationError,
   expectLoginSuccess,
   expectProfileData,
+  expectProfileVisibility,
   expectUnauthorizedResponseForInvalidAuthorizationHeader,
   expectUnauthorizedResponseForInvalidToken,
   expectUnauthorizedResponseForMissingAuthorizationHeader,
   login,
+  toggleProfileVisibility,
   upSertProfileData,
 } from "@/utils/test";
 
@@ -56,6 +58,28 @@ describe("Profile Service", () => {
     it("should update profile data", async () => {
       const response = await upSertProfileData(profileData, authorizationHeader);
       expectProfileData(response, { userId: loggedInUserId, ...profileData });
+    });
+  });
+
+  describe("Profile Visibility", () => {
+    it("should update profile visibility to private", async () => {
+      const response = await toggleProfileVisibility(false, authorizationHeader);
+      expectProfileVisibility(response, false);
+    });
+
+    it("should update profile visibility to public", async () => {
+      const response = await toggleProfileVisibility(true, authorizationHeader);
+      expectProfileVisibility(response, true);
+    });
+
+    it("should reject invalid isPublic value", async () => {
+      const response = await toggleProfileVisibility("not-a-boolean" as unknown as boolean, authorizationHeader);
+      expectBadRequestResponseForValidationError(response);
+    });
+
+    it("should require authentication", async () => {
+      const response = await toggleProfileVisibility(false, "");
+      expectUnauthorizedResponseForMissingAuthorizationHeader(response);
     });
   });
 });

@@ -29,3 +29,19 @@ export const expectProfileData = (response: Response, data: ProfileData) => {
 
   expect(response.body.data).toMatchObject(expectedBody);
 };
+
+export const toggleProfileVisibility = async (isPublic: boolean, authorizationHeader: string) => {
+  return await supertest(app)
+    .patch("/api/v1/profile/visibility")
+    .set("authorization", authorizationHeader)
+    .send({ isPublic });
+};
+
+export const expectProfileVisibility = (response: Response, isPublic: boolean) => {
+  expect(response).toBeDefined();
+  expect(response.statusCode).toBe(STATUS_CODES.OK);
+  expect(response.body.message).toBe(success.PROFILE_VISIBILITY_UPDATED_SUCCESSFULLY);
+  expect(response.body.status).toBe("success");
+
+  expect(response.body.data.isPublic).toBe(isPublic);
+};

@@ -16,4 +16,8 @@ export class ProfileService {
   getProfileData = async (userId: string) => {
     return await this.profileDataDal.getProfileData(userId);
   };
+
+  toggleProfileVisibility = async (userId: string, isPublic: boolean) => {
+    return await this.profileDataDal.toggleProfileVisibility(userId, isPublic);
+  };
 }

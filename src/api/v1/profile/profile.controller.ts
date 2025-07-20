@@ -5,6 +5,7 @@ import { sendResponse } from "@/utils";
 import { UserService } from "../user/user.service";
 import { success } from "./profile.constant";
 import { ProfileService } from "./profile.service";
+import { toggleVisibilitySchema } from "./profile.validation";
 
 export class ProfileController {
   static upSertProfile = async (req: Request, res: Response) => {
@@ -27,6 +28,17 @@ export class ProfileController {
       response: res,
       message: success.PROFILE_FETCHED_SUCCESSFULLY,
       data: { profile, user },
+      statusCode: 200,
+    });
+  };
+
+  static toggleProfileVisibility = async (req: Request, res: Response) => {
+    const { isPublic } = toggleVisibilitySchema.parse(req.body);
+    const profile = await new ProfileService().toggleProfileVisibility(res.locals.loggedInUser.userId, isPublic);
+    sendResponse({
+      response: res,
+      message: success.PROFILE_VISIBILITY_UPDATED_SUCCESSFULLY,
+      data: profile,
       statusCode: 200,
     });
   };

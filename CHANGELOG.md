@@ -5,6 +5,13 @@ All notable changes to the User Service will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### New feature
+
+- Allow User to Make Their Profile Public or Private ([#63](https://github.com/ansopedia/user-service/issues/63))
+- Protect User Routes ([#67](https://github.com/ansopedia/user-service/issues/67))
+
 ## [1.1.0] - 2025-07-03
 
 ### Changed
