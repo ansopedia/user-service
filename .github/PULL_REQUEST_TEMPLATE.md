@@ -2,10 +2,6 @@
 
 [Provide a short description of the changes.]
 
-## Screenshots (if applicable)
-
-[Add screenshots of your changes.]
-
 ## Related Issues or Tasks
 
 [Link to any related issues or tasks.]
