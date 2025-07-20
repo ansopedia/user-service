@@ -25,6 +25,11 @@ export const profileSchema = z.object({
       github: z.string().url().optional(),
     })
     .optional(),
+  isPublic: z.boolean().optional(),
+});
+
+export const toggleVisibilitySchema = z.object({
+  isPublic: z.boolean(),
 });
 
 export const validateProfileSchema = (data: ProfileData) => {

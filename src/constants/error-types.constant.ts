@@ -37,6 +37,8 @@ const errorType = [
   "INVALID_TOKEN_AUDIENCE",
   "NOTIFICATION_SERVICE_UNAVAILABLE",
   "NOTIFICATION_SERVICE_MISCONFIGURED",
+  "PROFILE_NOT_FOUND",
+  "PROFILE_REQUIRED_FOR_VISIBILITY_CHANGE",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -278,6 +280,20 @@ export const errorMap = {
     body: {
       code: "notification_service_misconfigured",
       message: "Notification service misconfigured.",
+    },
+  },
+  [ErrorTypeEnum.enum.PROFILE_NOT_FOUND]: {
+    httpStatusCode: STATUS_CODES.NOT_FOUND,
+    body: {
+      code: "profile_not_found",
+      message: "Profile not found.",
+    },
+  },
+  [ErrorTypeEnum.enum.PROFILE_REQUIRED_FOR_VISIBILITY_CHANGE]: {
+    httpStatusCode: STATUS_CODES.NOT_FOUND,
+    body: {
+      code: "profile_not_found",
+      message: "Profile not found. A profile must exist to change its visibility.",
     },
   },
 };
