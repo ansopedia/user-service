@@ -1,9 +1,10 @@
 import { isPast } from "date-fns";
 
 import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
+import { UserActionType } from "@/constants/events.constant";
+import { Tokens } from "@/types";
 import { errorLogger, generateTokenForAction, verifyJWTToken } from "@/utils";
 
-import { UserActionType } from "../../../constants/events.constant";
 import { TokenDAL } from "./token.dal";
 import { CreateToken, Token } from "./token.validation";
 
@@ -31,7 +32,7 @@ export class TokenService {
 
   async verifyActionToken(token: string, action: UserActionType): Promise<Token> {
     try {
-      const verifiedToken = await verifyJWTToken<Token>(token, "action");
+      const verifiedToken = await verifyJWTToken<Token>(token, Tokens.ACTION);
 
       if (verifiedToken.action !== action) {
         throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN_TYPE);

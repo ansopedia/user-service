@@ -9,15 +9,23 @@ import {
   validateEmail,
   validateResetPasswordSchema,
 } from "@/api/v1/user/user.validation";
-import { ErrorTypeEnum, Permission } from "@/constants";
+import { ErrorTypeEnum, NotificationType, Permission, UserActionType } from "@/constants";
 import { notificationService } from "@/services";
+import { LoggedInUser, Tokens } from "@/types";
 import { GoogleUser } from "@/types/passport-google";
-import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from "@/utils";
+import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId, verifyJWTToken } from "@/utils";
 
-import { NotificationType, UserActionType } from "../../../constants/events.constant";
 import { ProfileService } from "../profile";
 import { AuthDAL } from "./auth.dal";
-import { Auth, AuthToken, Login, SignUpResponse, loginSchema } from "./auth.validation";
+import {
+  Auth,
+  AuthToken,
+  JwtAccessToken,
+  JwtRefreshToken,
+  Login,
+  SignUpResponse,
+  loginSchema,
+} from "./auth.validation";
 
 export class AuthService {
   public static async signUp(userData: CreateUser): Promise<SignUpResponse> {
@@ -99,18 +107,34 @@ export class AuthService {
     return await this.generateAccessAndRefreshToken(userRecord.id);
   }
 
-  public static async logout(userId: string) {
-    validateObjectId(userId);
-    return await AuthDAL.deleteAuth(userId);
+  public static async logout(sessionId: string, userId: string) {
+    return await AuthDAL.deleteAuthBySessionIdAndUserId(sessionId, userId);
   }
 
-  public static async verifyToken(userId: string): Promise<Auth> {
-    validateObjectId(userId);
-    const user = await AuthDAL.getAuthByUserId(userId);
+  public static async logoutAll(userId: string) {
+    return await AuthDAL.deleteAllAuthsByUserId(userId);
+  }
 
-    if (!user) throw new Error(ErrorTypeEnum.enum.UNAUTHORIZED);
+  public static async logoutOthers(sessionId: string, userId: string) {
+    return await AuthDAL.deleteAllExceptSessionId(userId, sessionId);
+  }
 
-    return user;
+  public static async getSessions(userId: string) {
+    return await AuthDAL.getAuthByUserId(userId);
+  }
+
+  static async verifyRefreshToken(refreshToken: string): Promise<Auth> {
+    const { id } = await verifyJWTToken<JwtRefreshToken>(refreshToken, Tokens.REFRESH);
+
+    const auth = await AuthDAL.getAuthByRefreshToken(refreshToken);
+
+    if (!auth || auth.userId !== id) throw new Error(ErrorTypeEnum.enum.UNAUTHORIZED);
+    return auth;
+  }
+
+  public static async verifyAccessToken(token: string): Promise<LoggedInUser> {
+    const { userId, permissions } = await verifyJWTToken<JwtAccessToken>(token, Tokens.ACCESS);
+    return { userId, permissions };
   }
 
   public static async forgetPassword(email: Email) {
@@ -141,7 +165,7 @@ export class AuthService {
     return await this.generateAccessAndRefreshToken(userId);
   }
 
-  public static async generateAccessAndRefreshToken(userId: string) {
+  static async generateAccessAndRefreshToken(userId: string) {
     validateObjectId(userId);
     const userRolePermissions = await UserDAL.getUserRolesAndPermissionsByUserId(userId);
 
@@ -154,8 +178,8 @@ export class AuthService {
       generateRefreshToken({ id: userId }),
     ]);
 
-    await AuthDAL.upsertAuthTokens({ userId, refreshToken });
+    const newSession = await AuthDAL.insertAuthToken({ userId, refreshToken });
 
-    return { userId, accessToken, refreshToken };
+    return { userId, accessToken, refreshToken, sessionId: newSession.id };
   }
 }

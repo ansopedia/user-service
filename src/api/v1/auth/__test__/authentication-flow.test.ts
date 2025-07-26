@@ -5,6 +5,7 @@ import {
   expectRenewTokenSuccess,
   expectSignUpSuccess,
   login,
+  logoutAllSessions,
   logoutUser,
   renewToken,
   signUp,
@@ -64,14 +65,45 @@ describe("Authentication Flow", () => {
     expectLoginSuccess(loginResponse);
   });
 
-  it("should logout a user", async () => {
-    const loginResponse = await login(VALID_CREDENTIALS);
-    expectLoginSuccess(loginResponse);
+  it("should logout a user from a single session", async () => {
+    const loginResponse1 = await login(VALID_CREDENTIALS);
+    expectLoginSuccess(loginResponse1);
 
-    const authorizationHeader = `Bearer ${loginResponse.header["authorization"]}`;
+    const loginResponse2 = await login(VALID_CREDENTIALS);
+    expectLoginSuccess(loginResponse2);
 
-    const logoutResponse = await logoutUser(authorizationHeader);
+    // Logout from first session using refresh token
+    const authorizationHeader1 = loginResponse1.headers["authorization"];
+    const sessionId1 = loginResponse1.body.sessionId;
+
+    const logoutResponse = await logoutUser(`Bearer ${authorizationHeader1}`, sessionId1);
     expectLogoutSuccess(logoutResponse);
+
+    // Renew token for second session should still succeed
+    const refreshToken2 = loginResponse2.headers["refresh-token"];
+    const renewTokenRes = await renewToken(`Bearer ${refreshToken2}`);
+    expectRenewTokenSuccess(renewTokenRes);
+  });
+
+  it("should logout a user from all sessions", async () => {
+    const loginResponse1 = await login(VALID_CREDENTIALS);
+    expectLoginSuccess(loginResponse1);
+
+    const loginResponse2 = await login(VALID_CREDENTIALS);
+    expectLoginSuccess(loginResponse2); // Logout from first session using refresh token
+
+    const authorizationHeader1 = loginResponse1.headers["authorization"];
+
+    // Logout from all sessions (no refresh token provided)
+    const logoutResponse = await logoutAllSessions(authorizationHeader1); // No refresh token
+    expectLogoutSuccess(logoutResponse);
+
+    // Renew token for both sessions should fail
+    const refreshToken1 = loginResponse1.headers["refresh-token"];
+    const refreshToken2 = loginResponse2.headers["refresh-token"];
+
+    await expect(renewToken(`Bearer ${refreshToken1}`)).rejects.toThrow();
+    await expect(renewToken(`Bearer ${refreshToken2}`)).rejects.toThrow();
   });
 
   it("should renew token", async () => {

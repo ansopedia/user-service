@@ -10,11 +10,20 @@ export class AuthDAL {
     return await AuthModel.findOne({ refreshToken });
   }
 
-  static async upsertAuthTokens({ userId, refreshToken }: Auth): Promise<Auth | null> {
-    return await AuthModel.findOneAndUpdate({ userId }, { refreshToken }, { upsert: true, new: true });
+  static async insertAuthToken(auth: Auth) {
+    const newAuth = new AuthModel(auth);
+    return await newAuth.save();
   }
 
-  static async deleteAuth(userId: string): Promise<Auth | null> {
-    return await AuthModel.findOneAndDelete({ userId });
+  static async deleteAuthBySessionIdAndUserId(sessionId: string, userId: string): Promise<Auth | null> {
+    return await AuthModel.findOneAndDelete({ _id: sessionId, userId });
+  }
+
+  static async deleteAllAuthsByUserId(userId: string): Promise<{ deletedCount?: number }> {
+    return await AuthModel.deleteMany({ userId });
+  }
+
+  static async deleteAllExceptSessionId(userId: string, sessionId: string): Promise<{ deletedCount?: number }> {
+    return await AuthModel.deleteMany({ userId, _id: { $ne: sessionId } });
   }
 }

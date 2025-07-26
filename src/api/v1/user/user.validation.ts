@@ -142,7 +142,7 @@ export interface UserRolePermission {
   username: string;
   email: string;
   roles: Role[];
-  allPermissions: AllPermission[];
+  allPermissions: Permission[];
 }
 
 export interface Role {
@@ -153,12 +153,6 @@ export interface Role {
 }
 
 export interface Permission {
-  _id: string;
-  name: string;
-  description: string;
-}
-
-export interface AllPermission {
   _id: string;
   name: string;
   description: string;

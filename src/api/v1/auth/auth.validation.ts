@@ -6,13 +6,18 @@ import { userSchema } from "../user/user.validation";
 
 const AuthSchema = z.object({
   userId: z.string().regex(/^[a-f\d]{24}$/i, "Invalid id"),
+  sessionId: z.string().regex(/^[a-f\d]{24}$/i, "Invalid id"),
   refreshToken: z.string(),
   otp,
   accessToken: z.string(),
+  device: z.string().optional(),
+  ip: z.string().optional(),
+  userAgent: z.string().optional(),
 });
 
 export const authToken = AuthSchema.pick({
   userId: true,
+  sessionId: true,
   accessToken: true,
   refreshToken: true,
 });
@@ -20,6 +25,9 @@ export const authToken = AuthSchema.pick({
 export const authenticateSchema = AuthSchema.pick({
   refreshToken: true,
   userId: true,
+  device: true,
+  ip: true,
+  userAgent: true,
 });
 
 export const jwtAccessTokenSchema = z.object({

@@ -29,6 +29,7 @@ export const expectLoginSuccess = (response: Response): void => {
     status: "success",
     data: {
       userId: expect.any(String),
+      sessionId: expect.any(String),
     },
   });
 };
@@ -64,8 +65,10 @@ export const expectSignUpSuccess = (response: Response): void => {
   });
 };
 
-export const logoutUser = async (authorizationHeader: string) => {
-  return await supertest(app).post("/api/v1/auth/logout").set("authorization", authorizationHeader);
+export const logoutUser = async (authorizationHeader: string, sessionId: string) => {
+  return await supertest(app).post("/api/v1/auth/logout").set("authorization", authorizationHeader).send({
+    sessionId,
+  });
 };
 
 export const expectLogoutSuccess = (response: Response) => {
@@ -151,4 +154,17 @@ export const expectResetPasswordSuccess = (response: Response): void => {
       userId: expect.any(String),
     },
   });
+};
+
+export const logoutOthers = async (authorizationHeader: string, sessionId: string) => {
+  return await supertest(app).post("/api/v1/auth/logout-others").set("authorization", authorizationHeader).send({
+    sessionId,
+  });
+};
+export const logoutAllSessions = async (authorizationHeader: string) => {
+  return await supertest(app).post("/api/v1/auth/logout-all").set("authorization", authorizationHeader);
+};
+
+export const getSessions = async (authorizationHeader: string) => {
+  return await supertest(app).get("/api/v1/auth/sessions").set("authorization", authorizationHeader);
 };

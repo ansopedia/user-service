@@ -1,9 +1,9 @@
-import { Auth } from "@/api/v1/auth/auth.validation";
+import { LoggedInUser } from "../index";
 
 declare global {
   namespace Express {
     interface Locals {
-      loggedInUser: Auth;
+      loggedInUser: LoggedInUser;
     }
   }
 }

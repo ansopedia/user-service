@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 
-import { STATUS_CODES, envConstants } from "@/constants";
+import { ErrorTypeEnum, STATUS_CODES, envConstants } from "@/constants";
 import { GoogleUser } from "@/types/passport-google";
-import { isValidRedirectUrl, sendResponse } from "@/utils";
+import { extractTokenFromBearerString, isValidRedirectUrl, sendResponse, validateObjectId } from "@/utils";
 
 import { success } from "./auth.constant";
 import { AuthService } from "./auth.service";
@@ -26,21 +26,20 @@ export class AuthController {
   }
 
   public static async signInWithEmailOrUsernameAndPassword(req: Request, res: Response) {
-    const { accessToken, refreshToken, userId }: AuthToken = await AuthService.signInWithEmailOrUsernameAndPassword(
-      req.body
-    );
+    const { accessToken, refreshToken, userId, sessionId }: AuthToken =
+      await AuthService.signInWithEmailOrUsernameAndPassword(req.body);
     AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
     sendResponse({
       response: res,
       message: success.LOGGED_IN_SUCCESSFULLY,
       statusCode: STATUS_CODES.OK,
-      data: { userId },
+      data: { userId, sessionId },
     });
   }
 
   public static async signInWithGoogleCallback(req: Request, res: Response) {
     const googleUser = req.user as GoogleUser;
-    const { accessToken, refreshToken, userId } = await AuthService.signInWithGoogle(googleUser);
+    const { accessToken, refreshToken, userId, sessionId } = await AuthService.signInWithGoogle(googleUser);
 
     AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
 
@@ -65,6 +64,13 @@ export class AuthController {
       maxAge: 1000 * 60 * 60, // 1hr
     });
 
+    res.cookie("session-id", sessionId, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 1000 * 60 * 60, // 1hr
+    });
+
     // Validate and sanitize the redirect URL
     const state = req.query.state as string;
     const allowedRedirects = [`${envConstants.CLIENT_URL}/profile`, `${envConstants.CLIENT_URL}/dashboard`];
@@ -80,8 +86,12 @@ export class AuthController {
     res.redirect(redirectUrl);
   }
 
-  public static async logout(_: Request, res: Response) {
-    await AuthService.logout(res.locals.loggedInUser.userId);
+  public static async logout(req: Request, res: Response) {
+    const { userId } = res.locals.loggedInUser;
+    const { sessionId } = req.body;
+    validateObjectId(sessionId);
+
+    await AuthService.logout(sessionId, userId);
     sendResponse({
       response: res,
       message: success.LOGGED_OUT_SUCCESSFULLY,
@@ -89,19 +99,49 @@ export class AuthController {
     });
   }
 
-  public static async verifyToken(_: Request, res: Response) {
-    await AuthService.verifyToken(res.locals.loggedInUser.userId);
+  public static async logoutAll(_: Request, res: Response) {
+    const { userId } = res.locals.loggedInUser;
+    await AuthService.logoutAll(userId);
     sendResponse({
       response: res,
-      message: success.TOKEN_VERIFIED,
+      message: success.LOGGED_OUT_SUCCESSFULLY,
       statusCode: STATUS_CODES.OK,
     });
   }
 
-  public static async renewToken(_: Request, res: Response) {
-    const { accessToken, refreshToken, userId }: AuthToken = await AuthService.generateAccessAndRefreshToken(
-      res.locals.loggedInUser.userId
-    );
+  public static async logoutOthers(req: Request, res: Response) {
+    const { userId } = res.locals.loggedInUser;
+    const { sessionId } = req.body;
+    validateObjectId(sessionId);
+
+    await AuthService.logoutOthers(sessionId, userId);
+    sendResponse({
+      response: res,
+      message: success.LOGGED_OUT_SUCCESSFULLY,
+      statusCode: STATUS_CODES.OK,
+    });
+  }
+
+  public static async getSessions(_: Request, res: Response) {
+    const { userId } = res.locals.loggedInUser;
+    const sessions = await AuthService.getSessions(userId);
+    sendResponse({
+      response: res,
+      message: success.SESSIONS_FETCHED_SUCCESSFULLY,
+      statusCode: STATUS_CODES.OK,
+      data: sessions,
+    });
+  }
+
+  public static async renewToken(req: Request, res: Response) {
+    const authHeader = req.headers.authorization;
+    if (authHeader == null || authHeader === "") throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
+
+    const token = extractTokenFromBearerString(authHeader);
+
+    const { userId } = await AuthService.verifyRefreshToken(token);
+    const { accessToken, refreshToken }: AuthToken = await AuthService.generateAccessAndRefreshToken(userId);
+
     AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
     sendResponse({
       response: res,

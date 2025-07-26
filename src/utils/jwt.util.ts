@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 
-import { AuthDAL } from "@/api/v1/auth/auth.dal";
 import {
   JwtActionToken,
   JwtRefreshToken,
@@ -16,6 +15,7 @@ import {
   ServiceEnum,
   envConstants,
 } from "@/constants";
+import { Tokens } from "@/types";
 
 import { CryptoUtil } from "./crypto.util";
 import { errorLogger } from "./logger";
@@ -78,30 +78,23 @@ export const generateTokenForAction = (payload: JwtActionToken) => {
 
 export const verifyJWTToken = async <T>(
   token: string,
-  tokenType: "access" | "refresh" | "action",
+  tokenType: Tokens,
   serviceName: ServiceEnum = CURRENT_SERVICE
 ): Promise<T> => {
   try {
     const cryptoUtil = CryptoUtil.getInstance();
     const publicKey = cryptoUtil.getPublicKey();
 
-    const secret = tokenType === "action" ? JWT_TOKEN_FOR_ACTION_SECRET : publicKey;
-    const algorithm = tokenType === "action" ? "HS256" : "RS256";
+    const secret = tokenType === Tokens.ACTION ? JWT_TOKEN_FOR_ACTION_SECRET : publicKey;
+    const algorithm: jwt.Algorithm = tokenType === Tokens.ACTION ? "HS256" : "RS256";
 
-    const verifyOptions = {
-      algorithms: [algorithm] as jwt.Algorithm[],
+    const verifyOptions: jwt.VerifyOptions = {
+      algorithms: [algorithm],
       audience: serviceName,
       issuer: CURRENT_SERVICE,
     };
 
     const verifiedToken = jwt.verify(token, secret, verifyOptions) as T;
-
-    if (tokenType === "refresh") {
-      const storedToken = await AuthDAL.getAuthByRefreshToken(token);
-      if (!storedToken) {
-        throw new Error(ErrorTypeEnum.enum.TOKEN_EXPIRED);
-      }
-    }
 
     return verifiedToken;
   } catch (error) {

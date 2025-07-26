@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Allow User to Make Their Profile Public or Private ([#63](https://github.com/ansopedia/user-service/issues/63))
 - Protect User Routes ([#67](https://github.com/ansopedia/user-service/issues/67))
+- Support Multi-Device Login by Allowing Multiple Refresh Tokens per User ([#123](https://github.com/ansopedia/user-service/issues/123))
 
 ## [1.1.0] - 2025-07-03
 

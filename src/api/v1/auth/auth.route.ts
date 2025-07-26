@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { signInWithGoogle, signInWithGoogleCallback, validateAccessToken, validateRefreshToken } from "@/middlewares";
+import { signInWithGoogle, signInWithGoogleCallback, validateAccessToken } from "@/middlewares";
 
 import { AuthController } from "./auth.controller";
 
@@ -9,8 +9,10 @@ const router = Router();
 router.post("/auth/sign-up", AuthController.signUp);
 router.post("/auth/login", AuthController.signInWithEmailOrUsernameAndPassword);
 router.post("/auth/logout", validateAccessToken, AuthController.logout);
-router.post("/auth/refresh-token", validateRefreshToken, AuthController.renewToken);
-router.post("/auth/verify-access-token", validateAccessToken, AuthController.verifyToken);
+router.post("/auth/logout-all", validateAccessToken, AuthController.logoutAll);
+router.post("/auth/logout-others", validateAccessToken, AuthController.logoutOthers);
+router.get("/auth/sessions", validateAccessToken, AuthController.getSessions);
+router.post("/auth/refresh-token", AuthController.renewToken);
 router.post("/auth/forget-password", AuthController.forgetPassword);
 router.post("/auth/reset-password", AuthController.resetPassword);
 
