@@ -36,6 +36,18 @@
 //     expect(tokens.map((t) => t.refreshToken)).toEqual(expect.arrayContaining([refreshToken1, refreshToken2]));
 //   });
 
+//   it("should allow multiple logins without duplicate key error", async () => {
+//     const loginPromises = [];
+//     for (let i = 0; i < 10; i++) {
+//       loginPromises.push(AuthService.generateAccessAndRefreshToken(userId));
+//     }
+//     const results = await Promise.all(loginPromises);
+//     const tokens = await AuthModel.find({ userId });
+//     expect(tokens.length).toBeGreaterThanOrEqual(10);
+//     const refreshTokens = results.map((res) => res.refreshToken);
+//     expect(tokens.map((t) => t.refreshToken)).toEqual(expect.arrayContaining(refreshTokens));
+//   });
+
 //   it("should logout from a single session by refresh token", async () => {
 //     const refreshToken1 = await generateRefreshToken({ id: userId });
 //     const refreshToken2 = await generateRefreshToken({ id: userId });
@@ -43,7 +55,7 @@
 //     await AuthDAL.insertAuthToken({ userId, refreshToken: refreshToken1 });
 //     await AuthDAL.insertAuthToken({ userId, refreshToken: refreshToken2 });
 
-//     await AuthService.logout(userId, refreshToken1);
+//     await AuthService.logout(refreshToken1, userId);
 
 //     const tokens = await AuthModel.find({ userId });
 //     expect(tokens.length).toBe(1);
@@ -57,7 +69,7 @@
 //     await AuthDAL.insertAuthToken({ userId, refreshToken: refreshToken1 });
 //     await AuthDAL.insertAuthToken({ userId, refreshToken: refreshToken2 });
 
-//     await AuthService.logout(userId);
+//     await AuthService.logout("", userId);
 
 //     const tokens = await AuthModel.find({ userId });
 //     expect(tokens.length).toBe(0);

@@ -6,6 +6,7 @@ import {
   CreateUser,
   Email,
   ResetPassword,
+  UserRolePermission,
   validateEmail,
   validateResetPasswordSchema,
 } from "@/api/v1/user/user.validation";
@@ -167,16 +168,15 @@ export class AuthService {
 
   static async generateAccessAndRefreshToken(userId: string) {
     validateObjectId(userId);
-    const userRolePermissions = await UserDAL.getUserRolesAndPermissionsByUserId(userId);
+    const userRolePermissions: UserRolePermission = await UserDAL.getUserRolesAndPermissionsByUserId(userId);
 
     // Generate both tokens concurrently
-    const [accessToken, refreshToken] = await Promise.all([
-      generateAccessToken({
-        userId,
-        permissions: userRolePermissions.allPermissions.map(({ name }) => name) as Permission[],
-      }),
-      generateRefreshToken({ id: userId }),
-    ]);
+    const accessToken = generateAccessToken({
+      userId,
+      permissions: userRolePermissions.allPermissions.map(({ name }) => name) as Permission[],
+    });
+
+    const refreshToken = generateRefreshToken({ id: userId });
 
     const newSession = await AuthDAL.insertAuthToken({ userId, refreshToken });
 

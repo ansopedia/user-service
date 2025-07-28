@@ -29,6 +29,7 @@ export class AuthController {
     const { accessToken, refreshToken, userId, sessionId }: AuthToken =
       await AuthService.signInWithEmailOrUsernameAndPassword(req.body);
     AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
+
     sendResponse({
       response: res,
       message: success.LOGGED_IN_SUCCESSFULLY,

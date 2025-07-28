@@ -1,5 +1,4 @@
-import { isPast } from "date-fns";
-import { formatDuration, intervalToDuration } from "date-fns";
+import { formatDuration, intervalToDuration, isPast } from "date-fns";
 
 import { success } from "@/api/v1/auth/auth.constant";
 import { UserService } from "@/api/v1/user/user.service";

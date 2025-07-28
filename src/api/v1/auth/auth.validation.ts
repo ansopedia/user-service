@@ -34,7 +34,6 @@ export const jwtAccessTokenSchema = z.object({
   userId: z.string(),
   permissions: z.array(z.string()),
   tokenVersion: z.number(),
-  issuedAt: z.number(),
   issuer: z.string(),
   audience: z.string(),
 });

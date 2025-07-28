@@ -97,7 +97,7 @@ export const errorMap = {
     httpStatusCode: STATUS_CODES.NOT_FOUND,
     body: {
       code: "role_not_found",
-      message: "Role not found. Check identifier and retry.",
+      message: "Role not found. Please contact support.",
     },
   },
   [ErrorTypeEnum.enum.USER_NOT_FOUND]: {

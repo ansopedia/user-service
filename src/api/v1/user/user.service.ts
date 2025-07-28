@@ -42,7 +42,7 @@ export class UserService {
 
     const userRole = await RoleDAL.getRoleByName(ROLES.USER);
 
-    if (!userRole) throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
+    if (!userRole) throw new Error(ErrorTypeEnum.enum.ROLE_NOT_FOUND);
 
     await UserRoleService.createUserRole({
       userId: createdUser.id,

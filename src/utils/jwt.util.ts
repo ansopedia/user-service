@@ -28,7 +28,7 @@ export const tokenSecrets = {
   action: JWT_TOKEN_FOR_ACTION_SECRET,
 };
 
-export const generateAccessToken = async (payload: { userId: string; permissions: Permission[] }): Promise<string> => {
+export const generateAccessToken = (payload: { userId: string; permissions: Permission[] }): string => {
   const cryptoUtil = CryptoUtil.getInstance();
   const privateKey = cryptoUtil.getPrivateKey();
 
@@ -37,7 +37,6 @@ export const generateAccessToken = async (payload: { userId: string; permissions
       userId: payload.userId,
       permissions: payload.permissions,
       tokenVersion: 1,
-      issuedAt: Date.now(),
       issuer: CURRENT_SERVICE,
       audience: CURRENT_SERVICE,
     });
@@ -47,6 +46,7 @@ export const generateAccessToken = async (payload: { userId: string; permissions
       expiresIn: "1h",
       audience: CURRENT_SERVICE,
       issuer: CURRENT_SERVICE,
+      jwtid: crypto.randomUUID(),
     });
   } catch (error) {
     errorLogger.error(`Access token generation error: ${error}`);
@@ -54,17 +54,24 @@ export const generateAccessToken = async (payload: { userId: string; permissions
   }
 };
 
-export const generateRefreshToken = async (payload: JwtRefreshToken): Promise<string> => {
-  const cryptoUtil = CryptoUtil.getInstance();
-  const privateKey = cryptoUtil.getPrivateKey();
+export const generateRefreshToken = (payload: JwtRefreshToken): string => {
+  try {
+    const cryptoUtil = CryptoUtil.getInstance();
+    const privateKey = cryptoUtil.getPrivateKey();
 
-  const validPayload = jwtRefreshTokenSchema.parse(payload);
-  return jwt.sign(validPayload, privateKey, {
-    algorithm: "RS256",
-    expiresIn: "7d",
-    audience: CURRENT_SERVICE,
-    issuer: CURRENT_SERVICE,
-  });
+    const validPayload = jwtRefreshTokenSchema.parse(payload);
+
+    return jwt.sign(validPayload, privateKey, {
+      algorithm: "RS256",
+      expiresIn: "7d",
+      audience: CURRENT_SERVICE,
+      issuer: CURRENT_SERVICE,
+      jwtid: crypto.randomUUID(),
+    });
+  } catch (error) {
+    errorLogger.error(`Refrest token generation error: ${error}`);
+    throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
+  }
 };
 
 export const generateTokenForAction = (payload: JwtActionToken) => {
