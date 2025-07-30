@@ -39,6 +39,7 @@ const errorType = [
   "NOTIFICATION_SERVICE_MISCONFIGURED",
   "PROFILE_NOT_FOUND",
   "PROFILE_REQUIRED_FOR_VISIBILITY_CHANGE",
+  "SESSION_NOT_FOUND",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -294,6 +295,13 @@ export const errorMap = {
     body: {
       code: "profile_not_found",
       message: "Profile not found. A profile must exist to change its visibility.",
+    },
+  },
+  [ErrorTypeEnum.enum.SESSION_NOT_FOUND]: {
+    httpStatusCode: STATUS_CODES.NOT_FOUND,
+    body: {
+      code: "session_not_found",
+      message: "Session not found.",
     },
   },
 };

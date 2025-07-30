@@ -2,8 +2,8 @@ import { AuthModel } from "./auth.model";
 import { Auth } from "./auth.validation";
 
 export class AuthDAL {
-  static async getAuthByUserId(userId: string): Promise<Auth | null> {
-    return await AuthModel.findOne({ userId });
+  static async getAuthsByUserId(userId: string): Promise<Auth[]> {
+    return await AuthModel.find({ userId });
   }
 
   static async getAuthByRefreshToken(refreshToken: string): Promise<Auth | null> {

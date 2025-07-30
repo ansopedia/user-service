@@ -108,20 +108,29 @@ export class AuthService {
     return await this.generateAccessAndRefreshToken(userRecord.id);
   }
 
-  public static async logout(sessionId: string, userId: string) {
-    return await AuthDAL.deleteAuthBySessionIdAndUserId(sessionId, userId);
+  public static async logout(sessionId: string, userId: string): Promise<void> {
+    // TODO: Implement Token Revocation List  Using Redis to Invalidate Access Tokens on Logout
+
+    const deletedSession = await AuthDAL.deleteAuthBySessionIdAndUserId(sessionId, userId);
+    if (!deletedSession) {
+      throw new Error(ErrorTypeEnum.enum.SESSION_NOT_FOUND);
+    }
   }
 
-  public static async logoutAll(userId: string) {
+  public static async logoutAll(userId: string): Promise<{ deletedCount?: number }> {
+    // TODO: Implement Token Revocation List Using Redis  to Invalidate Access Tokens on Logout
+
     return await AuthDAL.deleteAllAuthsByUserId(userId);
   }
 
-  public static async logoutOthers(sessionId: string, userId: string) {
+  public static async logoutOthers(sessionId: string, userId: string): Promise<{ deletedCount?: number }> {
+    // TODO: Implement Token Revocation List Using Redis  to Invalidate Access Tokens on Logout
+
     return await AuthDAL.deleteAllExceptSessionId(userId, sessionId);
   }
 
   public static async getSessions(userId: string) {
-    return await AuthDAL.getAuthByUserId(userId);
+    return await AuthDAL.getAuthsByUserId(userId);
   }
 
   static async verifyRefreshToken(refreshToken: string): Promise<Auth> {
@@ -135,6 +144,8 @@ export class AuthService {
 
   public static async verifyAccessToken(token: string): Promise<LoggedInUser> {
     const { userId, permissions } = await verifyJWTToken<JwtAccessToken>(token, Tokens.ACCESS);
+
+    // TODO: Implement Token Revocation List to Invalidate Access Tokens on Logout
     return { userId, permissions };
   }
 

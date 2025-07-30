@@ -1,4 +1,14 @@
-import { expectLoginSuccess, getSessions, login, logoutOthers, logoutUser, renewToken } from "@/utils/test";
+import {
+  expectLoginSuccess,
+  expectSignUpSuccess,
+  expectUnauthorizedResponseForInvalidToken,
+  getSessions,
+  login,
+  logoutOthers,
+  logoutUser,
+  renewToken,
+  signUp,
+} from "@/utils/test";
 
 const VALID_CREDENTIALS = {
   username: "username",
@@ -13,6 +23,9 @@ describe("Thorough Testing for Auth APIs - Edge Cases and Security", () => {
   let sessionId1: string;
 
   beforeAll(async () => {
+    const response = await signUp(VALID_CREDENTIALS);
+    expectSignUpSuccess(response);
+
     // Login twice to create two sessions
     const loginResponse1 = await login(VALID_CREDENTIALS);
     expectLoginSuccess(loginResponse1);
@@ -25,7 +38,8 @@ describe("Thorough Testing for Auth APIs - Edge Cases and Security", () => {
   });
 
   it("should reject logout with invalid token", async () => {
-    await expect(logoutUser("Bearer invalidtoken", "")).rejects.toThrow();
+    const logoutResponse = await logoutUser("Bearer invalidtoken", "");
+    expectUnauthorizedResponseForInvalidToken(logoutResponse);
   });
 
   it("should reject logoutOthers with invalid token", async () => {

@@ -1,6 +1,7 @@
 import { Model, Schema, Types, model } from "mongoose";
 
-import { UserActionType } from "../../../constants/events.constant";
+import { UserActionType } from "@/constants/events.constant";
+
 import { Token } from "./token.validation";
 
 const TokenSchema: Schema<Token> = new Schema(
@@ -42,4 +43,5 @@ const TokenSchema: Schema<Token> = new Schema(
   { timestamps: true }
 );
 
+TokenSchema.index({ userId: 1, action: 1 }, { unique: true });
 export const TokenModel: Model<Token> = model<Token>("Token", TokenSchema);
