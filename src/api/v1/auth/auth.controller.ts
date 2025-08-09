@@ -88,11 +88,15 @@ export class AuthController {
   }
 
   public static async logout(req: Request, res: Response) {
-    const { userId } = res.locals.loggedInUser;
+    const authHeader = req.headers.authorization;
     const { sessionId } = req.body;
     validateObjectId(sessionId);
 
-    await AuthService.logout(sessionId, userId);
+    if (authHeader == null || authHeader === "") throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
+
+    const accessToken = extractTokenFromBearerString(authHeader);
+
+    await AuthService.logout(accessToken, sessionId);
     sendResponse({
       response: res,
       message: success.LOGGED_OUT_SUCCESSFULLY,
@@ -102,6 +106,11 @@ export class AuthController {
 
   public static async logoutAll(_: Request, res: Response) {
     const { userId } = res.locals.loggedInUser;
+
+    // Extract access token from authorization header
+    // const authHeader = req.headers.authorization;
+    // const accessToken = authHeader != null ? extractTokenFromBearerString(authHeader) : undefined;
+
     await AuthService.logoutAll(userId);
     sendResponse({
       response: res,
@@ -114,6 +123,10 @@ export class AuthController {
     const { userId } = res.locals.loggedInUser;
     const { sessionId } = req.body;
     validateObjectId(sessionId);
+
+    // Extract access token from authorization header
+    // const authHeader = req.headers.authorization;
+    // const accessToken = authHeader != null ? extractTokenFromBearerString(authHeader) : undefined;
 
     await AuthService.logoutOthers(sessionId, userId);
     sendResponse({

@@ -8,7 +8,7 @@ import { connectDB, disconnectDB } from "./mongodb";
     await setupInitialRolesAndPermissions();
     await setupInitialUserRole();
   } catch (error) {
-    errorLogger.error("Failed to setup initial data:", error);
+    errorLogger.error(`Failed to setup initial data: ${error}`);
     process.exit(1);
   } finally {
     await disconnectDB();

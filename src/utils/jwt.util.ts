@@ -87,7 +87,7 @@ export const verifyJWTToken = async <T>(
   token: string,
   tokenType: Tokens,
   serviceName: ServiceEnum = CURRENT_SERVICE
-): Promise<T> => {
+): Promise<T & jwt.JwtPayload> => {
   try {
     const cryptoUtil = CryptoUtil.getInstance();
     const publicKey = cryptoUtil.getPublicKey();
@@ -101,7 +101,7 @@ export const verifyJWTToken = async <T>(
       issuer: CURRENT_SERVICE,
     };
 
-    const verifiedToken = jwt.verify(token, secret, verifyOptions) as T;
+    const verifiedToken = jwt.verify(token, secret, verifyOptions) as T & jwt.JwtPayload;
 
     return verifiedToken;
   } catch (error) {

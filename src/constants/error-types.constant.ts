@@ -40,6 +40,7 @@ const errorType = [
   "PROFILE_NOT_FOUND",
   "PROFILE_REQUIRED_FOR_VISIBILITY_CHANGE",
   "SESSION_NOT_FOUND",
+  "TOKEN_REVOKED",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -302,6 +303,13 @@ export const errorMap = {
     body: {
       code: "session_not_found",
       message: "Session not found.",
+    },
+  },
+  [ErrorTypeEnum.enum.TOKEN_REVOKED]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: {
+      code: "token_revoked",
+      message: "Token has been revoked. Please login again.",
     },
   },
 };

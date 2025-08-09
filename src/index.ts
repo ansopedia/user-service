@@ -8,7 +8,7 @@ import { errorLogger } from "./utils";
     await connectDB();
     await startServer(envConstants.APP_PORT);
   } catch (error) {
-    errorLogger.error("Failed to setup initial data:", error);
+    errorLogger.error(`Failed to setup initial data: ${error}`);
     process.exit(1);
   }
 })();

@@ -42,6 +42,21 @@ const envSchema = z.object({
   CLIENT_URL: z.string().url().readonly(),
   PUBLIC_KEY: z.string().min(1, "PUBLIC_KEY is required").readonly(),
   PRIVATE_KEY: z.string().min(1, "PRIVATE_KEY is required").readonly(),
+  REDIS_HOST: z.string().min(1, "REDIS_HOST is required").readonly(),
+  REDIS_PASSWORD: z.string().min(1, "REDIS_PASSWORD is required").readonly(),
+  REDIS_PORT: z.coerce
+    .number()
+    .int("REDIS_PORT must be an integer")
+    .min(1, "REDIS_PORT must be greater than 0")
+    .max(65535, "REDIS_PORT must be less than or equal to 65535")
+    .readonly(),
+  REDIS_DB: z.coerce
+    .number()
+    .int("REDIS_DB must be an integer")
+    .min(0, "REDIS_DB must be greater than or equal to 0")
+    .max(15, "REDIS_DB must be between 0 and 15")
+    .readonly(),
+  REDIS_USERNAME: z.string().min(1, "REDIS_USERNAME is required").readonly(),
 });
 
 export const envConstants = envSchema.parse(process.env);

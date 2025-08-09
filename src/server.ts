@@ -16,7 +16,7 @@ const initializeCryptoKeys = async () => {
     await cryptoUtil.loadKeys();
     logger.info("Crypto keys loaded successfully");
   } catch (error) {
-    errorLogger.error("Failed to load crypto keys:", error);
+    errorLogger.error(`Failed to load crypto keys: ${error}`);
     process.exit(1); // Exit if we can't load the keys
   }
 };
@@ -24,6 +24,7 @@ const initializeCryptoKeys = async () => {
 // Call this before starting your server
 export const startServer = async (port: number): Promise<void> => {
   await initializeCryptoKeys();
+  app.set("port", port);
   return new Promise((resolve, reject) => {
     try {
       server.listen(port, () => {
@@ -35,11 +36,11 @@ export const startServer = async (port: number): Promise<void> => {
       });
 
       server.on("error", (error) => {
-        errorLogger.error("Server error:", error);
+        errorLogger.error(`Server error: ${error}`);
         reject(error);
       });
     } catch (error) {
-      errorLogger.error("Failed to start server:", error);
+      errorLogger.error(`Failed to start server: ${error}`);
       reject(error);
     }
   });

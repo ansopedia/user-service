@@ -11,7 +11,7 @@ import {
   validateResetPasswordSchema,
 } from "@/api/v1/user/user.validation";
 import { ErrorTypeEnum, NotificationType, Permission, UserActionType } from "@/constants";
-import { notificationService } from "@/services";
+import { notificationService, redisService } from "@/services";
 import { LoggedInUser, Tokens } from "@/types";
 import { GoogleUser } from "@/types/passport-google";
 import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId, verifyJWTToken } from "@/utils";
@@ -108,9 +108,23 @@ export class AuthService {
     return await this.generateAccessAndRefreshToken(userRecord.id);
   }
 
-  public static async logout(sessionId: string, userId: string): Promise<void> {
-    // TODO: Implement Token Revocation List  Using Redis to Invalidate Access Tokens on Logout
+  public static async logout(accessToken: string, sessionId: string): Promise<void> {
+    const res = await verifyJWTToken<JwtAccessToken>(accessToken, Tokens.ACCESS);
+    const { userId, jti, exp } = res;
 
+    if (jti == null || exp == null) {
+      throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
+    }
+
+    const isRevoked = await redisService.isJtiRevoked(jti);
+    if (isRevoked) {
+      throw new Error(ErrorTypeEnum.enum.TOKEN_REVOKED);
+    }
+
+    // Add JTI to Redis blacklist
+    await redisService.revokeJti(jti, exp);
+
+    // Remove from database
     const deletedSession = await AuthDAL.deleteAuthBySessionIdAndUserId(sessionId, userId);
     if (!deletedSession) {
       throw new Error(ErrorTypeEnum.enum.SESSION_NOT_FOUND);
@@ -143,9 +157,17 @@ export class AuthService {
   }
 
   public static async verifyAccessToken(token: string): Promise<LoggedInUser> {
-    const { userId, permissions } = await verifyJWTToken<JwtAccessToken>(token, Tokens.ACCESS);
+    const { userId, permissions, jti } = await verifyJWTToken<JwtAccessToken>(token, Tokens.ACCESS);
 
-    // TODO: Implement Token Revocation List to Invalidate Access Tokens on Logout
+    if (jti == null) {
+      throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
+    }
+
+    const isRevoked = await redisService.isJtiRevoked(jti);
+    if (isRevoked) {
+      throw new Error(ErrorTypeEnum.enum.TOKEN_REVOKED);
+    }
+
     return { userId, permissions };
   }
 

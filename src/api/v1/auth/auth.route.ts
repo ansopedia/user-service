@@ -8,7 +8,7 @@ const router = Router();
 
 router.post("/auth/sign-up", AuthController.signUp);
 router.post("/auth/login", AuthController.signInWithEmailOrUsernameAndPassword);
-router.post("/auth/logout", validateAccessToken, AuthController.logout);
+router.post("/auth/logout", AuthController.logout);
 router.post("/auth/logout-all", validateAccessToken, AuthController.logoutAll);
 router.post("/auth/logout-others", validateAccessToken, AuthController.logoutOthers);
 router.get("/auth/sessions", validateAccessToken, AuthController.getSessions);

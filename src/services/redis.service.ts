@@ -1,31 +1,45 @@
 import Redis from "ioredis";
 
-import { errorLogger } from "../utils";
+import { envConstants } from "../constants";
+import { errorLogger, logger } from "../utils";
 
 class RedisService {
   private client: Redis;
 
   constructor() {
     this.client = new Redis({
-      host: process.env.REDIS_HOST ?? "127.0.0.1",
-      port: Number(process.env.REDIS_PORT) || 6379,
-      password: process.env.REDIS_PASSWORD ?? undefined,
+      port: Number(envConstants.REDIS_PORT),
+      host: envConstants.REDIS_HOST,
+      username: envConstants.REDIS_USERNAME,
+      password: envConstants.REDIS_PASSWORD,
+      db: 0,
+    });
+
+    this.client.on("connect", () => {
+      logger.info("Connected to Redis!");
     });
 
     this.client.on("error", (err) => {
-      errorLogger.error("Redis error:", err);
+      errorLogger.error(`Redis error: ${err}`);
     });
   }
 
-  // Add a token to the revocation list with expiration (in seconds)
-  async revokeToken(tokenId: string, expiresInSeconds: number): Promise<void> {
-    await this.client.set(`revoked_token:${tokenId}`, "revoked", "EX", expiresInSeconds);
+  async revokeJti(jti: string, exp: number): Promise<void> {
+    const now = Math.floor(Date.now() / 1000);
+    const ttl = exp - now;
+
+    if (ttl <= 0) {
+      logger.warn("Token already expired, skipping revoke");
+      return;
+    }
+
+    await this.client.set(`bl_jti_${jti}`, "revoked", "EX", ttl);
+    logger.info(`JTI ${jti} revoked for ${ttl} seconds`);
   }
 
-  // Check if a token is revoked
-  async isTokenRevoked(tokenId: string): Promise<boolean> {
-    const result = await this.client.get(`revoked_token:${tokenId}`);
-    return result === "revoked";
+  async isJtiRevoked(jti: string): Promise<boolean> {
+    const exists = await this.client.get(`bl_jti_${jti}`);
+    return exists !== null;
   }
 }
 
