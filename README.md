@@ -157,7 +157,7 @@ Example using environment variables inline:
   ```bash
   docker run -d -p 3000:3000 \
     -e NODE_ENV=production \
-    -e DATABASE_URL=your_database_url \
+    -e DATABASE_URI=your_DATABASE_URI \
     -e JWT_PRIVATE_KEY="your_jwt_private_key" \
     ansopedia-user-service
   ```
@@ -168,7 +168,7 @@ Alternatively, use an `.env` file to manage environment variables:
 
     ```env
       NODE_ENV=production
-      DATABASE_URL=your_database_url
+      DATABASE_URI=your_DATABASE_URI
       JWT_PRIVATE_KEY="your_jwt_private_key"
     ```
 

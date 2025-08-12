@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
 import {
   createPermissionRequest,
@@ -17,7 +19,7 @@ const VALID_PERMISSION: CreatePermission = {
   description: "this is crete permission creating first time",
   category: PermissionCategory.SYSTEM,
   isDeleted: false,
-  createdBy: "65f6dac9156e93e7b6f1b88d",
+  createdBy: new mongoose.Types.ObjectId(),
 };
 
 const testInvalidPermissionField = async (field: string, value: string) => {

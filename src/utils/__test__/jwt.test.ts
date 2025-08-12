@@ -1,5 +1,9 @@
+import mongoose from "mongoose";
+
 import { ErrorTypeEnum } from "@/constants";
 import { extractTokenFromBearerString, generateAccessToken, generateRefreshToken } from "@/utils";
+
+import { AccessTokenPayload } from "../../api/v1/auth/auth.validation";
 
 jest.mock("jsonwebtoken", () => ({
   sign: jest.fn(),
@@ -7,9 +11,11 @@ jest.mock("jsonwebtoken", () => ({
 }));
 
 describe("Jwt token", () => {
-  const mockdata = {
-    userId: "123",
+  const mockdata: AccessTokenPayload = {
+    userId: new mongoose.Types.ObjectId(),
     permissions: [],
+    tokenVersion: 0,
+    deviceId: crypto.randomUUID(),
   };
 
   beforeEach(() => {
@@ -22,7 +28,7 @@ describe("Jwt token", () => {
   });
 
   it("should generate a refresh token", () => {
-    const token = generateRefreshToken({ id: "123" });
+    const token = generateRefreshToken({ sessionId: new mongoose.Types.ObjectId() });
     expect(token).toBeDefined();
   });
 

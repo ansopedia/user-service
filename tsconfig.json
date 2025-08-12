@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "es2021",
-    "module": "CommonJS",
+    "module": "NodeNext",
     "rootDir": "./src",
-    "moduleResolution": "Node",
+    "moduleResolution": "nodenext",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]

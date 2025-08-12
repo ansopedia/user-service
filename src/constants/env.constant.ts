@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import fs from "fs";
+import { SignOptions } from "jsonwebtoken";
 import path from "path";
 import { z } from "zod";
 
@@ -22,7 +23,7 @@ if (nodeEnv !== "production") {
 
 // Define environment schema with optional() for development flexibility
 const envSchema = z.object({
-  DATABASE_URL: z.string().min(1, "DATABASE_URL is required").readonly(),
+  DATABASE_URI: z.string().min(1, "DATABASE_URI is required").readonly(),
   APP_PORT: z.coerce.number().min(1, "APP_PORT is required and must be a number greater than 0").readonly(),
   DB_NAME: z.string().min(1, "DB_NAME is required").readonly(),
   PINO_LOG_LEVEL: z.string().min(1, "PINO_LOG_LEVEL is required").readonly(),
@@ -31,9 +32,10 @@ const envSchema = z.object({
       required_error: "NODE_ENV is required and must be one of development, stage, local, test, or production",
     })
     .readonly(),
-  JWT_ACCESS_SECRET: z.string().min(1, "JWT_ACCESS_SECRET is required").readonly(),
-  JWT_REFRESH_SECRET: z.string().min(1, "JWT_REFRESH_SECRET is required").readonly(),
-  JWT_TOKEN_FOR_ACTION_SECRET: z.string().min(1, "JWT_TOKEN_FOR_ACTION_SECRET is required").readonly(),
+  ACTION_TOKEN_SECRET: z.string().min(1, "ACTION_TOKEN_SECRET is required").readonly(),
+  ACCESS_TOKEN_EXPIRES_IN: z.custom<SignOptions["expiresIn"]>().readonly(),
+  REFRESH_TOKEN_EXPIRES_IN: z.custom<SignOptions["expiresIn"]>().readonly(),
+  ACTION_TOKEN_EXPIRES_IN: z.custom<SignOptions["expiresIn"]>().readonly(),
   MASTER_OTP: z.string().min(1, "MASTER_OTP is required").readonly(),
   DEFAULT_SUPER_ADMIN_USERNAME: userSchema.shape.username.readonly(),
   DEFAULT_SUPER_ADMIN_EMAIL: z.string().email().readonly(),

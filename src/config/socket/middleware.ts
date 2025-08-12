@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 
-import { JwtAccessToken } from "@/api/v1/auth/auth.validation";
+import { AccessTokenPayload } from "@/api/v1/auth/auth.validation";
 import { CustomSocket } from "@/types/socket.types";
 import { logger, verifyJWTToken } from "@/utils";
 
@@ -15,7 +15,7 @@ export const setupSocketMiddleware = (io: Server) => {
       }
 
       // 2. Validate token
-      const decoded = await verifyJWTToken<JwtAccessToken>(token, "access");
+      const decoded = await verifyJWTToken<AccessTokenPayload>(token, "access");
 
       // 3. Attach user data to socket
       socket.data.userId = decoded.userId;

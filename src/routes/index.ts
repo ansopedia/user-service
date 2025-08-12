@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { authRoutes } from "@/api/v1/auth/auth.route";
+import { authRouter } from "@/api/v1/auth/auth.route";
 import { otpRoutes } from "@/api/v1/otp/otp.route";
 import { permissionRoutes } from "@/api/v1/permission/permission.route";
 import { profileRoutes } from "@/api/v1/profile/profile.route";
@@ -11,6 +11,8 @@ import { userRoleRoutes } from "@/api/v1/userRole/user-role.route";
 
 export const routes = Router();
 
+routes.use("/auth", authRouter);
+
 routes.use(
   userRoutes,
   roleRoutes,
@@ -18,7 +20,6 @@ routes.use(
   rolePermissionRoutes,
   userRoutes,
   userRoleRoutes,
-  authRoutes,
   otpRoutes,
   profileRoutes
 );

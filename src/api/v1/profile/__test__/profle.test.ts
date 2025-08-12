@@ -1,4 +1,5 @@
 import { defaultUsers } from "@/constants";
+import { MongooseObjectId } from "@/types";
 import {
   expectBadRequestResponseForValidationError,
   expectLoginSuccess,
@@ -25,7 +26,7 @@ const profileData: CreateProfileData = {
 
 describe("Profile Service", () => {
   let authorizationHeader: string;
-  let loggedInUserId: string;
+  let loggedInUserId: MongooseObjectId;
 
   beforeAll(async () => {
     const loginResponse = await login(defaultUsers);

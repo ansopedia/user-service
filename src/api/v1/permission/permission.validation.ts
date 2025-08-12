@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { objectIdSchema } from "@/utils";
+import { mongooseObjectId } from "@/types";
 
 export enum PermissionCategory {
   "USER_MANAGEMENT" = "USER_MANAGEMENT",
@@ -13,7 +13,7 @@ export enum PermissionCategory {
 }
 
 const permissionSchema = z.object({
-  id: objectIdSchema,
+  id: mongooseObjectId,
   name: z
     .string()
     .min(3, "Name must be at least 3 characters long.")
@@ -25,8 +25,8 @@ const permissionSchema = z.object({
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
-  createdBy: objectIdSchema,
-  updatedBy: objectIdSchema,
+  createdBy: mongooseObjectId,
+  updatedBy: mongooseObjectId,
 });
 
 export const createPermissionSchema = permissionSchema.omit({

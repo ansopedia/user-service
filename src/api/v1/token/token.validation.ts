@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 import { userActionTypeSchema } from "@/constants/events.constant";
-import { objectIdSchema } from "@/utils";
+import { mongooseObjectId } from "@/types";
 
 export const tokenSchema = z.object({
-  id: objectIdSchema,
-  userId: objectIdSchema,
+  id: mongooseObjectId,
+  userId: mongooseObjectId,
   action: userActionTypeSchema,
   token: z.string(),
   isUsed: z.boolean(),

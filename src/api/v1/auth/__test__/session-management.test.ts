@@ -24,21 +24,18 @@ describe("Session Management APIs - logoutOthers and getSessions", () => {
 
   beforeAll(async () => {
     const signUpResponse = await signUp(VALID_CREDENTIALS);
-    console.log(signUpResponse.body);
     expectSignUpSuccess(signUpResponse);
 
     await verifyAccount(signUpResponse.body.data);
 
     // Login twice to create two sessions
     const loginResponse1 = await login(VALID_CREDENTIALS);
-    console.log(loginResponse1.body);
 
     expectLoginSuccess(loginResponse1);
     refreshToken1 = loginResponse1.headers["refresh-token"];
     sessionId1 = loginResponse1.body.sessionId;
 
     const loginResponse2 = await login(VALID_CREDENTIALS);
-    console.log(loginResponse2.body);
 
     expectLoginSuccess(loginResponse2);
     refreshToken2 = loginResponse2.headers["refresh-token"];

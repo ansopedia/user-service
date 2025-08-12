@@ -41,6 +41,7 @@ const errorType = [
   "PROFILE_REQUIRED_FOR_VISIBILITY_CHANGE",
   "SESSION_NOT_FOUND",
   "TOKEN_REVOKED",
+  "BOT_ACCESS_FORBIDDEN",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -310,6 +311,13 @@ export const errorMap = {
     body: {
       code: "token_revoked",
       message: "Token has been revoked. Please login again.",
+    },
+  },
+  [ErrorTypeEnum.enum.BOT_ACCESS_FORBIDDEN]: {
+    httpStatusCode: STATUS_CODES.FORBIDDEN,
+    body: {
+      code: "bot_access_forbidden",
+      message: "Bot access forbidden.",
     },
   },
 };

@@ -1,6 +1,6 @@
 import { ZodError } from "zod";
 
-import { password } from "../user.validation";
+import { password } from "@/types";
 
 describe("Password Schema", () => {
   const validatePassword = (pwd: string) => {

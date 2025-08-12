@@ -2,8 +2,8 @@ import { isPast } from "date-fns";
 
 import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
 import { UserActionType } from "@/constants/events.constant";
-import { Tokens } from "@/types";
-import { errorLogger, generateTokenForAction, verifyJWTToken } from "@/utils";
+import { MongooseObjectId, Tokens } from "@/types";
+import { errorLogger, generateActionToken, verifyJWTToken } from "@/utils";
 
 import { TokenDAL } from "./token.dal";
 import { CreateToken, Token } from "./token.validation";
@@ -15,8 +15,8 @@ export class TokenService {
     this.tokenDAL = new TokenDAL();
   }
 
-  async createActionToken(userId: string, action: UserActionType) {
-    const token = generateTokenForAction({ userId, action });
+  async createActionToken(userId: MongooseObjectId, action: UserActionType) {
+    const token = generateActionToken({ userId, action });
 
     const tokenPayload: CreateToken = {
       userId,
@@ -54,7 +54,7 @@ export class TokenService {
     }
   }
 
-  async invalidateToken(tokenId: string) {
+  async invalidateToken(tokenId: MongooseObjectId) {
     await this.tokenDAL.updateToken(tokenId, { isUsed: true });
   }
 }

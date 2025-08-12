@@ -111,7 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Configured global rate limiting (#71)
 - Created scalable and dynamic schema for storing tokens (#53)
-- Added route protection using validateAccessToken and checkPermission middleware (#51)
+- Added route protection using authenticate and checkPermission middleware (#51)
 - Implemented strong password policy (#40, #48)
 - Encrypted JWT tokens (#37)
 - Implemented Role-Based Access Control (RBAC) with default roles and permissions (#28, #36)

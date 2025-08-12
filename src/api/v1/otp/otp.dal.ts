@@ -1,3 +1,4 @@
+import { MongooseObjectId } from "../../../types";
 import { OtpModel } from "./otp.model";
 import { GetOtp, OtpSchema, SaveOtp } from "./otp.validation";
 
@@ -11,11 +12,11 @@ export class OtpDAL {
     return await OtpModel.find(otpSchema);
   }
 
-  static async deleteOtp(otpId: string) {
+  static async deleteOtp(otpId: MongooseObjectId) {
     return await OtpModel.findByIdAndDelete(otpId);
   }
 
-  static async deleteOtpByUserId(userId: string) {
+  static async deleteOtpByUserId(userId: MongooseObjectId) {
     return await OtpModel.deleteMany({ userId });
   }
 

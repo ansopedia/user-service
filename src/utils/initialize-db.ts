@@ -48,7 +48,7 @@ export const setupInitialRolesAndPermissions = async () => {
 
 export const setupInitialUserRole = async () => {
   try {
-    const user = await UserService.createUser(defaultUsers);
+    const user = await UserService.registerUser(defaultUsers);
 
     const roles = await RoleService.getRoles();
 

@@ -1,3 +1,4 @@
+import { MongooseObjectId } from "../../../types";
 import { RoleModel } from "./role.model";
 import { Role, createRole } from "./role.validation";
 
@@ -22,11 +23,11 @@ export class RoleDAL {
     return await RoleModel.findOne({ name });
   }
 
-  static async softDeleteRole(roleId: string): Promise<Role | null> {
+  static async softDeleteRole(roleId: MongooseObjectId): Promise<Role | null> {
     return await RoleModel.findByIdAndUpdate(roleId, { isDeleted: true }, { new: true });
   }
 
-  static async restoreRole(roleId: string): Promise<Role | null> {
+  static async restoreRole(roleId: MongooseObjectId): Promise<Role | null> {
     return await RoleModel.findByIdAndUpdate(roleId, { isDeleted: false }, { new: true });
   }
 }

@@ -1,10 +1,20 @@
-import { Types } from "mongoose";
-import { z } from "zod";
+import {
+  Email,
+  MongooseObjectId,
+  Username,
+  mongooseObjectId,
+  username as usernameSchema,
+  email as validEmail,
+} from "@/types";
 
-export const objectIdSchema = z.string().refine((value) => Types.ObjectId.isValid(value), {
-  message: "Invalid ObjectId",
-});
+export const validateObjectId = (objectId: unknown): MongooseObjectId => {
+  return mongooseObjectId.parse(objectId);
+};
 
-export const validateObjectId = (objectId: string) => {
-  return objectIdSchema.parse(objectId);
+export const validateUsername = (username: unknown): Username => {
+  return usernameSchema.parse(username);
+};
+
+export const validateEmail = (email: string): Email => {
+  return validEmail.parse(email);
 };

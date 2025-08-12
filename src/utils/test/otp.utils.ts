@@ -7,6 +7,7 @@ import { STATUS_CODES } from "@/constants";
 
 import { OtpService } from "../../api/v1/otp/otp.service";
 import { NotificationType } from "../../constants/events.constant";
+import { MongooseObjectId } from "../../types";
 
 export const requestOTP = async (otpEvents: OtpEvent): Promise<Response> => {
   return supertest(app).post("/api/v1/otp").send(otpEvents);
@@ -22,7 +23,7 @@ export const expectOTPRequestSuccess = (response: Response): void => {
   });
 };
 
-export const retrieveOTP = async (userId: string, otpType: NotificationType): Promise<OtpSchema> => {
+export const retrieveOTP = async (userId: MongooseObjectId, otpType: NotificationType): Promise<OtpSchema> => {
   const otpDetails = await OtpService.getOtpDetailsByUserId({
     userId,
     otpType,

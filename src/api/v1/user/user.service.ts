@@ -1,20 +1,12 @@
 import { ErrorTypeEnum, ROLES } from "@/constants";
-import { generateRandomUsername, validateObjectId } from "@/utils";
+import { Email, MongooseObjectId, Username } from "@/types";
+import { generateRandomUsername } from "@/utils";
 
 import { RoleDAL } from "../role/role.dal";
 import { UserRoleService } from "../userRole/user-role.service";
 import { UserDAL } from "./user.dal";
 import { UserDto } from "./user.dto";
-import {
-  CreateUser,
-  Email,
-  GetUser,
-  UpdateUser,
-  validateCreateUser,
-  validateEmail,
-  validatePagination,
-  validateUsername,
-} from "./user.validation";
+import { GetUser, RegisterSchema, UpdateUser, validatePagination } from "./user.validation";
 
 export class UserService {
   static async generateUniqueUsername(username: string): Promise<string> {
@@ -27,9 +19,7 @@ export class UserService {
     return await this.generateUniqueUsername(newUsername);
   }
 
-  static async createUser(userData: CreateUser): Promise<GetUser> {
-    validateCreateUser(userData);
-
+  static async registerUser(userData: RegisterSchema): Promise<GetUser> {
     const isUserExist = await UserDAL.getUserByEmail(userData.email);
 
     if (isUserExist) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS);
@@ -61,20 +51,16 @@ export class UserService {
     };
   }
 
-  static async getUserByUsername(username: string): Promise<GetUser> {
-    const validateData = validateUsername.parse({ username });
-
-    const user = await UserDAL.getUserByUsername(validateData.username);
+  static async getUserByUsername(username: Username): Promise<GetUser> {
+    const user = await UserDAL.getUserByUsername(username);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     return UserDto(user).getUser();
   }
 
-  static async getUserById(userId: string): Promise<GetUser> {
-    const validateData = validateObjectId(userId);
-
-    const user = await UserDAL.getUserById(validateData);
+  static async getUserById(userId: MongooseObjectId): Promise<GetUser> {
+    const user = await UserDAL.getUserById(userId);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
@@ -90,8 +76,6 @@ export class UserService {
   }
 
   static async getUserByEmail(email: Email): Promise<GetUser> {
-    validateEmail(email);
-
     const user = await UserDAL.getUserByEmail(email);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
@@ -99,29 +83,23 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async softDeleteUser(userId: string): Promise<GetUser> {
-    const validateData = validateObjectId(userId);
-
-    const user = await UserDAL.softDeleteUser(validateData);
+  static async softDeleteUser(userId: MongooseObjectId): Promise<GetUser> {
+    const user = await UserDAL.softDeleteUser(userId);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     return UserDto(user).getUser();
   }
 
-  static async restoreUser(userId: string): Promise<GetUser> {
-    const validateData = validateObjectId(userId);
-
-    const user = await UserDAL.restoreUser(validateData);
+  static async restoreUser(userId: MongooseObjectId): Promise<GetUser> {
+    const user = await UserDAL.restoreUser(userId);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     return UserDto(user).getUser();
   }
 
-  static async updateUser(userId: string, userData: UpdateUser): Promise<GetUser> {
-    validateObjectId(userId);
-
+  static async updateUser(userId: MongooseObjectId, userData: UpdateUser): Promise<GetUser> {
     const updatedUser = await UserDAL.updateUser(userId, userData);
 
     if (!updatedUser) throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
@@ -130,7 +108,6 @@ export class UserService {
   }
 
   static async checkUsernameAvailability(username: string): Promise<boolean> {
-    validateUsername.parse({ username });
     const user = await UserDAL.getUserByUsername(username);
     // If user is null/undefined, !user returns true meaning username is available
     // If user exists, !user returns false meaning username is taken

@@ -9,7 +9,7 @@ import { NotificationType } from "@/constants/events.constant";
 import { ResetPassword } from "../../api/v1/user/user.validation";
 import { expectOTPVerificationSuccess, retrieveOTP, verifyOTP } from "./otp.utils";
 
-export const login = async (loginData: Login): Promise<Response> => {
+export const login = async (loginData: Omit<Login, "deviceInfo">): Promise<Response> => {
   return supertest(app).post("/api/v1/auth/login").send(loginData);
 };
 
@@ -48,7 +48,7 @@ export const signUp = async (signUpData: {
   password: string;
   confirmPassword: string;
 }): Promise<Response> => {
-  return await supertest(app).post("/api/v1/auth/sign-up").send(signUpData);
+  return await supertest(app).post("/api/v1/auth/register").send(signUpData);
 };
 
 export const expectSignUpSuccess = (response: Response): void => {

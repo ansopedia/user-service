@@ -4,7 +4,8 @@ import { app } from "@/app";
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 
 import { success } from "../../api/v1/user/user.constant";
-import { CreateUser, Pagination } from "../../api/v1/user/user.validation";
+import { Pagination, RegisterSchema } from "../../api/v1/user/user.validation";
+import { MongooseObjectId } from "../../types";
 
 export const expectBadRequestResponseForValidationError = (response: Response): void => {
   const errorObject = errorMap[ErrorTypeEnum.enum.VALIDATION_ERROR];
@@ -17,11 +18,11 @@ export const expectBadRequestResponseForValidationError = (response: Response): 
   });
 };
 
-export const createUser = async (user: CreateUser, authorizationHeader: string): Promise<Response> => {
+export const createUser = async (user: RegisterSchema, authorizationHeader: string): Promise<Response> => {
   return supertest(app).post("/api/v1/users").send(user).set("authorization", authorizationHeader);
 };
 
-export const expectUserCreationSuccess = (response: Response, user: CreateUser): void => {
+export const expectUserCreationSuccess = (response: Response, user: RegisterSchema): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
 
@@ -61,7 +62,7 @@ export const expectUserNotFoundError = (response: Response): void => {
   });
 };
 
-export const expectFindUserByUsernameSuccess = (response: Response, user: CreateUser): void => {
+export const expectFindUserByUsernameSuccess = (response: Response, user: RegisterSchema): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
   expect(statusCode).toBe(STATUS_CODES.OK);
@@ -81,7 +82,7 @@ export const expectFindUserByUsernameSuccess = (response: Response, user: Create
   expect(body.data).not.toHaveProperty("confirmPassword");
 };
 
-export const deleteUser = async (userId: string, authorizationHeader: string): Promise<Response> => {
+export const deleteUser = async (userId: MongooseObjectId | string, authorizationHeader: string): Promise<Response> => {
   return supertest(app).delete(`/api/v1/users/${userId}`).set("authorization", authorizationHeader);
 };
 
@@ -100,7 +101,10 @@ export const expectDeleteUserSuccess = (response: Response): void => {
   expect(body.data.user).not.toHaveProperty("confirmPassword");
 };
 
-export const restoreUser = async (userId: string, authorizationHeader: string): Promise<Response> => {
+export const restoreUser = async (
+  userId: MongooseObjectId | string,
+  authorizationHeader: string
+): Promise<Response> => {
   return supertest(app).patch(`/api/v1/users/${userId}/restore`).set("authorization", authorizationHeader);
 };
 

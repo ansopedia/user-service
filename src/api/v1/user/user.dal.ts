@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
+import { MongooseObjectId, Username } from "@/types";
+import { hashPassword } from "@/utils";
 
-import { hashPassword } from "../../../utils";
 import { Login } from "../auth/auth.validation";
 import { UserModel } from "./user.model";
-import { CreateUser, UpdateUser, User, UserRolePermission } from "./user.validation";
+import { RegisterSchema, UpdateUser, User, UserRolePermission } from "./user.validation";
 
 export class UserDAL {
-  static async createUser(userData: CreateUser): Promise<User> {
+  static async createUser(userData: RegisterSchema): Promise<User> {
     const newUser = new UserModel(userData);
     return await newUser.save();
   }
@@ -17,9 +17,9 @@ export class UserDAL {
     return { users, totalUsers };
   }
 
-  static async getUser(validUserData: Login): Promise<User | null> {
-    const identifier = "email" in validUserData ? validUserData.email : validUserData.username;
-    return UserDAL.getUserByEmailOrUsername(identifier as string);
+  static async getUser(loginData: Login): Promise<User | null> {
+    const identifier = "email" in loginData ? loginData.email : loginData.username;
+    return await UserDAL.getUserByEmailOrUsername(identifier as string);
   }
 
   static async getUserByEmailOrUsername(emailOrUsername: string): Promise<User | null> {
@@ -34,11 +34,11 @@ export class UserDAL {
     });
   }
 
-  static async getUserByUsername(username: string): Promise<User | null> {
+  static async getUserByUsername(username: Username): Promise<User | null> {
     return await UserModel.findOne({ username, isDeleted: false });
   }
 
-  static async getUserById(userId: string): Promise<User | null> {
+  static async getUserById(userId: MongooseObjectId): Promise<User | null> {
     return await UserModel.findById(userId);
   }
 
@@ -46,26 +46,26 @@ export class UserDAL {
     return await UserModel.findOne({ googleId });
   }
 
-  static async softDeleteUser(userId: string): Promise<User | null> {
+  static async softDeleteUser(userId: MongooseObjectId): Promise<User | null> {
     return await UserModel.findByIdAndUpdate(userId, { isDeleted: true }, { new: true });
   }
 
-  static async restoreUser(userId: string): Promise<User | null> {
+  static async restoreUser(userId: MongooseObjectId): Promise<User | null> {
     return await UserModel.findByIdAndUpdate(userId, { isDeleted: false }, { new: true });
   }
 
-  static async updateUser(userId: string, userData: UpdateUser): Promise<User | null> {
+  static async updateUser(userId: MongooseObjectId, userData: UpdateUser): Promise<User | null> {
     if (userData.password !== null && userData.password !== undefined) {
       userData.password = await hashPassword(userData.password);
     }
     return await UserModel.findByIdAndUpdate(userId, userData, { new: true });
   }
 
-  static async getUserRolesAndPermissionsByUserId(userId: string): Promise<UserRolePermission> {
+  static async getUserRolesAndPermissionsByUserId(userId: MongooseObjectId): Promise<UserRolePermission> {
     const userRolePermissions = await UserModel.aggregate([
       {
         $match: {
-          _id: new mongoose.Types.ObjectId(userId),
+          _id: userId,
         },
       },
       {

@@ -7,7 +7,6 @@ import { NotificationType, UserActionType, notificationToActionMap } from "@/con
 import { notificationService } from "@/services/notification.services";
 import { generateOTP, verifyOTP } from "@/utils";
 
-import { AuthService } from "../auth/auth.service";
 import { AuthToken } from "../auth/auth.validation";
 import { TokenService } from "../token/token.service";
 import { OtpDAL } from "./otp.dal";
@@ -27,7 +26,7 @@ export class OtpService {
     // }
 
     let message: string = success.OTP_SENT;
-    const user = await UserService.getUserByEmail(validOtpEvent.email as string);
+    const user = await UserService.getUserByEmail(validOtpEvent.email);
 
     if (otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
       if (user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED);
@@ -101,7 +100,7 @@ export class OtpService {
     if (otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
       await UserService.updateUser(userId, { isEmailVerified: true });
       message = success.EMAIL_VERIFIED_SUCCESSFULLY;
-      actionToken = await AuthService.generateAccessAndRefreshToken(userId);
+      // actionToken = await AuthService.generateAccessAndRefreshToken(userId);
     } else if (otpType === NotificationType.FORGET_PASSWORD_OTP) {
       actionToken = await tokenService.createActionToken(userId, UserActionType.RESET_PASSWORD);
       message = success.PASSWORD_RESET_SUCCESSFULLY;

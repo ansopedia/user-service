@@ -2,21 +2,32 @@ import { Request, Response } from "express";
 
 import { ErrorTypeEnum, STATUS_CODES, envConstants } from "@/constants";
 import { GoogleUser } from "@/types/passport-google";
-import { extractTokenFromBearerString, isValidRedirectUrl, sendResponse, validateObjectId } from "@/utils";
+import {
+  extractTokenFromBearerString,
+  isValidRedirectUrl,
+  sendResponse,
+  validateEmail,
+  validateObjectId,
+} from "@/utils";
+import { getDeviceInfo } from "@/utils/device-info";
 
+import { validateRegister, validateResetPasswordSchema } from "../user/user.validation";
 import { success } from "./auth.constant";
 import { AuthService } from "./auth.service";
-import { AuthToken, SignUpResponse } from "./auth.validation";
+import { AuthToken, SignUpResponse, loginSchema, validateRefreshTokenSchema } from "./auth.validation";
 
 export class AuthController {
-  private static setAuthTokenHeaders(res: Response, accessToken: string, refreshToken: string) {
+  private static setAuthTokenHeaders(res: Response, accessToken: string, refreshToken: string, deviceId: string) {
     res.header("Access-Control-Expose-Headers", "set-cookie, authorization, refresh-token");
     res.setHeader("authorization", accessToken);
     res.setHeader("refresh-token", refreshToken);
+    res.setHeader("x-device-id", deviceId);
   }
 
-  public static async signUp(req: Request, res: Response) {
-    const signUpResponse = await AuthService.signUp(req.body);
+  public static async register(req: Request, res: Response) {
+    const userData = validateRegister(req.body);
+
+    const signUpResponse = await AuthService.register(userData);
     sendResponse<SignUpResponse>({
       response: res,
       message: success.SIGN_UP_SUCCESS,
@@ -26,50 +37,97 @@ export class AuthController {
   }
 
   public static async signInWithEmailOrUsernameAndPassword(req: Request, res: Response) {
-    const { accessToken, refreshToken, userId, sessionId }: AuthToken =
-      await AuthService.signInWithEmailOrUsernameAndPassword(req.body);
-    AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
+    // Capture device info
+    const deviceInfo = getDeviceInfo(req);
+
+    // Security: Block bots immediately
+    if (deviceInfo.isBot) {
+      throw new Error(ErrorTypeEnum.enum.BOT_ACCESS_FORBIDDEN);
+    }
+
+    // deviceId is undefined if it's the first time the user is logging in
+    const deviceId = deviceInfo.deviceId ?? crypto.randomUUID();
+
+    const loginData = loginSchema.parse(req.body);
+
+    const { accessToken, refreshToken, userId }: AuthToken = await AuthService.signInWithEmailOrUsernameAndPassword(
+      loginData,
+      deviceInfo,
+      deviceId
+    );
+
+    AuthController.setAuthTokenHeaders(res, accessToken, refreshToken, deviceId);
 
     sendResponse({
       response: res,
       message: success.LOGGED_IN_SUCCESSFULLY,
       statusCode: STATUS_CODES.OK,
-      data: { userId, sessionId },
+      data: { userId, deviceInfo },
     });
   }
 
   public static async signInWithGoogleCallback(req: Request, res: Response) {
     const googleUser = req.user as GoogleUser;
-    const { accessToken, refreshToken, userId, sessionId } = await AuthService.signInWithGoogle(googleUser);
 
-    AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
+    // Capture device info
+    const deviceInfo = getDeviceInfo(req);
 
+    // Security: Block bots immediately
+    if (deviceInfo.isBot) {
+      throw new Error(ErrorTypeEnum.enum.BOT_ACCESS_FORBIDDEN);
+    }
+
+    // deviceId is undefined if it's the first time the user is logging in
+    const deviceId = deviceInfo.deviceId ?? crypto.randomUUID();
+
+    const { accessToken, refreshToken, userId } = await AuthService.signInWithGoogle(googleUser, deviceInfo, deviceId);
+
+    AuthController.setAuthTokenHeaders(res, accessToken, refreshToken, deviceId);
+
+    // TODO: Fix maxAge. sync with env
     res.cookie("authorization", accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      maxAge: 1000 * 60 * 60, // 1hr
+      maxAge:
+        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string"
+          ? parseInt(envConstants.ACCESS_TOKEN_EXPIRES_IN.replace(/[^0-9]/g, "")) * 1000
+          : envConstants.ACCESS_TOKEN_EXPIRES_IN,
     });
 
     res.cookie("refresh-token", refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      maxAge: 1000 * 60 * 60, // 1hr
+      maxAge:
+        typeof envConstants.REFRESH_TOKEN_EXPIRES_IN === "string"
+          ? parseInt(envConstants.REFRESH_TOKEN_EXPIRES_IN.replace(/[^0-9]/g, "")) * 1000
+          : envConstants.REFRESH_TOKEN_EXPIRES_IN,
     });
 
     res.cookie("user-id", userId, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      maxAge: 1000 * 60 * 60, // 1hr
+      maxAge:
+        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string"
+          ? parseInt(envConstants.ACCESS_TOKEN_EXPIRES_IN.replace(/[^0-9]/g, "")) * 1000
+          : envConstants.ACCESS_TOKEN_EXPIRES_IN,
+      domain: process.env.COOKIE_DOMAIN,
+      ...(deviceInfo.geolocation?.country !== null && {
+        // GDPR compliance for EU users
+        sameSite: deviceInfo.geolocation?.country === "EU" ? "none" : "strict",
+      }),
     });
 
-    res.cookie("session-id", sessionId, {
+    res.cookie("x-device-id", deviceId, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      maxAge: 1000 * 60 * 60, // 1hr
+      maxAge:
+        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string"
+          ? parseInt(envConstants.ACCESS_TOKEN_EXPIRES_IN.replace(/[^0-9]/g, "")) * 1000
+          : envConstants.ACCESS_TOKEN_EXPIRES_IN,
     });
 
     // Validate and sanitize the redirect URL
@@ -147,32 +205,29 @@ export class AuthController {
     });
   }
 
-  public static async renewToken(req: Request, res: Response) {
-    const authHeader = req.headers.authorization;
-    if (authHeader == null || authHeader === "") throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
-
-    const sessionId = validateObjectId(req.body?.sessionId);
-
-    const token = extractTokenFromBearerString(authHeader);
+  public static async refreshToken(req: Request, res: Response) {
+    const { refreshToken } = validateRefreshTokenSchema(req.body);
 
     const {
       accessToken,
-      refreshToken,
+      refreshToken: newRefreshToken,
       userId,
-      sessionId: newSessionId,
-    }: AuthToken = await AuthService.renewAccessTokenFromRefreshToken(sessionId, token);
+      deviceId,
+    } = await AuthService.refreshToken(refreshToken);
 
-    AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
+    AuthController.setAuthTokenHeaders(res, accessToken, newRefreshToken, deviceId);
     sendResponse({
       response: res,
       message: success.TOKEN_RENEWED_SUCCESSFULLY,
       statusCode: STATUS_CODES.OK,
-      data: { userId, sessionId: newSessionId },
+      data: { userId },
     });
   }
 
   public static async forgetPassword(req: Request, res: Response) {
-    const { message, token } = await AuthService.forgetPassword(req.body.email);
+    const email = validateEmail(req.body.email);
+
+    const { message, token } = await AuthService.forgetPassword(email);
     sendResponse({
       response: res,
       message,
@@ -182,14 +237,14 @@ export class AuthController {
   }
 
   public static async resetPassword(req: Request, res: Response) {
-    const { accessToken, refreshToken, userId } = await AuthService.resetPassword(req.body);
-    AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
+    const resetPasswordSchema = validateResetPasswordSchema(req.body);
+
+    await AuthService.resetPassword(resetPasswordSchema);
 
     sendResponse({
       response: res,
       message: success.PASSWORD_RESET_SUCCESSFULLY,
       statusCode: STATUS_CODES.OK,
-      data: { userId },
     });
   }
 }

@@ -59,7 +59,7 @@ describe("Restore User", () => {
   });
 
   it("should return 404 for user not found", async () => {
-    const response = await restoreUser(new mongoose.Types.ObjectId().toHexString(), authorizationHeader);
+    const response = await restoreUser(new mongoose.Types.ObjectId(), authorizationHeader);
     expectUserNotFoundError(response);
   });
 

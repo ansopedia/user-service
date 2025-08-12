@@ -1,3 +1,4 @@
+import { MongooseObjectId } from "../../../types";
 import { UserRoleModel } from "./user-role.model";
 import { UserRole } from "./user-role.validation";
 
@@ -7,7 +8,7 @@ export class UserRoleDAL {
     return rolePermission.save();
   }
 
-  static async getUserRoles(userId: string) {
+  static async getUserRoles(userId: MongooseObjectId) {
     return await UserRoleModel.find({ userId });
   }
 

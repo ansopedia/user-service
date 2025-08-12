@@ -1,8 +1,9 @@
+import { MongooseObjectId } from "../../../types";
 import { AuthModel } from "./auth.model";
 import { Auth } from "./auth.validation";
 
 export class AuthDAL {
-  static async getAuthsByUserId(userId: string): Promise<Auth[]> {
+  static async getAuthsByUserId(userId: MongooseObjectId): Promise<Auth[]> {
     return await AuthModel.find({ userId });
   }
 
@@ -15,15 +16,28 @@ export class AuthDAL {
     return await newAuth.save();
   }
 
-  static async deleteAuthBySessionIdAndUserId(sessionId: string, userId: string): Promise<Auth | null> {
+  static async deleteAuthBySessionIdAndUserId(
+    sessionId: MongooseObjectId,
+    userId: MongooseObjectId
+  ): Promise<Auth | null> {
     return await AuthModel.findOneAndDelete({ _id: sessionId, userId });
   }
 
-  static async deleteAllAuthsByUserId(userId: string): Promise<{ deletedCount?: number }> {
+  static async deleteAllAuthsByUserId(userId: MongooseObjectId): Promise<{ deletedCount?: number }> {
     return await AuthModel.deleteMany({ userId });
   }
 
-  static async deleteAllExceptSessionId(userId: string, sessionId: string): Promise<{ deletedCount?: number }> {
+  static async deleteAllExceptSessionId(
+    userId: MongooseObjectId,
+    sessionId: MongooseObjectId
+  ): Promise<{ deletedCount?: number }> {
     return await AuthModel.deleteMany({ userId, _id: { $ne: sessionId } });
+  }
+
+  static async upsertAuthToken(auth: Auth & { sessionId?: MongooseObjectId }) {
+    return await AuthModel.findOneAndUpdate({ userId: auth.userId, _id: auth.sessionId }, auth, {
+      upsert: true,
+      new: true,
+    });
   }
 }

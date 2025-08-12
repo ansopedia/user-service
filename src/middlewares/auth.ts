@@ -5,7 +5,7 @@ import { extractTokenFromBearerString } from "@/utils/jwt.util";
 
 import { AuthService } from "../api/v1/auth/auth.service";
 
-export const validateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
     if (authHeader == null || authHeader === "") throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);

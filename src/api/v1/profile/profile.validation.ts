@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-import { objectIdSchema } from "@/utils";
+import { mongooseObjectId } from "@/types";
 
 export const profileSchema = z.object({
-  userId: objectIdSchema,
+  userId: mongooseObjectId,
   name: z.string().optional(),
   givenName: z.string().optional(),
   familyName: z.string().optional(),
