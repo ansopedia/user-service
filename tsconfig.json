@@ -8,9 +8,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "sourceMap": true,
-    "outDir": "./build",
-    "sourceRoot": "./src",
+    "outDir": "./dist",
     "noEmitOnError": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

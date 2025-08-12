@@ -7,14 +7,18 @@ import { userSchema } from "@/api/v1/user/user.validation";
 
 // Load environment variables based on NODE_ENV
 const nodeEnv = process.env.NODE_ENV ?? "development";
-const envPath = path.resolve(process.cwd(), "environments", `.env.${nodeEnv.toLowerCase()}`);
 
-// Check if environment file exists before loading
-if (!fs.existsSync(envPath)) {
-  throw new Error(`Environment file ${envPath} not found`);
+if (nodeEnv !== "production") {
+  // For non-production environments, load from files
+  const envPath = path.resolve(process.cwd(), "environments", `.env.${nodeEnv.toLowerCase()}`);
+
+  // Check if environment file exists before loading (only for non-production)
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+  }
+} else {
+  dotenv.config();
 }
-
-dotenv.config({ path: envPath });
 
 // Define environment schema with optional() for development flexibility
 const envSchema = z.object({

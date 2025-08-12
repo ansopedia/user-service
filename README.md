@@ -1,141 +1,204 @@
 # Ansopedia User Service
 
-The Ansopedia User Service is a backend service responsible for managing user accounts and authentication within the Ansopedia learning platform. It provides functionalities like:
+The Ansopedia User Service is a backend service responsible for managing user accounts and authentication within the Ansopedia learning platform.  
+It provides functionalities like:
 
-- **User Registration and Login:** Enables users to create new accounts and securely log in to the platform.
-- **User Management:** Offers APIs to manage user profiles, preferences, and potentially user roles (if permission levels exist).
-- **Authentication:** Implements robust authentication mechanisms (e.g., JWT tokens) to secure access to Ansopedia features and resources.
-- **Integration:** Collaborates with other services like Ansopedia Studio API to manage user permissions for content creation and interaction.
+- **User Registration and Login:** Create accounts and log in securely.  
+- **User Management:** Manage profiles, preferences, and roles.  
+- **Authentication:** Secure access with JWT-based authentication.  
+- **Integration:** Works with other services like Ansopedia Studio API to manage user permissions.
 
 ## Understanding the Scripts
 
-Before we dive into the setup steps, let's break down the scripts in your `package.json` file:
-
-- **build:** Transpiles TypeScript code to JavaScript.
-- **dev:local:** Starts the development server with nodemon in local environment.
-- **dev:development:** Starts the development server with nodemon in development environment.
-- **generate-keys:** Generates RSA keys for JWT authentication.
-- **generate-env:** Generates environment files from the example template.
-- **setup:** Runs a complete project setup (generates environment files and RSA keys).
-- **lint:** Lints the codebase using ESLint.
-- **lint:fix:** Automatically fixes lint errors.
-- **prepare:** Runs husky pre-commit hooks.
-- **pretest:** Builds the project before running tests.
-- **prettier:check:** Checks code formatting.
-- **prettier:fix:** Fixes code formatting automatically.
-- **prod:** Sets the NODE_ENV to production, builds the project, and starts the server.
-- **start:** Starts the development server using ts-node.
-- **test:** Runs the test suite.
+- **build:** Transpiles TypeScript and fixes path aliases.  
+- **local:** Starts the server with `NODE_ENV=local`.  
+- **local:dev:** Starts the server with `NODE_ENV=development`.  
+- **local:prod:** Starts the server with `NODE_ENV=production` and runs the production build.  
+- **generate-keys:** Generates RSA keys for JWT authentication.  
+- **generate-env:** Generates `.env` files from templates.  
+- **migrate:** Runs migrations for the current `NODE_ENV` (used internally by other migrate scripts).  
+- **migrate:local:** Runs migrations for `NODE_ENV=local`.  
+- **migrate:prod:** Runs migrations for `NODE_ENV=production`.  
+- **setup:** Generates environment files and RSA keys.  
+- **lint / lint:fix:** Lint code and optionally fix issues.  
+- **prettier:check / prettier:fix:** Check or fix formatting.  
+- **prepare:** Runs Husky hooks.  
+- **prod:** Builds the app and starts in production.  
+- **start:** Runs the built app.  
+- **test / test:coverage:** Run tests, optionally with coverage.
 
 ## Project Setup
 
 Follow these steps to set up the project:
 
-1. **Clone the repository:**
+1. **Clone the repository**
 
    ```bash
    git clone https://github.com/ansopedia/user-service.git
    cd user-service
    ```
 
-2. **Install dependencies:**
+2. **Install dependencies**
 
    ```bash
    pnpm install
    ```
 
-3. **Automated Setup:**
+3. **Automated setup**
 
    ```bash
    pnpm run setup
    ```
 
-   **This script:**
-   - Generates environment files for test, development, and local environments
-   - Generates RSA keys for JWT authentication
-   - Automatically updates environment files with the generated RSA keys
+   This:
 
-4. **Migrate Database:**
+   - Creates `.env` files for local, development, and test.
+   - Generates RSA keys.
+   - Injects keys into `.env` files.
+
+4. **Run database migrations**
 
    ```bash
-   pnpm run migrate
+   pnpm migrate:local
    ```
 
-   This command runs database migrations to set up the necessary tables and schema.
+   Or for production:
 
-5. **Verify Setup:**
+   ```bash
+   pnpm migrate:prod
+   ```
+
+5. **Verify setup**
 
    ```bash
    pnpm test
    ```
 
-   All test cases should pass if the setup is correct.
-
-6. **Start Development Server:**
+6. **Start development server**
 
    ```bash
-   pnpm dev:local
+   pnpm local
    ```
 
-   or
+   Or:
 
    ```bash
-   pnpm dev:development
+   pnpm local:dev
    ```
 
-   Your server should now be running locally.
+---
 
 ## Available Scripts
 
 - **Setup:**
-  - `pnpm run setup`: Complete project setup (environment files and RSA keys)
-  - `pnpm generate-env`: Generate environment files only
-  - `pnpm generate-keys`: Generate RSA keys only
+
+  - `pnpm setup` → Generate env files & RSA keys.
+  - `pnpm generate-env` → Env files only.
+  - `pnpm generate-keys` → RSA keys only.
+
+- **Migrations:**
+
+  - `pnpm migrate` → Run for current `NODE_ENV`.
+  - `pnpm migrate:local` → Run for local.
+  - `pnpm migrate:prod` → Run for production.
 
 - **Development:**
-  - `pnpm dev:local`: Start development server in local environment
-  - `pnpm dev:development`: Start development server in development environment
-  - `pnpm start`: Start server using ts-node
+
+  - `pnpm local` → Local environment.
+  - `pnpm local:dev` → Development environment.
+  - `pnpm local:prod` → Production environment (locally).
 
 - **Production:**
-  - `pnpm build`: Build the project
-  - `pnpm prod`: Run in production mode
+
+  - `pnpm build` → Build app.
+  - `pnpm prod` → Build & run.
+  - `pnpm start` → Start built app.
 
 - **Testing:**
-  - `pnpm test`: Run test suite
-  - `pnpm test:coverage`: Run tests with coverage report
+
+  - `pnpm test`
+  - `pnpm test:coverage`
 
 - **Code Quality:**
-  - `pnpm lint`: Check code style
-  - `pnpm lint:fix`: Fix code style issues
-  - `pnpm prettier:check`: Check formatting
-  - `pnpm prettier:fix`: Fix formatting issues
+
+  - `pnpm lint`
+  - `pnpm lint:fix`
+  - `pnpm prettier:check`
+  - `pnpm prettier:fix`
 
 ## Environment Configuration
 
-The project uses different environment configurations for various deployment scenarios:
+The service uses multiple environment configs:
 
-- **Local**: For local development (.env.local)
-- **Development**: For development server deployment (.env.development)
-- **Test**: For running tests (.env.test)
-- **Production**: For production deployment (configure manually)
+- `.env.local` → Local development
+- `.env.development` → Dev server deployment
+- `.env.test` → Testing
+- `.env.production` → Production (manually or via secrets in deployment)
 
-The environment files are stored in the **environments** directory and are automatically loaded based on the **NODE_ENV** value.
+These are loaded based on `NODE_ENV`.
+Never commit `.env` files with real credentials.
+
+## Running with Docker
+
+You can build and run the Ansopedia User Service using Docker. This ensures a consistent environment and makes deployment easier.
+
+### Build the Docker image
+
+```bash
+docker build -t ansopedia-user-service .
+```
+
+### Run the container with environment variables
+
+You should pass environment variables like `NODE_ENV` and any secrets (database URLs, API keys) at runtime.
+
+Example using environment variables inline:
+
+  ```bash
+  docker run -d -p 3000:3000 \
+    -e NODE_ENV=production \
+    -e DATABASE_URL=your_database_url \
+    -e JWT_PRIVATE_KEY="your_jwt_private_key" \
+    ansopedia-user-service
+  ```
+
+Alternatively, use an `.env` file to manage environment variables:
+
+1. Create a `.env` file with the needed variables:
+
+    ```env
+      NODE_ENV=production
+      DATABASE_URL=your_database_url
+      JWT_PRIVATE_KEY="your_jwt_private_key"
+    ```
+
+2. Run the container with the env file:
+
+    ```bash
+    docker run -d -p 3000:3000 --env-file .env ansopedia-user-service
+    ```
+
+### Notes
+
+- The Dockerfile already sets `NODE_ENV=production` by default, but explicitly passing it at runtime is a good practice for clarity.
+- Never commit secrets or private keys into your Docker image or source control.
+- Use Docker secrets or your cloud provider’s secret management for production deployments.
+- The container exposes port `3000` by default; you can map it to any host port you prefer.
 
 ## Security Notes
 
-- Never commit your RSA keys to version control
-- In production, use a secure key management service
-- Rotate keys periodically following security best practices
-- Keep your private key secure and restrict access
+- Never commit RSA keys.
+- Use a secure key vault in production.
+- Rotate keys periodically.
+- Restrict access to private keys.
 
 ## Contributing
 
-We welcome contributions! Please read our [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Code of Conduct
 
-Please read our [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for community guidelines.
+See [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
 
 ## Contributors
 
@@ -145,4 +208,4 @@ Please read our [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for community guideli
 
 ## License
 
-This project is licensed under the terms specified in [LICENSE](./LICENSE).
+This project is licensed under the terms in [LICENSE](./LICENSE).

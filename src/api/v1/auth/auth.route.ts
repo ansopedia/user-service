@@ -12,7 +12,7 @@ router.post("/auth/logout", AuthController.logout);
 router.post("/auth/logout-all", validateAccessToken, AuthController.logoutAll);
 router.post("/auth/logout-others", validateAccessToken, AuthController.logoutOthers);
 router.get("/auth/sessions", validateAccessToken, AuthController.getSessions);
-router.post("/auth/refresh-token", AuthController.renewToken);
+router.post("/auth/renew-token", AuthController.renewToken);
 router.post("/auth/forget-password", AuthController.forgetPassword);
 router.post("/auth/reset-password", AuthController.resetPassword);
 

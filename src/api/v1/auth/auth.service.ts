@@ -199,6 +199,18 @@ export class AuthService {
     return await this.generateAccessAndRefreshToken(userId);
   }
 
+  public static async renewAccessTokenFromRefreshToken(sessionId: string, refreshToken: string) {
+    const { userId } = await this.verifyRefreshToken(refreshToken);
+
+    const deletedSession = await AuthDAL.deleteAuthBySessionIdAndUserId(sessionId, userId);
+
+    if (!deletedSession) {
+      throw new Error(ErrorTypeEnum.enum.SESSION_NOT_FOUND);
+    }
+
+    return await this.generateAccessAndRefreshToken(userId);
+  }
+
   static async generateAccessAndRefreshToken(userId: string) {
     validateObjectId(userId);
     const userRolePermissions: UserRolePermission = await UserDAL.getUserRolesAndPermissionsByUserId(userId);

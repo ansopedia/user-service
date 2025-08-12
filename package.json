@@ -4,12 +4,15 @@
   "description": "user service for ansopedia",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "dev:local": "cross-env NODE_ENV=local nodemon",
-    "dev:development": "cross-env NODE_ENV=development nodemon",
+    "build": "tsc && tsc-alias",
+    "local": "cross-env NODE_ENV=local nodemon",
+    "local:dev": "cross-env NODE_ENV=development nodemon",
+    "local:prod": "cross-env NODE_ENV=production pnpm prod",
     "generate-keys": "ts-node scripts/generate-keys.ts",
     "generate-env": "ts-node scripts/generate-env-files.ts",
-    "migrate": "cross-env NODE_ENV=local ts-node -r tsconfig-paths/register src/config/migrate.ts",
+    "migrate": "ts-node -r tsconfig-paths/register src/config/migrate.ts",
+    "migrate:local": "cross-env NODE_ENV=local pnpm migrate",
+    "migrate:prod": "cross-env NODE_ENV=production pnpm migrate",
     "setup": "ts-node scripts/setup-project.ts",
     "lint:fix": "eslint --fix .",
     "lint": "eslint src .",
@@ -17,8 +20,8 @@
     "pretest": "pnpm build",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "prod": "set NODE_ENV=production && pnpm build && pnpm start",
-    "start": "ts-node -r tsconfig-paths/register src/index.ts",
+    "prod": "pnpm build && pnpm start",
+    "start": "node dist/index.js",
     "test:coverage": "jest --runInBand --detectOpenHandles --forceExit --coverage",
     "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit"
   },
@@ -76,6 +79,7 @@
     "supertest": "7.1.4",
     "ts-jest": "29.4.1",
     "ts-node": "10.9.2",
+    "tsc-alias": "^1.8.16",
     "tsconfig-paths": "4.2.0",
     "typescript": "5.9.2",
     "typescript-eslint": "8.39.0"
@@ -90,5 +94,8 @@
       "prettier --write .",
       "eslint --fix ."
     ]
+  },
+  "engines": {
+    "node": ">=22.18.0"
   }
 }

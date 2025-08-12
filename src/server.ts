@@ -3,6 +3,7 @@ import { Server as SocketIOServer } from "socket.io";
 
 import { app } from "./app";
 import { initializeSocket } from "./config";
+import { envConstants } from "./constants";
 import { errorLogger, logger } from "./utils";
 import { CryptoUtil } from "./utils/crypto.util";
 
@@ -31,7 +32,10 @@ export const startServer = async (port: number): Promise<void> => {
         // Initialize Socket.IO
         io = initializeSocket(server);
 
-        logger.info(`🚀 Server is running on port ${port}`);
+        const mode = envConstants.NODE_ENV;
+
+        logger.info(`Server is running on port ${port} in ${mode.toUpperCase()} mode ${mode}`);
+        logger.info(`Server URL: http://localhost:${port}`);
         resolve();
       });
 

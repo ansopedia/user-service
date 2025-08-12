@@ -1,68 +1,61 @@
-ARG NODE_VERSION=20.10.0
-ARG PNPM_VERSION=8.14.0
+# Use official Node.js runtime as base image
+FROM node:22-alpine AS base
 
-################################################################################
-# Use node image for base image for all stages.
-FROM node:${NODE_VERSION}-alpine as base
+# Set working directory
+WORKDIR /app
 
-# Set working directory for all build stages.
-WORKDIR /usr/src/app
+# Install pnpm globally
+RUN npm install -g pnpm
 
-# Install pnpm.
-RUN --mount=type=cache,target=/root/.npm \
-    npm install -g pnpm@${PNPM_VERSION}
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
 
-################################################################################
-# Create a stage for installing production dependecies.
-FROM base as deps
+# Install dependencies (including dev dependencies for build)
+RUN pnpm install --frozen-lockfile
 
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.local/share/pnpm/store to speed up subsequent builds.
-# Leverage bind mounts to package.json and pnpm-lock.yaml to avoid having to copy them
-# into this layer.
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
-    --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm install --frozen-lockfile
-
-################################################################################
-# Create a stage for building the application.
-FROM deps as build
-
-# Download additional development dependencies before building, as some projects require
-# "devDependencies" to be installed to build. If you don't need this, remove this step.
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
-    --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm install --frozen-lockfile
-
-# Copy the rest of the source files into the image.
+# Copy source code
 COPY . .
-# Run the build script.
-RUN pnpm run build
 
-################################################################################
-# Create a new stage to run the application with minimal runtime dependencies
-# where the necessary files are copied from the build stage.
-FROM base as final
+# Build the application
+RUN pnpm build
 
-# Use production node environment by default.
-ENV NODE_ENV production
+# Production stage
+FROM node:22-alpine AS production
 
-# Run the application as a non-root user.
-USER node
+# Set working directory
+WORKDIR /app
 
-# Copy package.json so that package manager commands can be used.
-COPY package.json .
+# ✅ Set NODE_ENV for production runtime
+ENV NODE_ENV=production
 
-# Copy the production dependencies from the deps stage and also
-# the built application from the build stage into the image.
-COPY --from=deps /usr/src/app/node_modules ./node_modules
-COPY --from=build /usr/src/app/build ./build
+# Install pnpm globally
+RUN npm install -g pnpm
 
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
 
-# Expose the port that the application listens on.
-EXPOSE 8000
+# Install production dependencies only (skip husky and other dev scripts)
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 
-# Run the application.
-CMD pnpm start
+# Copy built application from build stage
+COPY --from=base /app/dist ./dist
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+  adduser -S nextjs -u 1001
+
+# Change ownership of the app directory
+RUN chown -R nextjs:nodejs /app
+
+# Switch to non-root user
+USER nextjs
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+
+# Start the application
+CMD ["node", "dist/index.js"]

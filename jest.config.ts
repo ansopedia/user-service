@@ -5,7 +5,7 @@ const config: Config = {
   preset: "ts-jest",
   moduleFileExtensions: ["js", "ts", "json", "node"],
   testTimeout: 10000,
-  modulePathIgnorePatterns: ["<rootDir>/build"],
+  modulePathIgnorePatterns: ["<rootDir>/dist"],
   transformIgnorePatterns: ["node_modules/(?!(jest-)?ts-jest)"],
   roots: ["<rootDir>/src"],
   setupFilesAfterEnv: ["<rootDir>/src/jest.setup.ts"],

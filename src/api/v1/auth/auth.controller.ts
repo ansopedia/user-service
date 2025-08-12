@@ -151,17 +151,23 @@ export class AuthController {
     const authHeader = req.headers.authorization;
     if (authHeader == null || authHeader === "") throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
 
+    const sessionId = validateObjectId(req.body?.sessionId);
+
     const token = extractTokenFromBearerString(authHeader);
 
-    const { userId } = await AuthService.verifyRefreshToken(token);
-    const { accessToken, refreshToken }: AuthToken = await AuthService.generateAccessAndRefreshToken(userId);
+    const {
+      accessToken,
+      refreshToken,
+      userId,
+      sessionId: newSessionId,
+    }: AuthToken = await AuthService.renewAccessTokenFromRefreshToken(sessionId, token);
 
     AuthController.setAuthTokenHeaders(res, accessToken, refreshToken);
     sendResponse({
       response: res,
       message: success.TOKEN_RENEWED_SUCCESSFULLY,
       statusCode: STATUS_CODES.OK,
-      data: { userId },
+      data: { userId, sessionId: newSessionId },
     });
   }
 
