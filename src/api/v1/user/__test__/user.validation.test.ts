@@ -1,6 +1,6 @@
 import { password, username } from "@/types";
 
-import { validateRegister } from "../user.validation";
+import { validateRegister } from "../user.validation.js";
 
 describe("Username validation", () => {
   it("should accept valid usernames", () => {

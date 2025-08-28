@@ -1,20 +1,20 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import { ErrorTypeEnum, STATUS_CODES, envConstants } from "@/constants";
-import { GoogleUser } from "@/types/passport-google";
+import { type GoogleUser } from "@/types/passport-google.js";
 import {
   extractTokenFromBearerString,
+  getDeviceInfo,
   isValidRedirectUrl,
   sendResponse,
   validateEmail,
   validateObjectId,
 } from "@/utils";
-import { getDeviceInfo } from "@/utils/device-info";
 
-import { validateRegister, validateResetPasswordSchema } from "../user/user.validation";
-import { success } from "./auth.constant";
-import { AuthService } from "./auth.service";
-import { AuthToken, SignUpResponse, loginSchema, validateRefreshTokenSchema } from "./auth.validation";
+import { validateRegister, validateResetPasswordSchema } from "../user/user.validation.js";
+import { success } from "./auth.constant.js";
+import { AuthService } from "./auth.service.js";
+import { type AuthToken, type SignUpResponse, loginSchema, validateRefreshTokenSchema } from "./auth.validation.js";
 
 export class AuthController {
   private static setAuthTokenHeaders(res: Response, accessToken: string, refreshToken: string, deviceId: string) {

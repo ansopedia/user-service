@@ -1,9 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
+import { AuthService } from "@/api/v1/auth/auth.service.js";
 import { ErrorTypeEnum } from "@/constants";
-import { extractTokenFromBearerString } from "@/utils/jwt.util";
-
-import { AuthService } from "../api/v1/auth/auth.service";
+import { extractTokenFromBearerString } from "@/utils/jwt.util.js";
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   try {

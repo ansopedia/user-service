@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import { sendResponse } from "@/utils";
 
-import { UserService } from "../user/user.service";
-import { success } from "./profile.constant";
-import { ProfileService } from "./profile.service";
-import { toggleVisibilitySchema } from "./profile.validation";
+import { UserService } from "../user/user.service.js";
+import { success } from "./profile.constant.js";
+import { ProfileService } from "./profile.service.js";
+import { toggleVisibilitySchema } from "./profile.validation.js";
 
 export class ProfileController {
   static upSertProfile = async (req: Request, res: Response) => {

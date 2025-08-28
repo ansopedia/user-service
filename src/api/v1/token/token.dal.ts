@@ -1,6 +1,7 @@
-import { MongooseObjectId } from "../../../types";
-import { TokenModel } from "./token.model";
-import { CreateToken, Token, UpdateToken } from "./token.validation";
+import { type MongooseObjectId } from "@/types";
+
+import { TokenModel } from "./token.model.js";
+import type { CreateToken, Token, UpdateToken } from "./token.validation.js";
 
 interface ITokenDal {
   saveToken(data: Token): Promise<CreateToken>;

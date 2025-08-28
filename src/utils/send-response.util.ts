@@ -1,7 +1,7 @@
-import { Response } from "express";
-import { ZodIssue } from "zod";
+import { type Response } from "express";
+import { type ZodIssue } from "zod";
 
-import { ErrorCode } from "@/constants";
+import { type ErrorCode } from "@/constants";
 
 export interface SendResponseSuccess<T> {
   response: Response;

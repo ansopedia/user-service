@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 
 import { ErrorTypeEnum, getErrorObject } from "@/constants";
-import { sendResponse } from "@/utils/send-response.util";
+import { sendResponse } from "@/utils";
 
 export const errorHandler = (err: Error, _: Request, res: Response, next: NextFunction) => {
   if (err instanceof ZodError) {

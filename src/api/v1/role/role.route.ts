@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { authenticate, checkPermission } from "@/middlewares";
 
-import { createRole, getRoles } from "./role.controller";
+import { createRole, getRoles } from "./role.controller.js";
 
 const router = Router();
 

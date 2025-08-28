@@ -1,6 +1,7 @@
-import { MongooseObjectId } from "../../../types";
-import { RoleModel } from "./role.model";
-import { Role, createRole } from "./role.validation";
+import { type MongooseObjectId } from "@/types";
+
+import { RoleModel } from "./role.model.js";
+import { type Role, type createRole } from "./role.validation.js";
 
 export class RoleDAL {
   static async createRole(userData: createRole): Promise<Role> {

@@ -1,13 +1,11 @@
-import supertest, { Response } from "supertest";
+import supertest, { type Response } from "supertest";
 
-import { success } from "@/api/v1/auth/auth.constant";
-import { OtpEvent, OtpSchema, OtpVerifyEvent } from "@/api/v1/otp/otp.validation";
-import { app } from "@/app";
-import { STATUS_CODES } from "@/constants";
-
-import { OtpService } from "../../api/v1/otp/otp.service";
-import { NotificationType } from "../../constants/events.constant";
-import { MongooseObjectId } from "../../types";
+import { success } from "@/api/v1/auth/auth.constant.js";
+import { OtpService } from "@/api/v1/otp/otp.service.js";
+import type { OtpEvent, OtpSchema, OtpVerifyEvent } from "@/api/v1/otp/otp.validation.js";
+import { app } from "@/app.js";
+import { NotificationType, STATUS_CODES } from "@/constants";
+import { type MongooseObjectId } from "@/types";
 
 export const requestOTP = async (otpEvents: OtpEvent): Promise<Response> => {
   return supertest(app).post("/api/v1/otp").send(otpEvents);

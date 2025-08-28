@@ -1,5 +1,5 @@
 import { defaultUsers } from "@/constants";
-import { MongooseObjectId } from "@/types";
+import {type  MongooseObjectId } from "@/types";
 import {
   expectBadRequestResponseForValidationError,
   expectLoginSuccess,
@@ -13,7 +13,7 @@ import {
   upSertProfileData,
 } from "@/utils/test";
 
-import { CreateProfileData } from "../profile.validation";
+import type { CreateProfileData } from "../profile.validation.js";
 
 const profileData: CreateProfileData = {
   avatar: "http://avatar.com",

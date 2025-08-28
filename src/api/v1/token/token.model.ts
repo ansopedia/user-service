@@ -1,8 +1,8 @@
 import { Model, Schema, model } from "mongoose";
 
-import { UserActionType } from "@/constants/events.constant";
+import { UserActionType } from "@/constants";
 
-import { Token } from "./token.validation";
+import type { Token } from "./token.validation.js";
 
 const TokenSchema: Schema<Token> = new Schema(
   {

@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-import { ProfileData } from "./profile.validation";
+import type { ProfileData } from "./profile.validation.js";
 
 const ProfileSchema = new Schema<ProfileData>(
   {

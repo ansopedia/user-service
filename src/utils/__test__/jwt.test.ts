@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 
+import { type AccessTokenPayload } from "@/api/v1/auth/auth.validation.js";
 import { ErrorTypeEnum } from "@/constants";
 import { extractTokenFromBearerString, generateAccessToken, generateRefreshToken } from "@/utils";
-
-import { AccessTokenPayload } from "../../api/v1/auth/auth.validation";
 
 jest.mock("jsonwebtoken", () => ({
   sign: jest.fn(),

@@ -1,9 +1,10 @@
-import { Request } from "express";
+import { type Request } from "express";
 import { UAParser } from "ua-parser-js";
 import { isBot } from "ua-parser-js/helpers";
 
-import { DeviceInfo } from "../types";
-import { enrichWithGeo } from "./geo";
+import { type DeviceInfo } from "@/types";
+
+import { enrichWithGeo } from "./geo.js";
 
 /**
  * Extract robust device info for logging/authentication purposes.

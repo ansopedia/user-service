@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
 import fs from "fs";
-import { SignOptions } from "jsonwebtoken";
+import { type SignOptions } from "jsonwebtoken";
 import path from "path";
 import { z } from "zod";
 
-import { userSchema } from "@/api/v1/user/user.validation";
+import { userSchema } from "@/api/v1/user/user.validation.js";
 
 // Load environment variables based on NODE_ENV
 const nodeEnv = process.env.NODE_ENV ?? "development";

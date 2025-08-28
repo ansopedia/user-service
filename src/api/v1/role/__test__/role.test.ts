@@ -16,7 +16,7 @@ import {
   verifyAccount,
 } from "@/utils/test";
 
-import { createRole } from "../role.validation";
+import type { createRole } from "../role.validation.js";
 
 const VALID_ROLE: createRole = {
   name: "new-role",

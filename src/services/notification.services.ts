@@ -1,7 +1,7 @@
 import { ErrorTypeEnum, envConstants } from "@/constants";
+import { errorLogger } from "@/utils";
 
-import { errorLogger } from "../utils/logger";
-import { EmailNotification } from "./notification.validation";
+import { type EmailNotification } from "./notification.validation.js";
 
 const sendEmail = async (body: EmailNotification) => {
   // Skiping sending notification for test environment

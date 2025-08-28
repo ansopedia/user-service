@@ -1,8 +1,9 @@
-import { connectDB } from "./config";
-import { envConstants } from "./constants";
-import { startServer } from "./server";
-import { errorLogger } from "./utils";
-import { initGeoDB } from "./utils/geo";
+import { connectDB } from "@/config";
+import { envConstants } from "@/constants";
+import { errorLogger } from "@/utils";
+
+import { startServer } from "./server.js";
+import { initGeoDB } from "./utils/geo.js";
 
 (async () => {
   try {

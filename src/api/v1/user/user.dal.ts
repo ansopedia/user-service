@@ -1,9 +1,9 @@
-import { MongooseObjectId, Username } from "@/types";
+import type { MongooseObjectId, Username } from "@/types";
 import { hashPassword } from "@/utils";
 
-import { Login } from "../auth/auth.validation";
-import { UserModel } from "./user.model";
-import { RegisterSchema, UpdateUser, User, UserRolePermission } from "./user.validation";
+import { type Login } from "../auth/auth.validation.js";
+import { UserModel } from "./user.model.js";
+import type { RegisterSchema, UpdateUser, User, UserRolePermission } from "./user.validation.js";
 
 export class UserDAL {
   static async createUser(userData: RegisterSchema): Promise<User> {

@@ -2,15 +2,15 @@ import { z } from "zod";
 
 import { mongooseObjectId } from "@/types";
 
-export enum PermissionCategory {
-  "USER_MANAGEMENT" = "USER_MANAGEMENT",
-  "CONTENT_MANAGEMENT" = "CONTENT_MANAGEMENT",
-  "ROLE_MANAGEMENT" = "ROLE_MANAGEMENT",
-  "ANALYTICS" = "ANALYTICS",
-  "SYSTEM" = "SYSTEM",
-  "PROFILE" = "PROFILE",
-  "COURSE_MANAGEMENT" = "COURSE_MANAGEMENT",
-}
+export const PermissionCategory = {
+  USER_MANAGEMENT: "USER_MANAGEMENT",
+  CONTENT_MANAGEMENT: "CONTENT_MANAGEMENT",
+  ROLE_MANAGEMENT: "ROLE_MANAGEMENT",
+  ANALYTICS: "ANALYTICS",
+  SYSTEM: "SYSTEM",
+  PROFILE: "PROFILE",
+  COURSE_MANAGEMENT: "COURSE_MANAGEMENT",
+} as const;
 
 const permissionSchema = z.object({
   id: mongooseObjectId,

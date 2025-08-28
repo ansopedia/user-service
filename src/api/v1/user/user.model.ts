@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 import { hashPassword } from "@/utils";
 
-import { User } from "./user.validation";
+import type { User } from "./user.validation.js";
 
 export interface IUser extends Document, User {}
 

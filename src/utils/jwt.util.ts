@@ -1,18 +1,18 @@
 import jwt from "jsonwebtoken";
 
 import {
-  AccessTokenPayload,
-  ActionTokenPayload,
-  RefreshTokenPayload,
+  type AccessTokenPayload,
+  type ActionTokenPayload,
+  type RefreshTokenPayload,
   validateAccessTokenPayload,
   validateActionTokenPayload,
   validateRefreshTokenPayload,
-} from "@/api/v1/auth/auth.validation";
+} from "@/api/v1/auth/auth.validation.js";
 import { CURRENT_SERVICE, ErrorTypeEnum, ServiceEnum, envConstants } from "@/constants";
 import { Tokens } from "@/types";
 
-import { CryptoUtil } from "./crypto.util";
-import { errorLogger } from "./logger";
+import { CryptoUtil } from "./crypto.util.js";
+import { errorLogger } from "./logger.js";
 
 const { ACTION_TOKEN_SECRET } = envConstants;
 

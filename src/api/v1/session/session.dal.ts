@@ -1,7 +1,8 @@
-import { MongooseObjectId } from "../../../types";
-import { generateRefreshToken } from "../../../utils";
-import { Session } from "../auth/auth.validation";
-import sessionModel from "./session.model";
+import { type MongooseObjectId } from "@/types";
+import { generateRefreshToken } from "@/utils";
+
+import { type Session } from "../auth/auth.validation.js";
+import sessionModel from "./session.model.js";
 
 interface ISessionDal {
   getSessionById(sessionId: MongooseObjectId): Promise<Session | null>;

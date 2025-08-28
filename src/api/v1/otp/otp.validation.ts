@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { NotificationType, notificationTypeSchema } from "@/constants/events.constant";
+import { NotificationType, notificationTypeSchema } from "@/constants";
 import { email, mongooseObjectId, otp } from "@/types";
 
 // Define separate schemas for each OTP type

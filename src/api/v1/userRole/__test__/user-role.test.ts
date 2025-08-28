@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-import { createRole } from "@/api/v1/role/role.validation";
+import { type createRole } from "@/api/v1/role/role.validation.js";
 import { defaultUsers } from "@/constants";
-import { MongooseObjectId } from "@/types";
+import { type MongooseObjectId } from "@/types";
 import {
   createRoleRequest,
   createUserRoleRequest,

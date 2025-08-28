@@ -1,6 +1,7 @@
-import { MongooseObjectId } from "../../../types";
-import { OtpModel } from "./otp.model";
-import { GetOtp, OtpSchema, SaveOtp } from "./otp.validation";
+import { type MongooseObjectId } from "@/types";
+
+import { OtpModel } from "./otp.model.js";
+import type { GetOtp, OtpSchema, SaveOtp } from "./otp.validation.js";
 
 export class OtpDAL {
   static async saveOtp(otpSchema: SaveOtp) {

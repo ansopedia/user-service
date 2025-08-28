@@ -1,12 +1,12 @@
 import { ErrorTypeEnum, ROLES } from "@/constants";
-import { Email, MongooseObjectId, Username } from "@/types";
+import type { Email, MongooseObjectId, Username } from "@/types";
 import { generateRandomUsername } from "@/utils";
 
-import { RoleDAL } from "../role/role.dal";
-import { UserRoleService } from "../userRole/user-role.service";
-import { UserDAL } from "./user.dal";
-import { UserDto } from "./user.dto";
-import { GetUser, RegisterSchema, UpdateUser, validatePagination } from "./user.validation";
+import { RoleDAL } from "../role/role.dal.js";
+import { UserRoleService } from "../userRole/user-role.service.js";
+import { UserDAL } from "./user.dal.js";
+import { UserDto } from "./user.dto.js";
+import { type GetUser, type RegisterSchema, type UpdateUser, validatePagination } from "./user.validation.js";
 
 export class UserService {
   static async generateUniqueUsername(username: string): Promise<string> {

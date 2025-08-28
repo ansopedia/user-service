@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { userActionTypeSchema } from "@/constants/events.constant";
+import { userActionTypeSchema } from "@/constants";
 import { mongooseObjectId } from "@/types";
 
 export const tokenSchema = z.object({

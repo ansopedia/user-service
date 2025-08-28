@@ -1,6 +1,6 @@
 import { Model, Schema, model } from "mongoose";
 
-import { Role } from "./role.validation";
+import type { Role } from "./role.validation.js";
 
 const RoleSchema: Schema<Role> = new Schema(
   {

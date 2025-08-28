@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 import { ErrorTypeEnum } from "@/constants";
 
-import { RolePermission } from "./role-permission.validation";
+import type { RolePermission } from "./role-permission.validation.js";
 
 const RolePermissionSchema = new Schema(
   {

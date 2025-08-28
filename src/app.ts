@@ -4,7 +4,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
 import passport from "passport";
-import pinoHttp from "pino-http";
+import { pinoHttp } from "pino-http";
 
 import {
   ErrorTypeEnum,

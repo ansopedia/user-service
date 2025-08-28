@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-import { Session } from "../auth/auth.validation";
+import { type Session } from "../auth/auth.validation.js";
 
 export interface ISession extends Document, Session {
   createdAt: Date;

@@ -1,8 +1,8 @@
-import supertest, { Response } from "supertest";
+import supertest, { type Response } from "supertest";
 
-import { success } from "@/api/v1/rolePermission/role-permission.constant";
-import { RolePermission } from "@/api/v1/rolePermission/role-permission.validation";
-import { app } from "@/app";
+import { success } from "@/api/v1/rolePermission/role-permission.constant.js";
+import type { RolePermission } from "@/api/v1/rolePermission/role-permission.validation.js";
+import { app } from "@/app.js";
 import { STATUS_CODES } from "@/constants";
 
 export const createRolePermissionRequest = async (rolePermission: RolePermission, authorizationHeader: string) => {

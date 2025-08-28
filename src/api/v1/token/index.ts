@@ -1,2 +1,2 @@
-export * from "./token.service";
-export * from "./token.validation";
+export * from "./token.service.js";
+export * from "./token.validation.js";

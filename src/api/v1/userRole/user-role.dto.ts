@@ -1,4 +1,4 @@
-import { UserRole } from "./user-role.validation";
+import { type UserRole } from "./user-role.validation.js";
 
 export const UserRoleDto = (rolePermission: UserRole) => ({
   getUserRole: () => {

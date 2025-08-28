@@ -1,8 +1,8 @@
-import supertest, { Response } from "supertest";
+import supertest, { type Response } from "supertest";
 
-import { success } from "@/api/v1/permission/permission.constant";
-import { CreatePermission } from "@/api/v1/permission/permission.validation";
-import { app } from "@/app";
+import { success } from "@/api/v1/permission/permission.constant.js";
+import type { CreatePermission } from "@/api/v1/permission/permission.validation.js";
+import { app } from "@/app.js";
 import { STATUS_CODES } from "@/constants";
 
 export const createPermissionRequest = async (permission: CreatePermission): Promise<Response> => {

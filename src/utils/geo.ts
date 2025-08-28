@@ -1,4 +1,4 @@
-import maxmind, { CityResponse, Reader } from "maxmind";
+import maxmind, { type CityResponse, Reader } from "maxmind";
 import path from "path";
 
 export let geoLookup: Reader<CityResponse> | null = null;
@@ -9,7 +9,7 @@ export const initGeoDB = async () => {
 };
 
 export const enrichWithGeo = (ip: string) => {
-  if (!geoLookup) return {};
+  if (geoLookup === null) return {};
   const geo = geoLookup.get(ip);
   return {
     country: geo?.country?.iso_code,

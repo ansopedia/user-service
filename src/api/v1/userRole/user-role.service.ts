@@ -1,9 +1,9 @@
 import { ErrorTypeEnum } from "@/constants";
-import { MongooseObjectId } from "@/types";
+import { type MongooseObjectId } from "@/types";
 
-import { UserRoleDAL } from "./user-role.dal";
-import { UserRoleDto } from "./user-role.dto";
-import { UserRole } from "./user-role.validation";
+import { UserRoleDAL } from "./user-role.dal.js";
+import { UserRoleDto } from "./user-role.dto.js";
+import { type UserRole } from "./user-role.validation.js";
 
 export class UserRoleService {
   static async createUserRole(userRole: UserRole) {

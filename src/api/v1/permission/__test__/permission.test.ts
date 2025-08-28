@@ -12,7 +12,7 @@ import {
   login,
 } from "@/utils/test";
 
-import { CreatePermission, PermissionCategory } from "../permission.validation";
+import { type CreatePermission, PermissionCategory } from "../permission.validation.js";
 
 const VALID_PERMISSION: CreatePermission = {
   name: "create-permission",

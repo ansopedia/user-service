@@ -1,4 +1,4 @@
-import { Response } from "supertest";
+import type { Response } from "supertest";
 
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 

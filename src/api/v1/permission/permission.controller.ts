@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import { STATUS_CODES } from "@/constants";
 import { sendResponse } from "@/utils";
 
-import { success } from "./permission.constant";
-import { PermissionService } from "./permission.service";
+import { success } from "./permission.constant.js";
+import { PermissionService } from "./permission.service.js";
 
 export const createPermission = async (req: Request, res: Response) => {
   const createdPermission = await PermissionService.createPermission(req.body);

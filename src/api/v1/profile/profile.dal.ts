@@ -1,6 +1,7 @@
-import { MongooseObjectId } from "../../../types";
-import { ProfileDataModel } from "./profile.model";
-import { ProfileData } from "./profile.validation";
+import { type MongooseObjectId } from "@/types";
+
+import { ProfileDataModel } from "./profile.model.js";
+import type { ProfileData } from "./profile.validation.js";
 
 interface IProfileDataDal {
   upSertProfileData(data: ProfileData): Promise<ProfileData>;

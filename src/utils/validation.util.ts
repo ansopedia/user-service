@@ -1,7 +1,7 @@
 import {
-  Email,
-  MongooseObjectId,
-  Username,
+  type Email,
+  type MongooseObjectId,
+  type Username,
   mongooseObjectId,
   username as usernameSchema,
   email as validEmail,

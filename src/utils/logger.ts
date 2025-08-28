@@ -13,7 +13,7 @@ let transport: DestinationStream;
 if (isDevelopment) {
   // In development, log to both console and file
   const logDirectory = path.join(process.cwd(), "log");
-  
+
   // Try to create the log directory if it doesn't exist (only for development)
   try {
     if (!fs.existsSync(logDirectory)) {
@@ -49,7 +49,7 @@ if (isDevelopment) {
   // - Google Cloud Logging
   // - Azure Monitor
   // - Third-party services like Datadog, Loggly, etc.
-  
+
   transport = pino.transport({
     target: "pino-pretty",
     options: {

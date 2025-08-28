@@ -1,8 +1,8 @@
 import { ErrorTypeEnum } from "@/constants";
-import { MongooseObjectId } from "@/types";
+import { type MongooseObjectId } from "@/types";
 
-import { ProfileDataDAL } from "./profile.dal";
-import { ProfileData, validateProfileSchema } from "./profile.validation";
+import { ProfileDataDAL } from "./profile.dal.js";
+import { type ProfileData, validateProfileSchema } from "./profile.validation.js";
 
 export class ProfileService {
   private profileDataDal: ProfileDataDAL;

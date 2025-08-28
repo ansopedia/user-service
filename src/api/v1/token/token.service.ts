@@ -1,12 +1,11 @@
 import { isPast } from "date-fns";
 
-import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
-import { UserActionType } from "@/constants/events.constant";
-import { MongooseObjectId, Tokens } from "@/types";
+import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, UserActionType } from "@/constants";
+import { type MongooseObjectId, Tokens } from "@/types";
 import { errorLogger, generateActionToken, verifyJWTToken } from "@/utils";
 
-import { TokenDAL } from "./token.dal";
-import { CreateToken, Token } from "./token.validation";
+import { TokenDAL } from "./token.dal.js";
+import type { CreateToken, Token } from "./token.validation.js";
 
 export class TokenService {
   private tokenDAL: TokenDAL;

@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 
-import { MongooseObjectId } from "./index";
+import { type MongooseObjectId } from "./index.js";
 
 export type UserConnectionEvent = {
   userId: MongooseObjectId;

@@ -1,18 +1,24 @@
-import { OtpService } from "@/api/v1/otp/otp.service";
-import { TokenService } from "@/api/v1/token";
-import { UserDAL } from "@/api/v1/user/user.dal";
-import { UserService } from "@/api/v1/user/user.service";
-import { RegisterSchema, ResetPassword, UserRolePermission } from "@/api/v1/user/user.validation";
-import { ErrorTypeEnum, NotificationType, Permission, UserActionType } from "@/constants";
+import { OtpService } from "@/api/v1/otp/otp.service.js";
+import { TokenService } from "@/api/v1/token/index.js";
+import { UserDAL } from "@/api/v1/user/user.dal.js";
+import { UserService } from "@/api/v1/user/user.service.js";
+import { type RegisterSchema, type ResetPassword, type UserRolePermission } from "@/api/v1/user/user.validation.js";
+import { ErrorTypeEnum, NotificationType, type Permission, UserActionType } from "@/constants";
 import { notificationService, redisService } from "@/services";
-import { DeviceId, DeviceInfo, Email, LoggedInUser, MongooseObjectId, Tokens } from "@/types";
-import { GoogleUser } from "@/types/passport-google";
+import { type DeviceId, type DeviceInfo, type Email, type LoggedInUser, type MongooseObjectId, Tokens } from "@/types";
+import type { GoogleUser } from "@/types/passport-google.js";
 import { comparePassword, generateAccessToken, verifyJWTToken } from "@/utils";
 
-import { ProfileService } from "../profile";
-import { SessionDAL } from "../session/session.dal";
-import { AuthDAL } from "./auth.dal";
-import { AccessTokenPayload, AuthToken, Login, RefreshTokenPayload, SignUpResponse } from "./auth.validation";
+import { ProfileService } from "../profile/profile.service.js";
+import { SessionDAL } from "../session/session.dal.js";
+import { AuthDAL } from "./auth.dal.js";
+import {
+  type AccessTokenPayload,
+  type AuthToken,
+  type Login,
+  type RefreshTokenPayload,
+  type SignUpResponse,
+} from "./auth.validation.js";
 
 interface GenerateTokenParams {
   userId: MongooseObjectId;

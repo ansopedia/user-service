@@ -1,4 +1,4 @@
-import { Otp } from "@/types";
+import { type Otp } from "@/types";
 
 export const generateOTP = (length: number = 6): Otp => {
   const factor = Math.pow(10, length - 1);

@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-import { OtpSchema } from "./otp.validation";
+import type { OtpSchema } from "./otp.validation.js";
 
 const OtpSchemas = new Schema<OtpSchema>(
   {

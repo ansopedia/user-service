@@ -16,7 +16,7 @@ import {
   restoreUser,
 } from "@/utils/test";
 
-import { GetUser } from "../user.validation";
+import { type GetUser } from "../user.validation.js";
 
 const newUser = {
   username: "username",

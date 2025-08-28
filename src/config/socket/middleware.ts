@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 
-import { AccessTokenPayload } from "@/api/v1/auth/auth.validation";
-import { CustomSocket } from "@/types/socket.types";
+import type { AccessTokenPayload } from "@/api/v1/auth/auth.validation.js";
+import type { CustomSocket } from "@/types/socket.types.js";
 import { logger, verifyJWTToken } from "@/utils";
 
 export const setupSocketMiddleware = (io: Server) => {

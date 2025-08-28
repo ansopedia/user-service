@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import { DEFAULT_PAGINATION_LIMIT, DEFAULT_PAGINATION_OFFSET, STATUS_CODES } from "@/constants";
 import { sendResponse, validateObjectId, validateUsername } from "@/utils";
 
-import { success } from "./user.constant";
-import { UserService } from "./user.service";
-import { validateRegister } from "./user.validation";
+import { success } from "./user.constant.js";
+import { UserService } from "./user.service.js";
+import { validateRegister } from "./user.validation.js";
 
 export const createUser = async (req: Request, res: Response) => {
   const userData = validateRegister(req.body);

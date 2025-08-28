@@ -1,6 +1,6 @@
 import { Model, Schema, model } from "mongoose";
 
-import { Permission, PermissionCategory } from "./permission.validation";
+import { type Permission, PermissionCategory } from "./permission.validation.js";
 
 const PermissionSchema: Schema<Permission> = new Schema<Permission>(
   {

@@ -1,7 +1,7 @@
-import supertest, { Response } from "supertest";
+import supertest, { type Response } from "supertest";
 
-import { CreateProfileData, ProfileData, success } from "@/api/v1/profile";
-import { app } from "@/app";
+import { type CreateProfileData, type ProfileData, success } from "@/api/v1/profile/index.js";
+import { app } from "@/app.js";
 import { STATUS_CODES } from "@/constants";
 
 export const upSertProfileData = async (data: CreateProfileData, authorizationHeader: string) => {

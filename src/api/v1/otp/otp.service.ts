@@ -1,16 +1,23 @@
 import { formatDuration, intervalToDuration, isPast } from "date-fns";
 
-import { success } from "@/api/v1/auth/auth.constant";
-import { UserService } from "@/api/v1/user/user.service";
-import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, envConstants } from "@/constants";
-import { NotificationType, UserActionType, notificationToActionMap } from "@/constants/events.constant";
-import { notificationService } from "@/services/notification.services";
+import { success } from "@/api/v1/auth/auth.constant.js";
+import { UserService } from "@/api/v1/user/user.service.js";
+import {
+  ErrorTypeEnum,
+  FIVE_MINUTES_IN_MS,
+  NotificationType,
+  UserActionType,
+  envConstants,
+  notificationToActionMap,
+} from "@/constants";
+import { notificationService } from "@/services";
 import { generateOTP, verifyOTP } from "@/utils";
 
-import { AuthToken } from "../auth/auth.validation";
-import { TokenService } from "../token/token.service";
-import { OtpDAL } from "./otp.dal";
-import { GetOtp, OtpEvent, OtpSchema, OtpVerifyEvent, otpEvent, otpVerifyEvent } from "./otp.validation";
+import type { AuthToken } from "../auth/auth.validation.js";
+import { TokenService } from "../token/token.service.js";
+import { OtpDAL } from "./otp.dal.js";
+import type { GetOtp, OtpEvent, OtpSchema, OtpVerifyEvent } from "./otp.validation.js";
+import { otpEvent, otpVerifyEvent } from "./otp.validation.js";
 
 export class OtpService {
   public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string; token: string }> {

@@ -1,4 +1,4 @@
-import mongoose, { ConnectOptions } from "mongoose";
+import mongoose, { type ConnectOptions } from "mongoose";
 
 import { ErrorTypeEnum, envConstants } from "@/constants";
 import { errorLogger } from "@/utils";

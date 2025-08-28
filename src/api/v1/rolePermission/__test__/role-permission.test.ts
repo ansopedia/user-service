@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
-import { CreatePermission, PermissionCategory } from "@/api/v1/permission/permission.validation";
-import { createRole } from "@/api/v1/role/role.validation";
+import { type CreatePermission, PermissionCategory } from "@/api/v1/permission/permission.validation.js";
+import { type createRole } from "@/api/v1/role/role.validation.js";
 import { defaultUsers } from "@/constants";
 import {
   createPermissionRequest,

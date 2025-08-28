@@ -1,7 +1,7 @@
-import Redis from "ioredis";
+import { Redis } from "ioredis";
 
-import { envConstants } from "../constants";
-import { errorLogger, logger } from "../utils";
+import { envConstants } from "@/constants";
+import { errorLogger, logger } from "@/utils";
 
 class RedisService {
   private client: Redis;

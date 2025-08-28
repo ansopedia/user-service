@@ -1,8 +1,8 @@
 import { ZodError } from "zod";
 
-import { NotificationType } from "@/constants/events.constant";
+import { NotificationType } from "@/constants/events.constant.js";
 
-import { OtpEvent, otpEvent } from "../otp.validation";
+import { type OtpEvent, otpEvent } from "../otp.validation.js";
 
 describe("Test OTP validation", () => {
   const otpTypes: OtpEvent = {

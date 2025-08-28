@@ -1,11 +1,11 @@
 import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 
-import { app } from "./app";
-import { initializeSocket } from "./config";
-import { envConstants } from "./constants";
-import { errorLogger, logger } from "./utils";
-import { CryptoUtil } from "./utils/crypto.util";
+import { initializeSocket } from "@/config";
+import { envConstants } from "@/constants";
+import { CryptoUtil, errorLogger, logger } from "@/utils";
+
+import { app } from "./app.js";
 
 const server = http.createServer(app);
 let io: SocketIOServer | undefined;

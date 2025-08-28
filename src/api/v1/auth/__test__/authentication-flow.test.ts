@@ -12,7 +12,7 @@ import {
   verifyAccount,
 } from "@/utils/test";
 
-import { SignUpResponse } from "../auth.validation";
+import type { SignUpResponse } from "../auth.validation.js";
 
 const VALID_CREDENTIALS = {
   username: "username",

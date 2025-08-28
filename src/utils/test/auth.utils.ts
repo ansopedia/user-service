@@ -1,13 +1,13 @@
-import supertest, { Response } from "supertest";
+import supertest, { type Response } from "supertest";
 
-import { success } from "@/api/v1/auth/auth.constant";
-import { Login, SignUpResponse } from "@/api/v1/auth/auth.validation";
-import { app } from "@/app";
+import { success } from "@/api/v1/auth/auth.constant.js";
+import type { Login, SignUpResponse } from "@/api/v1/auth/auth.validation.js";
+import { app } from "@/app.js";
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
-import { NotificationType } from "@/constants/events.constant";
+import { NotificationType } from "@/constants/events.constant.js";
 
-import { ResetPassword } from "../../api/v1/user/user.validation";
-import { expectOTPVerificationSuccess, retrieveOTP, verifyOTP } from "./otp.utils";
+import { type ResetPassword } from "../../api/v1/user/user.validation.js";
+import { expectOTPVerificationSuccess, retrieveOTP, verifyOTP } from "./otp.utils.js";
 
 export const login = async (loginData: Omit<Login, "deviceInfo">): Promise<Response> => {
   return supertest(app).post("/api/v1/auth/login").send(loginData);

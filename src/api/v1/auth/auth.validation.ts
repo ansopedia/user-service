@@ -2,8 +2,8 @@ import { z } from "zod";
 
 import { deviceId, deviceInfoSchema, mongooseObjectId, otp } from "@/types";
 
-import { tokenSchema } from "../token/token.validation";
-import { userSchema } from "../user/user.validation";
+import { tokenSchema } from "../token/token.validation.js";
+import { userSchema } from "../user/user.validation.js";
 
 const AuthSchema = z.object({
   userId: mongooseObjectId,

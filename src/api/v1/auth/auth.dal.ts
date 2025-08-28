@@ -1,6 +1,7 @@
-import { MongooseObjectId } from "../../../types";
-import { AuthModel } from "./auth.model";
-import { Auth } from "./auth.validation";
+import { type MongooseObjectId } from "@/types";
+
+import { AuthModel } from "./auth.model.js";
+import { type Auth } from "./auth.validation.js";
 
 export class AuthDAL {
   static async getAuthsByUserId(userId: MongooseObjectId): Promise<Auth[]> {

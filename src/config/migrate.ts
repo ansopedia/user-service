@@ -1,6 +1,6 @@
-import { errorLogger } from "../utils";
-import { setupInitialRolesAndPermissions, setupInitialUserRole } from "../utils/initialize-db";
-import { connectDB, disconnectDB } from "./mongodb";
+import { errorLogger, setupInitialRolesAndPermissions, setupInitialUserRole } from "@/utils";
+
+import { connectDB, disconnectDB } from "./mongodb.js";
 
 (async () => {
   try {

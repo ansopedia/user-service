@@ -1,11 +1,10 @@
-import supertest, { Response } from "supertest";
+import supertest, { type Response } from "supertest";
 
-import { app } from "@/app";
+import { success } from "@/api/v1/user/user.constant.js";
+import type { Pagination, RegisterSchema } from "@/api/v1/user/user.validation.js";
+import { app } from "@/app.js";
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
-
-import { success } from "../../api/v1/user/user.constant";
-import { Pagination, RegisterSchema } from "../../api/v1/user/user.validation";
-import { MongooseObjectId } from "../../types";
+import { type MongooseObjectId } from "@/types/index.js";
 
 export const expectBadRequestResponseForValidationError = (response: Response): void => {
   const errorObject = errorMap[ErrorTypeEnum.enum.VALIDATION_ERROR];

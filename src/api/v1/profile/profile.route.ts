@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { authenticate } from "@/middlewares";
 
-import { ProfileController } from "./profile.controller";
+import { ProfileController } from "./profile.controller.js";
 
 const router = Router();
 

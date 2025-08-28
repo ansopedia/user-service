@@ -1,6 +1,6 @@
-import { Response } from "express";
+import { type Response } from "express";
 
-import { SendResponse, sendResponse } from "@/utils";
+import { type SendResponse, sendResponse } from "@/utils";
 
 describe("sendResponse", () => {
   it("should return a successful response with the correct data", () => {
