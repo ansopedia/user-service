@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 
 import { ErrorTypeEnum, STATUS_CODES, envConstants } from "@/constants";
-import { type GoogleUser } from "@/types/passport-google.js";
+import { type GoogleUser } from "@/types";
 import {
   extractTokenFromBearerString,
   getDeviceInfo,

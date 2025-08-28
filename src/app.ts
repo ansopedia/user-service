@@ -17,7 +17,7 @@ import { addAxiosHeadersMiddleware, errorHandler } from "@/middlewares";
 import { routes } from "@/routes";
 import { errorLogger, logger } from "@/utils";
 
-import "./config/passport";
+import "./config/passport.js";
 
 const { NODE_ENV } = envConstants;
 

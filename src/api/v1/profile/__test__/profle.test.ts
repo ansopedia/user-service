@@ -1,5 +1,5 @@
 import { defaultUsers } from "@/constants";
-import {type  MongooseObjectId } from "@/types";
+import { type MongooseObjectId } from "@/types";
 import {
   expectBadRequestResponseForValidationError,
   expectLoginSuccess,
