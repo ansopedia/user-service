@@ -1,8 +1,11 @@
 import maxmind, { type CityResponse, Reader } from "maxmind";
-import path from "path";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 
 export let geoLookup: Reader<CityResponse> | null = null;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 export const initGeoDB = async () => {
   const dbPath = path.resolve(__dirname, "../../data/geolite2-country-ipv6.mmdb");
   geoLookup = await maxmind.open<CityResponse>(dbPath);

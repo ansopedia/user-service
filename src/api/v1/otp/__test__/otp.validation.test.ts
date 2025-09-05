@@ -1,6 +1,6 @@
 import { ZodError } from "zod";
 
-import { NotificationType } from "@/constants/events.constant.js";
+import { NotificationType } from "@/constants";
 
 import { type OtpEvent, otpEvent } from "../otp.validation.js";
 

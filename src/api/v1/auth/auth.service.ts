@@ -5,8 +5,8 @@ import { UserService } from "@/api/v1/user/user.service.js";
 import { type RegisterSchema, type ResetPassword, type UserRolePermission } from "@/api/v1/user/user.validation.js";
 import { ErrorTypeEnum, NotificationType, type Permission, UserActionType } from "@/constants";
 import { notificationService, redisService } from "@/services";
+import type { GoogleUser } from "@/types";
 import { type DeviceId, type DeviceInfo, type Email, type LoggedInUser, type MongooseObjectId, Tokens } from "@/types";
-import type { GoogleUser } from "@/types/passport-google.js";
 import { comparePassword, generateAccessToken, verifyJWTToken } from "@/utils";
 
 import { ProfileService } from "../profile/profile.service.js";

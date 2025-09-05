@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es2021",
+    "target": "esnext",
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "rootDir": "./src",
-    "baseUrl": "./", // Required when using paths
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"],
       "@/constants": ["src/constants/index.ts"],
       "@/types": ["src/types/index.ts"],
       "@/routes": ["src/routes/index.ts"],
@@ -37,9 +36,9 @@
     "verbatimModuleSyntax": true,
     "erasableSyntaxOnly": true,
     "noImplicitOverride": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "lib": ["ES2022"]
   },
-  "lib": ["es2021"],
   "include": ["src/**/*", "src/jest.setup.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "./*.ts", "__test__"]
 }

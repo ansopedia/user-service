@@ -2,8 +2,9 @@ import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/userRole/user-role.constant.js";
 import type { UserRole } from "@/api/v1/userRole/user-role.validation.js";
-import { app } from "@/app.js";
 import { STATUS_CODES } from "@/constants";
+
+import { app } from "../../app.js";
 
 export const createUserRoleRequest = async (userRole: UserRole, authorizationHeader: string): Promise<Response> => {
   return supertest(app).post("/api/v1/user-role").send(userRole).set("authorization", authorizationHeader);

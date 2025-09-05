@@ -1,4 +1,4 @@
-import type { CustomSocket } from "@/types/socket.types.js";
+import type { CustomSocket } from "@/types";
 import { errorLogger, logger } from "@/utils";
 
 export const setupEventHandlers = (socket: CustomSocket) => {

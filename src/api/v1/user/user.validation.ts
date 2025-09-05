@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { DEFAULT_PAGINATION_LIMIT, DEFAULT_PAGINATION_OFFSET, MAX_PAGINATION_LIMIT } from "@/constants";
 import { mongooseObjectId, password, username } from "@/types";
 
 export const userSchema = z.object({
@@ -15,6 +14,10 @@ export const userSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
 });
+
+const DEFAULT_PAGINATION_LIMIT = 10;
+const MAX_PAGINATION_LIMIT = 100;
+const DEFAULT_PAGINATION_OFFSET = 0;
 
 export const paginationSchema = z.object({
   limit: z

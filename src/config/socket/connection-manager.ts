@@ -1,5 +1,5 @@
+import type { SocketUser } from "@/types";
 import { type MongooseObjectId } from "@/types";
-import type { SocketUser } from "@/types/socket.types.js";
 
 class ConnectionManager {
   private connectedUsers: Map<MongooseObjectId, SocketUser>;

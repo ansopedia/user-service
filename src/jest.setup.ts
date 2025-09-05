@@ -1,7 +1,7 @@
-import { connectDB, disconnectDB } from "@/config";
-import { envConstants } from "@/constants";
-import { startServer, stopServer } from "@/server.js";
-import { setupInitialRolesAndPermissions, setupInitialUserRole } from "@/utils";
+import { connectDB, disconnectDB } from "./config/index.js";
+import { envConstants } from "./constants/env.constant.js";
+import { startServer, stopServer } from "./server.js";
+import { setupInitialRolesAndPermissions, setupInitialUserRole } from "./utils/index.js";
 
 beforeAll(async () => {
   await connectDB();

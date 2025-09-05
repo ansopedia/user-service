@@ -3,7 +3,7 @@ import { Server as SocketIOServer } from "socket.io";
 
 import { envConstants } from "@/constants";
 import { allowedOrigins } from "@/middlewares";
-import type { CustomServer, CustomSocket } from "@/types/socket.types.js";
+import type { CustomServer, CustomSocket } from "@/types";
 
 import { connectionManager } from "./socket/connection-manager.js";
 import { setupEventHandlers } from "./socket/handlers.js";

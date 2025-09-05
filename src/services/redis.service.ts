@@ -1,19 +1,12 @@
 import { Redis } from "ioredis";
 
-import { envConstants } from "@/constants";
 import { errorLogger, logger } from "@/utils";
 
 class RedisService {
   private client: Redis;
 
   constructor() {
-    this.client = new Redis({
-      port: Number(envConstants.REDIS_PORT),
-      host: envConstants.REDIS_HOST,
-      username: envConstants.REDIS_USERNAME,
-      password: envConstants.REDIS_PASSWORD,
-      db: 0,
-    });
+    this.client = new Redis();
 
     this.client.on("connect", () => {
       logger.info("Connected to Redis!");

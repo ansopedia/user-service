@@ -145,3 +145,4 @@ export const deviceInfoSchema = uaParserResultSchema.extend({
 export type DeviceInfo = z.infer<typeof deviceInfoSchema>;
 
 export * from "./passport-google.js";
+export * from "./socket.types.js";

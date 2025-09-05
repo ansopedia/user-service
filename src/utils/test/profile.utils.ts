@@ -1,8 +1,9 @@
 import supertest, { type Response } from "supertest";
 
 import { type CreateProfileData, type ProfileData, success } from "@/api/v1/profile/index.js";
-import { app } from "@/app.js";
 import { STATUS_CODES } from "@/constants";
+
+import { app } from "../../app.js";
 
 export const upSertProfileData = async (data: CreateProfileData, authorizationHeader: string) => {
   return await supertest(app).put("/api/v1/profile").set("authorization", authorizationHeader).send(data);
