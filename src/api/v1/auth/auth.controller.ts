@@ -37,13 +37,7 @@ export class AuthController {
   }
 
   public static async signInWithEmailOrUsernameAndPassword(req: Request, res: Response) {
-    // Capture device info
-    const deviceInfo = getDeviceInfo(req);
-
-    // Security: Block bots immediately
-    if (deviceInfo.isBot) {
-      throw new Error(ErrorTypeEnum.enum.BOT_ACCESS_FORBIDDEN);
-    }
+    const deviceInfo = req.deviceInfo ?? getDeviceInfo(req);
 
     // deviceId is undefined if it's the first time the user is logging in
     const deviceId = deviceInfo.deviceId ?? crypto.randomUUID();
@@ -62,20 +56,15 @@ export class AuthController {
       response: res,
       message: success.LOGGED_IN_SUCCESSFULLY,
       statusCode: STATUS_CODES.OK,
-      data: { userId, deviceInfo },
+      data: { userId },
     });
   }
 
   public static async signInWithGoogleCallback(req: Request, res: Response) {
     const googleUser = req.user as GoogleUser;
 
-    // Capture device info
-    const deviceInfo = getDeviceInfo(req);
-
-    // Security: Block bots immediately
-    if (deviceInfo.isBot) {
-      throw new Error(ErrorTypeEnum.enum.BOT_ACCESS_FORBIDDEN);
-    }
+    // Capture device info (bot detection already handled by middleware)
+    const deviceInfo = req.deviceInfo ?? getDeviceInfo(req);
 
     // deviceId is undefined if it's the first time the user is logging in
     const deviceId = deviceInfo.deviceId ?? crypto.randomUUID();
@@ -147,14 +136,12 @@ export class AuthController {
 
   public static async logout(req: Request, res: Response) {
     const authHeader = req.headers.authorization;
-    const { sessionId } = req.body;
-    validateObjectId(sessionId);
 
     if (authHeader == null || authHeader === "") throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
 
     const accessToken = extractTokenFromBearerString(authHeader);
 
-    await AuthService.logout(accessToken, sessionId);
+    await AuthService.logout(accessToken);
     sendResponse({
       response: res,
       message: success.LOGGED_OUT_SUCCESSFULLY,
@@ -207,6 +194,7 @@ export class AuthController {
 
   public static async refreshToken(req: Request, res: Response) {
     const { refreshToken } = validateRefreshTokenSchema(req.body);
+    console.log({ refreshToken });
 
     const {
       accessToken,

@@ -28,7 +28,6 @@ export const expectLoginSuccess = (response: Response): void => {
     status: "success",
     data: {
       userId: expect.any(String),
-      sessionId: expect.any(String),
     },
   });
 };

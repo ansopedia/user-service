@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 import type { MongooseObjectId, Username } from "@/types";
 import { hashPassword } from "@/utils";
 
@@ -65,7 +67,7 @@ export class UserDAL {
     const userRolePermissions = await UserModel.aggregate([
       {
         $match: {
-          _id: userId,
+          _id: new mongoose.Types.ObjectId(userId),
         },
       },
       {

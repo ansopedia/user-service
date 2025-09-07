@@ -11,7 +11,6 @@ import { comparePassword, generateAccessToken, verifyJWTToken } from "@/utils";
 
 import { ProfileService } from "../profile/profile.service.js";
 import { SessionDAL } from "../session/session.dal.js";
-import { AuthDAL } from "./auth.dal.js";
 import {
   type AccessTokenPayload,
   type AuthToken,
@@ -123,9 +122,9 @@ export class AuthService {
     });
   }
 
-  public static async logout(accessToken: string, sessionId: MongooseObjectId): Promise<void> {
+  public static async logout(accessToken: string): Promise<void> {
     const res = await verifyJWTToken<AccessTokenPayload>(accessToken, Tokens.ACCESS);
-    const { userId, jti, exp } = res;
+    const { userId, deviceId, jti, exp } = res;
 
     if (jti == null || exp == null) {
       throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
@@ -139,30 +138,27 @@ export class AuthService {
     // Add JTI to Redis blacklist
     await redisService.revokeJti(jti, exp);
 
-    // Remove from database
-    const deletedSession = await AuthDAL.deleteAuthBySessionIdAndUserId(sessionId, userId);
-    if (!deletedSession) {
-      throw new Error(ErrorTypeEnum.enum.SESSION_NOT_FOUND);
-    }
+    // Deactivate the specific session
+    await new SessionDAL().updateSessionByUserAndDevice(userId, deviceId, { isActive: false });
   }
 
-  public static async logoutAll(userId: MongooseObjectId): Promise<{ deletedCount?: number }> {
+  public static async logoutAll(userId: MongooseObjectId): Promise<{ modifiedCount?: number }> {
     // TODO: Implement Token Revocation List Using Redis  to Invalidate Access Tokens on Logout
 
-    return await AuthDAL.deleteAllAuthsByUserId(userId);
+    return await new SessionDAL().deactivateAllSession(userId);
   }
 
   public static async logoutOthers(
     sessionId: MongooseObjectId,
     userId: MongooseObjectId
-  ): Promise<{ deletedCount?: number }> {
+  ): Promise<{ modifiedCount?: number }> {
     // TODO: Implement Token Revocation List Using Redis  to Invalidate Access Tokens on Logout
 
-    return await AuthDAL.deleteAllExceptSessionId(userId, sessionId);
+    return await new SessionDAL().deactivateAllExceptSessionId(userId, sessionId);
   }
 
   public static async getSessions(userId: MongooseObjectId) {
-    return await AuthDAL.getAuthsByUserId(userId);
+    return await new SessionDAL().getActiveSessionsByUserId(userId);
   }
 
   public static async verifyAccessToken(token: string): Promise<LoggedInUser> {
@@ -224,7 +220,7 @@ export class AuthService {
     const userRolePermissions: UserRolePermission = await UserDAL.getUserRolesAndPermissionsByUserId(
       updatedSession.userId
     );
-
+    console.log({ refreshToken, sessionId, session, updatedSession, userRolePermissions });
     const accessToken = generateAccessToken({
       userId: updatedSession.userId,
       deviceId: updatedSession.deviceId,

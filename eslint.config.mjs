@@ -25,7 +25,6 @@ export default [
       "eslint.config.mjs",
       "coverage**/*",
       "*.history",
-      "jest.config.mjs",
     ],
   },
   ...compat.extends("eslint:recommended", "plugin:@typescript-eslint/recommended"),

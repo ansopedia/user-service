@@ -1,26 +1,27 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ES2022",
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "rootDir": "./src",
     "baseUrl": "./",
     "paths": {
+      "@/server": ["src/server.ts"],
+      "@/app": ["src/app.ts"],
       "@/constants": ["src/constants/index.ts"],
       "@/types": ["src/types/index.ts"],
       "@/routes": ["src/routes/index.ts"],
       "@/config": ["src/config/index.ts"],
-      "@/utils": ["src/utils/index.ts"],
       "@/utils/test": ["src/utils/test/index.ts"],
+      "@/utils": ["src/utils/index.ts"],
       "@/api/*": ["src/api/*"],
       "@/middlewares": ["src/middlewares/index.ts"],
       "@/services": ["src/services/index.ts"]
     },
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "outDir": "./dist",
-    "sourceRoot": "./src",
     "noEmitOnError": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -39,6 +40,6 @@
     "skipLibCheck": true,
     "lib": ["ES2022"]
   },
-  "include": ["src/**/*", "src/jest.setup.ts"],
+  "include": ["src/**/*", "src/vitest.setup.ts"],
   "exclude": ["node_modules", "./*.ts", "__test__"]
 }

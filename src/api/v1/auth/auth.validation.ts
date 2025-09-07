@@ -24,6 +24,7 @@ export const session = z.object({
   updatedAt: z.date(),
   deviceId: deviceId,
   deviceInfo: deviceInfoSchema,
+  isActive: z.boolean().optional().default(true),
 });
 
 const refreshTokenSchema = z.object({

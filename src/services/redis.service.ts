@@ -14,6 +14,7 @@ class RedisService {
 
     this.client.on("error", (err) => {
       errorLogger.error(`Redis error: ${err}`);
+      throw new Error("Failed to connect to Redis");
     });
   }
 

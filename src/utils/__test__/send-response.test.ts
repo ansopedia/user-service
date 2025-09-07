@@ -1,12 +1,13 @@
 import { type Response } from "express";
+import { vi } from "vitest";
 
 import { type SendResponse, sendResponse } from "@/utils";
 
 describe("sendResponse", () => {
   it("should return a successful response with the correct data", () => {
     const mockResponse: Response = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
     } as unknown as Response;
 
     const mockData: SendResponse<{ someData: string }> = {
@@ -28,8 +29,8 @@ describe("sendResponse", () => {
 
   it("should log an error in non-production environments", () => {
     const mockResponse: Response = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
     } as unknown as Response;
 
     const mockError: Error = new Error("Something went wrong");

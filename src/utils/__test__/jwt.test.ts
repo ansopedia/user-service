@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
+import { vi } from "vitest";
 
 import { type AccessTokenPayload } from "@/api/v1/auth/auth.validation.js";
 import { ErrorTypeEnum } from "@/constants";
 import { extractTokenFromBearerString, generateAccessToken, generateRefreshToken } from "@/utils";
 
-jest.mock("jsonwebtoken", () => ({
-  sign: jest.fn(),
-  verify: jest.fn(),
+vi.mock("jsonwebtoken", () => ({
+  sign: vi.fn(),
+  verify: vi.fn(),
 }));
 
 describe("Jwt token", () => {

@@ -13,7 +13,7 @@ import {
   RATE_LIMIT_WINDOW_MS,
   envConstants,
 } from "@/constants";
-import { addAxiosHeadersMiddleware, errorHandler } from "@/middlewares";
+import { addAxiosHeadersMiddleware, botDetectionMiddleware, errorHandler } from "@/middlewares";
 import { routes } from "@/routes";
 import { errorLogger, logger } from "@/utils";
 
@@ -62,6 +62,9 @@ const globalLimiter = rateLimit({
 });
 
 app.use(globalLimiter);
+
+// Bot detection middleware - early in the chain to block bots before processing
+app.use(botDetectionMiddleware);
 
 app.use(express.json());
 app.use(passport.initialize());
