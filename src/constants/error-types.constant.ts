@@ -40,6 +40,7 @@ const errorType = [
   "PROFILE_NOT_FOUND",
   "PROFILE_REQUIRED_FOR_VISIBILITY_CHANGE",
   "SESSION_NOT_FOUND",
+  "SESSION_INACTIVE",
   "TOKEN_REVOKED",
   "BOT_ACCESS_FORBIDDEN",
 ] as const;
@@ -304,6 +305,13 @@ export const errorMap = {
     body: {
       code: "session_not_found",
       message: "Session not found.",
+    },
+  },
+  [ErrorTypeEnum.enum.SESSION_INACTIVE]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: {
+      code: "session_inactive",
+      message: "Session is inactive. Please login again.",
     },
   },
   [ErrorTypeEnum.enum.TOKEN_REVOKED]: {

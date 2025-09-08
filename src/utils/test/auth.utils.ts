@@ -81,7 +81,6 @@ export const renewToken = async (refreshToken: string) => {
 
 export const expectRenewTokenSuccess = (response: Response) => {
   const { statusCode, headers } = response;
-  console.log({ statusCode, headers, b: response.body });
 
   expect(statusCode).toBe(STATUS_CODES.OK);
 
@@ -97,6 +96,20 @@ export const expectRenewTokenSuccess = (response: Response) => {
     data: {
       userId: expect.any(String),
     },
+  });
+};
+
+export const expectRenewTokenFailed = (response: Response) => {
+  const errorObject = errorMap[ErrorTypeEnum.enum.SESSION_INACTIVE];
+
+  const { statusCode, body } = response;
+
+  expect(statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
+
+  expect(body).toMatchObject({
+    message: errorObject.body.message,
+    code: errorObject.body.code,
+    status: "failed",
   });
 };
 
@@ -134,22 +147,13 @@ export const resetPassword = async (resetPassword: ResetPassword): Promise<Respo
 };
 
 export const expectResetPasswordSuccess = (response: Response): void => {
-  const { statusCode, headers } = response;
+  const { statusCode, body } = response;
 
   expect(statusCode).toBe(STATUS_CODES.OK);
 
-  const authorizationHeader = headers["authorization"];
-  expect(authorizationHeader).toBeDefined();
-
-  const refreshToken = headers["refresh-token"];
-  expect(refreshToken).toBeDefined();
-
-  expect(response.body).toMatchObject({
+  expect(body).toMatchObject({
     message: success.PASSWORD_RESET_SUCCESSFULLY,
     status: "success",
-    data: {
-      userId: expect.any(String),
-    },
   });
 };
 

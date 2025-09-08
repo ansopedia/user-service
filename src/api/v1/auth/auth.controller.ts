@@ -2,14 +2,7 @@ import type { Request, Response } from "express";
 
 import { ErrorTypeEnum, STATUS_CODES, envConstants } from "@/constants";
 import { type GoogleUser } from "@/types";
-import {
-  extractTokenFromBearerString,
-  getDeviceInfo,
-  isValidRedirectUrl,
-  sendResponse,
-  validateEmail,
-  validateObjectId,
-} from "@/utils";
+import { extractTokenFromBearerString, getDeviceInfo, isValidRedirectUrl, sendResponse, validateEmail } from "@/utils";
 
 import { validateRegister, validateResetPasswordSchema } from "../user/user.validation.js";
 import { success } from "./auth.constant.js";
@@ -151,11 +144,6 @@ export class AuthController {
 
   public static async logoutAll(_: Request, res: Response) {
     const { userId } = res.locals.loggedInUser;
-    console.log({ userId });
-
-    // Extract access token from authorization header
-    // const authHeader = req.headers.authorization;
-    // const accessToken = authHeader != null ? extractTokenFromBearerString(authHeader) : undefined;
 
     await AuthService.logoutAll(userId);
     sendResponse({
@@ -165,16 +153,16 @@ export class AuthController {
     });
   }
 
-  public static async logoutOthers(req: Request, res: Response) {
-    const { userId } = res.locals.loggedInUser;
-    const { sessionId } = req.body;
-    validateObjectId(sessionId);
+  public static async logoutOthers(_req: Request, res: Response) {
+    const { userId, deviceId } = res.locals.loggedInUser;
+
+    if (deviceId === undefined) throw new Error(ErrorTypeEnum.enum.UNAUTHORIZED);
 
     // Extract access token from authorization header
     // const authHeader = req.headers.authorization;
     // const accessToken = authHeader != null ? extractTokenFromBearerString(authHeader) : undefined;
 
-    await AuthService.logoutOthers(sessionId, userId);
+    await AuthService.logoutOthers(deviceId, userId);
     sendResponse({
       response: res,
       message: success.LOGGED_OUT_SUCCESSFULLY,

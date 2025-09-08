@@ -2,6 +2,7 @@ import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 import {
   expectLoginSuccess,
   expectLogoutSuccess,
+  expectRenewTokenFailed,
   expectRenewTokenSuccess,
   expectSignUpSuccess,
   login,
@@ -101,8 +102,11 @@ describe("Authentication Flow", () => {
     const refreshToken1 = loginResponse1.headers["refresh-token"];
     const refreshToken2 = loginResponse2.headers["refresh-token"];
 
-    await expect(renewToken(refreshToken1)).rejects.toThrow();
-    await expect(renewToken(refreshToken2)).rejects.toThrow();
+    const refreshTokenRes = await renewToken(refreshToken1);
+    expectRenewTokenFailed(refreshTokenRes);
+
+    const refreshTokenRes2 = await renewToken(refreshToken2);
+    expectRenewTokenFailed(refreshTokenRes2);
   });
 
   it("should renew token", async () => {

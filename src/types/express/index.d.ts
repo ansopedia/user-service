@@ -1,4 +1,4 @@
-import { DeviceInfo, LoggedInUser } from "../index";
+import { DeviceInfo, LoggedInUser } from "../index.ts";
 
 declare global {
   namespace Express {

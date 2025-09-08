@@ -60,7 +60,7 @@ export class SessionDAL implements ISessionDal {
   }
 
   async insertSession(
-    session: Omit<Session, "refreshToken" | "createdAt" | "updatedAt" | "isActive">
+    session: Omit<Session, "refreshToken" | "createdAt" | "updatedAt" | "isActive" | "id">
   ): Promise<Session> {
     const newSession = new sessionModel(session);
     const refreshToken = generateRefreshToken({ sessionId: newSession.id });

@@ -144,18 +144,47 @@ export class AuthService {
   }
 
   public static async logoutAll(userId: MongooseObjectId): Promise<{ modifiedCount?: number }> {
-    // TODO: Implement Token Revocation List Using Redis  to Invalidate Access Tokens on Logout
+    // Increment tokenVersion for all sessions and deactivate them
+    const sessions = await new SessionDAL().getSessionsByUserId(userId);
 
-    return await new SessionDAL().deactivateAllSession(userId);
+    for (const session of sessions) {
+      await new SessionDAL().updateSessionByUserAndDevice(session.userId, session.deviceId, {
+        isActive: false,
+        tokenVersion: session.tokenVersion + 1,
+      });
+      // Update Redis cache for tokenVersion
+      await redisService.setUserDeviceTokenVersion(
+        session.userId.toString(),
+        session.deviceId,
+        session.tokenVersion + 1
+      );
+    }
+
+    return { modifiedCount: sessions.length };
   }
 
-  public static async logoutOthers(
-    sessionId: MongooseObjectId,
-    userId: MongooseObjectId
-  ): Promise<{ modifiedCount?: number }> {
-    // TODO: Implement Token Revocation List Using Redis  to Invalidate Access Tokens on Logout
+  public static async logoutOthers(deviceId: string, userId: MongooseObjectId): Promise<{ modifiedCount?: number }> {
+    // Increment tokenVersion for all sessions except current and deactivate them
+    const sessions = await new SessionDAL().getSessionsByUserId(userId);
 
-    return await new SessionDAL().deactivateAllExceptSessionId(userId, sessionId);
+    let modifiedCount = 0;
+    for (const session of sessions) {
+      if (session.deviceId !== deviceId.toString()) {
+        await new SessionDAL().updateSessionByUserAndDevice(session.userId, session.deviceId, {
+          isActive: false,
+          tokenVersion: session.tokenVersion + 1,
+        });
+        // Update Redis cache for tokenVersion
+        await redisService.setUserDeviceTokenVersion(
+          session.userId.toString(),
+          session.deviceId,
+          session.tokenVersion + 1
+        );
+        modifiedCount++;
+      }
+    }
+
+    return { modifiedCount };
   }
 
   public static async getSessions(userId: MongooseObjectId) {
@@ -175,6 +204,13 @@ export class AuthService {
     const isRevoked = await redisService.isJtiRevoked(jti);
     if (isRevoked) {
       throw new Error(ErrorTypeEnum.enum.TOKEN_REVOKED);
+    }
+
+    // Check tokenVersion from Redis to avoid DB call
+    const currentTokenVersion = await redisService.getUserDeviceTokenVersion(userId.toString(), deviceId);
+
+    if (currentTokenVersion !== null && tokenVersion < currentTokenVersion) {
+      throw new Error(ErrorTypeEnum.enum.TOKEN_NOT_ACTIVE);
     }
 
     return { userId, permissions, deviceId, tokenVersion };
@@ -205,17 +241,10 @@ export class AuthService {
 
   public static async refreshToken(refreshToken: string) {
     const res = await verifyJWTToken<RefreshTokenPayload>(refreshToken, Tokens.REFRESH);
-    console.log({ res });
-    // TODO: Fix renew refresh token after logout using redis
     const { sessionId, jti, exp } = res;
 
     if (jti == null || exp == null) {
       throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
-    }
-
-    const isRevoked = await redisService.isJtiRevoked(jti);
-    if (isRevoked) {
-      throw new Error(ErrorTypeEnum.enum.TOKEN_REVOKED);
     }
 
     const session = await new SessionDAL().getSessionById(sessionId);
@@ -224,11 +253,27 @@ export class AuthService {
       throw new Error(ErrorTypeEnum.Enum.SESSION_NOT_FOUND);
     }
 
-    const updatedSession = await new SessionDAL().updateSession(sessionId);
-
-    if (!updatedSession) {
-      throw new Error(ErrorTypeEnum.Enum.SESSION_NOT_FOUND);
+    if (!session.isActive) {
+      throw new Error(ErrorTypeEnum.enum.SESSION_INACTIVE);
     }
+
+    // Mark previous token/session inactive after renewing
+    await new SessionDAL().updateSessionByUserAndDevice(session.userId, session.deviceId, { isActive: false });
+
+    const updatedSession = await new SessionDAL().insertSession({
+      userId: session.userId,
+      deviceId: session.deviceId,
+      deviceInfo: session.deviceInfo,
+      lastActive: new Date(),
+      tokenVersion: session.tokenVersion + 1,
+    });
+
+    // Cache tokenVersion in Redis
+    await redisService.setUserDeviceTokenVersion(
+      session.userId.toString(),
+      session.deviceId,
+      updatedSession.tokenVersion
+    );
 
     const userRolePermissions: UserRolePermission = await UserDAL.getUserRolesAndPermissionsByUserId(
       updatedSession.userId

@@ -16,6 +16,7 @@ const AuthSchema = z.object({
 });
 
 export const session = z.object({
+  id: mongooseObjectId,
   userId: mongooseObjectId,
   refreshToken: z.string(),
   tokenVersion: z.number().default(0),
