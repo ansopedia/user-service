@@ -10,6 +10,7 @@ export const UserActionType = {
   // Authentication actions
   VERIFY_EMAIL: "verifyEmail",
   RESET_PASSWORD: "resetPassword",
+  AUTO_LOGIN: "autoLogin",
   DELETE_ACCOUNT: "deleteAccount",
   CHANGE_SUBSCRIPTION: "changeSubscription",
   VERIFY_PHONE: "verifyPhone",

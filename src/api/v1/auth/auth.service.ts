@@ -11,6 +11,7 @@ import { comparePassword, generateAccessToken, verifyJWTToken } from "@/utils";
 
 import { ProfileService } from "../profile/profile.service.js";
 import { SessionDAL } from "../session/session.dal.js";
+import { success } from "./auth.constant.js";
 import {
   type AccessTokenPayload,
   type AuthToken,
@@ -203,7 +204,19 @@ export class AuthService {
   }
 
   public static async refreshToken(refreshToken: string) {
-    const { sessionId } = await verifyJWTToken<RefreshTokenPayload>(refreshToken, Tokens.REFRESH);
+    const res = await verifyJWTToken<RefreshTokenPayload>(refreshToken, Tokens.REFRESH);
+    console.log({ res });
+    // TODO: Fix renew refresh token after logout using redis
+    const { sessionId, jti, exp } = res;
+
+    if (jti == null || exp == null) {
+      throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
+    }
+
+    const isRevoked = await redisService.isJtiRevoked(jti);
+    if (isRevoked) {
+      throw new Error(ErrorTypeEnum.enum.TOKEN_REVOKED);
+    }
 
     const session = await new SessionDAL().getSessionById(sessionId);
 
@@ -220,7 +233,7 @@ export class AuthService {
     const userRolePermissions: UserRolePermission = await UserDAL.getUserRolesAndPermissionsByUserId(
       updatedSession.userId
     );
-    console.log({ refreshToken, sessionId, session, updatedSession, userRolePermissions });
+
     const accessToken = generateAccessToken({
       userId: updatedSession.userId,
       deviceId: updatedSession.deviceId,
@@ -234,6 +247,28 @@ export class AuthService {
       refreshToken: updatedSession.refreshToken,
       deviceId: updatedSession.deviceId,
     };
+  }
+
+  public static async autoLogin(actionToken: string): Promise<{ message: string; authToken: AuthToken }> {
+    const tokenService = new TokenService();
+    const { userId, id: tokenId } = await tokenService.verifyActionToken(actionToken, UserActionType.AUTO_LOGIN);
+
+    // For auto-login, we need device info, but since it's from OTP verification, we can use default or empty device info
+    // To keep it simple, we'll use a default deviceId and empty deviceInfo
+    const deviceId: DeviceId = crypto.randomUUID();
+    const deviceInfo = {} as DeviceInfo;
+
+    const authToken = await this.generateAccessAndRefreshToken({
+      userId,
+      deviceInfo,
+      deviceId,
+      tokenVersion: 0,
+    });
+
+    // Invalidate the action token after use
+    await tokenService.invalidateToken(tokenId);
+
+    return { message: success.AUTO_LOGIN_SUCCESSFUL, authToken };
   }
 
   private static async generateAccessAndRefreshToken({

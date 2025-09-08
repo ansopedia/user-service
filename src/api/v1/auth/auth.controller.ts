@@ -151,6 +151,7 @@ export class AuthController {
 
   public static async logoutAll(_: Request, res: Response) {
     const { userId } = res.locals.loggedInUser;
+    console.log({ userId });
 
     // Extract access token from authorization header
     // const authHeader = req.headers.authorization;
@@ -194,7 +195,6 @@ export class AuthController {
 
   public static async refreshToken(req: Request, res: Response) {
     const { refreshToken } = validateRefreshTokenSchema(req.body);
-    console.log({ refreshToken });
 
     const {
       accessToken,
@@ -233,6 +233,19 @@ export class AuthController {
       response: res,
       message: success.PASSWORD_RESET_SUCCESSFULLY,
       statusCode: STATUS_CODES.OK,
+    });
+  }
+
+  public static async autoLogin(req: Request, res: Response) {
+    const { actionToken } = req.body;
+
+    const { message, authToken } = await AuthService.autoLogin(actionToken);
+
+    sendResponse({
+      response: res,
+      message: message,
+      statusCode: STATUS_CODES.OK,
+      data: authToken,
     });
   }
 }

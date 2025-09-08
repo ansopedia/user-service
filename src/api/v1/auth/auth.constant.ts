@@ -11,4 +11,5 @@ export const success = {
   PASSWORD_RESET_SUCCESSFULLY: "Password reset successfully",
   EMAIL_VERIFIED_SUCCESSFULLY: "Email verified successfully",
   SESSIONS_FETCHED_SUCCESSFULLY: "Sessions fetched successfully",
+  AUTO_LOGIN_SUCCESSFUL: "Auto login successful",
 };

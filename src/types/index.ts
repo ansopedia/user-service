@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 import z from "zod";
 
-export const mongooseObjectId = z.custom<mongoose.Types.ObjectId>();
+export const mongooseObjectId = z
+  .string()
+  .refine((val) => mongoose.Types.ObjectId.isValid(val), "Invalid ObjectId")
+  .transform((val) => new mongoose.Types.ObjectId(val));
 
 export type MongooseObjectId = z.infer<typeof mongooseObjectId>;
 

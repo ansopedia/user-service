@@ -13,7 +13,6 @@ import {
 import { notificationService } from "@/services";
 import { generateOTP, verifyOTP } from "@/utils";
 
-import type { AuthToken } from "../auth/auth.validation.js";
 import { TokenService } from "../token/token.service.js";
 import { OtpDAL } from "./otp.dal.js";
 import type { GetOtp, OtpEvent, OtpSchema, OtpVerifyEvent } from "./otp.validation.js";
@@ -72,12 +71,10 @@ export class OtpService {
     return { message, token };
   }
 
-  public static async verifyOtp(
-    otpEvents: OtpVerifyEvent
-  ): Promise<{ message: string; actionToken: string | AuthToken }> {
+  public static async verifyOtp(otpEvents: OtpVerifyEvent): Promise<{ message: string; actionToken: string }> {
     // Extract the token from the parsed event data
     const { otp, otpType, token: verificationToken } = otpVerifyEvent.parse(otpEvents);
-    let actionToken: string | AuthToken = "";
+    let actionToken: string = "";
     let message: string = success.OTP_VERIFIED_SUCCESSFULLY;
 
     const isMasterOTP = envConstants.MASTER_OTP === otp;
@@ -107,7 +104,7 @@ export class OtpService {
     if (otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
       await UserService.updateUser(userId, { isEmailVerified: true });
       message = success.EMAIL_VERIFIED_SUCCESSFULLY;
-      // actionToken = await AuthService.generateAccessAndRefreshToken(userId);
+      actionToken = await tokenService.createActionToken(userId, UserActionType.AUTO_LOGIN);
     } else if (otpType === NotificationType.FORGET_PASSWORD_OTP) {
       actionToken = await tokenService.createActionToken(userId, UserActionType.RESET_PASSWORD);
       message = success.PASSWORD_RESET_SUCCESSFULLY;

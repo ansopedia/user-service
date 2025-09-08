@@ -74,14 +74,13 @@ describe("Authentication Flow", () => {
 
     // Logout from first session using refresh token
     const authorizationHeader1 = loginResponse1.headers["authorization"];
-    const sessionId1 = loginResponse1.body.sessionId;
 
-    const logoutResponse = await logoutUser(`Bearer ${authorizationHeader1}`, sessionId1);
+    const logoutResponse = await logoutUser(`Bearer ${authorizationHeader1}`);
     expectLogoutSuccess(logoutResponse);
 
     // Renew token for second session should still succeed
     const refreshToken2 = loginResponse2.headers["refresh-token"];
-    const renewTokenRes = await renewToken(`Bearer ${refreshToken2}`);
+    const renewTokenRes = await renewToken(refreshToken2);
     expectRenewTokenSuccess(renewTokenRes);
   });
 
@@ -95,15 +94,15 @@ describe("Authentication Flow", () => {
     const authorizationHeader1 = loginResponse1.headers["authorization"];
 
     // Logout from all sessions (no refresh token provided)
-    const logoutResponse = await logoutAllSessions(authorizationHeader1); // No refresh token
+    const logoutResponse = await logoutAllSessions(`Bearer ${authorizationHeader1}`); // No refresh token
     expectLogoutSuccess(logoutResponse);
 
     // Renew token for both sessions should fail
     const refreshToken1 = loginResponse1.headers["refresh-token"];
     const refreshToken2 = loginResponse2.headers["refresh-token"];
 
-    await expect(renewToken(`Bearer ${refreshToken1}`)).rejects.toThrow();
-    await expect(renewToken(`Bearer ${refreshToken2}`)).rejects.toThrow();
+    await expect(renewToken(refreshToken1)).rejects.toThrow();
+    await expect(renewToken(refreshToken2)).rejects.toThrow();
   });
 
   it("should renew token", async () => {
@@ -112,7 +111,7 @@ describe("Authentication Flow", () => {
 
     const refreshToken = loginResponse.headers["refresh-token"];
 
-    const renewTokenRes = await renewToken(`Bearer ${refreshToken}`);
+    const renewTokenRes = await renewToken(refreshToken);
     expectRenewTokenSuccess(renewTokenRes);
   });
 });

@@ -13,6 +13,7 @@ const sessionSchema = new Schema<ISession>(
     refreshToken: { type: String, required: true },
     tokenVersion: { type: Number, default: 0 },
     lastActive: { type: Date, default: Date.now },
+    deviceId: { type: String, required: true },
     deviceInfo: { type: Schema.Types.Mixed, required: true }, // Mixed type for complex object
     isActive: { type: Boolean, default: true },
   },

@@ -45,16 +45,10 @@ export const expectOTPVerificationSuccess = (otpType: NotificationType, response
 
   const expectedMessage = expectedMessages.get(otpType) ?? success.OTP_VERIFIED_SUCCESSFULLY;
 
-  const emailVerificationSuccess = {
-    userId: expect.any(String),
-    accessToken: expect.any(String),
-    refreshToken: expect.any(String),
-  };
-
   expect(response.body).toMatchObject({
     message: expectedMessage,
     data: {
-      actionToken: otpType === NotificationType.EMAIL_VERIFICATION_OTP ? emailVerificationSuccess : expect.any(String),
+      actionToken: expect.any(String),
     },
   });
 };

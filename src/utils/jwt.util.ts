@@ -4,7 +4,6 @@ import {
   type AccessTokenPayload,
   type ActionTokenPayload,
   type RefreshTokenPayload,
-  validateAccessTokenPayload,
   validateActionTokenPayload,
   validateRefreshTokenPayload,
 } from "@/api/v1/auth/auth.validation.js";
@@ -28,9 +27,7 @@ export const generateAccessToken = (payload: Omit<AccessTokenPayload, "issuer" |
   };
 
   try {
-    const accessTokenPayload = validateAccessTokenPayload(accessToken);
-
-    return jwt.sign(accessTokenPayload, privateKey, {
+    return jwt.sign(accessToken, privateKey, {
       algorithm: "RS256",
       expiresIn: envConstants.ACCESS_TOKEN_EXPIRES_IN,
       audience: CURRENT_SERVICE,

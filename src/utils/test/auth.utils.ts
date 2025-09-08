@@ -63,10 +63,8 @@ export const expectSignUpSuccess = (response: Response): void => {
   });
 };
 
-export const logoutUser = async (authorizationHeader: string, sessionId: string) => {
-  return await supertest(app).post("/api/v1/auth/logout").set("authorization", authorizationHeader).send({
-    sessionId,
-  });
+export const logoutUser = async (authorizationHeader: string) => {
+  return await supertest(app).post("/api/v1/auth/logout").set("authorization", authorizationHeader);
 };
 
 export const expectLogoutSuccess = (response: Response) => {
@@ -78,11 +76,12 @@ export const expectLogoutSuccess = (response: Response) => {
 };
 
 export const renewToken = async (refreshToken: string) => {
-  return await supertest(app).post("/api/v1/auth/refresh-token").set("authorization", refreshToken);
+  return await supertest(app).post("/api/v1/auth/refresh").send({ refreshToken });
 };
 
 export const expectRenewTokenSuccess = (response: Response) => {
   const { statusCode, headers } = response;
+  console.log({ statusCode, headers, b: response.body });
 
   expect(statusCode).toBe(STATUS_CODES.OK);
 
