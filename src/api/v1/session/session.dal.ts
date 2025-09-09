@@ -5,7 +5,7 @@ import { type Session } from "../auth/auth.validation.js";
 import sessionModel from "./session.model.js";
 
 // Type for safe session data (without sensitive fields)
-export type SessionSafe = Omit<Session, 'refreshToken'>;
+export type SessionSafe = Omit<Session, "refreshToken">;
 
 interface ISessionDal {
   getSessionById(sessionId: MongooseObjectId): Promise<Session | null>;
@@ -33,15 +33,11 @@ interface ISessionDal {
 export class SessionDAL implements ISessionDal {
   async getActiveSessionsByUserId(userId: MongooseObjectId): Promise<Session[]> {
     // Select only safe fields, exclude sensitive data like refreshToken
-    return await sessionModel
-      .find({ userId, isActive: true })
-      .select('-refreshToken'); // Exclude refreshToken using select notation
+    return await sessionModel.find({ userId, isActive: true }).select("-refreshToken"); // Exclude refreshToken using select notation
   }
 
   async getActiveSessionsSafe(userId: MongooseObjectId): Promise<SessionSafe[]> {
-    return await sessionModel
-      .find({ userId, isActive: true })
-      .select('-refreshToken'); // Exclude refreshToken using select notation
+    return await sessionModel.find({ userId, isActive: true }).select("-refreshToken"); // Exclude refreshToken using select notation
   }
 
   async updateSessionByUserAndDevice(

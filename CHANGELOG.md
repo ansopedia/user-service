@@ -5,19 +5,30 @@ All notable changes to the User Service will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [1.2.0] - 2025-09-10
 
 ### New feature
 
 - Allow User to Make Their Profile Public or Private ([#63](https://github.com/ansopedia/user-service/issues/63))
 - Protect User Routes ([#67](https://github.com/ansopedia/user-service/issues/67))
 - Support Multi-Device Login by Allowing Multiple Refresh Tokens per User ([#123](https://github.com/ansopedia/user-service/issues/123))
+- Add API to List and Track Active User Sessions ([#125](https://github.com/ansopedia/user-service/issues/125))
+- Integrate Redis into User Service ([#126](https://github.com/ansopedia/user-service/issues/126))
+
+### Changed
+
+- Migrate from Jest to Vitest for improved ESM support ([#129](https://github.com/ansopedia/user-service/issues/129))
+- Migrate project to use ECMAScript Modules (ESM) ([#128](https://github.com/ansopedia/user-service/issues/128))
+
+### Security
+
+- Implement Token Revocation List to Invalidate Access Tokens on Logout ([#127](https://github.com/ansopedia/user-service/issues/127))
 
 ## [1.1.0] - 2025-07-03
 
 ### Changed
 
-- Updated dependencies to latest versions (#113)
+- Updated dependencies to latest versions ([#113](https://github.com/ansopedia/user-service/issues/113))
   - Notable: `Express - v5x`, `bcrypt - v6x`, `jest - v30x`, `dotenv - v17x` & more.
 - Use upsert operations for token and OTP database interactions for better consistency.
 - Standardize token names and improve token invalidation logic.
@@ -35,21 +46,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Optimize test script. (#110)
-- Improve error logging for 500 errors (#108)
-- Migrate Initial Data Setup to Migration Script (#116)
+- Optimize test script. ([#110](https://github.com/ansopedia/user-service/issues/110))
+- Improve error logging for 500 errors ([#108](https://github.com/ansopedia/user-service/issues/108))
+- Migrate Initial Data Setup to Migration Script ([#116](https://github.com/ansopedia/user-service/issues/116))
   - remove initial setup flag and related code
 - Add `morgan` logger for request logging
 - Add `refresh-token` & `user-id` cookies to `login` response
-- Implemented multi-environment configuration system with automated setup (#111)
+- Implemented multi-environment configuration system with automated setup ([#111](https://github.com/ansopedia/user-service/issues/111))
   - Added support for test, development, and local environment configurations
   - Created scripts to automatically generate environment files from templates
   - Integrated RSA key generation into environment setup process
   - Added comprehensive documentation for environment management
-- Added username availability check endpoint (#103)
+- Added username availability check endpoint ([#103](https://github.com/ansopedia/user-service/issues/103))
   - New GET `/users/check-username/:username` endpoint
   - Comprehensive test coverage for validation cases
-- Enhanced Google OAuth profile data storage (#66)
+- Enhanced Google OAuth profile data storage ([#66](https://github.com/ansopedia/user-service/issues/66))
   - Added name fields to profile schema (name, givenName, familyName)
   - Store Google user's display name and name components
   - Update profile dto to include name fields
@@ -71,23 +82,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Integrated Socket.IO for real-time interactions (#86)
-- Enhanced Google Sign-In API with redirect support (#77)
-- Implemented pagination for Get Users endpoint (#68)
+- Integrated Socket.IO for real-time interactions ([#86](https://github.com/ansopedia/user-service/issues/86))
+- Enhanced Google Sign-In API with redirect support ([#77](https://github.com/ansopedia/user-service/issues/77))
+- Implemented pagination for Get Users endpoint ([#68](https://github.com/ansopedia/user-service/issues/68))
 - Added Profile Management APIs:
-  - Create Profile API (#60)
-  - Get Profile Data API (#61)
-  - Update Profile Data API (#62)
-- Implemented decentralized JWT token validation across microservices (#55)
-- Integrated Notification Service API (#32)
-- Implemented OTP verification for user registration (#23)
-- Implemented secure master OTP for development/staging environments (#24)
-- Implemented basic CRUD operations for user management (#1)
-- Set up database connection and test server (#2)
-- Implemented sendResponse function (#4)
-- Implemented error handler middleware and error constants (#6)
-- Implemented scalable role and permission schema for RBAC (#12)
-- Implemented user authentication (Login, Register, Forgot Password) (#14)
+  - Create Profile API ([#60](https://github.com/ansopedia/user-service/issues/60))
+  - Get Profile Data API ([#61](https://github.com/ansopedia/user-service/issues/61))
+  - Update Profile Data API ([#62](https://github.com/ansopedia/user-service/issues/62))
+- Implemented decentralized JWT token validation across microservices ([#55](https://github.com/ansopedia/user-service/issues/55))
+- Integrated Notification Service API ([#32](https://github.com/ansopedia/user-service/issues/32))
+- Implemented OTP verification for user registration ([#23](https://github.com/ansopedia/user-service/issues/23))
+- Implemented secure master OTP for development/staging environments ([#24](https://github.com/ansopedia/user-service/issues/24))
+- Implemented basic CRUD operations for user management ([#1](https://github.com/ansopedia/user-service/issues/1))
+- Set up database connection and test server ([#2](https://github.com/ansopedia/user-service/issues/2))
+- Implemented sendResponse function ([#4](https://github.com/ansopedia/user-service/issues/4))
+- Implemented error handler middleware and error constants ([#6](https://github.com/ansopedia/user-service/issues/6))
+- Implemented scalable role and permission schema for RBAC ([#12](https://github.com/ansopedia/user-service/issues/12))
+- Implemented user authentication (Login, Register, Forgot Password) ([#14](https://github.com/ansopedia/user-service/issues/14))
 - Logging system using Pino
 - Test coverage with Jest
 - ESLint and Prettier configuration
@@ -102,28 +113,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated API response structure to namespace payload under data (#83)
-- Optimized function names to use "Upsert" instead of "UpdateOrCreate" (#47)
-- Enhanced login API to support both email and username authentication (#41)
-- Updated dependencies (#25)
+- Updated API response structure to namespace payload under data ([#83](https://github.com/ansopedia/user-service/issues/83))
+- Optimized function names to use "Upsert" instead of "UpdateOrCreate" ([#47](https://github.com/ansopedia/user-service/issues/47))
+- Enhanced login API to support both email and username authentication ([#41](https://github.com/ansopedia/user-service/issues/41))
+- Updated dependencies ([#25](https://github.com/ansopedia/user-service/issues/25))
 
 ### Security
 
-- Configured global rate limiting (#71)
-- Created scalable and dynamic schema for storing tokens (#53)
-- Added route protection using authenticate and checkPermission middleware (#51)
-- Implemented strong password policy (#40, #48)
-- Encrypted JWT tokens (#37)
-- Implemented Role-Based Access Control (RBAC) with default roles and permissions (#28, #36)
-- Implemented middleware for access token validation and refresh (#21)
-- Integrated Helmet and CORS middleware (#16)
-- Implemented bcrypt for password hashing (#10)
+- Configured global rate limiting ([#71](https://github.com/ansopedia/user-service/issues/71))
+- Created scalable and dynamic schema for storing tokens ([#53](https://github.com/ansopedia/user-service/issues/53))
+- Added route protection using authenticate and checkPermission middleware ([#51](https://github.com/ansopedia/user-service/issues/51))
+- Implemented strong password policy ([#40](https://github.com/ansopedia/user-service/issues/40), [#48](https://github.com/ansopedia/user-service/issues/48))
+- Encrypted JWT tokens ([#37](https://github.com/ansopedia/user-service/issues/37))
+- Implemented Role-Based Access Control (RBAC) with default roles and permissions ([#28](https://github.com/ansopedia/user-service/issues/28), [#36](https://github.com/ansopedia/user-service/issues/36))
+- Implemented middleware for access token validation and refresh ([#21](https://github.com/ansopedia/user-service/issues/21))
+- Integrated Helmet and CORS middleware ([#16](https://github.com/ansopedia/user-service/issues/16))
+- Implemented bcrypt for password hashing ([#10](https://github.com/ansopedia/user-service/issues/10))
 - Added JWT-based authentication
 - Configured CORS protection
 
 ### Fixed
 
-- Fixed weak password acceptance during sign-up (#48)
+- Fixed weak password acceptance during sign-up [#48](https://github.com/ansopedia/user-service/issues/48)
 
 ### Developer Experience
 

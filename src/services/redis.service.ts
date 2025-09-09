@@ -38,9 +38,10 @@ class RedisService {
   }
 
   async setUserDeviceTokenVersion(userId: string, deviceId: string, tokenVersion: number): Promise<void> {
-    const expireSeconds = typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string"
-      ? parseInt(envConstants.ACCESS_TOKEN_EXPIRES_IN.replace(/[^0-9]/g, ""))
-      : envConstants.ACCESS_TOKEN_EXPIRES_IN;
+    const expireSeconds =
+      typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string"
+        ? parseInt(envConstants.ACCESS_TOKEN_EXPIRES_IN.replace(/[^0-9]/g, ""))
+        : envConstants.ACCESS_TOKEN_EXPIRES_IN;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (this.client as any).set(

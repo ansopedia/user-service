@@ -5,7 +5,7 @@ import { hashPassword } from "@/utils";
 import type { User } from "./user.validation.js";
 
 export interface IUser extends Document, User {
-  id: mongoose.Types.ObjectId  
+  id: mongoose.Types.ObjectId;
 }
 
 const userSchema = new Schema<IUser>(
