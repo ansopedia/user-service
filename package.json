@@ -44,7 +44,7 @@
     "ioredis": "5.7.0",
     "jsonwebtoken": "9.0.2",
     "maxmind": "^5.0.0",
-    "mongoose": "8.18.0",
+    "mongoose": "8.18.1",
     "morgan": "1.10.1",
     "passport": "0.7.0",
     "passport-google-oauth20": "2.0.0",
@@ -67,8 +67,8 @@
     "@types/passport": "1.0.17",
     "@types/passport-google-oauth20": "2.0.16",
     "@types/supertest": "6.0.3",
-    "@typescript-eslint/eslint-plugin": "8.42.0",
-    "@typescript-eslint/parser": "8.42.0",
+    "@typescript-eslint/eslint-plugin": "8.43.0",
+    "@typescript-eslint/parser": "8.43.0",
     "cross-env": "10.0.0",
     "eslint": "9.35.0",
     "eslint-plugin-check-file": "3.3.0",
@@ -83,7 +83,7 @@
     "tsconfig-paths": "4.2.0",
     "tsx": "^4.20.5",
     "typescript": "5.9.2",
-    "typescript-eslint": "8.42.0",
+    "typescript-eslint": "8.43.0",
     "vitest": "^3.2.4"
   },
   "husky": {
