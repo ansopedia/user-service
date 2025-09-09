@@ -1,4 +1,4 @@
-import { Redis } from "ioredis";
+import { Redis, type RedisOptions } from "ioredis";
 import ms from "ms";
 
 import { envConstants } from "@/constants";
@@ -8,7 +8,15 @@ class RedisService {
   private client: Redis;
 
   constructor() {
-    this.client = new Redis();
+    const redisConnectionStringProd: RedisOptions = {
+      username: envConstants.REDIS_USERNAME,
+      password: envConstants.REDIS_PASSWORD,
+      port: envConstants.REDIS_PORT,
+      host: envConstants.REDIS_HOST,
+      db: envConstants.REDIS_DB,
+    };
+
+    this.client = envConstants.NODE_ENV === "production" ? new Redis(redisConnectionStringProd) : new Redis();
 
     this.client.on("connect", () => {
       logger.info("Connected to Redis!");
