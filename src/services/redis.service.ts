@@ -8,7 +8,7 @@ class RedisService {
   private client: Redis;
 
   constructor() {
-    const redisConnectionStringProd: RedisOptions = {
+    const redisOptions: RedisOptions = {
       username: envConstants.REDIS_USERNAME,
       password: envConstants.REDIS_PASSWORD,
       port: envConstants.REDIS_PORT,
@@ -16,7 +16,7 @@ class RedisService {
       db: envConstants.REDIS_DB,
     };
 
-    this.client = envConstants.NODE_ENV === "production" ? new Redis(redisConnectionStringProd) : new Redis();
+    this.client = new Redis(redisOptions);
 
     this.client.on("connect", () => {
       logger.info("Connected to Redis!");
