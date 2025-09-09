@@ -144,17 +144,17 @@ The easiest way to run the service with its dependencies (MongoDB and Redis) is 
 2. Run the services:
 
    ```bash
-   docker-compose up
+   docker-compose up --build
    ```
 
    Or to run in detached mode:
 
    ```bash
-   docker-compose up -d
+   docker-compose up -d --build
    ```
 
    This will:
-   - Build the user service image.
+   - Build the user service image (including copying the GeoIP database).
    - Start MongoDB and Redis containers.
    - Start the user service container connected to the databases.
    - Expose the service on port 3000.
@@ -208,6 +208,7 @@ Alternatively, use an `.env` file to manage environment variables:
 - Never commit secrets or private keys into your Docker image or source control.
 - Use Docker secrets or your cloud provider’s secret management for production deployments.
 - The container exposes port `3000` by default; you can map it to any host port you prefer.
+docker build -t ansopedia-user-service .
 
 ## Security Notes
 
