@@ -158,10 +158,6 @@ export class AuthController {
 
     if (deviceId === undefined) throw new Error(ErrorTypeEnum.enum.UNAUTHORIZED);
 
-    // Extract access token from authorization header
-    // const authHeader = req.headers.authorization;
-    // const accessToken = authHeader != null ? extractTokenFromBearerString(authHeader) : undefined;
-
     await AuthService.logoutOthers(deviceId, userId);
     sendResponse({
       response: res,
@@ -173,6 +169,7 @@ export class AuthController {
   public static async getSessions(_: Request, res: Response) {
     const { userId } = res.locals.loggedInUser;
     const sessions = await AuthService.getSessions(userId);
+
     sendResponse({
       response: res,
       message: success.SESSIONS_FETCHED_SUCCESSFULLY,

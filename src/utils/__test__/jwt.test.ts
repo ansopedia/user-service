@@ -5,6 +5,8 @@ import { type AccessTokenPayload } from "@/api/v1/auth/auth.validation.js";
 import { ErrorTypeEnum } from "@/constants";
 import { extractTokenFromBearerString, generateAccessToken, generateRefreshToken } from "@/utils";
 
+import type { MongooseObjectId } from "../../types/index.js";
+
 vi.mock("jsonwebtoken", () => ({
   sign: vi.fn(),
   verify: vi.fn(),
@@ -19,7 +21,7 @@ describe("Jwt token", () => {
   };
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it("should generate an access token", () => {
@@ -28,7 +30,8 @@ describe("Jwt token", () => {
   });
 
   it("should generate a refresh token", () => {
-    const token = generateRefreshToken({ sessionId: new mongoose.Types.ObjectId() });
+    const sessionId = new mongoose.Types.ObjectId().toString() as unknown as MongooseObjectId;
+    const token = generateRefreshToken({ sessionId });
     expect(token).toBeDefined();
   });
 

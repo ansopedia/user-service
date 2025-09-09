@@ -44,7 +44,6 @@ export const generateRefreshToken = (payload: RefreshTokenPayload): string => {
   try {
     const cryptoUtil = CryptoUtil.getInstance();
     const privateKey = cryptoUtil.getPrivateKey();
-
     const refreshTokenPayload = validateRefreshTokenPayload(payload);
 
     return jwt.sign(refreshTokenPayload, privateKey, {

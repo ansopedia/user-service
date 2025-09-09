@@ -16,7 +16,7 @@ describe("generateRandomUsername", () => {
 
   it("should generate a valid username that validates against the username schema", () => {
     const username = generateRandomUsername();
-    const result = usernameSchema.safeParse({ username });
+    const result = usernameSchema.safeParse(username);
     expect(result.success).toBe(true);
   });
 });

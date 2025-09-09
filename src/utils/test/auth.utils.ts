@@ -157,10 +157,8 @@ export const expectResetPasswordSuccess = (response: Response): void => {
   });
 };
 
-export const logoutOthers = async (authorizationHeader: string, sessionId: string) => {
-  return await supertest(app).post("/api/v1/auth/logout-others").set("authorization", authorizationHeader).send({
-    sessionId,
-  });
+export const logoutOthers = async (authorizationHeader: string) => {
+  return await supertest(app).post("/api/v1/auth/logout-others").set("authorization", authorizationHeader);
 };
 export const logoutAllSessions = async (authorizationHeader: string) => {
   return await supertest(app).post("/api/v1/auth/logout-all").set("authorization", authorizationHeader);

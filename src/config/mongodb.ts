@@ -5,8 +5,19 @@ import { errorLogger } from "@/utils";
 
 const { DATABASE_URI, NODE_ENV, DB_NAME } = envConstants;
 
+// Generate unique database name for test environment to avoid conflicts
+const getTestDatabaseName = () => {
+  if (NODE_ENV === "test") {
+    // Use timestamp and random number for uniqueness
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 1000);
+    return `${DB_NAME}_test_${timestamp}_${random}`;
+  }
+  return DB_NAME;
+};
+
 const dbOptions: ConnectOptions = {
-  dbName: DB_NAME,
+  dbName: getTestDatabaseName(),
 };
 
 export const connectDB = async () => {
@@ -19,7 +30,6 @@ export const connectDB = async () => {
 
     if (NODE_ENV === "test") {
       await mongoose.connect(DATABASE_URI, dbOptions);
-      await mongoose.connection.db?.dropDatabase();
       return;
     }
 
@@ -34,6 +44,11 @@ export const connectDB = async () => {
 
 export const disconnectDB = async () => {
   try {
+    // Drop the database in test environment for complete cleanup
+    if (NODE_ENV === "test" && mongoose.connection.db) {
+      await mongoose.connection.db.dropDatabase();
+    }
+
     await mongoose.connection.close();
   } catch (error) {
     errorLogger.error(error);

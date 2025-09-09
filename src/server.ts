@@ -60,7 +60,17 @@ export const stopServer = (): Promise<void> => {
 
     server.close((err) => {
       if (err) {
-        reject(err);
+        // Force close all connections if graceful shutdown fails
+        server.closeAllConnections();
+        setTimeout(() => {
+          server.close((forceErr) => {
+            if (forceErr) {
+              reject(forceErr);
+            } else {
+              resolve();
+            }
+          });
+        }, 100); // Small delay to ensure port is freed
       } else {
         resolve();
       }
