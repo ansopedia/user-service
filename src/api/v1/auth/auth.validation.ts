@@ -44,14 +44,6 @@ export const authToken = AuthSchema.pick({
   refreshToken: true,
 });
 
-export const authenticateSchema = AuthSchema.pick({
-  refreshToken: true,
-  userId: true,
-  device: true,
-  ip: true,
-  userAgent: true,
-});
-
 const accessTokenPayload = z.object({
   userId: mongooseObjectId,
   deviceId: deviceId,
@@ -114,6 +106,5 @@ export type AccessTokenPayload = z.infer<typeof accessTokenPayload>;
 export type RefreshTokenPayload = z.infer<typeof refreshTokenPayload>;
 export type ActionTokenPayload = z.infer<typeof actionTokenPayload>;
 export type Login = z.infer<typeof loginSchema>;
-export type Auth = z.infer<typeof authenticateSchema>;
 export type AuthToken = z.infer<typeof authToken>;
 export type Session = z.infer<typeof session>;

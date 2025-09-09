@@ -1,4 +1,5 @@
 import { Redis } from "ioredis";
+import ms from "ms";
 
 import { envConstants } from "@/constants";
 import { errorLogger, logger } from "@/utils";
@@ -39,12 +40,11 @@ class RedisService {
 
   async setUserDeviceTokenVersion(userId: string, deviceId: string, tokenVersion: number): Promise<void> {
     const expireSeconds =
-      typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string"
-        ? parseInt(envConstants.ACCESS_TOKEN_EXPIRES_IN.replace(/[^0-9]/g, ""))
-        : envConstants.ACCESS_TOKEN_EXPIRES_IN;
+      typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string" && envConstants.ACCESS_TOKEN_EXPIRES_IN
+        ? ms(envConstants.ACCESS_TOKEN_EXPIRES_IN)
+        : (envConstants.ACCESS_TOKEN_EXPIRES_IN ?? 0) * 1000;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (this.client as any).set(
+    await this.client.set(
       `user_device_token_version_${userId}_${deviceId}`,
       tokenVersion.toString(),
       "EX",

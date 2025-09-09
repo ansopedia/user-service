@@ -40,15 +40,15 @@ RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 # Copy built application from build stage
 COPY --from=base /app/dist ./dist
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-  adduser -S nextjs -u 1001
+# Create non-root user and group with consistent names
+RUN addgroup -g 1001 -S appgroup && \
+  adduser -S appuser -G appgroup -u 1001
 
 # Change ownership of the app directory
-RUN chown -R nextjs:nodejs /app
+RUN chown -R appuser:appgroup /app
 
 # Switch to non-root user
-USER nextjs
+USER appuser
 
 # Expose port
 EXPOSE 3000

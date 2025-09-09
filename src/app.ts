@@ -72,6 +72,10 @@ app.use(pinoHttp({ logger }));
 app.use(addAxiosHeadersMiddleware);
 app.use(morgan("dev"));
 
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 app.use("/api/v1", routes);
 
 // Handling non matching request from the client

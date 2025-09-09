@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import ms from "ms";
 
 import { ErrorTypeEnum, STATUS_CODES, envConstants } from "@/constants";
 import { type GoogleUser } from "@/types";
@@ -66,15 +67,14 @@ export class AuthController {
 
     AuthController.setAuthTokenHeaders(res, accessToken, refreshToken, deviceId);
 
-    // TODO: Fix maxAge. sync with env
     res.cookie("authorization", accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
       maxAge:
-        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string"
-          ? parseInt(envConstants.ACCESS_TOKEN_EXPIRES_IN.replace(/[^0-9]/g, "")) * 1000
-          : envConstants.ACCESS_TOKEN_EXPIRES_IN,
+        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string" && envConstants.ACCESS_TOKEN_EXPIRES_IN
+          ? ms(envConstants.ACCESS_TOKEN_EXPIRES_IN)
+          : (envConstants.ACCESS_TOKEN_EXPIRES_IN ?? 0) * 1000,
     });
 
     res.cookie("refresh-token", refreshToken, {
@@ -82,9 +82,9 @@ export class AuthController {
       secure: true,
       sameSite: "strict",
       maxAge:
-        typeof envConstants.REFRESH_TOKEN_EXPIRES_IN === "string"
-          ? parseInt(envConstants.REFRESH_TOKEN_EXPIRES_IN.replace(/[^0-9]/g, "")) * 1000
-          : envConstants.REFRESH_TOKEN_EXPIRES_IN,
+        typeof envConstants.REFRESH_TOKEN_EXPIRES_IN === "string" && envConstants.REFRESH_TOKEN_EXPIRES_IN
+          ? ms(envConstants.REFRESH_TOKEN_EXPIRES_IN)
+          : (envConstants.REFRESH_TOKEN_EXPIRES_IN ?? 0) * 1000,
     });
 
     res.cookie("user-id", userId, {
@@ -92,9 +92,9 @@ export class AuthController {
       secure: true,
       sameSite: "strict",
       maxAge:
-        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string"
-          ? parseInt(envConstants.ACCESS_TOKEN_EXPIRES_IN.replace(/[^0-9]/g, "")) * 1000
-          : envConstants.ACCESS_TOKEN_EXPIRES_IN,
+        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string" && envConstants.ACCESS_TOKEN_EXPIRES_IN
+          ? ms(envConstants.ACCESS_TOKEN_EXPIRES_IN)
+          : (envConstants.ACCESS_TOKEN_EXPIRES_IN ?? 0) * 1000,
       domain: process.env.COOKIE_DOMAIN,
       ...(deviceInfo.geolocation?.country !== null && {
         // GDPR compliance for EU users
@@ -107,9 +107,9 @@ export class AuthController {
       secure: true,
       sameSite: "strict",
       maxAge:
-        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string"
-          ? parseInt(envConstants.ACCESS_TOKEN_EXPIRES_IN.replace(/[^0-9]/g, "")) * 1000
-          : envConstants.ACCESS_TOKEN_EXPIRES_IN,
+        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string" && envConstants.ACCESS_TOKEN_EXPIRES_IN
+          ? ms(envConstants.ACCESS_TOKEN_EXPIRES_IN)
+          : (envConstants.ACCESS_TOKEN_EXPIRES_IN ?? 0) * 1000,
     });
 
     // Validate and sanitize the redirect URL

@@ -22,11 +22,11 @@ const sendEmail = async (body: EmailNotification) => {
   } catch (error) {
     if (error instanceof Error) {
       if (error.message === "fetch failed") {
-        throw new Error(ErrorTypeEnum.Enum.NOTIFICATION_SERVICE_UNAVAILABLE);
+        throw new Error(ErrorTypeEnum.enum.NOTIFICATION_SERVICE_UNAVAILABLE);
       }
     } else {
       // TODO: fix with appropriate error message
-      throw new Error(ErrorTypeEnum.Enum.INTERNAL_SERVER_ERROR);
+      throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -40,7 +40,7 @@ const sendEmail = async (body: EmailNotification) => {
       requestBody: body,
     });
 
-    throw new Error(ErrorTypeEnum.Enum.NOTIFICATION_SERVICE_MISCONFIGURED);
+    throw new Error(ErrorTypeEnum.enum.NOTIFICATION_SERVICE_MISCONFIGURED);
   }
 };
 

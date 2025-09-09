@@ -250,7 +250,7 @@ export class AuthService {
     const session = await new SessionDAL().getSessionById(sessionId);
 
     if (!session) {
-      throw new Error(ErrorTypeEnum.Enum.SESSION_NOT_FOUND);
+      throw new Error(ErrorTypeEnum.enum.SESSION_NOT_FOUND);
     }
 
     if (!session.isActive) {
