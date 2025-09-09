@@ -43,21 +43,14 @@ if (isDevelopment) {
     ],
   });
 } else if (isProduction) {
-  // In production, use console logging by default (works in serverless environments)
+  // In production, use JSON logging to stdout (suitable for log aggregation)
   // You can configure this to use cloud logging services like:
   // - AWS CloudWatch
   // - Google Cloud Logging
   // - Azure Monitor
   // - Third-party services like Datadog, Loggly, etc.
 
-  transport = pino.transport({
-    target: "pino-pretty",
-    options: {
-      colorize: false,
-      translateTime: "SYS:standard",
-      ignore: "pid,hostname",
-    },
-  });
+  transport = pino.destination(1); // stdout
 } else {
   // For other environments (stage, etc.)
   transport = pino.transport({

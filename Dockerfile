@@ -40,6 +40,9 @@ RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 # Copy built application from build stage
 COPY --from=base /app/dist ./dist
 
+# Copy data directory with GeoIP database
+COPY --from=base /app/data ./data
+
 # Create non-root user and group with consistent names
 RUN addgroup -g 1001 -S appgroup && \
   adduser -S appuser -G appgroup -u 1001

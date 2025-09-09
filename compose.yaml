@@ -1,12 +1,32 @@
 version: "3.8"
 
 services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=production
+
   mongodb:
     image: mongo:latest
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db # Mount the named volume to MongoDB's data directory
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   redis:
     image: redis:latest
@@ -14,6 +34,12 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data # Mount the named volume to Redis's data directory
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   mongo_data:

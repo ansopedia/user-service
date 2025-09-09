@@ -135,24 +135,54 @@ Never commit `.env` files with real credentials.
 
 You can build and run the Ansopedia User Service using Docker. This ensures a consistent environment and makes deployment easier.
 
-### Build the Docker image
+### Using Docker Compose (Recommended)
+
+The easiest way to run the service with its dependencies (MongoDB and Redis) is using Docker Compose.
+
+1. Ensure you have a `.env` file with the required environment variables (see Environment Configuration section).
+
+2. Run the services:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+   Or to run in detached mode:
+
+   ```bash
+   docker-compose up -d --build
+   ```
+
+   This will:
+   - Build the user service image (including copying the GeoIP database).
+   - Start MongoDB and Redis containers.
+   - Start the user service container connected to the databases.
+   - Expose the service on port 3000.
+
+3. To stop the services:
+
+   ```bash
+   docker-compose down
+   ```
+
+### Using Docker Run (Standalone)
+
+If you prefer to run the container standalone (e.g., connecting to external databases), follow these steps:
+
+#### Build the Docker image
 
 ```bash
 docker build -t ansopedia-user-service .
 ```
 
-### Run the container with environment variables
+#### Run the container with environment variables
 
 You should pass environment variables like `NODE_ENV` and any secrets (database URLs, API keys) at runtime.
 
 Example using environment variables inline:
 
 ```bash
-docker run -d -p 3000:3000 \
-  -e NODE_ENV=production \
-  -e DATABASE_URI=your_DATABASE_URI \
-  -e JWT_PRIVATE_KEY="your_jwt_private_key" \
-  ansopedia-user-service
+docker run -p 3000:3000 --env-file .env ansopedia-user-service
 ```
 
 Alternatively, use an `.env` file to manage environment variables:
@@ -174,9 +204,11 @@ Alternatively, use an `.env` file to manage environment variables:
 ### Notes
 
 - The Dockerfile already sets `NODE_ENV=production` by default, but explicitly passing it at runtime is a good practice for clarity.
+- When using Docker Compose, ensure your `.env` file contains the correct database connection strings (e.g., `mongodb://mongodb:27017/yourdb` for the MongoDB service).
 - Never commit secrets or private keys into your Docker image or source control.
 - Use Docker secrets or your cloud provider’s secret management for production deployments.
 - The container exposes port `3000` by default; you can map it to any host port you prefer.
+docker build -t ansopedia-user-service .
 
 ## Security Notes
 
