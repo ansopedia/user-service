@@ -1,9 +1,16 @@
-import { Auth } from "@/api/v1/auth/auth.validation";
+import { DeviceInfo, LoggedInUser } from "../index.ts";
 
 declare global {
   namespace Express {
     interface Locals {
-      loggedInUser: Auth;
+      loggedInUser: LoggedInUser;
+    }
+    interface Request {
+      deviceInfo?: DeviceInfo;
+      security?: {
+        riskScore: number;
+        warnings: string[];
+      };
     }
   }
 }

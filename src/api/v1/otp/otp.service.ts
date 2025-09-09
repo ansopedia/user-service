@@ -1,18 +1,22 @@
-import { isPast } from "date-fns";
-import { formatDuration, intervalToDuration } from "date-fns";
+import { formatDuration, intervalToDuration, isPast } from "date-fns";
 
-import { success } from "@/api/v1/auth/auth.constant";
-import { UserService } from "@/api/v1/user/user.service";
-import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, envConstants } from "@/constants";
-import { NotificationType, UserActionType, notificationToActionMap } from "@/constants/events.constant";
-import { notificationService } from "@/services/notification.services";
+import { success } from "@/api/v1/auth/auth.constant.js";
+import { UserService } from "@/api/v1/user/user.service.js";
+import {
+  ErrorTypeEnum,
+  FIVE_MINUTES_IN_MS,
+  NotificationType,
+  UserActionType,
+  envConstants,
+  notificationToActionMap,
+} from "@/constants";
+import { notificationService } from "@/services";
 import { generateOTP, verifyOTP } from "@/utils";
 
-import { AuthService } from "../auth/auth.service";
-import { AuthToken } from "../auth/auth.validation";
-import { TokenService } from "../token/token.service";
-import { OtpDAL } from "./otp.dal";
-import { GetOtp, OtpEvent, OtpSchema, OtpVerifyEvent, otpEvent, otpVerifyEvent } from "./otp.validation";
+import { TokenService } from "../token/token.service.js";
+import { OtpDAL } from "./otp.dal.js";
+import type { GetOtp, OtpEvent, OtpSchema, OtpVerifyEvent } from "./otp.validation.js";
+import { otpEvent, otpVerifyEvent } from "./otp.validation.js";
 
 export class OtpService {
   public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string; token: string }> {
@@ -28,7 +32,7 @@ export class OtpService {
     // }
 
     let message: string = success.OTP_SENT;
-    const user = await UserService.getUserByEmail(validOtpEvent.email as string);
+    const user = await UserService.getUserByEmail(validOtpEvent.email);
 
     if (otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
       if (user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_VERIFIED);
@@ -67,12 +71,10 @@ export class OtpService {
     return { message, token };
   }
 
-  public static async verifyOtp(
-    otpEvents: OtpVerifyEvent
-  ): Promise<{ message: string; actionToken: string | AuthToken }> {
+  public static async verifyOtp(otpEvents: OtpVerifyEvent): Promise<{ message: string; actionToken: string }> {
     // Extract the token from the parsed event data
     const { otp, otpType, token: verificationToken } = otpVerifyEvent.parse(otpEvents);
-    let actionToken: string | AuthToken = "";
+    let actionToken: string = "";
     let message: string = success.OTP_VERIFIED_SUCCESSFULLY;
 
     const isMasterOTP = envConstants.MASTER_OTP === otp;
@@ -102,7 +104,7 @@ export class OtpService {
     if (otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
       await UserService.updateUser(userId, { isEmailVerified: true });
       message = success.EMAIL_VERIFIED_SUCCESSFULLY;
-      actionToken = await AuthService.generateAccessAndRefreshToken(userId);
+      actionToken = await tokenService.createActionToken(userId, UserActionType.AUTO_LOGIN);
     } else if (otpType === NotificationType.FORGET_PASSWORD_OTP) {
       actionToken = await tokenService.createActionToken(userId, UserActionType.RESET_PASSWORD);
       message = success.PASSWORD_RESET_SUCCESSFULLY;

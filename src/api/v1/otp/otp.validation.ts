@@ -1,19 +1,17 @@
 import { z } from "zod";
 
-import { userSchema } from "@/api/v1/user/user.validation";
-import { NotificationType, notificationTypeSchema } from "@/constants/events.constant";
-
-export const otp = z.string().length(6);
+import { NotificationType, notificationTypeSchema } from "@/constants";
+import { email, mongooseObjectId, otp } from "@/types";
 
 // Define separate schemas for each OTP type
 const emailVerificationOtpSchema = z.object({
   otpType: z.literal(NotificationType.EMAIL_VERIFICATION_OTP),
-  email: userSchema.shape.email,
+  email: email,
 });
 
 const forgetPasswordOtpSchema = z.object({
   otpType: z.literal(NotificationType.FORGET_PASSWORD_OTP),
-  email: userSchema.shape.email,
+  email: email,
 });
 
 // const phoneVerificationOtpSchema = z.object({
@@ -35,9 +33,9 @@ export const otpVerifyEvent = z.object({
 });
 
 export const otpSchema = z.object({
-  id: z.string(),
+  id: mongooseObjectId,
   otp,
-  userId: z.string().regex(/^[a-f\d]{24}$/i, "Invalid id"),
+  userId: mongooseObjectId,
   expiryTime: z.date(),
   otpType: notificationTypeSchema,
 });
@@ -50,7 +48,6 @@ export const getOtpSchema = otpSchema.pick({
 
 // Update types based on the new schemas
 export type OtpSchema = z.infer<typeof otpSchema>;
-export type OTP = z.infer<typeof otp>;
 export type OtpEvent = z.infer<typeof otpEvent>;
 export type GetOtp = z.infer<typeof getOtpSchema>;
 export type SaveOtp = z.infer<typeof saveOtpSchema>;

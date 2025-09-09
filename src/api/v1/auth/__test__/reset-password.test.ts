@@ -1,5 +1,6 @@
-import { Response } from "supertest";
+import type { Response } from "supertest";
 
+import { NotificationType, envConstants } from "@/constants";
 import {
   expectBadRequestResponseForValidationError,
   expectForgetPasswordSuccess,
@@ -15,9 +16,6 @@ import {
   verifyAccount,
   verifyOTP,
 } from "@/utils/test";
-
-import { envConstants } from "../../../../constants";
-import { NotificationType } from "../../../../constants/events.constant";
 
 const user = {
   username: "username",

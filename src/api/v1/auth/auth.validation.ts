@@ -1,15 +1,42 @@
 import { z } from "zod";
 
-import { otp } from "../otp/otp.validation";
-import { tokenSchema } from "../token/token.validation";
-import { userSchema } from "../user/user.validation";
+import { deviceId, deviceInfoSchema, mongooseObjectId, otp } from "@/types";
+
+import { tokenSchema } from "../token/token.validation.js";
+import { userSchema } from "../user/user.validation.js";
 
 const AuthSchema = z.object({
-  userId: z.string().regex(/^[a-f\d]{24}$/i, "Invalid id"),
+  userId: mongooseObjectId,
   refreshToken: z.string(),
   otp,
   accessToken: z.string(),
+  device: z.string().optional(),
+  ip: z.string().optional(),
+  userAgent: z.string().optional(),
 });
+
+export const session = z.object({
+  id: mongooseObjectId,
+  userId: mongooseObjectId,
+  refreshToken: z.string(),
+  tokenVersion: z.number().default(0),
+  lastActive: z.date().default(() => new Date()),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  deviceId: deviceId,
+  deviceInfo: deviceInfoSchema,
+  isActive: z.boolean().optional().default(true),
+});
+
+const refreshTokenSchema = z.object({
+  refreshToken: z.string(),
+});
+
+export type RefreshTokenSchema = z.infer<typeof refreshTokenSchema>;
+
+export const validateRefreshTokenSchema = (data: unknown) => {
+  return refreshTokenSchema.parse(data);
+};
 
 export const authToken = AuthSchema.pick({
   userId: true,
@@ -17,28 +44,33 @@ export const authToken = AuthSchema.pick({
   refreshToken: true,
 });
 
-export const authenticateSchema = AuthSchema.pick({
-  refreshToken: true,
-  userId: true,
-});
-
-export const jwtAccessTokenSchema = z.object({
-  userId: z.string(),
-  permissions: z.array(z.string()),
+const accessTokenPayload = z.object({
+  userId: mongooseObjectId,
+  deviceId: deviceId,
   tokenVersion: z.number(),
-  issuedAt: z.number(),
-  issuer: z.string(),
-  audience: z.string(),
+  permissions: z.array(z.string()),
 });
 
-export const jwtRefreshTokenSchema = z.object({
-  id: z.string(),
+export const validateAccessTokenPayload = (data: unknown) => {
+  return accessTokenPayload.parse(data);
+};
+
+const refreshTokenPayload = z.object({
+  sessionId: mongooseObjectId,
 });
 
-export const jwtActionTokenSchema = z.object({
-  userId: z.string(),
+export const validateRefreshTokenPayload = (data: unknown) => {
+  return refreshTokenPayload.parse(data);
+};
+
+const actionTokenPayload = z.object({
+  userId: mongooseObjectId,
   action: tokenSchema.shape.action,
 });
+
+export const validateActionTokenPayload = (data: unknown) => {
+  return actionTokenPayload.parse(data);
+};
 
 export const loginSchema = z
   .object({
@@ -64,15 +96,15 @@ export const loginSchema = z
   });
 
 const SignUpResponse = z.object({
-  userId: z.string(),
+  userId: mongooseObjectId,
   token: z.string(),
 });
 
 export type SignUpResponse = z.infer<typeof SignUpResponse>;
 
-export type JwtAccessToken = z.infer<typeof jwtAccessTokenSchema>;
-export type JwtRefreshToken = z.infer<typeof jwtRefreshTokenSchema>;
-export type JwtActionToken = z.infer<typeof jwtActionTokenSchema>;
+export type AccessTokenPayload = z.infer<typeof accessTokenPayload>;
+export type RefreshTokenPayload = z.infer<typeof refreshTokenPayload>;
+export type ActionTokenPayload = z.infer<typeof actionTokenPayload>;
 export type Login = z.infer<typeof loginSchema>;
-export type Auth = z.infer<typeof authenticateSchema>;
 export type AuthToken = z.infer<typeof authToken>;
+export type Session = z.infer<typeof session>;

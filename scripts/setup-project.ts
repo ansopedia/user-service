@@ -12,11 +12,11 @@ const setupProject = () => {
 
     // Generate environment files
     console.info("Generating environment files...");
-    execSync("ts-node scripts/generate-env-files.ts", { stdio: "inherit" });
+    execSync("tsx scripts/generate-env-files.ts", { stdio: "inherit" });
 
     // Generate RSA keys
     console.info("Generating RSA keys...");
-    execSync("ts-node scripts/generate-keys.ts", { stdio: "inherit" });
+    execSync("tsx scripts/generate-keys.ts", { stdio: "inherit" });
 
     // Update environment files with RSA keys
     console.info("Updating environment files with RSA keys...");

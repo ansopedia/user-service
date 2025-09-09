@@ -1,11 +1,11 @@
 import { isPast } from "date-fns";
 
-import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
-import { errorLogger, generateTokenForAction, verifyJWTToken } from "@/utils";
+import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, UserActionType } from "@/constants";
+import { type MongooseObjectId, Tokens } from "@/types";
+import { errorLogger, generateActionToken, verifyJWTToken } from "@/utils";
 
-import { UserActionType } from "../../../constants/events.constant";
-import { TokenDAL } from "./token.dal";
-import { CreateToken, Token } from "./token.validation";
+import { TokenDAL } from "./token.dal.js";
+import type { CreateToken, Token } from "./token.validation.js";
 
 export class TokenService {
   private tokenDAL: TokenDAL;
@@ -14,8 +14,8 @@ export class TokenService {
     this.tokenDAL = new TokenDAL();
   }
 
-  async createActionToken(userId: string, action: UserActionType) {
-    const token = generateTokenForAction({ userId, action });
+  async createActionToken(userId: MongooseObjectId, action: UserActionType) {
+    const token = generateActionToken({ userId, action });
 
     const tokenPayload: CreateToken = {
       userId,
@@ -31,7 +31,7 @@ export class TokenService {
 
   async verifyActionToken(token: string, action: UserActionType): Promise<Token> {
     try {
-      const verifiedToken = await verifyJWTToken<Token>(token, "action");
+      const verifiedToken = await verifyJWTToken<Token>(token, Tokens.ACTION);
 
       if (verifiedToken.action !== action) {
         throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN_TYPE);
@@ -53,7 +53,7 @@ export class TokenService {
     }
   }
 
-  async invalidateToken(tokenId: string) {
+  async invalidateToken(tokenId: MongooseObjectId) {
     await this.tokenDAL.updateToken(tokenId, { isUsed: true });
   }
 }

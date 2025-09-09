@@ -1,6 +1,6 @@
-import { Model, Schema, Types, model } from "mongoose";
+import { Model, Schema, model } from "mongoose";
 
-import { Permission, PermissionCategory } from "./permission.validation";
+import { type Permission, PermissionCategory } from "./permission.validation.js";
 
 const PermissionSchema: Schema<Permission> = new Schema<Permission>(
   {
@@ -25,24 +25,8 @@ const PermissionSchema: Schema<Permission> = new Schema<Permission>(
       enum: Object.values(PermissionCategory),
       required: true,
     },
-    createdBy: {
-      type: String,
-      required: true,
-      validate: {
-        validator: (v: string) => Types.ObjectId.isValid(v),
-        message: "createdBy must be a valid MongoDB ObjectId string",
-      },
-      ref: "User",
-    },
-    updatedBy: {
-      type: String,
-      required: true,
-      validate: {
-        validator: (v: string) => Types.ObjectId.isValid(v),
-        message: "updatedBy must be a valid MongoDB ObjectId string",
-      },
-      ref: "User",
-    },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    updatedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     isDeleted: {
       type: Boolean,
       default: false,

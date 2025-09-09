@@ -3,11 +3,11 @@ import { Server as SocketIOServer } from "socket.io";
 
 import { envConstants } from "@/constants";
 import { allowedOrigins } from "@/middlewares";
-import { CustomServer, CustomSocket } from "@/types/socket.types";
+import type { CustomServer, CustomSocket } from "@/types";
 
-import { connectionManager } from "./socket/connection-manager";
-import { setupEventHandlers } from "./socket/handlers";
-import { setupSocketMiddleware } from "./socket/middleware";
+import { connectionManager } from "./socket/connection-manager.js";
+import { setupEventHandlers } from "./socket/handlers.js";
+import { setupSocketMiddleware } from "./socket/middleware.js";
 
 const ALLOWED_ORIGINS = envConstants.NODE_ENV === "development" ? "*" : allowedOrigins;
 

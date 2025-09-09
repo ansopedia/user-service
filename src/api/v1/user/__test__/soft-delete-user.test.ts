@@ -16,7 +16,7 @@ import {
   login,
 } from "@/utils/test";
 
-import { GetUser } from "../user.validation";
+import { type GetUser } from "../user.validation.js";
 
 const newUser = {
   username: "username",
@@ -59,7 +59,7 @@ describe("Soft Delete User", () => {
   });
 
   it("should return 404 for user not found", async () => {
-    const response = await deleteUser(new mongoose.Types.ObjectId().toHexString(), authorizationHeader);
+    const response = await deleteUser(new mongoose.Types.ObjectId(), authorizationHeader);
     expectUserNotFoundError(response);
   });
 

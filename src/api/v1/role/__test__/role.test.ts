@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
 import {
   createRoleRequest,
@@ -14,12 +16,12 @@ import {
   verifyAccount,
 } from "@/utils/test";
 
-import { createRole } from "../role.validation";
+import type { createRole } from "../role.validation.js";
 
 const VALID_ROLE: createRole = {
   name: "new-role",
   description: "this is new-role creating first time",
-  createdBy: "65f6dac9156e93e7b6f1b88d",
+  createdBy: new mongoose.Types.ObjectId(),
   isSystemRole: false,
   isDeleted: false,
 };

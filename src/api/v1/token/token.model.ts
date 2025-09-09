@@ -1,19 +1,12 @@
-import { Model, Schema, Types, model } from "mongoose";
+import { Model, Schema, model } from "mongoose";
 
-import { UserActionType } from "../../../constants/events.constant";
-import { Token } from "./token.validation";
+import { UserActionType } from "@/constants";
+
+import type { Token } from "./token.validation.js";
 
 const TokenSchema: Schema<Token> = new Schema(
   {
-    userId: {
-      type: String,
-      required: true,
-      validate: {
-        validator: (v: string) => Types.ObjectId.isValid(v),
-        message: "userId must be a valid MongoDB ObjectId string",
-      },
-      ref: "User",
-    },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     action: {
       type: String,
       enum: Object.values(UserActionType),
@@ -42,4 +35,5 @@ const TokenSchema: Schema<Token> = new Schema(
   { timestamps: true }
 );
 
+TokenSchema.index({ userId: 1, action: 1 }, { unique: true });
 export const TokenModel: Model<Token> = model<Token>("Token", TokenSchema);

@@ -1,7 +1,10 @@
 /* eslint-disable no-console */
 import fs from "fs";
-import path from "path";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const ENVIRONMENTS = ["test", "development", "local"];
 const ENV_EXAMPLE_PATH = path.join(__dirname, "..", ".env.example");
 const ENV_DIR = path.join(__dirname, "..", "environments");

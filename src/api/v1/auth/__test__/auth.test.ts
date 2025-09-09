@@ -1,6 +1,6 @@
-import { ZodError, ZodIssue } from "zod";
+import { ZodError, type ZodIssue } from "zod";
 
-import { Login, loginSchema } from "@/api/v1/auth/auth.validation";
+import { type Login, loginSchema } from "@/api/v1/auth/auth.validation.js";
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 import {
   expectSignUpSuccess,
@@ -77,7 +77,7 @@ describe("Auth Test", () => {
   //   const loginResponse = await login(VALID_CREDENTIALS);
 
   //   // Mock verifyToken to throw a TokenExpiredError
-  //   const refreshToken = sign({ id: loginResponse.body.userId }, envConstants.JWT_REFRESH_SECRET, { expiresIn: "0s" });
+  //   const refreshToken = sign({ id: loginResponse.body.userId }, envConstants.REFRESH_TOKEN_SECRET, { expiresIn: "0s" });
 
   //   const response = await renewToken(`Bearer ${refreshToken}`);
 

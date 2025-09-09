@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import { STATUS_CODES } from "@/constants";
 import { sendResponse } from "@/utils";
 
-import { success } from "./role.constant";
-import { RoleService } from "./role.service";
+import { success } from "./role.constant.js";
+import { RoleService } from "./role.service.js";
 
 export const createRole = async (req: Request, res: Response) => {
   const role = await RoleService.createRole(req.body);

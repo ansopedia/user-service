@@ -1,5 +1,8 @@
-import { createRole } from "@/api/v1/role/role.validation";
+import mongoose from "mongoose";
+
+import { type createRole } from "@/api/v1/role/role.validation.js";
 import { defaultUsers } from "@/constants";
+import { type MongooseObjectId } from "@/types";
 import {
   createRoleRequest,
   createUserRoleRequest,
@@ -12,14 +15,14 @@ import {
 const VALID_ROLE: createRole = {
   name: "new-role",
   description: "this is super admin creating first time",
-  createdBy: "65f6dac9156e93e7b6f1b88d",
+  createdBy: new mongoose.Types.ObjectId(),
   isSystemRole: false,
   isDeleted: false,
 };
 
 describe("User Role Test", () => {
   let authorizationHeader: string;
-  let loggedInUserId: string;
+  let loggedInUserId: MongooseObjectId;
 
   beforeAll(async () => {
     const loginResponse = await login(defaultUsers);

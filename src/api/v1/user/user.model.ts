@@ -1,10 +1,14 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Document, Schema, model } from "mongoose";
 
 import { hashPassword } from "@/utils";
 
-import { User } from "./user.validation";
+import type { User } from "./user.validation.js";
 
-const UserSchema = new Schema<User>(
+export interface IUser extends Document, User {
+  id: mongoose.Types.ObjectId;
+}
+
+const userSchema = new Schema<IUser>(
   {
     googleId: { type: String },
     username: {
@@ -40,7 +44,8 @@ const UserSchema = new Schema<User>(
   { timestamps: true }
 );
 
-UserSchema.pre("save", async function (next): Promise<void> {
+// Hash password before saving
+userSchema.pre("save", async function (next): Promise<void> {
   if (!this.isModified("password")) return next();
 
   this.password = await hashPassword(this.password);
@@ -48,4 +53,4 @@ UserSchema.pre("save", async function (next): Promise<void> {
   next();
 });
 
-export const UserModel = model<User>("User", UserSchema);
+export const UserModel = model<IUser>("User", userSchema);

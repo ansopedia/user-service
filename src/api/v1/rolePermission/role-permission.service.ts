@@ -1,8 +1,8 @@
 import { ErrorTypeEnum } from "@/constants";
 
-import { RolePermissionDAL } from "./role-permission.dal";
-import { RolePermissionDto } from "./role-permission.dto";
-import { RolePermission, rolePermissionSchema } from "./role-permission.validation";
+import { RolePermissionDAL } from "./role-permission.dal.js";
+import { RolePermissionDto } from "./role-permission.dto.js";
+import { type RolePermission, rolePermissionSchema } from "./role-permission.validation.js";
 
 export class RolePermissionService {
   static async createRolePermission(createRolePermission: RolePermission) {

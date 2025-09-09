@@ -1,6 +1,6 @@
-import { Model, Schema, Types, model } from "mongoose";
+import { Model, Schema, model } from "mongoose";
 
-import { Role } from "./role.validation";
+import type { Role } from "./role.validation.js";
 
 const RoleSchema: Schema<Role> = new Schema(
   {
@@ -28,24 +28,8 @@ const RoleSchema: Schema<Role> = new Schema(
       type: Boolean,
       default: false,
     },
-    createdBy: {
-      type: String,
-      required: true,
-      validate: {
-        validator: (v: string) => Types.ObjectId.isValid(v),
-        message: "createdBy must be a valid MongoDB ObjectId string",
-      },
-      ref: "User",
-    },
-    updatedBy: {
-      type: String,
-      required: true,
-      validate: {
-        validator: (v: string) => Types.ObjectId.isValid(v),
-        message: "updatedBy must be a valid MongoDB ObjectId string",
-      },
-      ref: "User",
-    },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    updatedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
 );

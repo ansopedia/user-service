@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { checkPermission, validateAccessToken } from "@/middlewares";
+import { authenticate, checkPermission } from "@/middlewares";
 
 import {
   checkUsernameAvailability,
@@ -9,15 +9,15 @@ import {
   getUserByUsername,
   restoreUser,
   softDeleteUser,
-} from "./user.controller";
+} from "./user.controller.js";
 
 const router = Router();
 
-router.post("/users", validateAccessToken, checkPermission(["create-users"]), createUser);
-router.get("/users", validateAccessToken, getAllUsers);
+router.post("/users", authenticate, checkPermission(["create-users"]), createUser);
+router.get("/users", authenticate, getAllUsers);
 router.get("/users/check-username/:username", checkUsernameAvailability);
-router.get("/users/:username", validateAccessToken, getUserByUsername);
-router.delete("/users/:userId", validateAccessToken, checkPermission(["delete-users"]), softDeleteUser);
-router.patch("/users/:userId/restore", validateAccessToken, checkPermission(["restore-users"]), restoreUser);
+router.get("/users/:username", authenticate, getUserByUsername);
+router.delete("/users/:userId", authenticate, checkPermission(["delete-users"]), softDeleteUser);
+router.patch("/users/:userId/restore", authenticate, checkPermission(["restore-users"]), restoreUser);
 
 export { router as userRoutes };

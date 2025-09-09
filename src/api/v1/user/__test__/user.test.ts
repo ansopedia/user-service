@@ -12,7 +12,7 @@ import {
   login,
 } from "@/utils/test";
 
-import { success } from "../user.constant";
+import { success } from "../user.constant.js";
 
 const newUser = {
   username: "username",

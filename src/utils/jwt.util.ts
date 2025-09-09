@@ -1,52 +1,38 @@
 import jwt from "jsonwebtoken";
 
-import { AuthDAL } from "@/api/v1/auth/auth.dal";
 import {
-  JwtActionToken,
-  JwtRefreshToken,
-  jwtAccessTokenSchema,
-  jwtActionTokenSchema,
-  jwtRefreshTokenSchema,
-} from "@/api/v1/auth/auth.validation";
-import {
-  ACTION_TOKEN_EXPIRY_TIME,
-  CURRENT_SERVICE,
-  ErrorTypeEnum,
-  Permission,
-  ServiceEnum,
-  envConstants,
-} from "@/constants";
+  type AccessTokenPayload,
+  type ActionTokenPayload,
+  type RefreshTokenPayload,
+  validateActionTokenPayload,
+  validateRefreshTokenPayload,
+} from "@/api/v1/auth/auth.validation.js";
+import { CURRENT_SERVICE, ErrorTypeEnum, ServiceEnum, envConstants } from "@/constants";
+import { Tokens } from "@/types";
 
-import { CryptoUtil } from "./crypto.util";
-import { errorLogger } from "./logger";
+import { CryptoUtil } from "./crypto.util.js";
+import { errorLogger } from "./logger.js";
 
-const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, JWT_TOKEN_FOR_ACTION_SECRET } = envConstants;
+const { ACTION_TOKEN_SECRET } = envConstants;
 
-export const tokenSecrets = {
-  access: JWT_ACCESS_SECRET,
-  refresh: JWT_REFRESH_SECRET,
-  action: JWT_TOKEN_FOR_ACTION_SECRET,
-};
-
-export const generateAccessToken = async (payload: { userId: string; permissions: Permission[] }): Promise<string> => {
+export const generateAccessToken = (payload: Omit<AccessTokenPayload, "issuer" | "audience">): string => {
   const cryptoUtil = CryptoUtil.getInstance();
   const privateKey = cryptoUtil.getPrivateKey();
 
-  try {
-    const tokenPayload = jwtAccessTokenSchema.parse({
-      userId: payload.userId,
-      permissions: payload.permissions,
-      tokenVersion: 1,
-      issuedAt: Date.now(),
-      issuer: CURRENT_SERVICE,
-      audience: CURRENT_SERVICE,
-    });
+  const accessToken: AccessTokenPayload = {
+    userId: payload.userId,
+    deviceId: payload.deviceId,
+    permissions: payload.permissions,
+    tokenVersion: payload.tokenVersion,
+  };
 
-    return jwt.sign(tokenPayload, privateKey, {
+  try {
+    return jwt.sign(accessToken, privateKey, {
       algorithm: "RS256",
-      expiresIn: "1h",
+      expiresIn: envConstants.ACCESS_TOKEN_EXPIRES_IN,
       audience: CURRENT_SERVICE,
       issuer: CURRENT_SERVICE,
+      jwtid: crypto.randomUUID(),
     });
   } catch (error) {
     errorLogger.error(`Access token generation error: ${error}`);
@@ -54,23 +40,31 @@ export const generateAccessToken = async (payload: { userId: string; permissions
   }
 };
 
-export const generateRefreshToken = async (payload: JwtRefreshToken): Promise<string> => {
-  const cryptoUtil = CryptoUtil.getInstance();
-  const privateKey = cryptoUtil.getPrivateKey();
+export const generateRefreshToken = (payload: RefreshTokenPayload): string => {
+  try {
+    const cryptoUtil = CryptoUtil.getInstance();
+    const privateKey = cryptoUtil.getPrivateKey();
+    const refreshTokenPayload = validateRefreshTokenPayload(payload);
 
-  const validPayload = jwtRefreshTokenSchema.parse(payload);
-  return jwt.sign(validPayload, privateKey, {
-    algorithm: "RS256",
-    expiresIn: "7d",
-    audience: CURRENT_SERVICE,
-    issuer: CURRENT_SERVICE,
-  });
+    return jwt.sign(refreshTokenPayload, privateKey, {
+      algorithm: "RS256",
+      expiresIn: envConstants.REFRESH_TOKEN_EXPIRES_IN,
+      audience: CURRENT_SERVICE,
+      issuer: CURRENT_SERVICE,
+      jwtid: crypto.randomUUID(),
+    });
+  } catch (error) {
+    errorLogger.error(`Refresh token generation error: ${error}`);
+    throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
+  }
 };
 
-export const generateTokenForAction = (payload: JwtActionToken) => {
-  const validPayload = jwtActionTokenSchema.parse(payload);
-  return jwt.sign(validPayload, JWT_TOKEN_FOR_ACTION_SECRET, {
-    expiresIn: ACTION_TOKEN_EXPIRY_TIME,
+export const generateActionToken = (payload: ActionTokenPayload) => {
+  const actionTokenPayload = validateActionTokenPayload(payload);
+
+  return jwt.sign(actionTokenPayload, ACTION_TOKEN_SECRET, {
+    algorithm: "HS256",
+    expiresIn: envConstants.ACTION_TOKEN_EXPIRES_IN,
     audience: CURRENT_SERVICE,
     issuer: CURRENT_SERVICE,
   });
@@ -78,30 +72,23 @@ export const generateTokenForAction = (payload: JwtActionToken) => {
 
 export const verifyJWTToken = async <T>(
   token: string,
-  tokenType: "access" | "refresh" | "action",
+  tokenType: Tokens,
   serviceName: ServiceEnum = CURRENT_SERVICE
-): Promise<T> => {
+): Promise<T & jwt.JwtPayload> => {
   try {
     const cryptoUtil = CryptoUtil.getInstance();
     const publicKey = cryptoUtil.getPublicKey();
 
-    const secret = tokenType === "action" ? JWT_TOKEN_FOR_ACTION_SECRET : publicKey;
-    const algorithm = tokenType === "action" ? "HS256" : "RS256";
+    const secret = tokenType === Tokens.ACTION ? ACTION_TOKEN_SECRET : publicKey;
+    const algorithm: jwt.Algorithm = tokenType === Tokens.ACTION ? "HS256" : "RS256";
 
-    const verifyOptions = {
-      algorithms: [algorithm] as jwt.Algorithm[],
+    const verifyOptions: jwt.VerifyOptions = {
+      algorithms: [algorithm],
       audience: serviceName,
       issuer: CURRENT_SERVICE,
     };
 
-    const verifiedToken = jwt.verify(token, secret, verifyOptions) as T;
-
-    if (tokenType === "refresh") {
-      const storedToken = await AuthDAL.getAuthByRefreshToken(token);
-      if (!storedToken) {
-        throw new Error(ErrorTypeEnum.enum.TOKEN_EXPIRED);
-      }
-    }
+    const verifiedToken = jwt.verify(token, secret, verifyOptions) as T & jwt.JwtPayload;
 
     return verifiedToken;
   } catch (error) {

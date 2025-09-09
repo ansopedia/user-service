@@ -6,29 +6,32 @@ import { z } from "zod";
 /**
  * User account action types that require verification or confirmation
  */
-export enum UserActionType {
+export const UserActionType = {
   // Authentication actions
-  VERIFY_EMAIL = "verifyEmail",
-  RESET_PASSWORD = "resetPassword",
-  DELETE_ACCOUNT = "deleteAccount",
-  CHANGE_SUBSCRIPTION = "changeSubscription",
-  VERIFY_PHONE = "verifyPhone",
-}
+  VERIFY_EMAIL: "verifyEmail",
+  RESET_PASSWORD: "resetPassword",
+  AUTO_LOGIN: "autoLogin",
+  DELETE_ACCOUNT: "deleteAccount",
+  CHANGE_SUBSCRIPTION: "changeSubscription",
+  VERIFY_PHONE: "verifyPhone",
+} as const;
+
+export type UserActionType = (typeof UserActionType)[keyof typeof UserActionType];
 
 /**
  * Notification event types for various user communications
  */
-export enum NotificationType {
+export const NotificationType = {
   // Email verification
-  EMAIL_VERIFICATION_OTP = "emailVerificationOtp",
-  // EMAIL_VERIFICATION_MAGIC_LINK = 'emailVerificationMagicLink',
+  EMAIL_VERIFICATION_OTP: "emailVerificationOtp",
+  // EMAIL_VERIFICATION_MAGIC_LINK : 'emailVerificationMagicLink',
 
   // Email changes
-  // EMAIL_CHANGE_CONFIRMATION = 'emailChangeConfirmation',
+  // EMAIL_CHANGE_CONFIRMATION : 'emailChangeConfirmation',
 
   // Password operations
-  FORGET_PASSWORD_OTP = "forgetPasswordOtp",
-  PASSWORD_CHANGE_CONFIRMATION = "passwordChangeConfirmation",
+  FORGET_PASSWORD_OTP: "forgetPasswordOtp",
+  PASSWORD_CHANGE_CONFIRMATION: "passwordChangeConfirmation",
 
   // Phone verification
   // PHONE_VERIFICATION = 'phoneVerification',
@@ -48,7 +51,9 @@ export enum NotificationType {
   // NEWSLETTER_OPT_IN = "newsletterOptIn",
   // ACCOUNT_LOCKOUT = "accountLockout",
   // PASSWORD_EXPIRATION_REMINDER = "passwordExpirationReminder",
-}
+};
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType];
 
 /**
  * Mapping between notification types and user action types

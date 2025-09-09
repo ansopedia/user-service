@@ -1,12 +1,12 @@
-import { Types } from "mongoose";
+import mongoose from "mongoose";
 
-import { CreatePermission, PermissionCategory } from "@/api/v1/permission/permission.validation";
-import { createRole } from "@/api/v1/role/role.validation";
+import { type CreatePermission, PermissionCategory } from "@/api/v1/permission/permission.validation.js";
+import { type createRole } from "@/api/v1/role/role.validation.js";
 
-import { envConstants } from "./env.constant";
+import { envConstants } from "./env.constant.js";
 
 // Generate a unique ObjectId for the system user, which might represent a system-level action
-const systemUserObjectId: string = new Types.ObjectId().toHexString();
+const systemUserObjectId = new mongoose.Types.ObjectId();
 
 export interface IDefaultRolePermission {
   [key: string]: string[];

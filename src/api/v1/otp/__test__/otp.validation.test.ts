@@ -1,8 +1,8 @@
 import { ZodError } from "zod";
 
-import { NotificationType } from "@/constants/events.constant";
+import { NotificationType } from "@/constants";
 
-import { OtpEvent, otpEvent } from "../otp.validation";
+import { type OtpEvent, otpEvent } from "../otp.validation.js";
 
 describe("Test OTP validation", () => {
   const otpTypes: OtpEvent = {
@@ -16,7 +16,7 @@ describe("Test OTP validation", () => {
     try {
       otpEvent.parse(otpTypesWithoutEmail);
     } catch (error) {
-      expect((error as ZodError).errors[0].message).toBe("Required");
+      expect((error as ZodError).errors[0].message).toBe("Email is required");
       expect((error as ZodError).errors[0].path).toEqual(["email"]);
     }
   });

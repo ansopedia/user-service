@@ -1,34 +1,9 @@
 import { z } from "zod";
 
-import { DEFAULT_PAGINATION_LIMIT, DEFAULT_PAGINATION_OFFSET, MAX_PAGINATION_LIMIT } from "@/constants";
-
-export const username = z
-  .string()
-  .min(3, "username must be at least 3 characters")
-  .max(18, "username must be at most 18 characters")
-  .regex(/^[a-z]/i, "username must start with a letter")
-  .regex(/^[a-z0-9-_]*$/i, "username can only contain alphanumeric characters, hyphens, and underscores")
-  .transform((val) => val.toLowerCase().trim());
-
-export const password = z
-  .string()
-  .min(8, "Password must be at least 8 characters long")
-  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-  .regex(/[0-9]/, "Password must contain at least one numeric digit")
-  .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character")
-  .refine(
-    (password) => {
-      const repeatedChars = /(.)\1{2,}/;
-      return !repeatedChars.test(password);
-    },
-    {
-      message: "Password should not contain repeated characters",
-    }
-  );
+import { mongooseObjectId, password, username } from "@/types";
 
 export const userSchema = z.object({
-  id: z.string().uuid(),
+  id: mongooseObjectId,
   googleId: z.string().optional(),
   username: username,
   email: z.string().email().trim().toLowerCase().min(1, "Email is required"),
@@ -39,6 +14,10 @@ export const userSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
 });
+
+const DEFAULT_PAGINATION_LIMIT = 10;
+const MAX_PAGINATION_LIMIT = 100;
+const DEFAULT_PAGINATION_OFFSET = 0;
 
 export const paginationSchema = z.object({
   limit: z
@@ -77,19 +56,7 @@ const createUserWithEmailAndPasswordSchema = userSchema
     path: ["confirmPassword"],
   });
 
-const createUserSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
-
-export const validateUsername = userSchema.pick({ username: true });
-
-export const validEmail = z
-  .string({ message: "Email is required" })
-  .min(1, { message: "Email is required" })
-  .email({ message: "Invalid email format" })
-  .transform((val) => val.toLowerCase().trim());
-
-export const validateEmail = (email: string): string => {
-  return validEmail.parse(email);
-};
+const registerSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
 
 export const updateUserSchema = userSchema
   .partial() // Make all keys optional
@@ -118,18 +85,17 @@ export const resetPasswordSchema = userSchema
   });
 
 export type User = z.infer<typeof userSchema>;
-export type CreateUser = z.infer<typeof createUserSchema>;
+export type RegisterSchema = z.infer<typeof registerSchema>;
 export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type GetUser = z.infer<typeof getUserSchema>;
-export type Email = z.infer<typeof validEmail>;
 export type ResetPassword = z.infer<typeof resetPasswordSchema>;
 export type Pagination = z.infer<typeof paginationSchema>;
 
-export const validateCreateUser = (data: CreateUser) => {
-  createUserSchema.parse(data);
+export const validateRegister = (data: unknown) => {
+  return registerSchema.parse(data);
 };
 
-export const validateResetPasswordSchema = (data: ResetPassword): { password: string; token: string } => {
+export const validateResetPasswordSchema = (data: unknown): ResetPassword => {
   return resetPasswordSchema.parse(data);
 };
 
@@ -142,7 +108,7 @@ export interface UserRolePermission {
   username: string;
   email: string;
   roles: Role[];
-  allPermissions: AllPermission[];
+  allPermissions: Permission[];
 }
 
 export interface Role {
@@ -153,12 +119,6 @@ export interface Role {
 }
 
 export interface Permission {
-  _id: string;
-  name: string;
-  description: string;
-}
-
-export interface AllPermission {
   _id: string;
   name: string;
   description: string;

@@ -10,4 +10,6 @@ export const success = {
   FORGET_PASSWORD_EMAIL_SENT: "Forget password email sent",
   PASSWORD_RESET_SUCCESSFULLY: "Password reset successfully",
   EMAIL_VERIFIED_SUCCESSFULLY: "Email verified successfully",
+  SESSIONS_FETCHED_SUCCESSFULLY: "Sessions fetched successfully",
+  AUTO_LOGIN_SUCCESSFUL: "Auto login successful",
 };

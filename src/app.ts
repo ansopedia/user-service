@@ -4,7 +4,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
 import passport from "passport";
-import pinoHttp from "pino-http";
+import { pinoHttp } from "pino-http";
 
 import {
   ErrorTypeEnum,
@@ -13,11 +13,11 @@ import {
   RATE_LIMIT_WINDOW_MS,
   envConstants,
 } from "@/constants";
-import { addAxiosHeadersMiddleware, errorHandler } from "@/middlewares";
+import { addAxiosHeadersMiddleware, botDetectionMiddleware, errorHandler } from "@/middlewares";
 import { routes } from "@/routes";
 import { errorLogger, logger } from "@/utils";
 
-import "./config/passport";
+import "./config/passport.js";
 
 const { NODE_ENV } = envConstants;
 
@@ -63,11 +63,18 @@ const globalLimiter = rateLimit({
 
 app.use(globalLimiter);
 
+// Bot detection middleware - early in the chain to block bots before processing
+app.use(botDetectionMiddleware);
+
 app.use(express.json());
 app.use(passport.initialize());
 app.use(pinoHttp({ logger }));
 app.use(addAxiosHeadersMiddleware);
 app.use(morgan("dev"));
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
 app.use("/api/v1", routes);
 

@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
-import { UserDAL } from "@/api/v1/user/user.dal";
-import { ErrorTypeEnum, Permission } from "@/constants";
+import { UserDAL } from "@/api/v1/user/user.dal.js";
+import { ErrorTypeEnum, type Permission } from "@/constants";
 
 export const checkPermission = (requiredPermissions: Permission[]) => {
   return async (_: Request, res: Response, next: NextFunction) => {

@@ -1,4 +1,4 @@
-import { validateUsername } from "@/api/v1/user/user.validation";
+import { username as usernameSchema } from "@/types";
 import { generateRandomUsername } from "@/utils";
 
 describe("generateRandomUsername", () => {
@@ -16,7 +16,7 @@ describe("generateRandomUsername", () => {
 
   it("should generate a valid username that validates against the username schema", () => {
     const username = generateRandomUsername();
-    const result = validateUsername.safeParse({ username });
+    const result = usernameSchema.safeParse(username);
     expect(result.success).toBe(true);
   });
 });

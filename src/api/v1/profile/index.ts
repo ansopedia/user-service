@@ -1,3 +1,3 @@
-export * from "./profile.service";
-export * from "./profile.validation";
-export * from "./profile.constant";
+export * from "./profile.service.js";
+export * from "./profile.validation.js";
+export * from "./profile.constant.js";

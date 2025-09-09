@@ -1,17 +1,18 @@
-import { SocketUser } from "@/types/socket.types";
+import type { SocketUser } from "@/types";
+import { type MongooseObjectId } from "@/types";
 
 class ConnectionManager {
-  private connectedUsers: Map<string, SocketUser>;
+  private connectedUsers: Map<MongooseObjectId, SocketUser>;
 
   constructor() {
     this.connectedUsers = new Map();
   }
 
-  addUser(userId: string, socketId: string) {
+  addUser(userId: MongooseObjectId, socketId: string) {
     this.connectedUsers.set(userId, { userId, socketId });
   }
 
-  removeUser(userId: string) {
+  removeUser(userId: MongooseObjectId) {
     this.connectedUsers.delete(userId);
   }
 
@@ -19,7 +20,7 @@ class ConnectionManager {
     return Array.from(this.connectedUsers.values());
   }
 
-  isUserConnected(userId: string) {
+  isUserConnected(userId: MongooseObjectId) {
     return this.connectedUsers.has(userId);
   }
 }

@@ -1,15 +1,14 @@
-import supertest, { Response } from "supertest";
+import supertest, { type Response } from "supertest";
 
-import { success } from "@/api/v1/auth/auth.constant";
-import { Login, SignUpResponse } from "@/api/v1/auth/auth.validation";
-import { app } from "@/app";
-import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
-import { NotificationType } from "@/constants/events.constant";
+import { success } from "@/api/v1/auth/auth.constant.js";
+import type { Login, SignUpResponse } from "@/api/v1/auth/auth.validation.js";
+import { ErrorTypeEnum, NotificationType, STATUS_CODES, errorMap } from "@/constants";
 
-import { ResetPassword } from "../../api/v1/user/user.validation";
-import { expectOTPVerificationSuccess, retrieveOTP, verifyOTP } from "./otp.utils";
+import { type ResetPassword } from "../../api/v1/user/user.validation.js";
+import { app } from "../../app.js";
+import { expectOTPVerificationSuccess, retrieveOTP, verifyOTP } from "./otp.utils.js";
 
-export const login = async (loginData: Login): Promise<Response> => {
+export const login = async (loginData: Omit<Login, "deviceInfo">): Promise<Response> => {
   return supertest(app).post("/api/v1/auth/login").send(loginData);
 };
 
@@ -47,7 +46,7 @@ export const signUp = async (signUpData: {
   password: string;
   confirmPassword: string;
 }): Promise<Response> => {
-  return await supertest(app).post("/api/v1/auth/sign-up").send(signUpData);
+  return await supertest(app).post("/api/v1/auth/register").send(signUpData);
 };
 
 export const expectSignUpSuccess = (response: Response): void => {
@@ -77,7 +76,7 @@ export const expectLogoutSuccess = (response: Response) => {
 };
 
 export const renewToken = async (refreshToken: string) => {
-  return await supertest(app).post("/api/v1/auth/refresh-token").set("authorization", refreshToken);
+  return await supertest(app).post("/api/v1/auth/refresh").send({ refreshToken });
 };
 
 export const expectRenewTokenSuccess = (response: Response) => {
@@ -97,6 +96,20 @@ export const expectRenewTokenSuccess = (response: Response) => {
     data: {
       userId: expect.any(String),
     },
+  });
+};
+
+export const expectRenewTokenFailed = (response: Response) => {
+  const errorObject = errorMap[ErrorTypeEnum.enum.SESSION_INACTIVE];
+
+  const { statusCode, body } = response;
+
+  expect(statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
+
+  expect(body).toMatchObject({
+    message: errorObject.body.message,
+    code: errorObject.body.code,
+    status: "failed",
   });
 };
 
@@ -134,21 +147,23 @@ export const resetPassword = async (resetPassword: ResetPassword): Promise<Respo
 };
 
 export const expectResetPasswordSuccess = (response: Response): void => {
-  const { statusCode, headers } = response;
+  const { statusCode, body } = response;
 
   expect(statusCode).toBe(STATUS_CODES.OK);
 
-  const authorizationHeader = headers["authorization"];
-  expect(authorizationHeader).toBeDefined();
-
-  const refreshToken = headers["refresh-token"];
-  expect(refreshToken).toBeDefined();
-
-  expect(response.body).toMatchObject({
+  expect(body).toMatchObject({
     message: success.PASSWORD_RESET_SUCCESSFULLY,
     status: "success",
-    data: {
-      userId: expect.any(String),
-    },
   });
+};
+
+export const logoutOthers = async (authorizationHeader: string) => {
+  return await supertest(app).post("/api/v1/auth/logout-others").set("authorization", authorizationHeader);
+};
+export const logoutAllSessions = async (authorizationHeader: string) => {
+  return await supertest(app).post("/api/v1/auth/logout-all").set("authorization", authorizationHeader);
+};
+
+export const getSessions = async (authorizationHeader: string) => {
+  return await supertest(app).get("/api/v1/auth/sessions").set("authorization", authorizationHeader);
 };

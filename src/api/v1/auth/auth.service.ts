@@ -1,27 +1,35 @@
-import { OtpService } from "@/api/v1/otp/otp.service";
-import { TokenService } from "@/api/v1/token";
-import { UserDAL } from "@/api/v1/user/user.dal";
-import { UserService } from "@/api/v1/user/user.service";
-import {
-  CreateUser,
-  Email,
-  ResetPassword,
-  validateEmail,
-  validateResetPasswordSchema,
-} from "@/api/v1/user/user.validation";
-import { ErrorTypeEnum, Permission } from "@/constants";
-import { notificationService } from "@/services";
-import { GoogleUser } from "@/types/passport-google";
-import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from "@/utils";
+import { OtpService } from "@/api/v1/otp/otp.service.js";
+import { TokenService } from "@/api/v1/token/index.js";
+import { UserDAL } from "@/api/v1/user/user.dal.js";
+import { UserService } from "@/api/v1/user/user.service.js";
+import { type RegisterSchema, type ResetPassword, type UserRolePermission } from "@/api/v1/user/user.validation.js";
+import { ErrorTypeEnum, NotificationType, type Permission, UserActionType } from "@/constants";
+import { notificationService, redisService } from "@/services";
+import type { GoogleUser } from "@/types";
+import { type DeviceId, type DeviceInfo, type Email, type LoggedInUser, type MongooseObjectId, Tokens } from "@/types";
+import { comparePassword, generateAccessToken, verifyJWTToken } from "@/utils";
 
-import { NotificationType, UserActionType } from "../../../constants/events.constant";
-import { ProfileService } from "../profile";
-import { AuthDAL } from "./auth.dal";
-import { Auth, AuthToken, Login, SignUpResponse, loginSchema } from "./auth.validation";
+import { ProfileService } from "../profile/profile.service.js";
+import { SessionDAL } from "../session/session.dal.js";
+import { success } from "./auth.constant.js";
+import {
+  type AccessTokenPayload,
+  type AuthToken,
+  type Login,
+  type RefreshTokenPayload,
+  type SignUpResponse,
+} from "./auth.validation.js";
+
+interface GenerateTokenParams {
+  userId: MongooseObjectId;
+  deviceInfo: DeviceInfo;
+  deviceId: DeviceId;
+  tokenVersion: number;
+}
 
 export class AuthService {
-  public static async signUp(userData: CreateUser): Promise<SignUpResponse> {
-    const newUser = await UserService.createUser(userData);
+  public static async register(userData: RegisterSchema): Promise<SignUpResponse> {
+    const newUser = await UserService.registerUser(userData);
 
     await OtpService.sendOtp({
       email: userData.email,
@@ -36,14 +44,16 @@ export class AuthService {
     return { token, userId: newUser.id };
   }
 
-  public static async signInWithEmailOrUsernameAndPassword(userData: Login): Promise<AuthToken> {
-    const validUserData = loginSchema.parse(userData);
-
-    const user = await UserDAL.getUser(validUserData);
+  public static async signInWithEmailOrUsernameAndPassword(
+    loginData: Login,
+    deviceInfo: DeviceInfo,
+    deviceId: DeviceId
+  ): Promise<AuthToken> {
+    const user = await UserDAL.getUser(loginData);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
-    const isPasswordMatch = await comparePassword(validUserData.password, user.password);
+    const isPasswordMatch = await comparePassword(loginData.password, user.password);
 
     if (!isPasswordMatch) throw new Error(ErrorTypeEnum.enum.INVALID_CREDENTIALS);
 
@@ -51,10 +61,19 @@ export class AuthService {
 
     if (!user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED);
 
-    return await this.generateAccessAndRefreshToken(user.id);
+    return await this.generateAccessAndRefreshToken({
+      userId: user.id,
+      deviceInfo: deviceInfo,
+      deviceId: deviceId,
+      tokenVersion: 0,
+    });
   }
 
-  public static async signInWithGoogle(googleUser: GoogleUser): Promise<AuthToken> {
+  public static async signInWithGoogle(
+    googleUser: GoogleUser,
+    deviceInfo: DeviceInfo,
+    deviceId: DeviceId
+  ): Promise<AuthToken> {
     const { id: googleId, emails, name, photos, displayName } = googleUser;
     const [{ value: email, verified: isEmailVerified }] = emails;
 
@@ -63,14 +82,14 @@ export class AuthService {
     }
 
     // Check if the user exists by Google ID
-    let userRecord = await UserService.getUserByGoogleId(googleId);
+    let user = await UserService.getUserByGoogleId(googleId);
 
-    if (!userRecord) {
+    if (!user) {
       // Check if the user exists by email
       const existingUser = await UserDAL.getUserByEmail(email);
 
       if (existingUser) {
-        userRecord = await UserService.updateUser(existingUser.id, {
+        user = await UserService.updateUser(existingUser.id, {
           googleId,
           email,
         });
@@ -78,7 +97,7 @@ export class AuthService {
         // Create new user
         const username = await UserService.generateUniqueUsername(name.givenName.toLowerCase().replace(/\s+/g, "-"));
 
-        userRecord = await UserService.createUser({
+        user = await UserService.registerUser({
           email,
           username,
           googleId,
@@ -87,7 +106,7 @@ export class AuthService {
 
         // Create profile with Google data
         await new ProfileService().upSertProfileData({
-          userId: userRecord.id,
+          userId: user.id,
           name: displayName,
           givenName: name.givenName,
           familyName: name.familyName,
@@ -96,34 +115,115 @@ export class AuthService {
       }
     }
 
-    return await this.generateAccessAndRefreshToken(userRecord.id);
+    return await this.generateAccessAndRefreshToken({
+      userId: user.id,
+      deviceInfo: deviceInfo,
+      deviceId: deviceId,
+      tokenVersion: 0,
+    });
   }
 
-  public static async logout(userId: string) {
-    validateObjectId(userId);
-    return await AuthDAL.deleteAuth(userId);
+  public static async logout(accessToken: string): Promise<void> {
+    const res = await verifyJWTToken<AccessTokenPayload>(accessToken, Tokens.ACCESS);
+    const { userId, deviceId, jti, exp } = res;
+
+    if (jti == null || exp == null) {
+      throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
+    }
+
+    const isRevoked = await redisService.isJtiRevoked(jti);
+    if (isRevoked) {
+      throw new Error(ErrorTypeEnum.enum.TOKEN_REVOKED);
+    }
+
+    // Add JTI to Redis blacklist
+    await redisService.revokeJti(jti, exp);
+
+    // Deactivate the specific session
+    await new SessionDAL().updateSessionByUserAndDevice(userId, deviceId, { isActive: false });
   }
 
-  public static async verifyToken(userId: string): Promise<Auth> {
-    validateObjectId(userId);
-    const user = await AuthDAL.getAuthByUserId(userId);
+  public static async logoutAll(userId: MongooseObjectId): Promise<{ modifiedCount?: number }> {
+    // Increment tokenVersion for all sessions and deactivate them
+    const sessions = await new SessionDAL().getSessionsByUserId(userId);
 
-    if (!user) throw new Error(ErrorTypeEnum.enum.UNAUTHORIZED);
+    for (const session of sessions) {
+      await new SessionDAL().updateSessionByUserAndDevice(session.userId, session.deviceId, {
+        isActive: false,
+        tokenVersion: session.tokenVersion + 1,
+      });
+      // Update Redis cache for tokenVersion
+      await redisService.setUserDeviceTokenVersion(
+        session.userId.toString(),
+        session.deviceId,
+        session.tokenVersion + 1
+      );
+    }
 
-    return user;
+    return { modifiedCount: sessions.length };
+  }
+
+  public static async logoutOthers(deviceId: string, userId: MongooseObjectId): Promise<{ modifiedCount?: number }> {
+    // Increment tokenVersion for all sessions except current and deactivate them
+    const sessions = await new SessionDAL().getSessionsByUserId(userId);
+
+    let modifiedCount = 0;
+    for (const session of sessions) {
+      if (session.deviceId !== deviceId.toString()) {
+        await new SessionDAL().updateSessionByUserAndDevice(session.userId, session.deviceId, {
+          isActive: false,
+          tokenVersion: session.tokenVersion + 1,
+        });
+        // Update Redis cache for tokenVersion
+        await redisService.setUserDeviceTokenVersion(
+          session.userId.toString(),
+          session.deviceId,
+          session.tokenVersion + 1
+        );
+        modifiedCount++;
+      }
+    }
+
+    return { modifiedCount };
+  }
+
+  public static async getSessions(userId: MongooseObjectId) {
+    return await new SessionDAL().getActiveSessionsByUserId(userId);
+  }
+
+  public static async verifyAccessToken(token: string): Promise<LoggedInUser> {
+    const { userId, permissions, jti, tokenVersion, deviceId } = await verifyJWTToken<AccessTokenPayload>(
+      token,
+      Tokens.ACCESS
+    );
+
+    if (jti == null) {
+      throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
+    }
+
+    const isRevoked = await redisService.isJtiRevoked(jti);
+    if (isRevoked) {
+      throw new Error(ErrorTypeEnum.enum.TOKEN_REVOKED);
+    }
+
+    // Check tokenVersion from Redis to avoid DB call
+    const currentTokenVersion = await redisService.getUserDeviceTokenVersion(userId.toString(), deviceId);
+
+    if (currentTokenVersion !== null && tokenVersion < currentTokenVersion) {
+      throw new Error(ErrorTypeEnum.enum.TOKEN_NOT_ACTIVE);
+    }
+
+    return { userId, permissions, deviceId, tokenVersion };
   }
 
   public static async forgetPassword(email: Email) {
-    validateEmail(email);
     return await OtpService.sendOtp({
       email,
       otpType: NotificationType.FORGET_PASSWORD_OTP,
     });
   }
 
-  public static async resetPassword(resetPassword: ResetPassword): Promise<AuthToken> {
-    const { password, token } = validateResetPasswordSchema(resetPassword);
-
+  public static async resetPassword({ token, password }: ResetPassword): Promise<void> {
     const tokenService = new TokenService();
     const { userId, id: tokenId } = await tokenService.verifyActionToken(token, UserActionType.RESET_PASSWORD);
 
@@ -137,25 +237,108 @@ export class AuthService {
       payload: { recipientName: user.username },
       subject: "Password Changed",
     });
-
-    return await this.generateAccessAndRefreshToken(userId);
   }
 
-  public static async generateAccessAndRefreshToken(userId: string) {
-    validateObjectId(userId);
-    const userRolePermissions = await UserDAL.getUserRolesAndPermissionsByUserId(userId);
+  public static async refreshToken(refreshToken: string) {
+    const res = await verifyJWTToken<RefreshTokenPayload>(refreshToken, Tokens.REFRESH);
+    const { sessionId, jti, exp } = res;
 
-    // Generate both tokens concurrently
-    const [accessToken, refreshToken] = await Promise.all([
-      generateAccessToken({
-        userId,
-        permissions: userRolePermissions.allPermissions.map(({ name }) => name) as Permission[],
-      }),
-      generateRefreshToken({ id: userId }),
-    ]);
+    if (jti == null || exp == null) {
+      throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
+    }
 
-    await AuthDAL.upsertAuthTokens({ userId, refreshToken });
+    const session = await new SessionDAL().getSessionById(sessionId);
 
-    return { userId, accessToken, refreshToken };
+    if (!session) {
+      throw new Error(ErrorTypeEnum.enum.SESSION_NOT_FOUND);
+    }
+
+    if (!session.isActive) {
+      throw new Error(ErrorTypeEnum.enum.SESSION_INACTIVE);
+    }
+
+    // Mark previous token/session inactive after renewing
+    await new SessionDAL().updateSessionByUserAndDevice(session.userId, session.deviceId, { isActive: false });
+
+    const updatedSession = await new SessionDAL().insertSession({
+      userId: session.userId,
+      deviceId: session.deviceId,
+      deviceInfo: session.deviceInfo,
+      lastActive: new Date(),
+      tokenVersion: session.tokenVersion + 1,
+    });
+
+    // Cache tokenVersion in Redis
+    await redisService.setUserDeviceTokenVersion(
+      session.userId.toString(),
+      session.deviceId,
+      updatedSession.tokenVersion
+    );
+
+    const userRolePermissions: UserRolePermission = await UserDAL.getUserRolesAndPermissionsByUserId(
+      updatedSession.userId
+    );
+
+    const accessToken = generateAccessToken({
+      userId: updatedSession.userId,
+      deviceId: updatedSession.deviceId,
+      tokenVersion: updatedSession.tokenVersion,
+      permissions: userRolePermissions.allPermissions.map(({ name }) => name) as Permission[],
+    });
+
+    return {
+      userId: updatedSession.userId,
+      accessToken,
+      refreshToken: updatedSession.refreshToken,
+      deviceId: updatedSession.deviceId,
+    };
+  }
+
+  public static async autoLogin(actionToken: string): Promise<{ message: string; authToken: AuthToken }> {
+    const tokenService = new TokenService();
+    const { userId, id: tokenId } = await tokenService.verifyActionToken(actionToken, UserActionType.AUTO_LOGIN);
+
+    // For auto-login, we need device info, but since it's from OTP verification, we can use default or empty device info
+    // To keep it simple, we'll use a default deviceId and empty deviceInfo
+    const deviceId: DeviceId = crypto.randomUUID();
+    const deviceInfo = {} as DeviceInfo;
+
+    const authToken = await this.generateAccessAndRefreshToken({
+      userId,
+      deviceInfo,
+      deviceId,
+      tokenVersion: 0,
+    });
+
+    // Invalidate the action token after use
+    await tokenService.invalidateToken(tokenId);
+
+    return { message: success.AUTO_LOGIN_SUCCESSFUL, authToken };
+  }
+
+  private static async generateAccessAndRefreshToken({
+    userId,
+    deviceInfo,
+    deviceId,
+    tokenVersion,
+  }: GenerateTokenParams) {
+    const session = await new SessionDAL().insertSession({
+      userId: userId,
+      deviceId,
+      deviceInfo: deviceInfo,
+      lastActive: new Date(),
+      tokenVersion,
+    });
+
+    const userRolePermissions: UserRolePermission = await UserDAL.getUserRolesAndPermissionsByUserId(userId);
+
+    const accessToken = generateAccessToken({
+      userId: userId,
+      deviceId: deviceId,
+      tokenVersion: session.tokenVersion,
+      permissions: userRolePermissions.allPermissions.map(({ name }) => name) as Permission[],
+    });
+
+    return { userId, accessToken, refreshToken: session.refreshToken };
   }
 }

@@ -1,5 +1,7 @@
-import { CreatePermission, PermissionCategory } from "@/api/v1/permission/permission.validation";
-import { createRole } from "@/api/v1/role/role.validation";
+import mongoose from "mongoose";
+
+import { type CreatePermission, PermissionCategory } from "@/api/v1/permission/permission.validation.js";
+import { type createRole } from "@/api/v1/role/role.validation.js";
 import { defaultUsers } from "@/constants";
 import {
   createPermissionRequest,
@@ -15,7 +17,7 @@ import {
 const VALID_ROLE: createRole = {
   name: "new-role",
   description: "this is super admin creating first time",
-  createdBy: "65f6dac9156e93e7b6f1b88d",
+  createdBy: new mongoose.Types.ObjectId(),
   isDeleted: false,
   isSystemRole: false,
 };
@@ -23,7 +25,7 @@ const VALID_ROLE: createRole = {
 const VALID_PERMISSION: CreatePermission = {
   name: "new-permissions",
   description: "this is crete permission creating first time",
-  createdBy: "65f6dac9156e93e7b6f1b88d",
+  createdBy: new mongoose.Types.ObjectId(),
   isDeleted: false,
   category: PermissionCategory.SYSTEM,
 };

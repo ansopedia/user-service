@@ -1,7 +1,8 @@
 import { ErrorTypeEnum } from "@/constants";
+import { type MongooseObjectId } from "@/types";
 
-import { ProfileDataDAL } from "./profile.dal";
-import { ProfileData, validateProfileSchema } from "./profile.validation";
+import { ProfileDataDAL } from "./profile.dal.js";
+import { type ProfileData, validateProfileSchema } from "./profile.validation.js";
 
 export class ProfileService {
   private profileDataDal: ProfileDataDAL;
@@ -15,11 +16,11 @@ export class ProfileService {
     return await this.profileDataDal.upSertProfileData(profileData);
   };
 
-  getProfileData = async (userId: string): Promise<ProfileData | null> => {
+  getProfileData = async (userId: MongooseObjectId): Promise<ProfileData | null> => {
     return await this.profileDataDal.getProfileData(userId);
   };
 
-  toggleProfileVisibility = async (userId: string, isPublic: boolean): Promise<ProfileData> => {
+  toggleProfileVisibility = async (userId: MongooseObjectId, isPublic: boolean): Promise<ProfileData> => {
     const profile = await this.profileDataDal.toggleProfileVisibility(userId, isPublic);
 
     if (!profile) {

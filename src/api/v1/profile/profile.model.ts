@@ -1,18 +1,10 @@
-import { Schema, Types, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
-import { ProfileData } from "./profile.validation";
+import type { ProfileData } from "./profile.validation.js";
 
 const ProfileSchema = new Schema<ProfileData>(
   {
-    userId: {
-      type: String,
-      required: true,
-      validate: {
-        validator: (v: string) => Types.ObjectId.isValid(v),
-        message: "userId must be a valid MongoDB ObjectId string",
-      },
-      ref: "User",
-    },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     name: {
       type: String,
       trim: true,

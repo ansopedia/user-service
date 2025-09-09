@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { OtpController } from "./otp.controller";
+import { OtpController } from "./otp.controller.js";
 
 const router = Router();
 

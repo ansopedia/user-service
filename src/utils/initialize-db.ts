@@ -1,10 +1,10 @@
-import { PermissionDAL } from "@/api/v1/permission/permission.dal";
-import { PermissionService } from "@/api/v1/permission/permission.service";
-import { RoleDAL } from "@/api/v1/role/role.dal";
-import { RoleService } from "@/api/v1/role/role.service";
-import { RolePermissionService } from "@/api/v1/rolePermission/role-permission.service";
-import { UserService } from "@/api/v1/user/user.service";
-import { UserRoleService } from "@/api/v1/userRole/user-role.service";
+import { PermissionDAL } from "@/api/v1/permission/permission.dal.js";
+import { PermissionService } from "@/api/v1/permission/permission.service.js";
+import { RoleDAL } from "@/api/v1/role/role.dal.js";
+import { RoleService } from "@/api/v1/role/role.service.js";
+import { RolePermissionService } from "@/api/v1/rolePermission/role-permission.service.js";
+import { UserService } from "@/api/v1/user/user.service.js";
+import { UserRoleService } from "@/api/v1/userRole/user-role.service.js";
 import { ROLES, defaultPermissions, defaultRolePermissions, defaultRoles, defaultUsers } from "@/constants";
 import { errorLogger, logger } from "@/utils";
 
@@ -48,7 +48,7 @@ export const setupInitialRolesAndPermissions = async () => {
 
 export const setupInitialUserRole = async () => {
   try {
-    const user = await UserService.createUser(defaultUsers);
+    const user = await UserService.registerUser(defaultUsers);
 
     const roles = await RoleService.getRoles();
 

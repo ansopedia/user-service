@@ -2,9 +2,8 @@
   "recommendations": [
     "streetsidesoftware.code-spell-checker",
     "dbaeumer.vscode-eslint",
-    "orta.vscode-jest",
-    "firsttris.vscode-jest-runner",
     "esbenp.prettier-vscode",
-    "yoavbls.pretty-ts-errors"
+    "yoavbls.pretty-ts-errors",
+    "vitest.explorer"
   ]
 }

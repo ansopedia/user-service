@@ -1,36 +1,36 @@
 import { z } from "zod";
 
-export enum NotificationType {
+export const NotificationType = {
   // Email verification
-  EMAIL_VERIFICATION_OTP = "emailVerificationOtp",
-  // EMAIL_VERIFICATION_MAGIC_LINK = 'emailVerificationMagicLink',
+  EMAIL_VERIFICATION_OTP: "emailVerificationOtp",
+  // EMAIL_VERIFICATION_MAGIC_LINK :'emailVerificationMagicLink',
 
   // Email changes
-  // EMAIL_CHANGE_CONFIRMATION = 'emailChangeConfirmation',
+  // EMAIL_CHANGE_CONFIRMATION :'emailChangeConfirmation',
 
   // Password operations
-  FORGET_PASSWORD_OTP = "forgetPasswordOtp",
-  PASSWORD_CHANGE_CONFIRMATION = "passwordChangeConfirmation",
+  FORGET_PASSWORD_OTP: "forgetPasswordOtp",
+  PASSWORD_CHANGE_CONFIRMATION: "passwordChangeConfirmation",
 
   // Phone verification
-  // PHONE_VERIFICATION = 'phoneVerification',
+  // PHONE_VERIFICATION :'phoneVerification',
 
   // Future events (commented until implemented)
-  // ACCOUNT_ACTIVATION = "accountActivation",
-  // WELCOME = "welcome",
-  // TWO_FACTOR_AUTH = "twoFactorAuth",
-  // LOGIN_ATTEMPT_ALERT = "loginAttemptAlert",
-  // ACCOUNT_DELETION_CONFIRMATION = "accountDeletionConfirmation",
-  // EMAIL_SUBSCRIPTION_CONFIRMATION = "emailSubscriptionConfirmation",
-  // PROFILE_UPDATE = "profileUpdate",
-  // SECURITY_ALERT = "securityAlert",
-  // INACTIVE_ACCOUNT_REMINDER = "inactiveAccountReminder",
-  // PAYMENT_CONFIRMATION = "paymentConfirmation",
-  // ORDER_SHIPPING_UPDATE = "orderShippingUpdate",
-  // NEWSLETTER_OPT_IN = "newsletterOptIn",
-  // ACCOUNT_LOCKOUT = "accountLockout",
-  // PASSWORD_EXPIRATION_REMINDER = "passwordExpirationReminder",
-}
+  // ACCOUNT_ACTIVATION :"accountActivation",
+  // WELCOME :"welcome",
+  // TWO_FACTOR_AUTH :"twoFactorAuth",
+  // LOGIN_ATTEMPT_ALERT :"loginAttemptAlert",
+  // ACCOUNT_DELETION_CONFIRMATION :"accountDeletionConfirmation",
+  // EMAIL_SUBSCRIPTION_CONFIRMATION :"emailSubscriptionConfirmation",
+  // PROFILE_UPDATE :"profileUpdate",
+  // SECURITY_ALERT :"securityAlert",
+  // INACTIVE_ACCOUNT_REMINDER :"inactiveAccountReminder",
+  // PAYMENT_CONFIRMATION :"paymentConfirmation",
+  // ORDER_SHIPPING_UPDATE :"orderShippingUpdate",
+  // NEWSLETTER_OPT_IN :"newsletterOptIn",
+  // ACCOUNT_LOCKOUT :"accountLockout",
+  // PASSWORD_EXPIRATION_REMINDER :"passwordExpirationReminder",
+};
 
 export const emailValidator = z
   .string()

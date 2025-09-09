@@ -1,12 +1,12 @@
-import supertest, { Response } from "supertest";
+import supertest, { type Response } from "supertest";
 
-import { success } from "@/api/v1/auth/auth.constant";
-import { OtpEvent, OtpSchema, OtpVerifyEvent } from "@/api/v1/otp/otp.validation";
-import { app } from "@/app";
-import { STATUS_CODES } from "@/constants";
+import { success } from "@/api/v1/auth/auth.constant.js";
+import { OtpService } from "@/api/v1/otp/otp.service.js";
+import type { OtpEvent, OtpSchema, OtpVerifyEvent } from "@/api/v1/otp/otp.validation.js";
+import { NotificationType, STATUS_CODES } from "@/constants";
+import { type MongooseObjectId } from "@/types";
 
-import { OtpService } from "../../api/v1/otp/otp.service";
-import { NotificationType } from "../../constants/events.constant";
+import { app } from "../../app.js";
 
 export const requestOTP = async (otpEvents: OtpEvent): Promise<Response> => {
   return supertest(app).post("/api/v1/otp").send(otpEvents);
@@ -22,7 +22,7 @@ export const expectOTPRequestSuccess = (response: Response): void => {
   });
 };
 
-export const retrieveOTP = async (userId: string, otpType: NotificationType): Promise<OtpSchema> => {
+export const retrieveOTP = async (userId: MongooseObjectId, otpType: NotificationType): Promise<OtpSchema> => {
   const otpDetails = await OtpService.getOtpDetailsByUserId({
     userId,
     otpType,
@@ -45,16 +45,10 @@ export const expectOTPVerificationSuccess = (otpType: NotificationType, response
 
   const expectedMessage = expectedMessages.get(otpType) ?? success.OTP_VERIFIED_SUCCESSFULLY;
 
-  const emailVerificationSuccess = {
-    userId: expect.any(String),
-    accessToken: expect.any(String),
-    refreshToken: expect.any(String),
-  };
-
   expect(response.body).toMatchObject({
     message: expectedMessage,
     data: {
-      actionToken: otpType === NotificationType.EMAIL_VERIFICATION_OTP ? emailVerificationSuccess : expect.any(String),
+      actionToken: expect.any(String),
     },
   });
 };

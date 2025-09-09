@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { STATUS_CODES } from "./status-code.constant";
+import { STATUS_CODES } from "./status-code.constant.js";
 
 const errorType = [
   "VALIDATION_ERROR",
@@ -39,6 +39,10 @@ const errorType = [
   "NOTIFICATION_SERVICE_MISCONFIGURED",
   "PROFILE_NOT_FOUND",
   "PROFILE_REQUIRED_FOR_VISIBILITY_CHANGE",
+  "SESSION_NOT_FOUND",
+  "SESSION_INACTIVE",
+  "TOKEN_REVOKED",
+  "BOT_ACCESS_FORBIDDEN",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -97,7 +101,7 @@ export const errorMap = {
     httpStatusCode: STATUS_CODES.NOT_FOUND,
     body: {
       code: "role_not_found",
-      message: "Role not found. Check identifier and retry.",
+      message: "Role not found. Please contact support.",
     },
   },
   [ErrorTypeEnum.enum.USER_NOT_FOUND]: {
@@ -294,6 +298,34 @@ export const errorMap = {
     body: {
       code: "profile_not_found",
       message: "Profile not found. A profile must exist to change its visibility.",
+    },
+  },
+  [ErrorTypeEnum.enum.SESSION_NOT_FOUND]: {
+    httpStatusCode: STATUS_CODES.NOT_FOUND,
+    body: {
+      code: "session_not_found",
+      message: "Session not found.",
+    },
+  },
+  [ErrorTypeEnum.enum.SESSION_INACTIVE]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: {
+      code: "session_inactive",
+      message: "Session is inactive. Please login again.",
+    },
+  },
+  [ErrorTypeEnum.enum.TOKEN_REVOKED]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: {
+      code: "token_revoked",
+      message: "Token has been revoked. Please login again.",
+    },
+  },
+  [ErrorTypeEnum.enum.BOT_ACCESS_FORBIDDEN]: {
+    httpStatusCode: STATUS_CODES.FORBIDDEN,
+    body: {
+      code: "bot_access_forbidden",
+      message: "Bot access forbidden.",
     },
   },
 };

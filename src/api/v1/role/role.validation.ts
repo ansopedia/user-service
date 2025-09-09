@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-import { objectIdSchema } from "@/utils";
+import { mongooseObjectId } from "@/types";
 
 const roleSchema = z.object({
-  id: objectIdSchema,
+  id: mongooseObjectId,
   name: z
     .string()
     .min(3, "name must be at least 3 characters")
@@ -15,8 +15,8 @@ const roleSchema = z.object({
   isSystemRole: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
-  createdBy: objectIdSchema,
-  updatedBy: objectIdSchema,
+  createdBy: mongooseObjectId,
+  updatedBy: mongooseObjectId,
 });
 
 export const createRoleSchema = roleSchema.omit({
@@ -33,6 +33,7 @@ export const updateRoleSchema = roleSchema.partial({
   description: true,
   updatedBy: true,
 });
+
 export const getRoleSchema = roleSchema.omit({
   createdBy: true,
   updatedBy: true,

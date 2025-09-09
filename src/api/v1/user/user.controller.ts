@@ -1,13 +1,16 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import { DEFAULT_PAGINATION_LIMIT, DEFAULT_PAGINATION_OFFSET, STATUS_CODES } from "@/constants";
-import { sendResponse } from "@/utils";
+import { sendResponse, validateObjectId, validateUsername } from "@/utils";
 
-import { success } from "./user.constant";
-import { UserService } from "./user.service";
+import { success } from "./user.constant.js";
+import { UserService } from "./user.service.js";
+import { validateRegister } from "./user.validation.js";
 
 export const createUser = async (req: Request, res: Response) => {
-  const user = await UserService.createUser(req.body);
+  const userData = validateRegister(req.body);
+
+  const user = await UserService.registerUser(userData);
   sendResponse({
     response: res,
     message: success.USER_CREATED_SUCCESSFULLY,
@@ -34,7 +37,9 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 export const getUserByUsername = async (req: Request, res: Response) => {
-  const user = await UserService.getUserByUsername(req.params.username);
+  const username = validateUsername(req.params.username);
+
+  const user = await UserService.getUserByUsername(username);
   sendResponse({
     response: res,
     message: success.USER_FETCHED_SUCCESSFULLY,
@@ -46,7 +51,9 @@ export const getUserByUsername = async (req: Request, res: Response) => {
 };
 
 export const softDeleteUser = async (req: Request, res: Response) => {
-  const user = await UserService.softDeleteUser(req.params.userId);
+  const userId = validateObjectId(req.params.userId);
+
+  const user = await UserService.softDeleteUser(userId);
   sendResponse({
     response: res,
     message: success.USER_DELETED_SUCCESSFULLY,
@@ -58,7 +65,9 @@ export const softDeleteUser = async (req: Request, res: Response) => {
 };
 
 export const restoreUser = async (req: Request, res: Response) => {
-  const user = await UserService.restoreUser(req.params.userId);
+  const userId = validateObjectId(req.params.userId);
+
+  const user = await UserService.restoreUser(userId);
   sendResponse({
     response: res,
     message: success.USER_RESTORED_SUCCESSFULLY,
@@ -70,7 +79,9 @@ export const restoreUser = async (req: Request, res: Response) => {
 };
 
 export const checkUsernameAvailability = async (req: Request, res: Response) => {
-  const isAvailable = await UserService.checkUsernameAvailability(req.params.username);
+  const username = validateUsername(req.params.username);
+
+  const isAvailable = await UserService.checkUsernameAvailability(username);
   sendResponse({
     response: res,
     message: isAvailable ? success.USERNAME_AVAILABLE : success.USERNAME_UNAVAILABLE,

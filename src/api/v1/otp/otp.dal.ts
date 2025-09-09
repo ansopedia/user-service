@@ -1,5 +1,7 @@
-import { OtpModel } from "./otp.model";
-import { GetOtp, OtpSchema, SaveOtp } from "./otp.validation";
+import { type MongooseObjectId } from "@/types";
+
+import { OtpModel } from "./otp.model.js";
+import type { GetOtp, OtpSchema, SaveOtp } from "./otp.validation.js";
 
 export class OtpDAL {
   static async saveOtp(otpSchema: SaveOtp) {
@@ -11,11 +13,11 @@ export class OtpDAL {
     return await OtpModel.find(otpSchema);
   }
 
-  static async deleteOtp(otpId: string) {
+  static async deleteOtp(otpId: MongooseObjectId) {
     return await OtpModel.findByIdAndDelete(otpId);
   }
 
-  static async deleteOtpByUserId(userId: string) {
+  static async deleteOtpByUserId(userId: MongooseObjectId) {
     return await OtpModel.deleteMany({ userId });
   }
 

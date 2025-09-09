@@ -1,4 +1,5 @@
 import { defaultUsers } from "@/constants";
+import { type MongooseObjectId } from "@/types";
 import {
   expectBadRequestResponseForValidationError,
   expectLoginSuccess,
@@ -12,7 +13,7 @@ import {
   upSertProfileData,
 } from "@/utils/test";
 
-import { CreateProfileData } from "../profile.validation";
+import type { CreateProfileData } from "../profile.validation.js";
 
 const profileData: CreateProfileData = {
   avatar: "http://avatar.com",
@@ -25,7 +26,7 @@ const profileData: CreateProfileData = {
 
 describe("Profile Service", () => {
   let authorizationHeader: string;
-  let loggedInUserId: string;
+  let loggedInUserId: MongooseObjectId;
 
   beforeAll(async () => {
     const loginResponse = await login(defaultUsers);
