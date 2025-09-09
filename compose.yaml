@@ -1,6 +1,18 @@
 version: "3.8"
 
 services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+      - redis
+    environment:
+      - NODE_ENV=production
+
   mongodb:
     image: mongo:latest
     ports:

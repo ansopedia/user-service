@@ -18,7 +18,7 @@ if (nodeEnv !== "production") {
 
   // Check if environment file exists before loading
   if (fs.existsSync(envPath)) {
-    dotenv.config({ path: envPath });
+    dotenv.config({ path: envPath, override: true });
   }
 }
 
