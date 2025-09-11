@@ -208,7 +208,10 @@ Alternatively, use an `.env` file to manage environment variables:
 - Never commit secrets or private keys into your Docker image or source control.
 - Use Docker secrets or your cloud provider’s secret management for production deployments.
 - The container exposes port `3000` by default; you can map it to any host port you prefer.
-  docker build -t ansopedia-user-service .
+  
+```bash
+docker build -t ansopedia-user-service .
+```
 
 ## Security Notes
 
