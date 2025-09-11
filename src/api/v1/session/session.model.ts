@@ -21,4 +21,6 @@ const sessionSchema = new Schema<ISession>(
   { timestamps: true }
 );
 
+sessionSchema.index({ userId: 1 });
+
 export default mongoose.model<ISession>("Session", sessionSchema);

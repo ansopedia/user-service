@@ -5,8 +5,8 @@ import { type UserRole } from "./user-role.validation.js";
 
 export class UserRoleDAL {
   static async createUserRole(userRole: UserRole) {
-    const rolePermission = await UserRoleModel.create(userRole);
-    return rolePermission.save();
+    const userRolePermission = await UserRoleModel.create(userRole);
+    return userRolePermission.save();
   }
 
   static async getUserRoles(userId: MongooseObjectId) {
