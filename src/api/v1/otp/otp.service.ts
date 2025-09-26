@@ -1,3 +1,11 @@
+import {
+  type GetOtp,
+  type OtpEvent,
+  type OtpRecord,
+  type OtpVerifyEvent,
+  otpEventSchema,
+  otpVerifyEventSchema,
+} from "@ansospace/types";
 import { formatDuration, intervalToDuration, isPast } from "date-fns";
 
 import { success } from "@/api/v1/auth/auth.constant.js";
@@ -15,12 +23,10 @@ import { generateOTP, verifyOTP } from "@/utils";
 
 import { TokenService } from "../token/token.service.js";
 import { OtpDAL } from "./otp.dal.js";
-import type { GetOtp, OtpEvent, OtpSchema, OtpVerifyEvent } from "./otp.validation.js";
-import { otpEvent, otpVerifyEvent } from "./otp.validation.js";
 
 export class OtpService {
   public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string; token: string }> {
-    const validOtpEvent = otpEvent.parse(otpEvents);
+    const validOtpEvent = otpEventSchema.parse(otpEvents);
     const { otpType } = validOtpEvent;
 
     const otp = generateOTP();
@@ -73,7 +79,7 @@ export class OtpService {
 
   public static async verifyOtp(otpEvents: OtpVerifyEvent): Promise<{ message: string; actionToken: string }> {
     // Extract the token from the parsed event data
-    const { otp, otpType, token: verificationToken } = otpVerifyEvent.parse(otpEvents);
+    const { otp, otpType, token: verificationToken } = otpVerifyEventSchema.parse(otpEvents);
     let actionToken: string = "";
     let message: string = success.OTP_VERIFIED_SUCCESSFULLY;
 
@@ -119,7 +125,7 @@ export class OtpService {
     return { message, actionToken };
   }
 
-  public static async getOtpDetailsByUserId(getOtpDetails: GetOtp): Promise<OtpSchema[]> {
+  public static async getOtpDetailsByUserId(getOtpDetails: GetOtp): Promise<OtpRecord[]> {
     const otpDetails = await OtpDAL.getOtpDetailsByUserId(getOtpDetails);
 
     if (!otpDetails) throw new Error(ErrorTypeEnum.enum.OTP_NOT_REQUESTED);

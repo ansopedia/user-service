@@ -1,3 +1,4 @@
+import type { Email, Password, Username } from "@ansospace/types";
 import mongoose from "mongoose";
 
 import { type CreatePermission, PermissionCategory } from "@/api/v1/permission/permission.validation.js";
@@ -312,9 +313,9 @@ export const defaultRolePermissions: IDefaultRolePermission = {
 };
 
 export const defaultUsers = {
-  username: envConstants.DEFAULT_SUPER_ADMIN_USERNAME,
-  email: envConstants.DEFAULT_SUPER_ADMIN_EMAIL,
-  password: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD,
+  username: envConstants.DEFAULT_SUPER_ADMIN_USERNAME as Username,
+  email: envConstants.DEFAULT_SUPER_ADMIN_EMAIL as Email,
+  password: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD as Password,
   confirmPassword: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD,
   isEmailVerified: true,
 };

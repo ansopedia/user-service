@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
+import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap, mockUser } from "@/constants";
 import {
   createRoleRequest,
   expectCreateRoleSuccess,
@@ -24,13 +24,6 @@ const VALID_ROLE: createRole = {
   createdBy: new mongoose.Types.ObjectId(),
   isSystemRole: false,
   isDeleted: false,
-};
-
-const VALID_CREDENTIALS = {
-  username: "username",
-  email: "validemail@example.com",
-  password: "ValidPassword123!",
-  confirmPassword: "ValidPassword123!",
 };
 
 const testInvalidField = async (field: string, value: string, authorizationHeader: string) => {
@@ -68,12 +61,12 @@ describe("Role Service", () => {
   });
 
   it("should not create a new role without create-role permission", async () => {
-    const signUpResponse = await signUp(VALID_CREDENTIALS);
+    const signUpResponse = await signUp(mockUser);
     expectSignUpSuccess(signUpResponse);
 
     await verifyAccount(signUpResponse.body.data);
 
-    const loginResponse = await login(VALID_CREDENTIALS);
+    const loginResponse = await login(mockUser);
     expectLoginSuccess(loginResponse);
     const header = `Bearer ${loginResponse.header["authorization"]}`;
 
@@ -119,7 +112,7 @@ describe("Role Service", () => {
   });
 
   it("should not get all roles without view-roles permission", async () => {
-    const loginResponse = await login(VALID_CREDENTIALS);
+    const loginResponse = await login(mockUser);
     expectLoginSuccess(loginResponse);
     const header = `Bearer ${loginResponse.header["authorization"]}`;
 

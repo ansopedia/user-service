@@ -1,5 +1,5 @@
 import { success } from "@/api/v1/auth/auth.constant.js";
-import { STATUS_CODES } from "@/constants";
+import { STATUS_CODES, mockUser } from "@/constants";
 import {
   expectLoginSuccess,
   expectLogoutSuccess,
@@ -17,13 +17,6 @@ import {
   verifyAccount,
 } from "@/utils/test";
 
-const VALID_CREDENTIALS = {
-  username: "testuser_session",
-  email: "testuser_session@example.com",
-  password: "ValidPassword123!",
-  confirmPassword: "ValidPassword123!",
-};
-
 describe("Session Management APIs", () => {
   let refreshToken1: string;
   let refreshToken2: string;
@@ -31,19 +24,19 @@ describe("Session Management APIs", () => {
 
   beforeAll(async () => {
     // Sign up and verify user
-    const signUpResponse = await signUp(VALID_CREDENTIALS);
+    const signUpResponse = await signUp(mockUser);
     expectSignUpSuccess(signUpResponse);
 
     await verifyAccount(signUpResponse.body.data);
 
     // Login twice to create two sessions
-    const loginResponse1 = await login(VALID_CREDENTIALS);
+    const loginResponse1 = await login(mockUser);
     expectLoginSuccess(loginResponse1);
     const headers1 = loginResponse1.headers;
     refreshToken1 = headers1["refresh-token"] as string;
     authorizationHeader1 = `Bearer ${headers1["authorization"] as string}`;
 
-    const loginResponse2 = await login(VALID_CREDENTIALS);
+    const loginResponse2 = await login(mockUser);
     expectLoginSuccess(loginResponse2);
     const headers2 = loginResponse2.headers;
     refreshToken2 = headers2["refresh-token"] as string;
@@ -66,7 +59,7 @@ describe("Session Management APIs", () => {
 
     it("should handle logoutOthers when only one session exists", async () => {
       // Login once to have only one session
-      const loginResponse = await login(VALID_CREDENTIALS);
+      const loginResponse = await login(mockUser);
       expectLoginSuccess(loginResponse);
       const authHeader = `Bearer ${loginResponse.headers["authorization"] as string}`;
 
@@ -93,13 +86,13 @@ describe("Session Management APIs", () => {
   describe("getSessions", () => {
     beforeAll(async () => {
       // Login twice to create two sessions
-      const loginResponse1 = await login(VALID_CREDENTIALS);
+      const loginResponse1 = await login(mockUser);
       expectLoginSuccess(loginResponse1);
       const headers1 = loginResponse1.headers;
       refreshToken1 = headers1["refresh-token"] as string;
       authorizationHeader1 = `Bearer ${headers1["authorization"] as string}`;
 
-      const loginResponse2 = await login(VALID_CREDENTIALS);
+      const loginResponse2 = await login(mockUser);
       expectLoginSuccess(loginResponse2);
       const headers2 = loginResponse2.headers;
       refreshToken2 = headers2["refresh-token"] as string;
@@ -150,13 +143,13 @@ describe("Session Management APIs", () => {
   describe("logoutAll", () => {
     beforeAll(async () => {
       // Login twice to create two sessions
-      const loginResponse1 = await login(VALID_CREDENTIALS);
+      const loginResponse1 = await login(mockUser);
       expectLoginSuccess(loginResponse1);
       const headers1 = loginResponse1.headers;
       refreshToken1 = headers1["refresh-token"] as string;
       authorizationHeader1 = `Bearer ${headers1["authorization"] as string}`;
 
-      const loginResponse2 = await login(VALID_CREDENTIALS);
+      const loginResponse2 = await login(mockUser);
       expectLoginSuccess(loginResponse2);
       const headers2 = loginResponse2.headers;
       refreshToken2 = headers2["refresh-token"] as string;
@@ -164,8 +157,8 @@ describe("Session Management APIs", () => {
 
     it("should logout all sessions for the user", async () => {
       // Ensure multiple sessions exist
-      await login(VALID_CREDENTIALS);
-      await login(VALID_CREDENTIALS);
+      await login(mockUser);
+      await login(mockUser);
 
       const logoutAllResponse = await logoutAllSessions(authorizationHeader1);
       expectLogoutSuccess(logoutAllResponse);

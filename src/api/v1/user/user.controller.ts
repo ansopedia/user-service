@@ -1,14 +1,14 @@
+import { mongooseObjectId, registerSchema, usernameSchema } from "@ansospace/types";
 import type { Request, Response } from "express";
 
 import { DEFAULT_PAGINATION_LIMIT, DEFAULT_PAGINATION_OFFSET, STATUS_CODES } from "@/constants";
-import { sendResponse, validateObjectId, validateUsername } from "@/utils";
+import { sendResponse } from "@/utils";
 
 import { success } from "./user.constant.js";
 import { UserService } from "./user.service.js";
-import { validateRegister } from "./user.validation.js";
 
 export const createUser = async (req: Request, res: Response) => {
-  const userData = validateRegister(req.body);
+  const userData = registerSchema.parse(req.body);
 
   const user = await UserService.registerUser(userData);
   sendResponse({
@@ -37,7 +37,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 export const getUserByUsername = async (req: Request, res: Response) => {
-  const username = validateUsername(req.params.username);
+  const username = usernameSchema.parse(req.params.username);
 
   const user = await UserService.getUserByUsername(username);
   sendResponse({
@@ -51,7 +51,7 @@ export const getUserByUsername = async (req: Request, res: Response) => {
 };
 
 export const softDeleteUser = async (req: Request, res: Response) => {
-  const userId = validateObjectId(req.params.userId);
+  const userId = mongooseObjectId.parse(req.params.userId);
 
   const user = await UserService.softDeleteUser(userId);
   sendResponse({
@@ -65,7 +65,7 @@ export const softDeleteUser = async (req: Request, res: Response) => {
 };
 
 export const restoreUser = async (req: Request, res: Response) => {
-  const userId = validateObjectId(req.params.userId);
+  const userId = mongooseObjectId.parse(req.params.userId);
 
   const user = await UserService.restoreUser(userId);
   sendResponse({
@@ -79,7 +79,7 @@ export const restoreUser = async (req: Request, res: Response) => {
 };
 
 export const checkUsernameAvailability = async (req: Request, res: Response) => {
-  const username = validateUsername(req.params.username);
+  const username = usernameSchema.parse(req.params.username);
 
   const isAvailable = await UserService.checkUsernameAvailability(username);
   sendResponse({

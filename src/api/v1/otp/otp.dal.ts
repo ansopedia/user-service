@@ -1,4 +1,4 @@
-import { type MongooseObjectId } from "@/types";
+import type { MongooseObjectId } from "@ansospace/types";
 
 import { OtpModel } from "./otp.model.js";
 import type { GetOtp, OtpSchema, SaveOtp } from "./otp.validation.js";

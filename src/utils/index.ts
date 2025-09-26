@@ -7,4 +7,3 @@ export * from "./logger.js";
 export * from "./otp.util.js";
 export * from "./password.util.js";
 export * from "./send-response.util.js";
-export * from "./validation.util.js";

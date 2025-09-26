@@ -1,7 +1,7 @@
+import type { Pagination, RegisterSchema } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/user/user.constant.js";
-import type { Pagination, RegisterSchema } from "@/api/v1/user/user.validation.js";
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 import { type MongooseObjectId } from "@/types";
 

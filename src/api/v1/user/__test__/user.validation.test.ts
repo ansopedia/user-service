@@ -1,6 +1,6 @@
-import { password, username } from "@/types";
+import { registerSchema } from "@ansospace/types";
 
-import { validateRegister } from "../user.validation.js";
+import { password, username } from "@/types";
 
 describe("Username validation", () => {
   it("should accept valid usernames", () => {
@@ -72,7 +72,7 @@ describe("Create user schema validation", () => {
       password: "V@lidPass1",
       confirmPassword: "V@lidPass1",
     };
-    expect(() => validateRegister(validUser)).not.toThrow();
+    expect(() => registerSchema.parse(validUser)).not.toThrow();
   });
 
   it("should accept valid user data with Google ID", () => {
@@ -82,7 +82,7 @@ describe("Create user schema validation", () => {
       isEmailVerified: true,
       googleId: "123456789",
     };
-    expect(() => validateRegister(validGoogleUser)).not.toThrow();
+    expect(() => registerSchema.parse(validGoogleUser)).not.toThrow();
   });
 
   it("should reject user data with mismatched passwords", () => {
@@ -92,7 +92,7 @@ describe("Create user schema validation", () => {
       password: "V@lidPass1",
       confirmPassword: "DifferentPass1!",
     };
-    expect(() => validateRegister(invalidUser)).toThrow("Confirm password does not match password");
+    expect(() => registerSchema.parse(invalidUser)).toThrow("Confirm password does not match password");
   });
 
   it("should reject user data with invalid email", () => {
@@ -102,7 +102,7 @@ describe("Create user schema validation", () => {
       password: "V@lidPass1",
       confirmPassword: "V@lidPass1",
     };
-    expect(() => validateRegister(invalidUser)).toThrow("Invalid email");
+    expect(() => registerSchema.parse(invalidUser)).toThrow("Invalid email");
   });
 
   it("should reject user data with invalid username", () => {
@@ -112,6 +112,6 @@ describe("Create user schema validation", () => {
       password: "V@lidPass1",
       confirmPassword: "V@lidPass1",
     };
-    expect(() => validateRegister(invalidUser)).toThrow("username must be at least 3 characters");
+    expect(() => registerSchema.parse(invalidUser)).toThrow("username must be at least 3 characters");
   });
 });

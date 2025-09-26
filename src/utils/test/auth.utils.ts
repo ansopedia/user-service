@@ -1,10 +1,9 @@
+import type { Login, ResetPassword, SignUpResponse } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant.js";
-import type { Login, SignUpResponse } from "@/api/v1/auth/auth.validation.js";
 import { ErrorTypeEnum, NotificationType, STATUS_CODES, errorMap } from "@/constants";
 
-import { type ResetPassword } from "../../api/v1/user/user.validation.js";
 import { app } from "../../app.js";
 import { expectOTPVerificationSuccess, retrieveOTP, verifyOTP } from "./otp.utils.js";
 

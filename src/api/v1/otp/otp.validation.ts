@@ -1,17 +1,22 @@
+import { emailSchema, mongooseObjectId, otpSchema as otp } from "@ansospace/types";
+import mongoose from "mongoose";
 import { z } from "zod";
 
 import { NotificationType, notificationTypeSchema } from "@/constants";
-import { email, mongooseObjectId, otp } from "@/types";
+
+mongooseObjectId.transform((val) => new mongoose.Types.ObjectId(val));
+
+// import { mongooseObjectId } from "@/types";
 
 // Define separate schemas for each OTP type
 const emailVerificationOtpSchema = z.object({
   otpType: z.literal(NotificationType.EMAIL_VERIFICATION_OTP),
-  email: email,
+  email: emailSchema,
 });
 
 const forgetPasswordOtpSchema = z.object({
   otpType: z.literal(NotificationType.FORGET_PASSWORD_OTP),
-  email: email,
+  email: emailSchema,
 });
 
 // const phoneVerificationOtpSchema = z.object({
@@ -27,7 +32,7 @@ export const otpEvent = z.discriminatedUnion("otpType", [
 ]);
 
 export const otpVerifyEvent = z.object({
-  otp,
+  otp: otp,
   otpType: notificationTypeSchema,
   token: z.string().min(1, "Token is required"),
 });
