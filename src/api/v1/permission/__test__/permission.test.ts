@@ -1,3 +1,4 @@
+import { type CreatePermission, PermissionCategory } from "@ansospace/types";
 import mongoose from "mongoose";
 
 import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
@@ -11,8 +12,6 @@ import {
   getPermissionsRequest,
   login,
 } from "@/utils/test";
-
-import { type CreatePermission, PermissionCategory } from "../permission.validation.js";
 
 const VALID_PERMISSION: CreatePermission = {
   name: "create-permission",

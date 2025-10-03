@@ -1,4 +1,4 @@
-import type { ProfileData } from "./profile.validation.js";
+import type { ProfileData } from "@ansospace/types";
 
 export const ProfileDto = (profile: ProfileData) => ({
   getProfile: () => {

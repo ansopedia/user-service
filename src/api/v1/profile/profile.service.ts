@@ -1,8 +1,8 @@
+import { type MongooseObjectId, type ProfileData, validateProfileSchema } from "@ansospace/types";
+
 import { ErrorTypeEnum } from "@/constants";
-import { type MongooseObjectId } from "@/types";
 
 import { ProfileDataDAL } from "./profile.dal.js";
-import { type ProfileData, validateProfileSchema } from "./profile.validation.js";
 
 export class ProfileService {
   private profileDataDal: ProfileDataDAL;

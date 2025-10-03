@@ -1,6 +1,5 @@
+import type { ProfileData } from "@ansospace/types";
 import { Schema, model } from "mongoose";
-
-import type { ProfileData } from "./profile.validation.js";
 
 const ProfileSchema = new Schema<ProfileData>(
   {

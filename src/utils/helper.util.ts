@@ -1,3 +1,4 @@
+import { type Username, usernameSchema } from "@ansospace/types";
 import { type Request } from "express";
 
 import { envConstants } from "@/constants";
@@ -6,9 +7,9 @@ export const getServerURL = (req: Request) => {
   return `${req.protocol}://${req.get("host")}`;
 };
 
-export const generateRandomUsername = (): string => {
+export const generateRandomUsername = (): Username => {
   const randomString = Math.random().toString(36).substring(2, 10);
-  return `user_${randomString}`;
+  return usernameSchema.parse(`user_${randomString}`);
 };
 
 export const isValidRedirectUrl = (url: string): boolean => {

@@ -1,5 +1,4 @@
-import type { SocketUser } from "@/types";
-import { type MongooseObjectId } from "@/types";
+import type { MongooseObjectId, SocketUser } from "@ansospace/types";
 
 class ConnectionManager {
   private connectedUsers: Map<MongooseObjectId, SocketUser>;

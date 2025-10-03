@@ -1,7 +1,6 @@
-import { type MongooseObjectId } from "@/types";
+import type { MongooseObjectId, UserRole } from "@ansospace/types";
 
 import { UserRoleModel } from "./user-role.model.js";
-import { type UserRole } from "./user-role.validation.js";
 
 export class UserRoleDAL {
   static async createUserRole(userRole: UserRole) {

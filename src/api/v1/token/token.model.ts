@@ -1,8 +1,7 @@
+import type { Token } from "@ansospace/types";
 import { Model, Schema, model } from "mongoose";
 
 import { UserActionType } from "@/constants";
-
-import type { Token } from "./token.validation.js";
 
 const TokenSchema: Schema<Token> = new Schema(
   {

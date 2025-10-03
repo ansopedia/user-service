@@ -1,7 +1,7 @@
+import type { CreatePermission } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/permission/permission.constant.js";
-import type { CreatePermission } from "@/api/v1/permission/permission.validation.js";
 import { STATUS_CODES } from "@/constants";
 
 import { app } from "../../app.js";

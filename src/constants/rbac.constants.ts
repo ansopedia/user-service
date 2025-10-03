@@ -1,7 +1,12 @@
+import {
+  type CreatePermission,
+  type CreateRole,
+  type Email,
+  type Password,
+  PermissionCategory,
+  type Username,
+} from "@ansospace/types";
 import mongoose from "mongoose";
-
-import { type CreatePermission, PermissionCategory } from "@/api/v1/permission/permission.validation.js";
-import { type createRole } from "@/api/v1/role/role.validation.js";
 
 import { envConstants } from "./env.constant.js";
 
@@ -281,7 +286,7 @@ export const defaultPermissions: CreatePermission[] = [
   },
 ];
 
-export const defaultRoles: createRole[] = [
+export const defaultRoles: CreateRole[] = [
   {
     name: ROLES.SUPER_ADMIN,
     description: "Super Administrator with all permissions",
@@ -312,9 +317,9 @@ export const defaultRolePermissions: IDefaultRolePermission = {
 };
 
 export const defaultUsers = {
-  username: envConstants.DEFAULT_SUPER_ADMIN_USERNAME,
-  email: envConstants.DEFAULT_SUPER_ADMIN_EMAIL,
-  password: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD,
-  confirmPassword: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD,
+  username: envConstants.DEFAULT_SUPER_ADMIN_USERNAME as Username,
+  email: envConstants.DEFAULT_SUPER_ADMIN_EMAIL as Email,
+  password: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD as Password,
+  confirmPassword: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD as Password,
   isEmailVerified: true,
 };

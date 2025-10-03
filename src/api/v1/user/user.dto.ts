@@ -1,4 +1,4 @@
-import type { GetUser, User } from "./user.validation.js";
+import type { GetUser, User } from "@ansospace/types";
 
 export const UserDto = (user: User) => ({
   getUser: (): GetUser => {

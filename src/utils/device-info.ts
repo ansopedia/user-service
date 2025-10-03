@@ -1,8 +1,7 @@
+import type { DeviceInfo } from "@ansospace/types";
 import { type Request } from "express";
 import { UAParser } from "ua-parser-js";
 import { isBot } from "ua-parser-js/helpers";
-
-import { type DeviceInfo } from "@/types";
 
 import { enrichWithGeo } from "./geo.js";
 

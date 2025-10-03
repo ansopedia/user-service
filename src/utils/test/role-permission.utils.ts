@@ -1,7 +1,7 @@
+import type { RolePermission } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/rolePermission/role-permission.constant.js";
-import type { RolePermission } from "@/api/v1/rolePermission/role-permission.validation.js";
 import { STATUS_CODES } from "@/constants";
 
 import { app } from "../../app.js";

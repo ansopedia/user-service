@@ -1,8 +1,9 @@
+import type { User } from "@ansospace/types";
 import mongoose, { Document, Schema, model } from "mongoose";
 
 import { hashPassword } from "@/utils";
 
-import type { User } from "./user.validation.js";
+// import type { User } from "./user.validation.js";
 
 export interface IUser extends Document, User {
   id: mongoose.Types.ObjectId;

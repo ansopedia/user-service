@@ -1,11 +1,10 @@
+import { type CreateToken, type MongooseObjectId, type Token, TokenType } from "@ansospace/types";
 import { isPast } from "date-fns";
 
 import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, UserActionType } from "@/constants";
-import { type MongooseObjectId, Tokens } from "@/types";
 import { errorLogger, generateActionToken, verifyJWTToken } from "@/utils";
 
 import { TokenDAL } from "./token.dal.js";
-import type { CreateToken, Token } from "./token.validation.js";
 
 export class TokenService {
   private tokenDAL: TokenDAL;
@@ -31,7 +30,7 @@ export class TokenService {
 
   async verifyActionToken(token: string, action: UserActionType): Promise<Token> {
     try {
-      const verifiedToken = await verifyJWTToken<Token>(token, Tokens.ACTION);
+      const verifiedToken = await verifyJWTToken<Token>(token, TokenType.ACTION);
 
       if (verifiedToken.action !== action) {
         throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN_TYPE);

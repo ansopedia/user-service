@@ -1,24 +1,33 @@
+import {
+  type AccessTokenPayload,
+  type AuthToken,
+  type AuthenticatedUser,
+  type DeviceId,
+  type DeviceInfo,
+  type Email,
+  type Login,
+  type MongooseObjectId,
+  type RefreshTokenPayload,
+  type RegisterSchema,
+  type ResetPassword,
+  type SignUpResponse,
+  TokenType,
+  type UserRolePermission,
+  usernameSchema,
+} from "@ansospace/types";
+
 import { OtpService } from "@/api/v1/otp/otp.service.js";
 import { TokenService } from "@/api/v1/token/index.js";
 import { UserDAL } from "@/api/v1/user/user.dal.js";
 import { UserService } from "@/api/v1/user/user.service.js";
-import { type RegisterSchema, type ResetPassword, type UserRolePermission } from "@/api/v1/user/user.validation.js";
 import { ErrorTypeEnum, NotificationType, type Permission, UserActionType } from "@/constants";
 import { notificationService, redisService } from "@/services";
 import type { GoogleUser } from "@/types";
-import { type DeviceId, type DeviceInfo, type Email, type LoggedInUser, type MongooseObjectId, Tokens } from "@/types";
 import { comparePassword, generateAccessToken, verifyJWTToken } from "@/utils";
 
 import { ProfileService } from "../profile/profile.service.js";
 import { SessionDAL } from "../session/session.dal.js";
 import { success } from "./auth.constant.js";
-import {
-  type AccessTokenPayload,
-  type AuthToken,
-  type Login,
-  type RefreshTokenPayload,
-  type SignUpResponse,
-} from "./auth.validation.js";
 
 interface GenerateTokenParams {
   userId: MongooseObjectId;
@@ -95,7 +104,8 @@ export class AuthService {
         });
       } else {
         // Create new user
-        const username = await UserService.generateUniqueUsername(name.givenName.toLowerCase().replace(/\s+/g, "-"));
+        const validaUsername = name.givenName.toLowerCase().replace(/\s+/g, "-");
+        const username = await UserService.generateUniqueUsername(usernameSchema.parse(validaUsername));
 
         user = await UserService.registerUser({
           email,
@@ -124,7 +134,7 @@ export class AuthService {
   }
 
   public static async logout(accessToken: string): Promise<void> {
-    const res = await verifyJWTToken<AccessTokenPayload>(accessToken, Tokens.ACCESS);
+    const res = await verifyJWTToken<AccessTokenPayload>(accessToken, TokenType.ACCESS);
     const { userId, deviceId, jti, exp } = res;
 
     if (jti == null || exp == null) {
@@ -191,10 +201,10 @@ export class AuthService {
     return await new SessionDAL().getActiveSessionsByUserId(userId);
   }
 
-  public static async verifyAccessToken(token: string): Promise<LoggedInUser> {
+  public static async verifyAccessToken(token: string): Promise<AuthenticatedUser> {
     const { userId, permissions, jti, tokenVersion, deviceId } = await verifyJWTToken<AccessTokenPayload>(
       token,
-      Tokens.ACCESS
+      TokenType.ACCESS
     );
 
     if (jti == null) {
@@ -240,7 +250,7 @@ export class AuthService {
   }
 
   public static async refreshToken(refreshToken: string) {
-    const res = await verifyJWTToken<RefreshTokenPayload>(refreshToken, Tokens.REFRESH);
+    const res = await verifyJWTToken<RefreshTokenPayload>(refreshToken, TokenType.REFRESH);
     const { sessionId, jti, exp } = res;
 
     if (jti == null || exp == null) {

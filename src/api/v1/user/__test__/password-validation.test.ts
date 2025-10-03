@@ -1,11 +1,10 @@
+import { passwordSchema } from "@ansospace/types";
 import { ZodError } from "zod";
-
-import { password } from "@/types";
 
 describe("Password Schema", () => {
   const validatePassword = (pwd: string) => {
     try {
-      password.parse(pwd);
+      passwordSchema.parse(pwd);
       return { success: true };
     } catch (error) {
       if (error instanceof ZodError) {

@@ -1,14 +1,24 @@
+import {
+  type AuthToken,
+  type SignUpResponse,
+  emailSchema,
+  loginSchema,
+  refreshTokenRequestSchema,
+  registerSchema,
+  resetPasswordSchema,
+} from "@ansospace/types";
 import type { Request, Response } from "express";
 import ms from "ms";
 
 import { ErrorTypeEnum, STATUS_CODES, envConstants } from "@/constants";
 import { type GoogleUser } from "@/types";
-import { extractTokenFromBearerString, getDeviceInfo, isValidRedirectUrl, sendResponse, validateEmail } from "@/utils";
+import { extractTokenFromBearerString, getDeviceInfo, isValidRedirectUrl, sendResponse } from "@/utils";
 
-import { validateRegister, validateResetPasswordSchema } from "../user/user.validation.js";
+// import { validateResetPasswordSchema } from "../user/user.validation.js";
 import { success } from "./auth.constant.js";
 import { AuthService } from "./auth.service.js";
-import { type AuthToken, type SignUpResponse, loginSchema, validateRefreshTokenSchema } from "./auth.validation.js";
+
+// import { type AuthToken, type SignUpResponse, loginSchema, validateRefreshTokenSchema } from "./auth.validation.js";
 
 export class AuthController {
   private static setAuthTokenHeaders(res: Response, accessToken: string, refreshToken: string, deviceId: string) {
@@ -19,7 +29,7 @@ export class AuthController {
   }
 
   public static async register(req: Request, res: Response) {
-    const userData = validateRegister(req.body);
+    const userData = registerSchema.parse(req.body);
 
     const signUpResponse = await AuthService.register(userData);
     sendResponse<SignUpResponse>({
@@ -179,7 +189,7 @@ export class AuthController {
   }
 
   public static async refreshToken(req: Request, res: Response) {
-    const { refreshToken } = validateRefreshTokenSchema(req.body);
+    const { refreshToken } = refreshTokenRequestSchema.parse(req.body);
 
     const {
       accessToken,
@@ -198,7 +208,7 @@ export class AuthController {
   }
 
   public static async forgetPassword(req: Request, res: Response) {
-    const email = validateEmail(req.body.email);
+    const email = emailSchema.parse(req.body.email);
 
     const { message, token } = await AuthService.forgetPassword(email);
     sendResponse({
@@ -210,9 +220,9 @@ export class AuthController {
   }
 
   public static async resetPassword(req: Request, res: Response) {
-    const resetPasswordSchema = validateResetPasswordSchema(req.body);
+    const resetPassword = resetPasswordSchema.parse(req.body);
 
-    await AuthService.resetPassword(resetPasswordSchema);
+    await AuthService.resetPassword(resetPassword);
 
     sendResponse({
       response: res,

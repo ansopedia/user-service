@@ -1,10 +1,9 @@
-import { type MongooseObjectId } from "@/types";
+import type { CreateRole, MongooseObjectId, Role } from "@ansospace/types";
 
 import { RoleModel } from "./role.model.js";
-import { type Role, type createRole } from "./role.validation.js";
 
 export class RoleDAL {
-  static async createRole(userData: createRole): Promise<Role> {
+  static async createRole(userData: CreateRole): Promise<Role> {
     const newRole = new RoleModel({
       ...userData,
       updatedBy: userData.createdBy,
@@ -12,7 +11,7 @@ export class RoleDAL {
     return await newRole.save();
   }
 
-  static async createRoles(roles: createRole[]): Promise<Role[]> {
+  static async createRoles(roles: CreateRole[]): Promise<Role[]> {
     return await RoleModel.insertMany(roles.map((role) => ({ ...role, updatedBy: role.createdBy })));
   }
 

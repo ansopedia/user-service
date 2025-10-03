@@ -1,8 +1,7 @@
+import type { CreateRole, MongooseObjectId } from "@ansospace/types";
 import mongoose from "mongoose";
 
-import { type createRole } from "@/api/v1/role/role.validation.js";
 import { defaultUsers } from "@/constants";
-import { type MongooseObjectId } from "@/types";
 import {
   createRoleRequest,
   createUserRoleRequest,
@@ -12,7 +11,7 @@ import {
   login,
 } from "@/utils/test";
 
-const VALID_ROLE: createRole = {
+const VALID_ROLE: CreateRole = {
   name: "new-role",
   description: "this is super admin creating first time",
   createdBy: new mongoose.Types.ObjectId(),

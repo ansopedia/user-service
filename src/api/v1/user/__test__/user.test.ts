@@ -1,4 +1,4 @@
-import { DEFAULT_PAGINATION_LIMIT, ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
+import { DEFAULT_PAGINATION_LIMIT, ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap, mockUser } from "@/constants";
 import {
   createUser,
   expectFindUserByUsernameSuccess,
@@ -14,13 +14,6 @@ import {
 
 import { success } from "../user.constant.js";
 
-const newUser = {
-  username: "username",
-  email: "validemail@example.com",
-  password: "ValidPassword123!",
-  confirmPassword: "ValidPassword123!",
-};
-
 describe("User Test", () => {
   let authorizationHeader: string;
   beforeAll(async () => {
@@ -30,17 +23,17 @@ describe("User Test", () => {
   });
 
   it("should return 401 for missing authorization header", async () => {
-    const response = await createUser(newUser, "");
+    const response = await createUser(mockUser, "");
     expectUnauthorizedResponseForMissingAuthorizationHeader(response);
   });
 
   it("should return 401 for invalid authorization header", async () => {
-    const response = await createUser(newUser, "invalid");
+    const response = await createUser(mockUser, "invalid");
     expectUnauthorizedResponseForInvalidAuthorizationHeader(response);
   });
 
   // it("should not create a new user without create-user permission", async () => {
-  //   const unAuthorizedUser = { ...newUser, username: "unauthorized", email: "unauthorized@gmail.com" };
+  //   const unAuthorizedUser = { ...mockUser, username: "unauthorized", email: "unauthorized@gmail.com" };
 
   //   const response = await createUser(unAuthorizedUser, authorizationHeader);
   //   expectUserCreationSuccess(response, unAuthorizedUser);
@@ -51,18 +44,18 @@ describe("User Test", () => {
   //   expectLoginSuccess(loginResponse);
   //   const header = `Bearer ${loginResponse.header["authorization"]}`;
 
-  //   const newUserRes = await createUser(newUser, header);
-  //   expectUnauthorizedResponseWhenUserHasInsufficientPermission(newUserRes);
+  //   const mockUserRes = await createUser(mockUser, header);
+  //   expectUnauthorizedResponseWhenUserHasInsufficientPermission(mockUserRes);
   // });
 
   it("should create a new user with valid credentials", async () => {
-    const response = await createUser(newUser, authorizationHeader);
-    expectUserCreationSuccess(response, newUser);
+    const response = await createUser(mockUser, authorizationHeader);
+    expectUserCreationSuccess(response, mockUser);
   });
 
   it("should respond with 409 for duplicate email", async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS];
-    const response = await createUser(newUser, authorizationHeader);
+    const response = await createUser(mockUser, authorizationHeader);
     expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
     expect(response.body.message).toBe(errorObject.body.message);
     expect(response.body.code).toBe(errorObject.body.code);
@@ -70,14 +63,14 @@ describe("User Test", () => {
 
   it("should respond with 409 for duplicate username", async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS];
-    const response = await createUser({ ...newUser, email: "new@gmail.com" }, authorizationHeader);
+    const response = await createUser({ ...mockUser, email: "new@gmail.com" }, authorizationHeader);
     expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
     expect(response.body.message).toBe(errorObject.body.message);
     expect(response.body.code).toBe(errorObject.body.code);
   });
 
   it("should return 401 when finding a user by username without an authorization header", async () => {
-    const response = await findUserByUsername(newUser.username, "");
+    const response = await findUserByUsername(mockUser.username, "");
     expectUnauthorizedResponseForMissingAuthorizationHeader(response);
   });
 
@@ -87,8 +80,8 @@ describe("User Test", () => {
   });
 
   it("logged in user should find user by username", async () => {
-    const response = await findUserByUsername(newUser.username, authorizationHeader);
-    expectFindUserByUsernameSuccess(response, newUser);
+    const response = await findUserByUsername(mockUser.username, authorizationHeader);
+    expectFindUserByUsernameSuccess(response, mockUser);
   });
 
   it("logged in should respond with 404 for user not found", async () => {

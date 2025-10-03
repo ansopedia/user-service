@@ -1,9 +1,9 @@
+import type { MongooseObjectId, UserRole } from "@ansospace/types";
+
 import { ErrorTypeEnum } from "@/constants";
-import { type MongooseObjectId } from "@/types";
 
 import { UserRoleDAL } from "./user-role.dal.js";
 import { UserRoleDto } from "./user-role.dto.js";
-import { type UserRole } from "./user-role.validation.js";
 
 export class UserRoleService {
   static async createUserRole(userRole: UserRole) {

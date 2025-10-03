@@ -1,4 +1,6 @@
-import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
+import type { SignUpResponse } from "@ansospace/types";
+
+import { ErrorTypeEnum, STATUS_CODES, errorMap, mockUser } from "@/constants";
 import {
   expectLoginSuccess,
   expectLogoutSuccess,
@@ -13,19 +15,10 @@ import {
   verifyAccount,
 } from "@/utils/test";
 
-import type { SignUpResponse } from "../auth.validation.js";
-
-const VALID_CREDENTIALS = {
-  username: "username",
-  email: "validemail@example.com",
-  password: "ValidPassword123!",
-  confirmPassword: "ValidPassword123!",
-};
-
 describe("Authentication Flow", () => {
   let signUpResponse: SignUpResponse;
   it("should sign up a user", async () => {
-    const response = await signUp(VALID_CREDENTIALS);
+    const response = await signUp(mockUser);
     expectSignUpSuccess(response);
     signUpResponse = response.body.data;
   });
@@ -34,8 +27,8 @@ describe("Authentication Flow", () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED];
 
     const { statusCode, body } = await login({
-      email: VALID_CREDENTIALS.email,
-      password: VALID_CREDENTIALS.password,
+      email: mockUser.email,
+      password: mockUser.password,
     });
 
     expect(statusCode).toBe(STATUS_CODES.FORBIDDEN);
@@ -52,25 +45,25 @@ describe("Authentication Flow", () => {
 
   it("should login with email and password", async () => {
     const loginResponse = await login({
-      email: VALID_CREDENTIALS.email,
-      password: VALID_CREDENTIALS.password,
+      email: mockUser.email,
+      password: mockUser.password,
     });
     expectLoginSuccess(loginResponse);
   });
 
   it("should login with username and password", async () => {
     const loginResponse = await login({
-      username: VALID_CREDENTIALS.username,
-      password: VALID_CREDENTIALS.password,
+      username: mockUser.username,
+      password: mockUser.password,
     });
     expectLoginSuccess(loginResponse);
   });
 
   it("should logout a user from a single session", async () => {
-    const loginResponse1 = await login(VALID_CREDENTIALS);
+    const loginResponse1 = await login(mockUser);
     expectLoginSuccess(loginResponse1);
 
-    const loginResponse2 = await login(VALID_CREDENTIALS);
+    const loginResponse2 = await login(mockUser);
     expectLoginSuccess(loginResponse2);
 
     // Logout from first session using refresh token
@@ -86,10 +79,10 @@ describe("Authentication Flow", () => {
   });
 
   it("should logout a user from all sessions", async () => {
-    const loginResponse1 = await login(VALID_CREDENTIALS);
+    const loginResponse1 = await login(mockUser);
     expectLoginSuccess(loginResponse1);
 
-    const loginResponse2 = await login(VALID_CREDENTIALS);
+    const loginResponse2 = await login(mockUser);
     expectLoginSuccess(loginResponse2); // Logout from first session using refresh token
 
     const authorizationHeader1 = loginResponse1.headers["authorization"];
@@ -110,7 +103,7 @@ describe("Authentication Flow", () => {
   });
 
   it("should renew token", async () => {
-    const loginResponse = await login(VALID_CREDENTIALS);
+    const loginResponse = await login(mockUser);
     expectLoginSuccess(loginResponse);
 
     const refreshToken = loginResponse.headers["refresh-token"];

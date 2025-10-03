@@ -1,11 +1,21 @@
+// import { type Login } from "../auth/auth.validation.js";
+import type {
+  Login,
+  MongooseObjectId,
+  RegisterSchema,
+  UpdateUser,
+  User,
+  UserRolePermission,
+  Username,
+} from "@ansospace/types";
 import mongoose from "mongoose";
 
-import type { MongooseObjectId, Username } from "@/types";
+// import type { MongooseObjectId, Username } from "@/types";
 import { hashPassword } from "@/utils";
 
-import { type Login } from "../auth/auth.validation.js";
 import { UserModel } from "./user.model.js";
-import type { RegisterSchema, UpdateUser, User, UserRolePermission } from "./user.validation.js";
+
+// import type { RegisterSchema, UpdateUser, User, UserRolePermission } from "./user.validation.js";
 
 export class UserDAL {
   static async createUser(userData: RegisterSchema): Promise<User> {

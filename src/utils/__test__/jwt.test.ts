@@ -1,11 +1,9 @@
+import type { AccessTokenPayload, MongooseObjectId } from "@ansospace/types";
 import mongoose from "mongoose";
 import { vi } from "vitest";
 
-import { type AccessTokenPayload } from "@/api/v1/auth/auth.validation.js";
 import { ErrorTypeEnum } from "@/constants";
 import { extractTokenFromBearerString, generateAccessToken, generateRefreshToken } from "@/utils";
-
-import type { MongooseObjectId } from "../../types/index.js";
 
 vi.mock("jsonwebtoken", () => ({
   sign: vi.fn(),

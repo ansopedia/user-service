@@ -1,7 +1,7 @@
+import { type Login, loginSchema, passwordSchema } from "@ansospace/types";
 import { ZodError, type ZodIssue } from "zod";
 
-import { type Login, loginSchema } from "@/api/v1/auth/auth.validation.js";
-import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
+import { ErrorTypeEnum, STATUS_CODES, errorMap, mockUser } from "@/constants";
 import {
   expectSignUpSuccess,
   expectUnauthorizedResponseForInvalidToken,
@@ -9,13 +9,6 @@ import {
   renewToken,
   signUp,
 } from "@/utils/test";
-
-const VALID_CREDENTIALS = {
-  username: "validUser",
-  email: "validemail1@example.com",
-  password: "ValidPassword123@",
-  confirmPassword: "ValidPassword123@",
-};
 
 type ValidationResult = { success: true; data: Login } | { success: false; error: ZodIssue[] };
 // Helper function to validate schema
@@ -36,7 +29,7 @@ describe("Auth Test", () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.USER_NOT_FOUND];
     const response = await login({
       email: "notRegistered@test.com",
-      password: "notRegistered123@",
+      password: passwordSchema.parse("notRegistered123@"),
     });
 
     expect(response.statusCode).toBe(STATUS_CODES.NOT_FOUND);
@@ -51,12 +44,12 @@ describe("Auth Test", () => {
   it("should respond with 401 for invalid credentials", async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_CREDENTIALS];
 
-    const res = await signUp(VALID_CREDENTIALS);
+    const res = await signUp(mockUser);
     expectSignUpSuccess(res);
 
     const response = await login({
-      ...VALID_CREDENTIALS,
-      password: "notRegistered123@",
+      ...mockUser,
+      password: passwordSchema.parse("notRegistered123@"),
     });
     expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
     expect(response.body).toMatchObject({
@@ -74,7 +67,7 @@ describe("Auth Test", () => {
   // it("should throw an error if the token is expired", async () => {
   //   const errorObject = errorMap[ErrorTypeEnum.enum.TOKEN_EXPIRED];
 
-  //   const loginResponse = await login(VALID_CREDENTIALS);
+  //   const loginResponse = await login(mockUser);
 
   //   // Mock verifyToken to throw a TokenExpiredError
   //   const refreshToken = sign({ id: loginResponse.body.userId }, envConstants.REFRESH_TOKEN_SECRET, { expiresIn: "0s" });
@@ -125,7 +118,7 @@ describe("Auth Test", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error[0].message).toBe("Invalid email");
+      expect(result.error[0].message).toBe("Invalid email format");
     }
   });
 
@@ -149,7 +142,7 @@ describe("Auth Test", () => {
     const result = validateLoginSchema({ email: "", password: "Password123@" });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error[0].message).toBe("Invalid email");
+      expect(result.error[0].message).toBe("Email is required");
     }
   });
 
@@ -160,7 +153,7 @@ describe("Auth Test", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error[0].message).toBe("username must be at least 3 characters");
+      expect(result.error[0].message).toBe("Username must be at least 3 characters");
     }
   });
 });

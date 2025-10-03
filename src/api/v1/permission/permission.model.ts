@@ -1,6 +1,5 @@
+import { type Permission, PermissionCategory } from "@ansospace/types";
 import { Model, Schema, model } from "mongoose";
-
-import { type Permission, PermissionCategory } from "./permission.validation.js";
 
 const PermissionSchema: Schema<Permission> = new Schema<Permission>(
   {

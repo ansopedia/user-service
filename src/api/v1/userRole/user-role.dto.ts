@@ -1,4 +1,4 @@
-import { type UserRole } from "./user-role.validation.js";
+import type { UserRole } from "@ansospace/types";
 
 export const UserRoleDto = (rolePermission: UserRole) => ({
   getUserRole: () => {

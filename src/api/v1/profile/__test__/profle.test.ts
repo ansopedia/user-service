@@ -1,5 +1,6 @@
+import type { CreateProfileData, MongooseObjectId } from "@ansospace/types";
+
 import { defaultUsers } from "@/constants";
-import { type MongooseObjectId } from "@/types";
 import {
   expectBadRequestResponseForValidationError,
   expectLoginSuccess,
@@ -12,8 +13,6 @@ import {
   toggleProfileVisibility,
   upSertProfileData,
 } from "@/utils/test";
-
-import type { CreateProfileData } from "../profile.validation.js";
 
 const profileData: CreateProfileData = {
   avatar: "http://avatar.com",

@@ -1,5 +1,6 @@
+import type { CreatePermission, Permission } from "@ansospace/types";
+
 import { PermissionModel } from "./permission.model.js";
-import type { CreatePermission, Permission } from "./permission.validation.js";
 
 export class PermissionDAL {
   static async createPermission(permission: CreatePermission): Promise<Permission> {

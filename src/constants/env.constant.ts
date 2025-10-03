@@ -1,10 +1,9 @@
+import { emailSchema, passwordSchema, usernameSchema } from "@ansospace/types";
 import dotenv from "dotenv";
 import fs from "fs";
 import { type SignOptions } from "jsonwebtoken";
 import path from "path";
 import { z } from "zod";
-
-import { userSchema } from "@/api/v1/user/user.validation.js";
 
 // Load environment variables based on NODE_ENV
 const nodeEnv = process.env.NODE_ENV ?? "development";
@@ -38,9 +37,9 @@ const envSchema = z.object({
   REFRESH_TOKEN_EXPIRES_IN: z.custom<SignOptions["expiresIn"]>().readonly(),
   ACTION_TOKEN_EXPIRES_IN: z.custom<SignOptions["expiresIn"]>().readonly(),
   MASTER_OTP: z.string().min(1, "MASTER_OTP is required").readonly(),
-  DEFAULT_SUPER_ADMIN_USERNAME: userSchema.shape.username.readonly(),
-  DEFAULT_SUPER_ADMIN_EMAIL: z.string().email().readonly(),
-  DEFAULT_SUPER_ADMIN_PASSWORD: userSchema.shape.password.readonly(),
+  DEFAULT_SUPER_ADMIN_USERNAME: usernameSchema.readonly(),
+  DEFAULT_SUPER_ADMIN_EMAIL: emailSchema.readonly(),
+  DEFAULT_SUPER_ADMIN_PASSWORD: passwordSchema.readonly(),
   NOTIFICATION_SERVICE_BASE_URL: z.string().url().readonly(),
   USER_SERVICE_BASE_URL: z.string().url().readonly(),
   GOOGLE_CLIENT_ID: z.string().min(1, "GOOGLE_CLIENT_ID is required").readonly(),
