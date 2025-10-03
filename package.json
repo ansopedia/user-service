@@ -33,6 +33,7 @@
   "author": "ansopedia",
   "license": "ISC",
   "dependencies": {
+    "@ansospace/types": "0.3.3",
     "axios": "1.12.2",
     "bcrypt": "6.0.0",
     "cors": "2.8.5",
@@ -56,7 +57,6 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
-    "@ansospace/types": "0.3.3",
     "@eslint/eslintrc": "3.3.1",
     "@eslint/js": "9.35.0",
     "@trivago/prettier-plugin-sort-imports": "5.2.2",

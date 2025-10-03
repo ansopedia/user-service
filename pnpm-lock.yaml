@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@ansospace/types':
+        specifier: 0.3.3
+        version: 0.3.3
       axios:
         specifier: 1.12.2
         version: 1.12.2
@@ -72,9 +75,6 @@ importers:
         specifier: 3.25.76
         version: 3.25.76
     devDependencies:
-      '@ansospace/types':
-        specifier: 0.3.3
-        version: 0.3.3
       '@eslint/eslintrc':
         specifier: 3.3.1
         version: 3.3.1
