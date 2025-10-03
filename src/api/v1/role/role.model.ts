@@ -1,6 +1,5 @@
+import type { Role } from "@ansospace/types";
 import { Model, Schema, model } from "mongoose";
-
-import type { Role } from "./role.validation.js";
 
 const RoleSchema: Schema<Role> = new Schema(
   {

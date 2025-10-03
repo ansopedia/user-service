@@ -1,8 +1,7 @@
+import type { RolePermission } from "@ansospace/types";
 import { Schema, model } from "mongoose";
 
 import { ErrorTypeEnum } from "@/constants";
-
-import type { RolePermission } from "./role-permission.validation.js";
 
 const RolePermissionSchema = new Schema(
   {

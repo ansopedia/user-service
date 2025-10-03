@@ -56,7 +56,7 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
-    "@ansospace/types": "0.3.1",
+    "@ansospace/types": "0.3.3",
     "@eslint/eslintrc": "3.3.1",
     "@eslint/js": "9.35.0",
     "@trivago/prettier-plugin-sort-imports": "5.2.2",

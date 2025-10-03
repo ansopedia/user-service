@@ -22,6 +22,7 @@ export default [
       "**/*.config.js",
       "**/*.md",
       "**/dist",
+      "**/build",
       "eslint.config.mjs",
       "coverage**/*",
       "*.history",

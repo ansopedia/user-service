@@ -1,7 +1,7 @@
+import type { EmailNotification } from "@ansospace/types";
+
 import { ErrorTypeEnum, envConstants } from "@/constants";
 import { errorLogger } from "@/utils";
-
-import { type EmailNotification } from "./notification.validation.js";
 
 const sendEmail = async (body: EmailNotification) => {
   // Skiping sending notification for test environment

@@ -13,6 +13,7 @@ import {
   type SignUpResponse,
   TokenType,
   type UserRolePermission,
+  usernameSchema,
 } from "@ansospace/types";
 
 import { OtpService } from "@/api/v1/otp/otp.service.js";
@@ -103,7 +104,8 @@ export class AuthService {
         });
       } else {
         // Create new user
-        const username = await UserService.generateUniqueUsername(name.givenName.toLowerCase().replace(/\s+/g, "-"));
+        const validaUsername = name.givenName.toLowerCase().replace(/\s+/g, "-");
+        const username = await UserService.generateUniqueUsername(usernameSchema.parse(validaUsername));
 
         user = await UserService.registerUser({
           email,

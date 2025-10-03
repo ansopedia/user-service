@@ -1,16 +1,16 @@
+import type { CreateRole } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/role/role.constant.js";
-import type { createRole } from "@/api/v1/role/role.validation.js";
 import { STATUS_CODES } from "@/constants";
 
 import { app } from "../../app.js";
 
-export const createRoleRequest = async (role: createRole, authorizationHeader: string): Promise<Response> => {
+export const createRoleRequest = async (role: CreateRole, authorizationHeader: string): Promise<Response> => {
   return supertest(app).post("/api/v1/roles").send(role).set("authorization", authorizationHeader);
 };
 
-export const expectCreateRoleSuccess = (response: Response, { name, description }: createRole): void => {
+export const expectCreateRoleSuccess = (response: Response, { name, description }: CreateRole): void => {
   expect(response).toBeDefined();
 
   const { statusCode, body } = response;

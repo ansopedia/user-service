@@ -1,5 +1,6 @@
+import type { RolePermission } from "@ansospace/types";
+
 import { RolePermissionModel } from "./role-permission.model.js";
-import type { RolePermission } from "./role-permission.validation.js";
 
 export class RolePermissionDAL {
   static async createRolePermission(rolePermissionData: RolePermission) {

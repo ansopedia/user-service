@@ -118,7 +118,7 @@ describe("Auth Test", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error[0].message).toBe("Invalid email");
+      expect(result.error[0].message).toBe("Invalid email format");
     }
   });
 
@@ -142,7 +142,7 @@ describe("Auth Test", () => {
     const result = validateLoginSchema({ email: "", password: "Password123@" });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error[0].message).toBe("Invalid email");
+      expect(result.error[0].message).toBe("Email is required");
     }
   });
 
@@ -153,7 +153,7 @@ describe("Auth Test", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error[0].message).toBe("username must be at least 3 characters");
+      expect(result.error[0].message).toBe("Username must be at least 3 characters");
     }
   });
 });

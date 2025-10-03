@@ -1,11 +1,5 @@
 {
-  "cSpell.words": [
-    "ansospace",
-    "maxlength",
-    "Parens",
-    "pino",
-    "trivago"
-  ],
+  "cSpell.words": ["ansospace", "maxlength", "Parens", "pino", "trivago"],
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": "always",
@@ -13,8 +7,6 @@
   },
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "cSpell.language": "en-GB",
-  "cSpell.dictionaries": [
-    "en-GB"
-  ],
+  "cSpell.dictionaries": ["en-GB"],
   "cSpell.allowCompoundWords": true
 }

@@ -1,7 +1,7 @@
-import { type MongooseObjectId } from "@/types";
+import type { MongooseObjectId, Session } from "@ansospace/types";
+
 import { generateRefreshToken } from "@/utils";
 
-import { type Session } from "../auth/auth.validation.js";
 import sessionModel from "./session.model.js";
 
 // Type for safe session data (without sensitive fields)

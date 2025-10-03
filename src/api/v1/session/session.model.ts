@@ -1,8 +1,6 @@
 import type { Session } from "@ansospace/types";
 import mongoose, { Document, Schema } from "mongoose";
 
-// import { type Session } from "../auth/auth.validation.js";
-
 export interface ISession extends Document, Session {
   id: mongoose.Types.ObjectId;
   createdAt: Date;

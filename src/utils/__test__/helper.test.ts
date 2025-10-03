@@ -1,4 +1,5 @@
-import { username as usernameSchema } from "@/types";
+import { usernameSchema } from "@ansospace/types";
+
 import { generateRandomUsername } from "@/utils";
 
 describe("generateRandomUsername", () => {

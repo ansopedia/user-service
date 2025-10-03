@@ -1,7 +1,6 @@
-import type { MongooseObjectId } from "@ansospace/types";
+import type { GetOtp, MongooseObjectId, OtpRecord, SaveOtp } from "@ansospace/types";
 
 import { OtpModel } from "./otp.model.js";
-import type { GetOtp, OtpSchema, SaveOtp } from "./otp.validation.js";
 
 export class OtpDAL {
   static async saveOtp(otpSchema: SaveOtp) {
@@ -9,7 +8,7 @@ export class OtpDAL {
     return await newOtp.save();
   }
 
-  static async getOtpDetailsByUserId(otpSchema: GetOtp): Promise<OtpSchema[] | null> {
+  static async getOtpDetailsByUserId(otpSchema: GetOtp): Promise<OtpRecord[] | null> {
     return await OtpModel.find(otpSchema);
   }
 

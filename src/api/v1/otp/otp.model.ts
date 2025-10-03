@@ -1,8 +1,7 @@
+import type { OtpRecord } from "@ansospace/types";
 import { Schema, model } from "mongoose";
 
-import type { OtpSchema } from "./otp.validation.js";
-
-const OtpSchemas = new Schema<OtpSchema>(
+const OtpSchemas = new Schema<OtpRecord>(
   {
     otp: {
       type: String,
@@ -21,4 +20,4 @@ const OtpSchemas = new Schema<OtpSchema>(
   { timestamps: true }
 );
 
-export const OtpModel = model<OtpSchema>("Otp", OtpSchemas);
+export const OtpModel = model<OtpRecord>("Otp", OtpSchemas);

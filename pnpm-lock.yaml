@@ -73,8 +73,8 @@ importers:
         version: 3.25.76
     devDependencies:
       '@ansospace/types':
-        specifier: 0.3.1
-        version: 0.3.1
+        specifier: 0.3.3
+        version: 0.3.3
       '@eslint/eslintrc':
         specifier: 3.3.1
         version: 3.3.1
@@ -171,8 +171,8 @@ importers:
 
 packages:
 
-  '@ansospace/types@0.3.1':
-    resolution: {integrity: sha512-omtU8oI66HfOPxnT4bim66i8c+bfsmKwNxJe3qyA2We05RxmLNkka9+vfNbcGaky2M2DO7Xx6grd7NpqYPJauw==}
+  '@ansospace/types@0.3.3':
+    resolution: {integrity: sha512-uMAH3g7eOF1DPpVXkfqsjsTB+dOshdjkj0eC9oJdS+33GnWocuAx39cW5E4DhN6YoXdUHYS/XUSeILLgFGuQZA==}
 
   '@asamuzakjp/css-color@3.2.0':
     resolution: {integrity: sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==}
@@ -1818,8 +1818,39 @@ packages:
       socks:
         optional: true
 
+  mongodb@6.20.0:
+    resolution: {integrity: sha512-Tl6MEIU3K4Rq3TSHd+sZQqRBoGlFsOgNrH5ltAcFBV62Re3Fd+FcaVf8uSEQFOJ51SDowDVttBTONMfoYWrWlQ==}
+    engines: {node: '>=16.20.1'}
+    peerDependencies:
+      '@aws-sdk/credential-providers': ^3.188.0
+      '@mongodb-js/zstd': ^1.1.0 || ^2.0.0
+      gcp-metadata: ^5.2.0
+      kerberos: ^2.0.1
+      mongodb-client-encryption: '>=6.0.0 <7'
+      snappy: ^7.3.2
+      socks: ^2.7.1
+    peerDependenciesMeta:
+      '@aws-sdk/credential-providers':
+        optional: true
+      '@mongodb-js/zstd':
+        optional: true
+      gcp-metadata:
+        optional: true
+      kerberos:
+        optional: true
+      mongodb-client-encryption:
+        optional: true
+      snappy:
+        optional: true
+      socks:
+        optional: true
+
   mongoose@8.18.1:
     resolution: {integrity: sha512-K0RfrUXXufqNRZZjvAGdyjydB91SnbWxlwFYi5t7zN2DxVWFD3c6puia0/7xfBwZm6RCpYOVdYFlRFpoDWiC+w==}
+    engines: {node: '>=16.20.1'}
+
+  mongoose@8.19.0:
+    resolution: {integrity: sha512-Z4iRiBkC7aR7a/rxQxtUAUBasFdiXkBuv3EY4NwkRbs92xKA4pwzi1Q4D+odFBe+ChahMNAYg2JP+7tWzZM0sQ==}
     engines: {node: '>=16.20.1'}
 
   morgan@1.10.1:
@@ -2598,9 +2629,19 @@ packages:
 
 snapshots:
 
-  '@ansospace/types@0.3.1':
+  '@ansospace/types@0.3.3':
     dependencies:
+      mongoose: 8.19.0
       zod: 3.25.76
+    transitivePeerDependencies:
+      - '@aws-sdk/credential-providers'
+      - '@mongodb-js/zstd'
+      - gcp-metadata
+      - kerberos
+      - mongodb-client-encryption
+      - snappy
+      - socks
+      - supports-color
 
   '@asamuzakjp/css-color@3.2.0':
     dependencies:
@@ -4247,11 +4288,36 @@ snapshots:
       bson: 6.10.4
       mongodb-connection-string-url: 3.0.2
 
+  mongodb@6.20.0:
+    dependencies:
+      '@mongodb-js/saslprep': 1.3.0
+      bson: 6.10.4
+      mongodb-connection-string-url: 3.0.2
+
   mongoose@8.18.1:
     dependencies:
       bson: 6.10.4
       kareem: 2.6.3
       mongodb: 6.18.0
+      mpath: 0.9.0
+      mquery: 5.0.0
+      ms: 2.1.3
+      sift: 17.1.3
+    transitivePeerDependencies:
+      - '@aws-sdk/credential-providers'
+      - '@mongodb-js/zstd'
+      - gcp-metadata
+      - kerberos
+      - mongodb-client-encryption
+      - snappy
+      - socks
+      - supports-color
+
+  mongoose@8.19.0:
+    dependencies:
+      bson: 6.10.4
+      kareem: 2.6.3
+      mongodb: 6.20.0
       mpath: 0.9.0
       mquery: 5.0.0
       ms: 2.1.3

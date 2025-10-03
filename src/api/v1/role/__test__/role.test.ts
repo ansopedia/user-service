@@ -1,3 +1,4 @@
+import type { CreateRole } from "@ansospace/types";
 import mongoose from "mongoose";
 
 import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap, mockUser } from "@/constants";
@@ -16,9 +17,7 @@ import {
   verifyAccount,
 } from "@/utils/test";
 
-import type { createRole } from "../role.validation.js";
-
-const VALID_ROLE: createRole = {
+const VALID_ROLE: CreateRole = {
   name: "new-role",
   description: "this is new-role creating first time",
   createdBy: new mongoose.Types.ObjectId(),

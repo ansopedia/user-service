@@ -1,4 +1,4 @@
-import { defaultUsers } from "@/constants";
+import { defaultUsers, mockUser } from "@/constants";
 import {
   checkUsernameAvailability,
   createUser,
@@ -9,13 +9,6 @@ import {
   login,
 } from "@/utils/test";
 
-const newUser = {
-  username: "testuser",
-  email: "testuser@example.com",
-  password: "ValidPassword123!",
-  confirmPassword: "ValidPassword123!",
-};
-
 describe("Check Username Availability", () => {
   let authorizationHeader: string;
 
@@ -25,8 +18,8 @@ describe("Check Username Availability", () => {
     authorizationHeader = `Bearer ${loginResponse.header["authorization"]}`;
 
     // Create a user to test username unavailability
-    const userResponse = await createUser(newUser, authorizationHeader);
-    expectUserCreationSuccess(userResponse, newUser);
+    const userResponse = await createUser(mockUser, authorizationHeader);
+    expectUserCreationSuccess(userResponse, mockUser);
   });
 
   it("should return true for available username", async () => {
@@ -35,7 +28,7 @@ describe("Check Username Availability", () => {
   });
 
   it("should return false for unavailable username", async () => {
-    const response = await checkUsernameAvailability(newUser.username);
+    const response = await checkUsernameAvailability(mockUser.username);
     expectUsernameAvailabilityResponse(response, false);
   });
 

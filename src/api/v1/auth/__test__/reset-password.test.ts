@@ -1,4 +1,4 @@
-import { type Password, passwordSchema } from "@ansospace/types";
+import { type Password, otpSchema, passwordSchema } from "@ansospace/types";
 import type { Response } from "supertest";
 
 import { NotificationType, envConstants, mockUser } from "@/constants";
@@ -62,7 +62,7 @@ describe("Reset Password", () => {
     const otpType = NotificationType.FORGET_PASSWORD_OTP;
 
     verifiedOTPResponse = await verifyOTP({
-      otp: envConstants.MASTER_OTP,
+      otp: otpSchema.parse(envConstants.MASTER_OTP),
       token: res.body.data.token,
       otpType,
     });

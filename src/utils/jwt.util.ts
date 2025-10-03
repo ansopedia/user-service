@@ -1,14 +1,14 @@
-import jwt from "jsonwebtoken";
-
 import {
   type AccessTokenPayload,
   type ActionTokenPayload,
   type RefreshTokenPayload,
-  validateActionTokenPayload,
-  validateRefreshTokenPayload,
-} from "@/api/v1/auth/auth.validation.js";
+  TokenType,
+  actionTokenPayloadSchema,
+  refreshTokenPayloadSchema,
+} from "@ansospace/types";
+import jwt from "jsonwebtoken";
+
 import { CURRENT_SERVICE, ErrorTypeEnum, ServiceEnum, envConstants } from "@/constants";
-import { Tokens } from "@/types";
 
 import { CryptoUtil } from "./crypto.util.js";
 import { errorLogger } from "./logger.js";
@@ -44,7 +44,7 @@ export const generateRefreshToken = (payload: RefreshTokenPayload): string => {
   try {
     const cryptoUtil = CryptoUtil.getInstance();
     const privateKey = cryptoUtil.getPrivateKey();
-    const refreshTokenPayload = validateRefreshTokenPayload(payload);
+    const refreshTokenPayload = refreshTokenPayloadSchema.parse(payload);
 
     return jwt.sign(refreshTokenPayload, privateKey, {
       algorithm: "RS256",
@@ -60,7 +60,7 @@ export const generateRefreshToken = (payload: RefreshTokenPayload): string => {
 };
 
 export const generateActionToken = (payload: ActionTokenPayload) => {
-  const actionTokenPayload = validateActionTokenPayload(payload);
+  const actionTokenPayload = actionTokenPayloadSchema.parse(payload);
 
   return jwt.sign(actionTokenPayload, ACTION_TOKEN_SECRET, {
     algorithm: "HS256",
@@ -72,15 +72,15 @@ export const generateActionToken = (payload: ActionTokenPayload) => {
 
 export const verifyJWTToken = async <T>(
   token: string,
-  tokenType: Tokens,
+  tokenType: TokenType,
   serviceName: ServiceEnum = CURRENT_SERVICE
 ): Promise<T & jwt.JwtPayload> => {
   try {
     const cryptoUtil = CryptoUtil.getInstance();
     const publicKey = cryptoUtil.getPublicKey();
 
-    const secret = tokenType === Tokens.ACTION ? ACTION_TOKEN_SECRET : publicKey;
-    const algorithm: jwt.Algorithm = tokenType === Tokens.ACTION ? "HS256" : "RS256";
+    const secret = tokenType === TokenType.ACTION ? ACTION_TOKEN_SECRET : publicKey;
+    const algorithm: jwt.Algorithm = tokenType === TokenType.ACTION ? "HS256" : "RS256";
 
     const verifyOptions: jwt.VerifyOptions = {
       algorithms: [algorithm],

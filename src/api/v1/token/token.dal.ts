@@ -1,7 +1,6 @@
-import { type MongooseObjectId } from "@/types";
+import type { CreateToken, MongooseObjectId, Token, UpdateToken } from "@ansospace/types";
 
 import { TokenModel } from "./token.model.js";
-import type { CreateToken, Token, UpdateToken } from "./token.validation.js";
 
 interface ITokenDal {
   saveToken(data: Token): Promise<CreateToken>;

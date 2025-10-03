@@ -1,3 +1,4 @@
+import { toggleVisibilitySchema } from "@ansospace/types";
 import type { Request, Response } from "express";
 
 import { sendResponse } from "@/utils";
@@ -5,7 +6,6 @@ import { sendResponse } from "@/utils";
 import { UserService } from "../user/user.service.js";
 import { success } from "./profile.constant.js";
 import { ProfileService } from "./profile.service.js";
-import { toggleVisibilitySchema } from "./profile.validation.js";
 
 export class ProfileController {
   static upSertProfile = async (req: Request, res: Response) => {

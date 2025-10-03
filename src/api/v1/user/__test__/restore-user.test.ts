@@ -1,6 +1,7 @@
+import { type GetUser } from "@ansospace/types";
 import mongoose from "mongoose";
 
-import { defaultUsers } from "@/constants";
+import { defaultUsers, mockUser } from "@/constants";
 import {
   createUser,
   expectBadRequestResponseForValidationError,
@@ -16,15 +17,6 @@ import {
   restoreUser,
 } from "@/utils/test";
 
-import { type GetUser } from "../user.validation.js";
-
-const newUser = {
-  username: "username",
-  email: "validemail@example.com",
-  password: "ValidPassword123!",
-  confirmPassword: "ValidPassword123!",
-};
-
 describe("Restore User", () => {
   let authorizationHeader: string;
   let userToDelete: GetUser;
@@ -34,11 +26,11 @@ describe("Restore User", () => {
     expectLoginSuccess(loginResponse);
     authorizationHeader = `Bearer ${loginResponse.header["authorization"]}`;
 
-    const userResponse = await createUser(newUser, authorizationHeader);
-    expectUserCreationSuccess(userResponse, newUser);
+    const userResponse = await createUser(mockUser, authorizationHeader);
+    expectUserCreationSuccess(userResponse, mockUser);
 
-    const foundUserRes = await findUserByUsername(newUser.username, authorizationHeader);
-    expectFindUserByUsernameSuccess(foundUserRes, newUser);
+    const foundUserRes = await findUserByUsername(mockUser.username, authorizationHeader);
+    expectFindUserByUsernameSuccess(foundUserRes, mockUser);
 
     userToDelete = foundUserRes.body.data;
   });
@@ -65,7 +57,7 @@ describe("Restore User", () => {
 
   // it("should return 403 for unauthorized user", async () => {
   //   const unAuthorizedUser = {
-  //     ...newUser,
+  //     ...mockUser,
   //     username: "unauthorized",
   //     email: "unauthorized@gmail.com",
   //   };

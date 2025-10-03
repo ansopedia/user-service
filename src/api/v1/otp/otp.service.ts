@@ -4,6 +4,7 @@ import {
   type OtpRecord,
   type OtpVerifyEvent,
   otpEventSchema,
+  otpSchema,
   otpVerifyEventSchema,
 } from "@ansospace/types";
 import { formatDuration, intervalToDuration, isPast } from "date-fns";
@@ -103,7 +104,7 @@ export class OtpService {
 
     const otpToVerify = isMasterOTP && envConstants.NODE_ENV !== "production" ? envConstants.MASTER_OTP : otpData.otp;
 
-    if (!verifyOTP(otpToVerify, otp as string)) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
+    if (!verifyOTP(otpSchema.parse(otpToVerify), otp)) throw new Error(ErrorTypeEnum.enum.INVALID_OTP);
 
     if (isPast(otpData.expiryTime)) throw new Error(ErrorTypeEnum.enum.OTP_EXPIRED);
 

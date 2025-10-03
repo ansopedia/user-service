@@ -1,6 +1,7 @@
+import type { CreateProfileData, ProfileData } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
-import { type CreateProfileData, type ProfileData, success } from "@/api/v1/profile/index.js";
+import { success } from "@/api/v1/profile/index.js";
 import { STATUS_CODES } from "@/constants";
 
 import { app } from "../../app.js";

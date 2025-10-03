@@ -1,4 +1,4 @@
-import type { GetPermission, Permission } from "./permission.validation.js";
+import type { GetPermission, Permission } from "@ansospace/types";
 
 export const PermissionDto = (permission: Permission) => ({
   getPermission: (): GetPermission => ({

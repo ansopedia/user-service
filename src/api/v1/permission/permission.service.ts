@@ -1,8 +1,9 @@
+import { type CreatePermission, type GetPermission, createPermissionSchema } from "@ansospace/types";
+
 import { ErrorTypeEnum } from "@/constants";
 
 import { PermissionDAL } from "./permission.dal.js";
 import { PermissionDto } from "./permission.dto.js";
-import { type CreatePermission, type GetPermission, createPermissionSchema } from "./permission.validation.js";
 
 export class PermissionService {
   static async createPermission(createPermission: CreatePermission): Promise<GetPermission> {

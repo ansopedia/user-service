@@ -1,4 +1,12 @@
-import type { RegisterSchema } from "@ansospace/types";
+import {
+  type Email,
+  type GetUser,
+  type MongooseObjectId,
+  type RegisterSchema,
+  type UpdateUser,
+  type Username,
+  paginationSchema,
+} from "@ansospace/types";
 
 import { ErrorTypeEnum, ROLES } from "@/constants";
 // import type { Email, MongooseObjectId, Username } from "@/types";
@@ -9,10 +17,8 @@ import { UserRoleService } from "../userRole/user-role.service.js";
 import { UserDAL } from "./user.dal.js";
 import { UserDto } from "./user.dto.js";
 
-// import { type GetUser, type UpdateUser, validatePagination } from "./user.validation.js";
-
 export class UserService {
-  static async generateUniqueUsername(username: string): Promise<string> {
+  static async generateUniqueUsername(username: Username): Promise<Username> {
     const user = await UserDAL.getUserByUsername(username);
 
     if (!user) return username;
@@ -46,7 +52,7 @@ export class UserService {
   }
 
   static async getAllUsers(limit: number, offset: number): Promise<{ users: GetUser[]; totalUsers: number }> {
-    validatePagination({ limit, offset });
+    paginationSchema.parse({ limit, offset });
     const { users, totalUsers } = await UserDAL.getAllUsers(limit, offset);
     return {
       users: users.map((user) => UserDto(user).getUser()),
@@ -110,7 +116,7 @@ export class UserService {
     return UserDto(updatedUser).getUser();
   }
 
-  static async checkUsernameAvailability(username: string): Promise<boolean> {
+  static async checkUsernameAvailability(username: Username): Promise<boolean> {
     const user = await UserDAL.getUserByUsername(username);
     // If user is null/undefined, !user returns true meaning username is available
     // If user exists, !user returns false meaning username is taken
