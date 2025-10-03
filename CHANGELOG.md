@@ -5,6 +5,12 @@ All notable changes to the User Service will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-10-03
+
+### Added
+
+- Integrate @ansospace/types package into user-service ([#138](https://github.com/ansopedia/user-service/issues/138))
+
 ## [1.2.0] - 2025-09-10
 
 ### New feature
@@ -14,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support Multi-Device Login by Allowing Multiple Refresh Tokens per User ([#123](https://github.com/ansopedia/user-service/issues/123))
 - Add API to List and Track Active User Sessions ([#125](https://github.com/ansopedia/user-service/issues/125))
 - Integrate Redis into User Service ([#126](https://github.com/ansopedia/user-service/issues/126))
+- Improve Test Reliability with Enhanced Server Shutdown, Port Allocation, and Test Database Handling ([#130](https://github.com/ansopedia/user-service/issues/130))
+- Add TypeScript v8 Feature: "erasableSyntaxOnly" and Update Codebase ([#122](https://github.com/ansopedia/user-service/issues/122))
 
 ### Changed
 
