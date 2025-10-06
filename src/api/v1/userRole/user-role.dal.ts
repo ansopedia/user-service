@@ -1,4 +1,4 @@
-import type { MongooseObjectId, UserRole } from "@ansospace/types";
+import type { ObjectId, UserRole } from "@ansospace/types";
 
 import { UserRoleModel } from "./user-role.model.js";
 
@@ -8,7 +8,7 @@ export class UserRoleDAL {
     return userRolePermission.save();
   }
 
-  static async getUserRoles(userId: MongooseObjectId) {
+  static async getUserRoles(userId: ObjectId) {
     return await UserRoleModel.find({ userId });
   }
 
