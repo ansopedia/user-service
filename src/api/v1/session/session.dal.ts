@@ -1,4 +1,4 @@
-import type { ObjectId, Session } from "@ansospace/types";
+import type { DeviceId, ObjectId, Session } from "@ansospace/types";
 
 import { generateRefreshToken } from "@/utils";
 
@@ -14,9 +14,9 @@ interface ISessionDal {
   getActiveSessionsSafe(userId: ObjectId): Promise<SessionSafe[]>; // Safe version without sensitive data
   insertSession(session: Omit<Session, "refreshToken" | "createdAt" | "updatedAt" | "isActive">): Promise<Session>;
   updateSession(sessionId: ObjectId): Promise<Session | null>;
-  updateSessionByUserAndDevice(userId: ObjectId, deviceId: string, update: Partial<Session>): Promise<Session | null>;
+  updateSessionByUserAndDevice(userId: ObjectId, deviceId: DeviceId, update: Partial<Session>): Promise<Session | null>;
   deleteSession(sessionId: ObjectId): Promise<void>;
-  deleteSessionByUserAndDevice(userId: ObjectId, deviceId: string): Promise<void>;
+  deleteSessionByUserAndDevice(userId: ObjectId, deviceId: DeviceId): Promise<void>;
   deleteAllExceptSessionId(userId: ObjectId, sessionId: ObjectId): Promise<{ deletedCount?: number }>;
   deleteAllSession(userId: ObjectId): Promise<{ deletedCount?: number }>;
   deactivateAllExceptSessionId(userId: ObjectId, sessionId: ObjectId): Promise<{ modifiedCount?: number }>;
@@ -35,7 +35,7 @@ export class SessionDAL implements ISessionDal {
 
   async updateSessionByUserAndDevice(
     userId: ObjectId,
-    deviceId: string,
+    deviceId: DeviceId,
     update: Partial<Session>
   ): Promise<Session | null> {
     return await sessionModel.findOneAndUpdate({ userId, deviceId }, update, { new: true });
@@ -85,7 +85,7 @@ export class SessionDAL implements ISessionDal {
     await sessionModel.findByIdAndDelete(sessionId);
   }
 
-  async deleteSessionByUserAndDevice(userId: ObjectId, deviceId: string): Promise<void> {
+  async deleteSessionByUserAndDevice(userId: ObjectId, deviceId: DeviceId): Promise<void> {
     await sessionModel.deleteOne({ userId, deviceId });
   }
 
