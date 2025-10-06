@@ -1,4 +1,4 @@
-import { type MongooseObjectId, type ProfileData, validateProfileSchema } from "@ansospace/types";
+import { type ObjectId, type ProfileData, validateProfileSchema } from "@ansospace/types";
 
 import { ErrorTypeEnum } from "@/constants";
 
@@ -16,11 +16,11 @@ export class ProfileService {
     return await this.profileDataDal.upSertProfileData(profileData);
   };
 
-  getProfileData = async (userId: MongooseObjectId): Promise<ProfileData | null> => {
+  getProfileData = async (userId: ObjectId): Promise<ProfileData | null> => {
     return await this.profileDataDal.getProfileData(userId);
   };
 
-  toggleProfileVisibility = async (userId: MongooseObjectId, isPublic: boolean): Promise<ProfileData> => {
+  toggleProfileVisibility = async (userId: ObjectId, isPublic: boolean): Promise<ProfileData> => {
     const profile = await this.profileDataDal.toggleProfileVisibility(userId, isPublic);
 
     if (!profile) {

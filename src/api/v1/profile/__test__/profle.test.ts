@@ -1,4 +1,4 @@
-import type { CreateProfileData, MongooseObjectId } from "@ansospace/types";
+import type { CreateProfileData, ObjectId } from "@ansospace/types";
 
 import { defaultUsers } from "@/constants";
 import {
@@ -25,7 +25,7 @@ const profileData: CreateProfileData = {
 
 describe("Profile Service", () => {
   let authorizationHeader: string;
-  let loggedInUserId: MongooseObjectId;
+  let loggedInUserId: ObjectId;
 
   beforeAll(async () => {
     const loginResponse = await login(defaultUsers);

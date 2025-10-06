@@ -1,4 +1,4 @@
-import type { CreateRole, MongooseObjectId, Role } from "@ansospace/types";
+import type { CreateRole, ObjectId, Role } from "@ansospace/types";
 
 import { RoleModel } from "./role.model.js";
 
@@ -23,11 +23,11 @@ export class RoleDAL {
     return await RoleModel.findOne({ name });
   }
 
-  static async softDeleteRole(roleId: MongooseObjectId): Promise<Role | null> {
+  static async softDeleteRole(roleId: ObjectId): Promise<Role | null> {
     return await RoleModel.findByIdAndUpdate(roleId, { isDeleted: true }, { new: true });
   }
 
-  static async restoreRole(roleId: MongooseObjectId): Promise<Role | null> {
+  static async restoreRole(roleId: ObjectId): Promise<Role | null> {
     return await RoleModel.findByIdAndUpdate(roleId, { isDeleted: false }, { new: true });
   }
 }

@@ -1,5 +1,6 @@
 import {
   type AuthToken,
+  type LoginResponse,
   type SignUpResponse,
   emailSchema,
   loginSchema,
@@ -56,7 +57,7 @@ export class AuthController {
 
     AuthController.setAuthTokenHeaders(res, accessToken, refreshToken, deviceId);
 
-    sendResponse({
+    sendResponse<LoginResponse>({
       response: res,
       message: success.LOGGED_IN_SUCCESSFULLY,
       statusCode: STATUS_CODES.OK,

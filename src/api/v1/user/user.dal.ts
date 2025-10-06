@@ -1,16 +1,8 @@
 // import { type Login } from "../auth/auth.validation.js";
-import type {
-  Login,
-  MongooseObjectId,
-  RegisterSchema,
-  UpdateUser,
-  User,
-  UserRolePermission,
-  Username,
-} from "@ansospace/types";
+import type { Login, ObjectId, RegisterSchema, UpdateUser, User, UserRolePermission, Username } from "@ansospace/types";
 import mongoose from "mongoose";
 
-// import type { MongooseObjectId, Username } from "@/types";
+// import type { ObjectId, Username } from "@/types";
 import { hashPassword } from "@/utils";
 
 import { UserModel } from "./user.model.js";
@@ -50,7 +42,7 @@ export class UserDAL {
     return await UserModel.findOne({ username, isDeleted: false });
   }
 
-  static async getUserById(userId: MongooseObjectId): Promise<User | null> {
+  static async getUserById(userId: ObjectId): Promise<User | null> {
     return await UserModel.findById(userId);
   }
 
@@ -58,22 +50,22 @@ export class UserDAL {
     return await UserModel.findOne({ googleId });
   }
 
-  static async softDeleteUser(userId: MongooseObjectId): Promise<User | null> {
+  static async softDeleteUser(userId: ObjectId): Promise<User | null> {
     return await UserModel.findByIdAndUpdate(userId, { isDeleted: true }, { new: true });
   }
 
-  static async restoreUser(userId: MongooseObjectId): Promise<User | null> {
+  static async restoreUser(userId: ObjectId): Promise<User | null> {
     return await UserModel.findByIdAndUpdate(userId, { isDeleted: false }, { new: true });
   }
 
-  static async updateUser(userId: MongooseObjectId, userData: UpdateUser): Promise<User | null> {
+  static async updateUser(userId: ObjectId, userData: UpdateUser): Promise<User | null> {
     if (userData.password !== null && userData.password !== undefined) {
       userData.password = await hashPassword(userData.password);
     }
     return await UserModel.findByIdAndUpdate(userId, userData, { new: true });
   }
 
-  static async getUserRolesAndPermissionsByUserId(userId: MongooseObjectId): Promise<UserRolePermission> {
+  static async getUserRolesAndPermissionsByUserId(userId: ObjectId): Promise<UserRolePermission> {
     const userRolePermissions = await UserModel.aggregate([
       {
         $match: {

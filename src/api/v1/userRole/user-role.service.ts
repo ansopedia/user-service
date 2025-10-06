@@ -1,4 +1,4 @@
-import type { MongooseObjectId, UserRole } from "@ansospace/types";
+import type { ObjectId, UserRole } from "@ansospace/types";
 
 import { ErrorTypeEnum } from "@/constants";
 
@@ -16,7 +16,7 @@ export class UserRoleService {
     return UserRoleDto(newUserRole).getUserRole();
   }
 
-  static async getUserRoles(userId: MongooseObjectId) {
+  static async getUserRoles(userId: ObjectId) {
     const userRoles = await UserRoleDAL.getUserRoles(userId);
     return userRoles.map((role) => UserRoleDto(role).getUserRole());
   }

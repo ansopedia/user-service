@@ -1,4 +1,4 @@
-import type { MongooseObjectId, OtpEvent, OtpRecord, OtpVerifyEvent } from "@ansospace/types";
+import type { ObjectId, OtpEvent, OtpRecord, OtpVerifyEvent } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant.js";
@@ -22,7 +22,7 @@ export const expectOTPRequestSuccess = (response: Response): void => {
   });
 };
 
-export const retrieveOTP = async (userId: MongooseObjectId, otpType: NotificationType): Promise<OtpRecord> => {
+export const retrieveOTP = async (userId: ObjectId, otpType: NotificationType): Promise<OtpRecord> => {
   const otpDetails = await OtpService.getOtpDetailsByUserId({
     userId,
     otpType,

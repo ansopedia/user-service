@@ -1,11 +1,11 @@
-import type { MongooseObjectId, ProfileData } from "@ansospace/types";
+import type { ObjectId, ProfileData } from "@ansospace/types";
 
 import { ProfileDataModel } from "./profile.model.js";
 
 interface IProfileDataDal {
   upSertProfileData(data: ProfileData): Promise<ProfileData>;
-  getProfileData(userId: MongooseObjectId): Promise<ProfileData | null>;
-  toggleProfileVisibility(userId: MongooseObjectId, isPublic: boolean): Promise<ProfileData | null>;
+  getProfileData(userId: ObjectId): Promise<ProfileData | null>;
+  toggleProfileVisibility(userId: ObjectId, isPublic: boolean): Promise<ProfileData | null>;
 }
 
 export class ProfileDataDAL implements IProfileDataDal {
@@ -16,11 +16,11 @@ export class ProfileDataDAL implements IProfileDataDal {
     });
   }
 
-  async getProfileData(userId: MongooseObjectId): Promise<ProfileData | null> {
+  async getProfileData(userId: ObjectId): Promise<ProfileData | null> {
     return await ProfileDataModel.findOne({ userId });
   }
 
-  async toggleProfileVisibility(userId: MongooseObjectId, isPublic: boolean): Promise<ProfileData | null> {
+  async toggleProfileVisibility(userId: ObjectId, isPublic: boolean): Promise<ProfileData | null> {
     return await ProfileDataModel.findOneAndUpdate({ userId }, { isPublic }, { new: true });
   }
 }
