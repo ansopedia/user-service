@@ -1,7 +1,7 @@
 import {
   type Email,
   type GetUser,
-  type MongooseObjectId,
+  type ObjectId,
   type RegisterSchema,
   type UpdateUser,
   type Username,
@@ -9,7 +9,7 @@ import {
 } from "@ansospace/types";
 
 import { ErrorTypeEnum, ROLES } from "@/constants";
-// import type { Email, MongooseObjectId, Username } from "@/types";
+// import type { Email, ObjectId, Username } from "@/types";
 import { generateRandomUsername } from "@/utils";
 
 import { RoleDAL } from "../role/role.dal.js";
@@ -68,7 +68,7 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async getUserById(userId: MongooseObjectId): Promise<GetUser> {
+  static async getUserById(userId: ObjectId): Promise<GetUser> {
     const user = await UserDAL.getUserById(userId);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
@@ -92,7 +92,7 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async softDeleteUser(userId: MongooseObjectId): Promise<GetUser> {
+  static async softDeleteUser(userId: ObjectId): Promise<GetUser> {
     const user = await UserDAL.softDeleteUser(userId);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
@@ -100,7 +100,7 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async restoreUser(userId: MongooseObjectId): Promise<GetUser> {
+  static async restoreUser(userId: ObjectId): Promise<GetUser> {
     const user = await UserDAL.restoreUser(userId);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
@@ -108,7 +108,7 @@ export class UserService {
     return UserDto(user).getUser();
   }
 
-  static async updateUser(userId: MongooseObjectId, userData: UpdateUser): Promise<GetUser> {
+  static async updateUser(userId: ObjectId, userData: UpdateUser): Promise<GetUser> {
     const updatedUser = await UserDAL.updateUser(userId, userData);
 
     if (!updatedUser) throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);

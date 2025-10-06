@@ -1,4 +1,4 @@
-import type { CreateRole, MongooseObjectId } from "@ansospace/types";
+import type { CreateRole, ObjectId } from "@ansospace/types";
 import mongoose from "mongoose";
 
 import { defaultUsers } from "@/constants";
@@ -21,7 +21,7 @@ const VALID_ROLE: CreateRole = {
 
 describe("User Role Test", () => {
   let authorizationHeader: string;
-  let loggedInUserId: MongooseObjectId;
+  let loggedInUserId: ObjectId;
 
   beforeAll(async () => {
     const loginResponse = await login(defaultUsers);

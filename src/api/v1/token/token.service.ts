@@ -1,4 +1,4 @@
-import { type CreateToken, type MongooseObjectId, type Token, TokenType } from "@ansospace/types";
+import { type CreateToken, type ObjectId, type Token, TokenType } from "@ansospace/types";
 import { isPast } from "date-fns";
 
 import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, UserActionType } from "@/constants";
@@ -13,7 +13,7 @@ export class TokenService {
     this.tokenDAL = new TokenDAL();
   }
 
-  async createActionToken(userId: MongooseObjectId, action: UserActionType) {
+  async createActionToken(userId: ObjectId, action: UserActionType) {
     const token = generateActionToken({ userId, action });
 
     const tokenPayload: CreateToken = {
@@ -52,7 +52,7 @@ export class TokenService {
     }
   }
 
-  async invalidateToken(tokenId: MongooseObjectId) {
+  async invalidateToken(tokenId: ObjectId) {
     await this.tokenDAL.updateToken(tokenId, { isUsed: true });
   }
 }

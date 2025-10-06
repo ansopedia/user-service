@@ -1,17 +1,17 @@
-import type { MongooseObjectId, SocketUser } from "@ansospace/types";
+import type { ObjectId, SocketUser } from "@ansospace/types";
 
 class ConnectionManager {
-  private connectedUsers: Map<MongooseObjectId, SocketUser>;
+  private connectedUsers: Map<ObjectId, SocketUser>;
 
   constructor() {
     this.connectedUsers = new Map();
   }
 
-  addUser(userId: MongooseObjectId, socketId: string) {
+  addUser(userId: ObjectId, socketId: string) {
     this.connectedUsers.set(userId, { userId, socketId });
   }
 
-  removeUser(userId: MongooseObjectId) {
+  removeUser(userId: ObjectId) {
     this.connectedUsers.delete(userId);
   }
 
@@ -19,7 +19,7 @@ class ConnectionManager {
     return Array.from(this.connectedUsers.values());
   }
 
-  isUserConnected(userId: MongooseObjectId) {
+  isUserConnected(userId: ObjectId) {
     return this.connectedUsers.has(userId);
   }
 }

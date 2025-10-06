@@ -6,7 +6,7 @@ import {
   type DeviceInfo,
   type Email,
   type Login,
-  type MongooseObjectId,
+  type ObjectId,
   type RefreshTokenPayload,
   type RegisterSchema,
   type ResetPassword,
@@ -30,7 +30,7 @@ import { SessionDAL } from "../session/session.dal.js";
 import { success } from "./auth.constant.js";
 
 interface GenerateTokenParams {
-  userId: MongooseObjectId;
+  userId: ObjectId;
   deviceInfo: DeviceInfo;
   deviceId: DeviceId;
   tokenVersion: number;
@@ -153,7 +153,7 @@ export class AuthService {
     await new SessionDAL().updateSessionByUserAndDevice(userId, deviceId, { isActive: false });
   }
 
-  public static async logoutAll(userId: MongooseObjectId): Promise<{ modifiedCount?: number }> {
+  public static async logoutAll(userId: ObjectId): Promise<{ modifiedCount?: number }> {
     // Increment tokenVersion for all sessions and deactivate them
     const sessions = await new SessionDAL().getSessionsByUserId(userId);
 
@@ -173,7 +173,7 @@ export class AuthService {
     return { modifiedCount: sessions.length };
   }
 
-  public static async logoutOthers(deviceId: string, userId: MongooseObjectId): Promise<{ modifiedCount?: number }> {
+  public static async logoutOthers(deviceId: string, userId: ObjectId): Promise<{ modifiedCount?: number }> {
     // Increment tokenVersion for all sessions except current and deactivate them
     const sessions = await new SessionDAL().getSessionsByUserId(userId);
 
@@ -197,7 +197,7 @@ export class AuthService {
     return { modifiedCount };
   }
 
-  public static async getSessions(userId: MongooseObjectId) {
+  public static async getSessions(userId: ObjectId) {
     return await new SessionDAL().getActiveSessionsByUserId(userId);
   }
 

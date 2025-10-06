@@ -1,4 +1,4 @@
-import type { MongooseObjectId, Session } from "@ansospace/types";
+import type { DeviceId, ObjectId, Session } from "@ansospace/types";
 
 import { generateRefreshToken } from "@/utils";
 
@@ -8,63 +8,53 @@ import sessionModel from "./session.model.js";
 export type SessionSafe = Omit<Session, "refreshToken">;
 
 interface ISessionDal {
-  getSessionById(sessionId: MongooseObjectId): Promise<Session | null>;
-  getSessionsByUserId(userId: MongooseObjectId): Promise<Session[]>;
-  getActiveSessionsByUserId(userId: MongooseObjectId): Promise<Session[]>;
-  getActiveSessionsSafe(userId: MongooseObjectId): Promise<SessionSafe[]>; // Safe version without sensitive data
+  getSessionById(sessionId: ObjectId): Promise<Session | null>;
+  getSessionsByUserId(userId: ObjectId): Promise<Session[]>;
+  getActiveSessionsByUserId(userId: ObjectId): Promise<Session[]>;
+  getActiveSessionsSafe(userId: ObjectId): Promise<SessionSafe[]>; // Safe version without sensitive data
   insertSession(session: Omit<Session, "refreshToken" | "createdAt" | "updatedAt" | "isActive">): Promise<Session>;
-  updateSession(sessionId: MongooseObjectId): Promise<Session | null>;
-  updateSessionByUserAndDevice(
-    userId: MongooseObjectId,
-    deviceId: string,
-    update: Partial<Session>
-  ): Promise<Session | null>;
-  deleteSession(sessionId: MongooseObjectId): Promise<void>;
-  deleteSessionByUserAndDevice(userId: MongooseObjectId, deviceId: string): Promise<void>;
-  deleteAllExceptSessionId(userId: MongooseObjectId, sessionId: MongooseObjectId): Promise<{ deletedCount?: number }>;
-  deleteAllSession(userId: MongooseObjectId): Promise<{ deletedCount?: number }>;
-  deactivateAllExceptSessionId(
-    userId: MongooseObjectId,
-    sessionId: MongooseObjectId
-  ): Promise<{ modifiedCount?: number }>;
-  deactivateAllSession(userId: MongooseObjectId): Promise<{ modifiedCount?: number }>;
+  updateSession(sessionId: ObjectId): Promise<Session | null>;
+  updateSessionByUserAndDevice(userId: ObjectId, deviceId: DeviceId, update: Partial<Session>): Promise<Session | null>;
+  deleteSession(sessionId: ObjectId): Promise<void>;
+  deleteSessionByUserAndDevice(userId: ObjectId, deviceId: DeviceId): Promise<void>;
+  deleteAllExceptSessionId(userId: ObjectId, sessionId: ObjectId): Promise<{ deletedCount?: number }>;
+  deleteAllSession(userId: ObjectId): Promise<{ deletedCount?: number }>;
+  deactivateAllExceptSessionId(userId: ObjectId, sessionId: ObjectId): Promise<{ modifiedCount?: number }>;
+  deactivateAllSession(userId: ObjectId): Promise<{ modifiedCount?: number }>;
 }
 
 export class SessionDAL implements ISessionDal {
-  async getActiveSessionsByUserId(userId: MongooseObjectId): Promise<Session[]> {
+  async getActiveSessionsByUserId(userId: ObjectId): Promise<Session[]> {
     // Select only safe fields, exclude sensitive data like refreshToken
     return await sessionModel.find({ userId, isActive: true }).select("-refreshToken"); // Exclude refreshToken using select notation
   }
 
-  async getActiveSessionsSafe(userId: MongooseObjectId): Promise<SessionSafe[]> {
+  async getActiveSessionsSafe(userId: ObjectId): Promise<SessionSafe[]> {
     return await sessionModel.find({ userId, isActive: true }).select("-refreshToken"); // Exclude refreshToken using select notation
   }
 
   async updateSessionByUserAndDevice(
-    userId: MongooseObjectId,
-    deviceId: string,
+    userId: ObjectId,
+    deviceId: DeviceId,
     update: Partial<Session>
   ): Promise<Session | null> {
     return await sessionModel.findOneAndUpdate({ userId, deviceId }, update, { new: true });
   }
 
-  async deactivateAllExceptSessionId(
-    userId: MongooseObjectId,
-    sessionId: MongooseObjectId
-  ): Promise<{ modifiedCount?: number }> {
+  async deactivateAllExceptSessionId(userId: ObjectId, sessionId: ObjectId): Promise<{ modifiedCount?: number }> {
     const result = await sessionModel.updateMany({ userId, _id: { $ne: sessionId } }, { isActive: false });
     return { modifiedCount: result.modifiedCount };
   }
 
-  async deactivateAllSession(userId: MongooseObjectId): Promise<{ modifiedCount?: number }> {
+  async deactivateAllSession(userId: ObjectId): Promise<{ modifiedCount?: number }> {
     const result = await sessionModel.updateMany({ userId }, { isActive: false });
     return { modifiedCount: result.modifiedCount };
   }
-  async getSessionById(sessionId: MongooseObjectId): Promise<Session | null> {
+  async getSessionById(sessionId: ObjectId): Promise<Session | null> {
     return await sessionModel.findById(sessionId);
   }
 
-  async getSessionsByUserId(userId: MongooseObjectId): Promise<Session[]> {
+  async getSessionsByUserId(userId: ObjectId): Promise<Session[]> {
     return await sessionModel.find({ userId });
   }
 
@@ -77,7 +67,7 @@ export class SessionDAL implements ISessionDal {
     return await newSession.save();
   }
 
-  async updateSession(sessionId: MongooseObjectId): Promise<Session | null> {
+  async updateSession(sessionId: ObjectId): Promise<Session | null> {
     const refreshToken = generateRefreshToken({ sessionId });
 
     return await sessionModel.findByIdAndUpdate(
@@ -91,22 +81,19 @@ export class SessionDAL implements ISessionDal {
     );
   }
 
-  async deleteSession(sessionId: MongooseObjectId): Promise<void> {
+  async deleteSession(sessionId: ObjectId): Promise<void> {
     await sessionModel.findByIdAndDelete(sessionId);
   }
 
-  async deleteSessionByUserAndDevice(userId: MongooseObjectId, deviceId: string): Promise<void> {
+  async deleteSessionByUserAndDevice(userId: ObjectId, deviceId: DeviceId): Promise<void> {
     await sessionModel.deleteOne({ userId, deviceId });
   }
 
-  async deleteAllExceptSessionId(
-    userId: MongooseObjectId,
-    sessionId: MongooseObjectId
-  ): Promise<{ deletedCount?: number }> {
+  async deleteAllExceptSessionId(userId: ObjectId, sessionId: ObjectId): Promise<{ deletedCount?: number }> {
     return await sessionModel.deleteMany({ userId, _id: { $ne: sessionId } });
   }
 
-  async deleteAllSession(userId: MongooseObjectId): Promise<{ deletedCount?: number }> {
+  async deleteAllSession(userId: ObjectId): Promise<{ deletedCount?: number }> {
     return await sessionModel.deleteMany({ userId });
   }
 }

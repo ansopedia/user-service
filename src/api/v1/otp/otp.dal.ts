@@ -1,4 +1,4 @@
-import type { GetOtp, MongooseObjectId, OtpRecord, SaveOtp } from "@ansospace/types";
+import type { GetOtp, ObjectId, OtpRecord, SaveOtp } from "@ansospace/types";
 
 import { OtpModel } from "./otp.model.js";
 
@@ -12,11 +12,11 @@ export class OtpDAL {
     return await OtpModel.find(otpSchema);
   }
 
-  static async deleteOtp(otpId: MongooseObjectId) {
+  static async deleteOtp(otpId: ObjectId) {
     return await OtpModel.findByIdAndDelete(otpId);
   }
 
-  static async deleteOtpByUserId(userId: MongooseObjectId) {
+  static async deleteOtpByUserId(userId: ObjectId) {
     return await OtpModel.deleteMany({ userId });
   }
 

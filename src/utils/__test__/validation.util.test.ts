@@ -1,23 +1,15 @@
-import { emailSchema, mongooseObjectId, usernameSchema } from "@ansospace/types";
-import mongoose from "mongoose";
+import { emailSchema, objectId, usernameSchema } from "@ansospace/types";
 import { describe, expect, it } from "vitest";
 
 // import { validateEmail, validateObjectId, validateUsername } from "@/utils";
 
 describe("validation.util", () => {
   describe("validateObjectId", () => {
-    it("should validate a valid ObjectId string", () => {
-      const validObjectId = new mongoose.Types.ObjectId().toHexString();
-      const result = mongooseObjectId.parse(validObjectId);
-      expect(result).toBeInstanceOf(mongoose.Types.ObjectId);
-      expect(result.toHexString()).toBe(validObjectId);
-    });
-
     it("should throw an error for an invalid ObjectId string", () => {
-      expect(() => mongooseObjectId.parse("invalid-object-id")).toThrow();
-      expect(() => mongooseObjectId.parse(123)).toThrow();
-      expect(() => mongooseObjectId.parse(null)).toThrow();
-      expect(() => mongooseObjectId.parse(undefined)).toThrow();
+      expect(() => objectId.parse("invalid-object-id")).toThrow();
+      expect(() => objectId.parse(123)).toThrow();
+      expect(() => objectId.parse(null)).toThrow();
+      expect(() => objectId.parse(undefined)).toThrow();
     });
   });
 

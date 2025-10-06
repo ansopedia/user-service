@@ -1,4 +1,4 @@
-import type { MongooseObjectId, Pagination, RegisterSchema } from "@ansospace/types";
+import type { ObjectId, Pagination, RegisterSchema } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/user/user.constant.js";
@@ -81,7 +81,7 @@ export const expectFindUserByUsernameSuccess = (response: Response, user: Regist
   expect(body.data).not.toHaveProperty("confirmPassword");
 };
 
-export const deleteUser = async (userId: MongooseObjectId | string, authorizationHeader: string): Promise<Response> => {
+export const deleteUser = async (userId: ObjectId | string, authorizationHeader: string): Promise<Response> => {
   return supertest(app).delete(`/api/v1/users/${userId}`).set("authorization", authorizationHeader);
 };
 
@@ -100,10 +100,7 @@ export const expectDeleteUserSuccess = (response: Response): void => {
   expect(body.data.user).not.toHaveProperty("confirmPassword");
 };
 
-export const restoreUser = async (
-  userId: MongooseObjectId | string,
-  authorizationHeader: string
-): Promise<Response> => {
+export const restoreUser = async (userId: ObjectId | string, authorizationHeader: string): Promise<Response> => {
   return supertest(app).patch(`/api/v1/users/${userId}/restore`).set("authorization", authorizationHeader);
 };
 

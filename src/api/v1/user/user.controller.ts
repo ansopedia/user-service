@@ -1,4 +1,4 @@
-import { mongooseObjectId, registerSchema, usernameSchema } from "@ansospace/types";
+import { objectId, registerSchema, usernameSchema } from "@ansospace/types";
 import type { Request, Response } from "express";
 
 import { DEFAULT_PAGINATION_LIMIT, DEFAULT_PAGINATION_OFFSET, STATUS_CODES } from "@/constants";
@@ -51,7 +51,7 @@ export const getUserByUsername = async (req: Request, res: Response) => {
 };
 
 export const softDeleteUser = async (req: Request, res: Response) => {
-  const userId = mongooseObjectId.parse(req.params.userId);
+  const userId = objectId.parse(req.params.userId);
 
   const user = await UserService.softDeleteUser(userId);
   sendResponse({
@@ -65,7 +65,7 @@ export const softDeleteUser = async (req: Request, res: Response) => {
 };
 
 export const restoreUser = async (req: Request, res: Response) => {
-  const userId = mongooseObjectId.parse(req.params.userId);
+  const userId = objectId.parse(req.params.userId);
 
   const user = await UserService.restoreUser(userId);
   sendResponse({

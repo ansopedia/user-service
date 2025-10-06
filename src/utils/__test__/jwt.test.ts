@@ -1,4 +1,4 @@
-import type { AccessTokenPayload, MongooseObjectId } from "@ansospace/types";
+import type { AccessTokenPayload, ObjectId } from "@ansospace/types";
 import mongoose from "mongoose";
 import { vi } from "vitest";
 
@@ -28,7 +28,7 @@ describe("Jwt token", () => {
   });
 
   it("should generate a refresh token", () => {
-    const sessionId = new mongoose.Types.ObjectId().toString() as unknown as MongooseObjectId;
+    const sessionId = new mongoose.Types.ObjectId().toString() as unknown as ObjectId;
     const token = generateRefreshToken({ sessionId });
     expect(token).toBeDefined();
   });
