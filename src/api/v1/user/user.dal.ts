@@ -11,8 +11,8 @@ import { UserModel } from "./user.model.js";
 
 export class UserDAL {
   static async createUser(userData: RegisterSchema): Promise<User> {
-    const newUser = new UserModel(userData);
-    return await newUser.save();
+    const userRole = await UserModel.create(userData);
+    return userRole;
   }
 
   static async getAllUsers(limit: number, offset: number): Promise<{ users: User[]; totalUsers: number }> {
