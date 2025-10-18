@@ -15,8 +15,8 @@ describe("Test OTP validation", () => {
     try {
       otpEventSchema.parse(otpTypesWithoutEmail);
     } catch (error) {
-      expect((error as ZodError).errors[0].message).toBe("Email is required");
-      expect((error as ZodError).errors[0].path).toEqual(["email"]);
+      expect((error as ZodError).issues[0].message).toBe("Email is required");
+      expect((error as ZodError).issues[0].path).toEqual(["email"]);
     }
   });
 

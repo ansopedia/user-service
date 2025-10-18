@@ -8,7 +8,7 @@ describe("Password Schema", () => {
       return { success: true };
     } catch (error) {
       if (error instanceof ZodError) {
-        return { success: false, error: error.errors[0].message };
+        return { success: false, error: error.issues[0].message };
       }
       throw error;
     }

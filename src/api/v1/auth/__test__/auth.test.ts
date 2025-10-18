@@ -18,7 +18,7 @@ const validateLoginSchema = (body: unknown): ValidationResult => {
     return { success: true, data };
   } catch (error) {
     if (error instanceof ZodError) {
-      return { success: false, error: error.errors };
+      return { success: false, error: error.issues };
     }
     throw error;
   }

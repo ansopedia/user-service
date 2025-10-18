@@ -29,7 +29,7 @@ const envSchema = z.object({
   PINO_LOG_LEVEL: z.string().min(1, "PINO_LOG_LEVEL is required").readonly(),
   NODE_ENV: z
     .enum(["development", "stage", "local", "test", "production"], {
-      required_error: "NODE_ENV is required and must be one of development, stage, local, test, or production",
+      error: "Invalid value for NODE_ENV. Must be one of development, stage, local, test, or production.",
     })
     .readonly(),
   ACTION_TOKEN_SECRET: z.string().min(1, "ACTION_TOKEN_SECRET is required").readonly(),
@@ -40,12 +40,12 @@ const envSchema = z.object({
   DEFAULT_SUPER_ADMIN_USERNAME: usernameSchema.readonly(),
   DEFAULT_SUPER_ADMIN_EMAIL: emailSchema.readonly(),
   DEFAULT_SUPER_ADMIN_PASSWORD: passwordSchema.readonly(),
-  NOTIFICATION_SERVICE_BASE_URL: z.string().url().readonly(),
-  USER_SERVICE_BASE_URL: z.string().url().readonly(),
+  NOTIFICATION_SERVICE_BASE_URL: z.url().readonly(),
+  USER_SERVICE_BASE_URL: z.url().readonly(),
   GOOGLE_CLIENT_ID: z.string().min(1, "GOOGLE_CLIENT_ID is required").readonly(),
   GOOGLE_CLIENT_SECRET: z.string().min(1, "GOOGLE_CLIENT_SECRET is required").readonly(),
-  GOOGLE_CLIENT_URL: z.string().url().readonly(),
-  CLIENT_URL: z.string().url().readonly(),
+  GOOGLE_CLIENT_URL: z.url().readonly(),
+  CLIENT_URL: z.url().readonly(),
   PUBLIC_KEY: z.string().min(1, "PUBLIC_KEY is required").readonly(),
   PRIVATE_KEY: z.string().min(1, "PRIVATE_KEY is required").readonly(),
   REDIS_HOST: z.string().min(1, "REDIS_HOST is required").readonly(),
