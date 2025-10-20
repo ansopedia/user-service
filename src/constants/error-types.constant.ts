@@ -43,6 +43,9 @@ const errorType = [
   "SESSION_INACTIVE",
   "TOKEN_REVOKED",
   "BOT_ACCESS_FORBIDDEN",
+  "PLATFORM_ALREADY_EXISTS",
+  "PLATFORM_NOT_FOUND",
+  "PLATFORM_SLUG_ALREADY_EXISTS",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -326,6 +329,27 @@ export const errorMap = {
     body: {
       code: "bot_access_forbidden",
       message: "Bot access forbidden.",
+    },
+  },
+  [ErrorTypeEnum.enum.PLATFORM_ALREADY_EXISTS]: {
+    httpStatusCode: STATUS_CODES.CONFLICT,
+    body: {
+      code: "platform_already_exists",
+      message: "Platform already exists. Use a different slug.",
+    },
+  },
+  [ErrorTypeEnum.enum.PLATFORM_NOT_FOUND]: {
+    httpStatusCode: STATUS_CODES.NOT_FOUND,
+    body: {
+      code: "platform_not_found",
+      message: "Platform not found. Check identifier and retry.",
+    },
+  },
+  [ErrorTypeEnum.enum.PLATFORM_SLUG_ALREADY_EXISTS]: {
+    httpStatusCode: STATUS_CODES.CONFLICT,
+    body: {
+      code: "platform_slug_already_exists",
+      message: "Platform slug already exists. Use a different slug.",
     },
   },
 };

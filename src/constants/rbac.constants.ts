@@ -8,6 +8,7 @@ import {
 } from "@ansospace/types";
 import mongoose from "mongoose";
 
+import type { CreatePlatformInput } from "../types/platform.types.js";
 import { envConstants } from "./env.constant.js";
 
 // Generate a unique ObjectId for the system user, which might represent a system-level action
@@ -322,4 +323,12 @@ export const defaultUsers = {
   password: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD as Password,
   confirmPassword: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD as Password,
   isEmailVerified: true,
+};
+
+export const defaultPlatformData: CreatePlatformInput = {
+  name: "Service Marketplace",
+  slug: "smp",
+  description: "Connects customers with verified service providers",
+  logoUrl: "https://cdn.ansopedia.com/smp-logo.png",
+  status: "active" as const,
 };
