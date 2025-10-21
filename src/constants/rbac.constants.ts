@@ -67,11 +67,7 @@ export const PERMISSIONS = {
   DELETE_PLATFORM: "delete-platform",
 
   // Permission Management Permissions
-  CREATE_PERMISSIONS: "create-permissions",
   VIEW_PERMISSIONS: "view-permissions",
-  EDIT_PERMISSIONS: "edit-permissions",
-  DELETE_PERMISSIONS: "delete-permissions",
-  RESTORE_PERMISSIONS: "restore-permissions",
 } as const;
 
 // Create a type based on the values of PERMISSIONS
@@ -331,36 +327,8 @@ export const defaultPermissions: CreatePermission[] = [
 
   // Permission Management Permissions
   {
-    name: PERMISSIONS.CREATE_PERMISSIONS,
-    description: "Allows the user to create new permissions",
-    category: PermissionCategory.SYSTEM,
-    createdBy: systemUserObjectId,
-    isDeleted: false,
-  },
-  {
     name: PERMISSIONS.VIEW_PERMISSIONS,
     description: "Allows the user to view permissions",
-    category: PermissionCategory.SYSTEM,
-    createdBy: systemUserObjectId,
-    isDeleted: false,
-  },
-  {
-    name: PERMISSIONS.EDIT_PERMISSIONS,
-    description: "Allows the user to edit permissions",
-    category: PermissionCategory.SYSTEM,
-    createdBy: systemUserObjectId,
-    isDeleted: false,
-  },
-  {
-    name: PERMISSIONS.DELETE_PERMISSIONS,
-    description: "Allows the user to delete permissions",
-    category: PermissionCategory.SYSTEM,
-    createdBy: systemUserObjectId,
-    isDeleted: false,
-  },
-  {
-    name: PERMISSIONS.RESTORE_PERMISSIONS,
-    description: "Allows the user to restore permissions",
     category: PermissionCategory.SYSTEM,
     createdBy: systemUserObjectId,
     isDeleted: false,
@@ -401,10 +369,7 @@ export const defaultRolePermissions: IDefaultRolePermission = {
     PERMISSIONS.VIEW_PLATFORMS,
     PERMISSIONS.EDIT_PLATFORM,
     PERMISSIONS.DELETE_PLATFORM,
-    PERMISSIONS.CREATE_PERMISSIONS,
     PERMISSIONS.VIEW_PERMISSIONS,
-    PERMISSIONS.EDIT_PERMISSIONS,
-    PERMISSIONS.DELETE_PERMISSIONS,
   ],
   [ROLES.USER]: [PERMISSIONS.EDIT_PROFILE, PERMISSIONS.DELETE_PROFILE],
 };
