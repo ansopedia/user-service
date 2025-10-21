@@ -1,7 +1,7 @@
+import { type GetPlatform, type UpdatePlatformInput } from "@ansospace/types";
 import { describe, expect, it } from "vitest";
 
 import { defaultPlatformData, defaultUsers, mockUser } from "@/constants";
-import { type GetPlatform, type UpdatePlatformInput } from "@/types";
 import {
   createPlatformRequest,
   deletePlatformRequest,

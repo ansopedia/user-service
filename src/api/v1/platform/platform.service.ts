@@ -1,7 +1,6 @@
-import type { ObjectId } from "@ansospace/types";
+import type { CreatePlatform, GetPlatform, ObjectId, UpdatePlatform } from "@ansospace/types";
 
 import { ErrorTypeEnum } from "@/constants";
-import type { CreatePlatform, GetPlatform, UpdatePlatform } from "@/types";
 
 import { PlatformDAL } from "./platform.dal.js";
 import { PlatformDto } from "./platform.dto.js";

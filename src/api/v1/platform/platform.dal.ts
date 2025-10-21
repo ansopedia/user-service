@@ -1,6 +1,4 @@
-import type { ObjectId } from "@ansospace/types";
-
-import type { CreatePlatform, Platform, UpdatePlatform } from "@/types";
+import type { CreatePlatform, ObjectId, Platform, UpdatePlatform } from "@ansospace/types";
 
 import { PlatformModel } from "./platform.model.js";
 

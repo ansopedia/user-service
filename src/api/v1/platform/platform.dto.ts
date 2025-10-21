@@ -1,4 +1,4 @@
-import type { GetPlatform, Platform } from "@/types";
+import type { GetPlatform, Platform } from "@ansospace/types";
 
 export const PlatformDto = (platform: Platform) => ({
   getPlatform: (): GetPlatform => ({

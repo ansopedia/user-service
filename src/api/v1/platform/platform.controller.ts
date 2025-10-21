@@ -1,7 +1,7 @@
+import { CreatePlatformInputSchema, UpdatePlatformInputSchema } from "@ansospace/types";
 import type { Request, Response } from "express";
 
 import { STATUS_CODES } from "@/constants";
-import { CreatePlatformInputSchema, UpdatePlatformInputSchema } from "@/types";
 import { sendResponse } from "@/utils";
 
 import { success } from "./platform.constant.js";

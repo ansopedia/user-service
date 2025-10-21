@@ -38,9 +38,6 @@ describe("Role Permission Test", () => {
 
     const allPermissions: GetPermission[] = permissionResponse.body.data.permissions;
 
-    // const permissionRes = await createPermissionRequest(VALID_PERMISSION);
-    // expectCreatePermissionSuccess(permissionRes, VALID_PERMISSION);
-
     const rolePermission = {
       roleId: roleResponse.body.data.role.id,
       permissionId: allPermissions[0].id,

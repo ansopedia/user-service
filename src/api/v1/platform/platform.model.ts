@@ -1,6 +1,5 @@
+import type { Platform } from "@ansospace/types";
 import mongoose, { Document, Model, Schema, model } from "mongoose";
-
-import type { Platform } from "@/types";
 
 export interface IPlatform extends Document, Platform {
   id: mongoose.Types.ObjectId;

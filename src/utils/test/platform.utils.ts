@@ -1,9 +1,9 @@
+import type { CreatePlatform, CreatePlatformInput, GetPlatform } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/platform/platform.constant.js";
 import { app } from "@/app";
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
-import type { CreatePlatform, CreatePlatformInput, GetPlatform } from "@/types";
 
 export const createPlatformRequest = async (
   platform: CreatePlatformInput,
