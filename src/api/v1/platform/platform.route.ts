@@ -1,6 +1,7 @@
 import { Router } from "express";
 
-import { authenticate } from "@/middlewares";
+import { PERMISSIONS } from "@/constants";
+import { authenticate, checkPermission } from "@/middlewares";
 
 import {
   createPlatform,
@@ -12,10 +13,10 @@ import {
 
 const router = Router();
 
-router.post("/platforms", authenticate, createPlatform);
-router.get("/platforms", authenticate, getPlatforms);
-router.get("/platforms/:slug", authenticate, getPlatformBySlug);
-router.put("/platforms/:slug", authenticate, updatePlatform);
-router.delete("/platforms/:slug", authenticate, deletePlatform);
+router.post("/platforms", authenticate, checkPermission([PERMISSIONS.CREATE_PLATFORM]), createPlatform);
+router.get("/platforms", authenticate, checkPermission([PERMISSIONS.VIEW_PLATFORMS]), getPlatforms);
+router.get("/platforms/:slug", getPlatformBySlug);
+router.put("/platforms/:slug", authenticate, checkPermission([PERMISSIONS.EDIT_PLATFORM]), updatePlatform);
+router.delete("/platforms/:slug", authenticate, checkPermission([PERMISSIONS.DELETE_PLATFORM]), deletePlatform);
 
 export { router as platformRoutes };

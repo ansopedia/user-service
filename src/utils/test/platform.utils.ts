@@ -2,7 +2,7 @@ import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/platform/platform.constant.js";
 import { app } from "@/app";
-import { STATUS_CODES } from "@/constants";
+import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 import type { CreatePlatform, CreatePlatformInput, GetPlatform } from "@/types";
 
 export const createPlatformRequest = async (
@@ -48,8 +48,8 @@ export const expectGetPlatformsSuccess = (response: Response): void => {
   });
 };
 
-export const getPlatformBySlugRequest = async (slug: string, authorizationHeader: string): Promise<Response> => {
-  return supertest(app).get(`/api/v1/platforms/${slug}`).set("Authorization", authorizationHeader);
+export const getPlatformBySlugRequest = async (slug: string): Promise<Response> => {
+  return supertest(app).get(`/api/v1/platforms/${slug}`);
 };
 
 export const expectGetPlatformBySlugSuccess = (response: Response, expectedPlatform: Partial<GetPlatform>): void => {
@@ -64,6 +64,18 @@ export const expectGetPlatformBySlugSuccess = (response: Response, expectedPlatf
         ...expectedPlatform,
       },
     },
+  });
+};
+
+export const expectPlatformNotFoundError = (response: Response): void => {
+  const errorObject = errorMap[ErrorTypeEnum.enum.PLATFORM_NOT_FOUND];
+
+  expect(response).toBeDefined();
+  expect(response.statusCode).toBe(STATUS_CODES.NOT_FOUND);
+  expect(response.body).toMatchObject({
+    message: errorObject.body.message,
+    code: errorObject.body.code,
+    status: "failed",
   });
 };
 

@@ -1,6 +1,7 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
-import { defaultPlatformData, defaultUsers } from "@/constants";
+import { defaultPlatformData, defaultUsers, mockUser } from "@/constants";
+import { type GetPlatform, type UpdatePlatformInput } from "@/types";
 import {
   createPlatformRequest,
   deletePlatformRequest,
@@ -8,41 +9,63 @@ import {
   expectDeletePlatformSuccess,
   expectGetPlatformBySlugSuccess,
   expectGetPlatformsSuccess,
+  expectLoginSuccess,
+  expectPlatformNotFoundError,
+  expectSignUpSuccess,
+  expectUnauthorizedResponseWhenUserHasInsufficientPermission,
   expectUpdatePlatformSuccess,
   getPlatformBySlugRequest,
   getPlatformsRequest,
   login,
+  signUp,
   updatePlatformRequest,
+  verifyAccount,
 } from "@/utils/test";
 
-import type { UpdatePlatformInput } from "../../../../types/platform.types.js";
-import { PlatformModel } from "../platform.model.js";
-
 describe("Platform API", () => {
-  let authToken: string;
+  let adminAuthToken: string;
+  let userAuthToken: string;
+  let platformData: GetPlatform;
 
-  beforeEach(async () => {
-    const loginResponse = await login(defaultUsers);
+  beforeAll(async () => {
+    const adminLoginResponse = await login(defaultUsers);
+    expectLoginSuccess(adminLoginResponse);
 
-    authToken = `Bearer ${loginResponse.header["authorization"]}`;
+    adminAuthToken = `Bearer ${adminLoginResponse.header["authorization"]}`;
 
-    // Clear platforms
-    await PlatformModel.deleteMany({});
+    // Sign up a regular user (without admin permissions)
+    const signUpResponse = await signUp(mockUser);
+    expectSignUpSuccess(signUpResponse);
+
+    await verifyAccount(signUpResponse.body.data);
+
+    const loginResponse = await login(mockUser);
+    expectLoginSuccess(loginResponse);
+
+    userAuthToken = `Bearer ${loginResponse.header["authorization"]}`;
   });
 
   describe("POST /api/v1/platforms", () => {
     it("should create a platform successfully", async () => {
-      const response = await createPlatformRequest(defaultPlatformData, authToken);
+      const response = await createPlatformRequest(defaultPlatformData, adminAuthToken);
 
       expectCreatePlatformSuccess(response, defaultPlatformData);
+
+      platformData = response.body.data.platform;
+    });
+
+    it("should not create a platform without create-platform permission", async () => {
+      const response = await createPlatformRequest(defaultPlatformData, userAuthToken);
+
+      expectUnauthorizedResponseWhenUserHasInsufficientPermission(response);
     });
 
     it("should return error for duplicate slug", async () => {
       // Create first platform
-      await createPlatformRequest(defaultPlatformData, authToken);
+      await createPlatformRequest(defaultPlatformData, adminAuthToken);
 
       // Try to create duplicate
-      const response = await createPlatformRequest(defaultPlatformData, authToken);
+      const response = await createPlatformRequest(defaultPlatformData, adminAuthToken);
 
       expect(response.status).toBe(409);
       expect(response.body.code).toBe("platform_already_exists");
@@ -51,63 +74,83 @@ describe("Platform API", () => {
 
   describe("GET /api/v1/platforms", () => {
     it("should get all platforms", async () => {
-      await createPlatformRequest(defaultPlatformData, authToken);
+      await createPlatformRequest(defaultPlatformData, adminAuthToken);
 
-      const response = await getPlatformsRequest(authToken);
+      const response = await getPlatformsRequest(adminAuthToken);
 
       expectGetPlatformsSuccess(response);
+    });
+
+    it("should not get platforms without view-platform permission", async () => {
+      const response = await getPlatformsRequest(userAuthToken);
+
+      expectUnauthorizedResponseWhenUserHasInsufficientPermission(response);
     });
   });
 
   describe("GET /api/v1/platforms/:slug", () => {
     it("should get platform by slug", async () => {
-      const createResponse = await createPlatformRequest(defaultPlatformData, authToken);
+      const { slug } = platformData;
 
-      const { slug } = createResponse.body.data.platform;
-
-      const response = await getPlatformBySlugRequest(slug, authToken);
+      const response = await getPlatformBySlugRequest(slug);
 
       expectGetPlatformBySlugSuccess(response, defaultPlatformData);
     });
 
     it("should return 404 for non-existent platform", async () => {
-      const response = await getPlatformBySlugRequest("non-existent-slug", authToken);
+      const response = await getPlatformBySlugRequest("non-existent-slug");
 
-      expect(response.status).toBe(404);
+      expectPlatformNotFoundError(response);
     });
   });
 
   describe("PUT /api/v1/platforms/:slug", () => {
     it("should update platform successfully", async () => {
-      const createResponse = await createPlatformRequest(defaultPlatformData, authToken);
-
-      const { slug } = createResponse.body.data.platform;
+      const { slug } = platformData;
 
       const updateData: UpdatePlatformInput = {
         name: "Updated Service Marketplace",
         description: "Updated description",
       };
 
-      const response = await updatePlatformRequest(slug, updateData, authToken);
+      const response = await updatePlatformRequest(slug, updateData, adminAuthToken);
 
       expectUpdatePlatformSuccess(response, updateData);
+    });
+
+    it("should not update platform without edit-platform permission", async () => {
+      const { slug } = platformData;
+
+      const updateData: UpdatePlatformInput = {
+        name: "Updated Service Marketplace",
+        description: "Updated description",
+      };
+
+      const response = await updatePlatformRequest(slug, updateData, userAuthToken);
+
+      expectUnauthorizedResponseWhenUserHasInsufficientPermission(response);
     });
   });
 
   describe("DELETE /api/v1/platforms/:slug", () => {
     it("should soft delete platform successfully", async () => {
-      const createResponse = await createPlatformRequest(defaultPlatformData, authToken);
+      const { slug } = platformData;
 
-      const { slug } = createResponse.body.data.platform;
-
-      const response = await deletePlatformRequest(slug, authToken);
+      const response = await deletePlatformRequest(slug, adminAuthToken);
 
       expectDeletePlatformSuccess(response);
 
       // Verify platform is soft deleted
-      const getResponse = await getPlatformBySlugRequest(slug, authToken);
+      const getResponse = await getPlatformBySlugRequest(slug);
 
       expect(getResponse.status).toBe(404);
+    });
+
+    it("should not delete platform without delete-platform permission", async () => {
+      const { slug } = platformData;
+      const response = await deletePlatformRequest(slug, userAuthToken);
+
+      expectUnauthorizedResponseWhenUserHasInsufficientPermission(response);
     });
   });
 });
