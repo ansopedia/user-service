@@ -20,7 +20,6 @@ routes.use(
   permissionRoutes,
   platformRoutes,
   rolePermissionRoutes,
-  userRoutes,
   userRoleRoutes,
   otpRoutes,
   profileRoutes

@@ -346,7 +346,7 @@ export class AuthService {
       userId: userId,
       deviceId: deviceId,
       tokenVersion: session.tokenVersion,
-      permissions: userRolePermissions.allPermissions.map(({ name }) => name),
+      permissions: userRolePermissions.allPermissions.map(({ name }) => name) as Permission[],
     });
 
     return { userId, accessToken, refreshToken: session.refreshToken };

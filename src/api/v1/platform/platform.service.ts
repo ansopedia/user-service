@@ -24,7 +24,7 @@ export class PlatformService {
 
   static async getPlatformById(id: ObjectId): Promise<GetPlatform | null> {
     const platform = await PlatformDAL.getPlatformById(id);
-    if (!platform || platform.isDeleted) throw new Error(ErrorTypeEnum.Enum.PLATFORM_NOT_FOUND);
+    if (!platform || platform.isDeleted) throw new Error(ErrorTypeEnum.enum.PLATFORM_NOT_FOUND);
     return PlatformDto(platform).getPlatform();
   }
 

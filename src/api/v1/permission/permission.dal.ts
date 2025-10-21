@@ -58,7 +58,7 @@ export class PermissionDAL {
       },
       {
         $match: {
-          "userRoles.userId": new mongoose.Types.ObjectId(userId),
+          "userRoles.userId": userId,
         },
       },
       {

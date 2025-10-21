@@ -24,7 +24,7 @@ export class PlatformDAL {
   }
 
   static async updatePlatform(id: ObjectId, updateData: UpdatePlatform): Promise<Platform | null> {
-    return await PlatformModel.findByIdAndUpdate(id, { ...updateData, updatedAt: new Date() }, { new: true });
+    return await PlatformModel.findByIdAndUpdate(id, updateData, { new: true });
   }
 
   static async softDeletePlatform(id: ObjectId, updatedBy: ObjectId): Promise<Platform | null> {
