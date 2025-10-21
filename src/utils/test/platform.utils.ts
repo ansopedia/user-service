@@ -48,11 +48,11 @@ export const expectGetPlatformsSuccess = (response: Response): void => {
   });
 };
 
-export const getPlatformByIdRequest = async (platformId: string, authorizationHeader: string): Promise<Response> => {
-  return supertest(app).get(`/api/v1/platforms/${platformId}`).set("Authorization", authorizationHeader);
+export const getPlatformBySlugRequest = async (slug: string, authorizationHeader: string): Promise<Response> => {
+  return supertest(app).get(`/api/v1/platforms/${slug}`).set("Authorization", authorizationHeader);
 };
 
-export const expectGetPlatformByIdSuccess = (response: Response, expectedPlatform: Partial<GetPlatform>): void => {
+export const expectGetPlatformBySlugSuccess = (response: Response, expectedPlatform: Partial<GetPlatform>): void => {
   const { statusCode, body } = response;
 
   expect(statusCode).toBe(STATUS_CODES.OK);
@@ -68,14 +68,11 @@ export const expectGetPlatformByIdSuccess = (response: Response, expectedPlatfor
 };
 
 export const updatePlatformRequest = async (
-  platformId: string,
+  slug: string,
   updateData: Partial<CreatePlatform>,
   authorizationHeader: string
 ): Promise<Response> => {
-  return supertest(app)
-    .put(`/api/v1/platforms/${platformId}`)
-    .send(updateData)
-    .set("Authorization", authorizationHeader);
+  return supertest(app).put(`/api/v1/platforms/${slug}`).send(updateData).set("Authorization", authorizationHeader);
 };
 
 export const expectUpdatePlatformSuccess = (response: Response, expectedPlatform: Partial<GetPlatform>): void => {
@@ -93,8 +90,8 @@ export const expectUpdatePlatformSuccess = (response: Response, expectedPlatform
   });
 };
 
-export const deletePlatformRequest = async (platformId: string, authorizationHeader: string): Promise<Response> => {
-  return supertest(app).delete(`/api/v1/platforms/${platformId}`).set("Authorization", authorizationHeader);
+export const deletePlatformRequest = async (slug: string, authorizationHeader: string): Promise<Response> => {
+  return supertest(app).delete(`/api/v1/platforms/${slug}`).set("Authorization", authorizationHeader);
 };
 
 export const expectDeletePlatformSuccess = (response: Response): void => {

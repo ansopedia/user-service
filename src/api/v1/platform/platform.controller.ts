@@ -1,10 +1,9 @@
-import { objectId } from "@ansospace/types";
 import type { Request, Response } from "express";
 
 import { STATUS_CODES } from "@/constants";
+import { CreatePlatformInputSchema, UpdatePlatformInputSchema } from "@/types";
 import { sendResponse } from "@/utils";
 
-import { CreatePlatformInputSchema, UpdatePlatformInputSchema } from "../../../types/platform.types.js";
 import { success } from "./platform.constant.js";
 import { PlatformService } from "./platform.service.js";
 
@@ -38,9 +37,9 @@ export const getPlatforms = async (_: Request, res: Response) => {
   });
 };
 
-export const getPlatformById = async (req: Request, res: Response) => {
-  const platformId = objectId.parse(req.params.id);
-  const platform = await PlatformService.getPlatformById(platformId);
+export const getPlatformBySlug = async (req: Request, res: Response) => {
+  const { slug } = req.params;
+  const platform = await PlatformService.getPlatformBySlug(slug);
 
   sendResponse({
     response: res,
@@ -53,10 +52,10 @@ export const getPlatformById = async (req: Request, res: Response) => {
 };
 
 export const updatePlatform = async (req: Request, res: Response) => {
-  const platformId = objectId.parse(req.params.id);
+  const { slug } = req.params;
   const parsedInput = UpdatePlatformInputSchema.parse(req.body);
 
-  const updatedPlatform = await PlatformService.updatePlatform(platformId, {
+  const updatedPlatform = await PlatformService.updatePlatformBySlug(slug, {
     ...parsedInput,
     updatedBy: res.locals.loggedInUser.userId,
   });
@@ -72,9 +71,9 @@ export const updatePlatform = async (req: Request, res: Response) => {
 };
 
 export const deletePlatform = async (req: Request, res: Response) => {
-  const platformId = objectId.parse(req.params.id);
+  const { slug } = req.params;
 
-  await PlatformService.deletePlatform(platformId, res.locals.loggedInUser.userId);
+  await PlatformService.deletePlatformBySlug(slug, res.locals.loggedInUser.userId);
 
   sendResponse({
     response: res,

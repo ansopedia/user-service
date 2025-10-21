@@ -6,10 +6,10 @@ import {
   deletePlatformRequest,
   expectCreatePlatformSuccess,
   expectDeletePlatformSuccess,
-  expectGetPlatformByIdSuccess,
+  expectGetPlatformBySlugSuccess,
   expectGetPlatformsSuccess,
   expectUpdatePlatformSuccess,
-  getPlatformByIdRequest,
+  getPlatformBySlugRequest,
   getPlatformsRequest,
   login,
   updatePlatformRequest,
@@ -59,53 +59,53 @@ describe("Platform API", () => {
     });
   });
 
-  describe("GET /api/v1/platforms/:id", () => {
-    it("should get platform by id", async () => {
+  describe("GET /api/v1/platforms/:slug", () => {
+    it("should get platform by slug", async () => {
       const createResponse = await createPlatformRequest(defaultPlatformData, authToken);
 
-      const platformId = createResponse.body.data.platform.id;
+      const { slug } = createResponse.body.data.platform;
 
-      const response = await getPlatformByIdRequest(platformId, authToken);
+      const response = await getPlatformBySlugRequest(slug, authToken);
 
-      expectGetPlatformByIdSuccess(response, defaultPlatformData);
+      expectGetPlatformBySlugSuccess(response, defaultPlatformData);
     });
 
     it("should return 404 for non-existent platform", async () => {
-      const response = await getPlatformByIdRequest("507f1f77bcf86cd799439011", authToken);
+      const response = await getPlatformBySlugRequest("non-existent-slug", authToken);
 
       expect(response.status).toBe(404);
     });
   });
 
-  describe("PUT /api/v1/platforms/:id", () => {
+  describe("PUT /api/v1/platforms/:slug", () => {
     it("should update platform successfully", async () => {
       const createResponse = await createPlatformRequest(defaultPlatformData, authToken);
 
-      const platformId = createResponse.body.data.platform.id;
+      const { slug } = createResponse.body.data.platform;
 
       const updateData: UpdatePlatformInput = {
         name: "Updated Service Marketplace",
         description: "Updated description",
       };
 
-      const response = await updatePlatformRequest(platformId, updateData, authToken);
+      const response = await updatePlatformRequest(slug, updateData, authToken);
 
       expectUpdatePlatformSuccess(response, updateData);
     });
   });
 
-  describe("DELETE /api/v1/platforms/:id", () => {
+  describe("DELETE /api/v1/platforms/:slug", () => {
     it("should soft delete platform successfully", async () => {
       const createResponse = await createPlatformRequest(defaultPlatformData, authToken);
 
-      const platformId = createResponse.body.data.platform.id;
+      const { slug } = createResponse.body.data.platform;
 
-      const response = await deletePlatformRequest(platformId, authToken);
+      const response = await deletePlatformRequest(slug, authToken);
 
       expectDeletePlatformSuccess(response);
 
       // Verify platform is soft deleted
-      const getResponse = await getPlatformByIdRequest(platformId, authToken);
+      const getResponse = await getPlatformBySlugRequest(slug, authToken);
 
       expect(getResponse.status).toBe(404);
     });

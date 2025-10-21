@@ -28,6 +28,12 @@ export class PlatformService {
     return PlatformDto(platform).getPlatform();
   }
 
+  static async getPlatformBySlug(slug: string): Promise<GetPlatform | null> {
+    const platform = await PlatformDAL.getPlatformBySlug(slug);
+    if (!platform || platform.isDeleted) throw new Error(ErrorTypeEnum.enum.PLATFORM_NOT_FOUND);
+    return PlatformDto(platform).getPlatform();
+  }
+
   static async updatePlatform(id: ObjectId, updateData: UpdatePlatform): Promise<GetPlatform | null> {
     const platform = await PlatformDAL.getPlatformById(id);
     if (!platform || platform.isDeleted) throw new Error(ErrorTypeEnum.enum.PLATFORM_NOT_FOUND);
@@ -44,11 +50,35 @@ export class PlatformService {
     return PlatformDto(updatedPlatform).getPlatform();
   }
 
+  static async updatePlatformBySlug(slug: string, updateData: UpdatePlatform): Promise<GetPlatform | null> {
+    const platform = await PlatformDAL.getPlatformBySlug(slug);
+    if (!platform || platform.isDeleted) throw new Error(ErrorTypeEnum.enum.PLATFORM_NOT_FOUND);
+
+    if (updateData.slug !== undefined) {
+      const existingPlatform = await PlatformDAL.getPlatformBySlug(updateData.slug);
+      if (existingPlatform && existingPlatform.id !== platform.id) {
+        throw new Error(ErrorTypeEnum.enum.PLATFORM_SLUG_ALREADY_EXISTS);
+      }
+    }
+
+    const updatedPlatform = await PlatformDAL.updatePlatform(platform.id, updateData);
+    if (!updatedPlatform) return null;
+    return PlatformDto(updatedPlatform).getPlatform();
+  }
+
   static async deletePlatform(id: ObjectId, updatedBy: ObjectId): Promise<boolean> {
     const platform = await PlatformDAL.getPlatformById(id);
     if (!platform || platform.isDeleted) throw new Error(ErrorTypeEnum.enum.PLATFORM_NOT_FOUND);
 
     const deletedPlatform = await PlatformDAL.softDeletePlatform(id, updatedBy);
+    return !!deletedPlatform;
+  }
+
+  static async deletePlatformBySlug(slug: string, updatedBy: ObjectId): Promise<boolean> {
+    const platform = await PlatformDAL.getPlatformBySlug(slug);
+    if (!platform || platform.isDeleted) throw new Error(ErrorTypeEnum.enum.PLATFORM_NOT_FOUND);
+
+    const deletedPlatform = await PlatformDAL.softDeletePlatform(platform.id, updatedBy);
     return !!deletedPlatform;
   }
 }
