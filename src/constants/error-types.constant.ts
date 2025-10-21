@@ -12,7 +12,6 @@ const errorType = [
   "ROLE_ALREADY_EXISTS",
   "ROLE_NOT_FOUND",
   "USER_NOT_FOUND",
-  "PERMISSION_ALREADY_EXISTS",
   "PERMISSION_NOT_FOUND",
   "ROLE_PERMISSION_ALREADY_EXISTS",
   "USER_ROLE_ALREADY_EXISTS",
@@ -43,6 +42,9 @@ const errorType = [
   "SESSION_INACTIVE",
   "TOKEN_REVOKED",
   "BOT_ACCESS_FORBIDDEN",
+  "PLATFORM_ALREADY_EXISTS",
+  "PLATFORM_NOT_FOUND",
+  "PLATFORM_SLUG_ALREADY_EXISTS",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -109,13 +111,6 @@ export const errorMap = {
     body: {
       code: "user_not_found",
       message: "User not found. Check identifier and retry.",
-    },
-  },
-  [ErrorTypeEnum.enum.PERMISSION_ALREADY_EXISTS]: {
-    httpStatusCode: STATUS_CODES.CONFLICT,
-    body: {
-      code: "duplicate_permission",
-      message: "Permission already exists. Use a different name.",
     },
   },
   [ErrorTypeEnum.enum.PERMISSION_NOT_FOUND]: {
@@ -326,6 +321,27 @@ export const errorMap = {
     body: {
       code: "bot_access_forbidden",
       message: "Bot access forbidden.",
+    },
+  },
+  [ErrorTypeEnum.enum.PLATFORM_ALREADY_EXISTS]: {
+    httpStatusCode: STATUS_CODES.CONFLICT,
+    body: {
+      code: "platform_already_exists",
+      message: "Platform already exists. Use a different slug.",
+    },
+  },
+  [ErrorTypeEnum.enum.PLATFORM_NOT_FOUND]: {
+    httpStatusCode: STATUS_CODES.NOT_FOUND,
+    body: {
+      code: "platform_not_found",
+      message: "Platform not found. Check identifier and retry.",
+    },
+  },
+  [ErrorTypeEnum.enum.PLATFORM_SLUG_ALREADY_EXISTS]: {
+    httpStatusCode: STATUS_CODES.CONFLICT,
+    body: {
+      code: "platform_slug_already_exists",
+      message: "Platform slug already exists. Use a different slug.",
     },
   },
 };

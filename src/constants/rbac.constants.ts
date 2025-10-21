@@ -1,3 +1,4 @@
+import type { CreatePlatformInput } from "@ansospace/types";
 import {
   type CreatePermission,
   type CreateRole,
@@ -58,6 +59,15 @@ export const PERMISSIONS = {
   DELETE_COURSE: "delete-course",
   RESTORE_COURSE: "restore-course",
   UPDATE_COURSE: "update-course",
+
+  // Platform Management Permissions
+  CREATE_PLATFORM: "create-platform",
+  VIEW_PLATFORMS: "view-platforms",
+  EDIT_PLATFORM: "edit-platform",
+  DELETE_PLATFORM: "delete-platform",
+
+  // Permission Management Permissions
+  VIEW_PERMISSIONS: "view-permissions",
 } as const;
 
 // Create a type based on the values of PERMISSIONS
@@ -284,6 +294,45 @@ export const defaultPermissions: CreatePermission[] = [
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
+
+  // Platform Management Permissions
+  {
+    name: PERMISSIONS.CREATE_PLATFORM,
+    description: "Allows the user to create new platforms",
+    category: PermissionCategory.SYSTEM,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+  {
+    name: PERMISSIONS.VIEW_PLATFORMS,
+    description: "Allows the user to view platforms",
+    category: PermissionCategory.SYSTEM,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+  {
+    name: PERMISSIONS.EDIT_PLATFORM,
+    description: "Allows the user to edit platforms",
+    category: PermissionCategory.SYSTEM,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+  {
+    name: PERMISSIONS.DELETE_PLATFORM,
+    description: "Allows the user to delete platforms",
+    category: PermissionCategory.SYSTEM,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+
+  // Permission Management Permissions
+  {
+    name: PERMISSIONS.VIEW_PERMISSIONS,
+    description: "Allows the user to view permissions",
+    category: PermissionCategory.SYSTEM,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
 ];
 
 export const defaultRoles: CreateRole[] = [
@@ -312,7 +361,16 @@ export const defaultRoles: CreateRole[] = [
 
 export const defaultRolePermissions: IDefaultRolePermission = {
   [ROLES.SUPER_ADMIN]: Object.values(PERMISSIONS),
-  [ROLES.ADMIN]: [PERMISSIONS.CREATE_ROLES, PERMISSIONS.EDIT_ROLES, PERMISSIONS.DELETE_ROLES],
+  [ROLES.ADMIN]: [
+    PERMISSIONS.CREATE_ROLES,
+    PERMISSIONS.EDIT_ROLES,
+    PERMISSIONS.DELETE_ROLES,
+    PERMISSIONS.CREATE_PLATFORM,
+    PERMISSIONS.VIEW_PLATFORMS,
+    PERMISSIONS.EDIT_PLATFORM,
+    PERMISSIONS.DELETE_PLATFORM,
+    PERMISSIONS.VIEW_PERMISSIONS,
+  ],
   [ROLES.USER]: [PERMISSIONS.EDIT_PROFILE, PERMISSIONS.DELETE_PROFILE],
 };
 
@@ -322,4 +380,12 @@ export const defaultUsers = {
   password: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD as Password,
   confirmPassword: envConstants.DEFAULT_SUPER_ADMIN_PASSWORD as Password,
   isEmailVerified: true,
+};
+
+export const defaultPlatformData: CreatePlatformInput = {
+  name: "Service Marketplace",
+  slug: "smp",
+  description: "Connects customers with verified service providers",
+  logoUrl: "https://cdn.ansopedia.com/smp-logo.png",
+  status: "active" as const,
 };

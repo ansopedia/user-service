@@ -1,9 +1,9 @@
-import { DeviceInfo, LoggedInUser } from "../index.ts";
+import type { AuthenticatedUser, DeviceInfo } from "@ansospace/types";
 
 declare global {
   namespace Express {
     interface Locals {
-      loggedInUser: LoggedInUser;
+      loggedInUser: AuthenticatedUser;
     }
     interface Request {
       deviceInfo?: DeviceInfo;

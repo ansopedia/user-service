@@ -1,12 +1,12 @@
 import { Router } from "express";
 
-import { authenticate } from "@/middlewares";
+import { PERMISSIONS } from "@/constants";
+import { authenticate, checkPermission } from "@/middlewares";
 
-import { createPermission, getPermissions } from "./permission.controller.js";
+import { getPermissions } from "./permission.controller.js";
 
 const router = Router();
 
-router.post("/permissions", createPermission);
-router.get("/permissions", authenticate, getPermissions);
+router.get("/permissions", authenticate, checkPermission([PERMISSIONS.VIEW_PERMISSIONS]), getPermissions);
 
 export { router as permissionRoutes };

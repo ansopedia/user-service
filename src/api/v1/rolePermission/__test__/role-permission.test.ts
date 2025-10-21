@@ -1,15 +1,15 @@
-import { type CreatePermission, type CreateRole, PermissionCategory } from "@ansospace/types";
+import { type CreateRole, type GetPermission } from "@ansospace/types";
 import mongoose from "mongoose";
 
 import { defaultUsers } from "@/constants";
 import {
-  createPermissionRequest,
   createRolePermissionRequest,
   createRoleRequest,
-  expectCreatePermissionSuccess,
   expectCreateRolePermissionSuccess,
   expectCreateRoleSuccess,
+  expectGetPermissionsSuccess,
   expectLoginSuccess,
+  getPermissionsRequest,
   login,
 } from "@/utils/test";
 
@@ -19,14 +19,6 @@ const VALID_ROLE: CreateRole = {
   createdBy: new mongoose.Types.ObjectId(),
   isDeleted: false,
   isSystemRole: false,
-};
-
-const VALID_PERMISSION: CreatePermission = {
-  name: "new-permissions",
-  description: "this is crete permission creating first time",
-  createdBy: new mongoose.Types.ObjectId(),
-  isDeleted: false,
-  category: PermissionCategory.SYSTEM,
 };
 
 describe("Role Permission Test", () => {
@@ -41,12 +33,14 @@ describe("Role Permission Test", () => {
     const roleResponse = await createRoleRequest(VALID_ROLE, authorizationHeader);
     expectCreateRoleSuccess(roleResponse, VALID_ROLE);
 
-    const permissionRes = await createPermissionRequest(VALID_PERMISSION);
-    expectCreatePermissionSuccess(permissionRes, VALID_PERMISSION);
+    const permissionResponse = await getPermissionsRequest(authorizationHeader);
+    expectGetPermissionsSuccess(permissionResponse);
+
+    const allPermissions: GetPermission[] = permissionResponse.body.data.permissions;
 
     const rolePermission = {
       roleId: roleResponse.body.data.role.id,
-      permissionId: permissionRes.body.data.permission.id,
+      permissionId: allPermissions[0].id,
     };
 
     const response = await createRolePermissionRequest(rolePermission, authorizationHeader);

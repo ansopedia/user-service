@@ -7,3 +7,4 @@ export * from "./role-permission.utils.js";
 export * from "./role.utils.js";
 export * from "./user-role.utils.js";
 export * from "./user.utils.js";
+export * from "./platform.utils.js";

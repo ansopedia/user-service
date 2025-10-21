@@ -1,4 +1,5 @@
 import type { CreatePermission, Permission } from "@ansospace/types";
+import mongoose from "mongoose";
 
 import { PermissionModel } from "./permission.model.js";
 
@@ -29,5 +30,51 @@ export class PermissionDAL {
 
   static async getPermissionsByIds(permissionIds: string[]) {
     return await PermissionModel.find({ _id: { $in: permissionIds } });
+  }
+
+  static async getPermissionsByUserId(userId: mongoose.Types.ObjectId): Promise<Permission[]> {
+    const permissions = await PermissionModel.aggregate([
+      {
+        $lookup: {
+          from: "rolepermissions",
+          localField: "_id",
+          foreignField: "permissionId",
+          as: "rolePermissions",
+        },
+      },
+      {
+        $unwind: "$rolePermissions",
+      },
+      {
+        $lookup: {
+          from: "userroles",
+          localField: "rolePermissions.roleId",
+          foreignField: "roleId",
+          as: "userRoles",
+        },
+      },
+      {
+        $unwind: "$userRoles",
+      },
+      {
+        $match: {
+          "userRoles.userId": userId,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          description: 1,
+          category: 1,
+          createdBy: 1,
+          updatedBy: 1,
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
+    ]);
+
+    return permissions;
   }
 }

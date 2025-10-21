@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@ansospace/types':
-        specifier: 0.3.8
-        version: 0.3.8
+        specifier: 0.4.1
+        version: 0.4.1
       axios:
         specifier: 1.12.2
         version: 1.12.2
@@ -171,8 +171,8 @@ importers:
 
 packages:
 
-  '@ansospace/types@0.3.8':
-    resolution: {integrity: sha512-bf7XA7cLToWIYPVa50C+KgYPk6YV/4kHJvZL679FN8NyAFDYZVlgqg5cdbuGen4j2EhgvVu7vMrqTrr5kuUrHA==}
+  '@ansospace/types@0.4.1':
+    resolution: {integrity: sha512-sFpS2rYNSaSEdd5P5A4JV/JIIGFGRHoDw5KmAk6z5KG2poWCMLk7H3Iy2hz+ZGrFlvJo94EmRvxVB8xlmtlHYQ==}
 
   '@asamuzakjp/css-color@3.2.0':
     resolution: {integrity: sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==}
@@ -2598,7 +2598,7 @@ packages:
 
 snapshots:
 
-  '@ansospace/types@0.3.8':
+  '@ansospace/types@0.4.1':
     dependencies:
       bson: 6.10.4
       zod: 3.25.76
