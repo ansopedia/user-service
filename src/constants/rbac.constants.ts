@@ -268,7 +268,7 @@ export const defaultPermissions: CreatePermission[] = [
   },
   {
     name: PERMISSIONS.EDIT_COURSE,
-    description: "Allows editing of existing courses including updates to lessons, metadata, and course visibility.",
+    description: "Allows modifying the course's educational content, such as lessons, structure, and metadata.",
     category: PermissionCategory.COURSE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
@@ -289,7 +289,7 @@ export const defaultPermissions: CreatePermission[] = [
   },
   {
     name: PERMISSIONS.UPDATE_COURSE,
-    description: "Allows authorized users to update course information such as content, pricing, or scheduling details.",
+     description: "Allows updating administrative course settings such as pricing, scheduling, and publication status.",
     category: PermissionCategory.COURSE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
