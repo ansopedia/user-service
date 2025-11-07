@@ -83,35 +83,40 @@ export const defaultPermissions: CreatePermission[] = [
   // User Management Permissions
   {
     name: PERMISSIONS.CREATE_USERS,
-    description: "Allows the user to create new user accounts",
+    description:
+      "Allows authorized users to create new user accounts, assign roles, and initialize user profiles securely within the system.",
     category: PermissionCategory.USER_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.VIEW_USERS,
-    description: "Allows the user to view user accounts",
+    description:
+      "Grants the ability to view user accounts, including names, roles, and activity information for administrative review or audit.",
     category: PermissionCategory.USER_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.EDIT_USERS,
-    description: "Allows the user to edit user accounts",
+    description:
+      "Allows modification of user details such as personal data, assigned roles, or account settings within authorized scope.",
     category: PermissionCategory.USER_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.DELETE_USERS,
-    description: "Allows the user to delete user accounts",
+    description:
+      "Authorizes the permanent removal or deactivation of user accounts from the system by an admin or system manager.",
     category: PermissionCategory.USER_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.RESTORE_USERS,
-    description: "Allows the user to restore user accounts",
+    description:
+      "Allows restoring previously deleted or deactivated user accounts, reinstating all related roles and access rights.",
     category: PermissionCategory.USER_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
@@ -120,35 +125,40 @@ export const defaultPermissions: CreatePermission[] = [
   // Role Management Permissions
   {
     name: PERMISSIONS.CREATE_ROLES,
-    description: "Allows the user to create new roles",
+    description:
+      "Grants permission to create new roles and define sets of permissions for different types of system users.",
     category: PermissionCategory.ROLE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.VIEW_ROLES,
-    description: "Allows the user to view roles",
+    description:
+      "Allows viewing available roles in the system, including their assigned permissions and related access policies.",
     category: PermissionCategory.ROLE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.EDIT_ROLES,
-    description: "Allows the user to edit roles",
+    description:
+      "Allows editing existing roles, modifying their names, permissions, or descriptions as per system requirements.",
     category: PermissionCategory.ROLE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.DELETE_ROLES,
-    description: "Allows the user to delete roles",
+    description:
+      "Permits deletion or deactivation of existing roles that are no longer required in the system configuration.",
     category: PermissionCategory.ROLE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.RESTORE_ROLES,
-    description: "Allows the user to restore roles",
+    description:
+      "Allows restoring previously deleted or inactive roles along with their permission mappings for reuse.",
     category: PermissionCategory.ROLE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
@@ -157,184 +167,188 @@ export const defaultPermissions: CreatePermission[] = [
   // Role Permission Management Permissions
   {
     name: PERMISSIONS.CREATE_ROLE_PERMISSIONS,
-    description: "Allows the user to create new role permissions",
+    description: "Allows creating new role-permission mappings to define what actions each role is allowed to perform.",
     category: PermissionCategory.ROLE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.VIEW_ROLE_PERMISSIONS,
-    description: "Allows the user to view role permissions",
+    description:
+      "Grants visibility into which permissions are assigned to specific roles within the system configuration.",
     category: PermissionCategory.ROLE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.EDIT_ROLE_PERMISSIONS,
-    description: "Allows the user to edit role permissions",
+    description:
+      "Allows modifying role-permission relationships by adding or removing specific permissions from a role.",
     category: PermissionCategory.ROLE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.DELETE_ROLE_PERMISSIONS,
-    description: "Allows the user to delete role permissions",
+    description: "Permits deletion of role-permission associations that are outdated or no longer applicable.",
     category: PermissionCategory.ROLE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.RESTORE_ROLE_PERMISSIONS,
-    description: "Allows the user to restore role permissions",
+    description: "Allows restoring deleted role-permission mappings to reinstate access configurations as before.",
     category: PermissionCategory.ROLE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
 
-  // User-Role Management Permissions
+  // User Role Management Permissions
   {
     name: PERMISSIONS.CREATE_USER_ROLES,
-    description: "Allows the user to create new user roles",
+    description:
+      "Allows creating new user-role assignments, linking users to specific system roles for access control.",
     category: PermissionCategory.USER_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.VIEW_USER_ROLES,
-    description: "Allows the user to view user roles",
+    description: "Grants visibility into which roles are assigned to specific users for audit and management purposes.",
     category: PermissionCategory.USER_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.EDIT_USER_ROLES,
-    description: "Allows the user to edit user roles",
+    description:
+      "Allows authorized updates to a user's assigned roles, adjusting their permissions dynamically as needed.",
     category: PermissionCategory.USER_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.DELETE_USER_ROLES,
-    description: "Allows the user to delete user roles",
+    description: "Enables deletion of user-role associations, effectively revoking assigned permissions for that user.",
     category: PermissionCategory.USER_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.RESTORE_USER_ROLES,
-    description: "Allows the user to restore user roles",
+    description: "Allows restoration of previously deleted user-role assignments, re-establishing access privileges.",
     category: PermissionCategory.USER_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
 
-  // Profile
+  // Profile Permissions
   {
     name: PERMISSIONS.VIEW_PROFILE,
-    description: "Allows the user to view their profile",
+    description: "Allows users to view their personal profile information including account details and preferences.",
     category: PermissionCategory.PROFILE,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.EDIT_PROFILE,
-    description: "Allows the user to edit their profile",
+    description: "Allows users to modify personal profile details such as name, password, or contact information.",
     category: PermissionCategory.PROFILE,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.DELETE_PROFILE,
-    description: "Allows the user to delete their profile",
+    description: "Grants the user permission to permanently delete their profile and associated account data.",
     category: PermissionCategory.PROFILE,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
 
-  // Course Management Permissions
+  // Course Permissions
   {
     name: PERMISSIONS.CREATE_COURSE,
-    description: "Allows the user to create a new course",
+    description:
+      "Allows authorized users to create new courses, define structure, and upload related learning materials.",
     category: PermissionCategory.COURSE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.VIEW_COURSE,
-    description: "Allows the user to view courses",
+    description:
+      "Grants access to view available courses, including details, instructors, and learning content overview.",
     category: PermissionCategory.COURSE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.EDIT_COURSE,
-    description: "Allows the user to edit courses",
-    category: PermissionCategory.COURSE_MANAGEMENT,
-    createdBy: systemUserObjectId,
-    isDeleted: false,
-  },
-  {
-    name: PERMISSIONS.DELETE_COURSE,
-    description: "Allows the user to delete courses",
-    category: PermissionCategory.COURSE_MANAGEMENT,
-    createdBy: systemUserObjectId,
-    isDeleted: false,
-  },
-  {
-    name: PERMISSIONS.RESTORE_COURSE,
-    description: "Allows the user to restore courses",
+    description: "Allows modifying the course's educational content, such as lessons, structure, and metadata.",
     category: PermissionCategory.COURSE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.UPDATE_COURSE,
-    description: "Allows the user to update course",
+    description: "Allows updating administrative course settings such as pricing, scheduling, and publication status.",
+    category: PermissionCategory.COURSE_MANAGEMENT,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+  {
+    name: PERMISSIONS.DELETE_COURSE,
+    description: "Permits deletion or archiving of outdated or inactive courses from the learning management system.",
+    category: PermissionCategory.COURSE_MANAGEMENT,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+  {
+    name: PERMISSIONS.RESTORE_COURSE,
+    description: "Allows restoring previously deleted or archived courses to make them accessible again.",
     category: PermissionCategory.COURSE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
 
-  // Platform Management Permissions
+  // Platform Permissions
   {
     name: PERMISSIONS.CREATE_PLATFORM,
-    description: "Allows the user to create new platforms",
+    description: "Allows creating new platform entries, defining platform settings, and initializing configurations.",
     category: PermissionCategory.SYSTEM,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.VIEW_PLATFORMS,
-    description: "Allows the user to view platforms",
+    description: "Grants visibility into all platform data including names, configurations, and operational status.",
     category: PermissionCategory.SYSTEM,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.EDIT_PLATFORM,
-    description: "Allows the user to edit platforms",
+    description: "Allows editing existing platform settings and configurations for maintenance or feature updates.",
     category: PermissionCategory.SYSTEM,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
   {
     name: PERMISSIONS.DELETE_PLATFORM,
-    description: "Allows the user to delete platforms",
+    description: "Permits authorized removal or deactivation of a platform instance that is no longer in use.",
     category: PermissionCategory.SYSTEM,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
-
-  // Permission Management Permissions
   {
     name: PERMISSIONS.VIEW_PERMISSIONS,
-    description: "Allows the user to view permissions",
+    description:
+      "Allows viewing all available system permissions for audit, documentation, or configuration review purposes.",
     category: PermissionCategory.SYSTEM,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
 ];
-
 export const defaultRoles: CreateRole[] = [
   {
     name: ROLES.SUPER_ADMIN,
