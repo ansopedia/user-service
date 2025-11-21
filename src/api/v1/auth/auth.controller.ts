@@ -1,7 +1,6 @@
 import {
   type AuthToken,
   type LoginResponse,
-  type SignUpResponse,
   emailSchema,
   loginSchema,
   refreshTokenRequestSchema,
@@ -33,11 +32,14 @@ export class AuthController {
     const userData = registerSchema.parse(req.body);
 
     const signUpResponse = await AuthService.register(userData);
-    sendResponse<SignUpResponse>({
+    sendResponse({
       response: res,
       message: success.SIGN_UP_SUCCESS,
       statusCode: STATUS_CODES.CREATED,
-      data: signUpResponse,
+      data: {
+        ...signUpResponse,
+        actionToken: signUpResponse.token,
+      },
     });
   }
 
@@ -235,13 +237,19 @@ export class AuthController {
   public static async autoLogin(req: Request, res: Response) {
     const { actionToken } = req.body;
 
-    const { message, authToken } = await AuthService.autoLogin(actionToken);
+    const deviceInfo = req.deviceInfo ?? getDeviceInfo(req);
 
-    sendResponse({
+    // deviceId is undefined if it's the first time the user is logging in
+    const deviceId = deviceInfo.deviceId ?? crypto.randomUUID();
+
+    const { accessToken, refreshToken, userId }: AuthToken = await AuthService.autoLogin(actionToken);
+    AuthController.setAuthTokenHeaders(res, accessToken, refreshToken, deviceId);
+
+    sendResponse<LoginResponse>({
       response: res,
-      message: message,
+      message: success.AUTO_LOGIN_SUCCESSFUL,
       statusCode: STATUS_CODES.OK,
-      data: authToken,
+      data: { userId },
     });
   }
 }

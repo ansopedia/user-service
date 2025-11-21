@@ -27,7 +27,6 @@ import { comparePassword, generateAccessToken, verifyJWTToken } from "@/utils";
 
 import { ProfileService } from "../profile/profile.service.js";
 import { SessionDAL } from "../session/session.dal.js";
-import { success } from "./auth.constant.js";
 
 interface GenerateTokenParams {
   userId: ObjectId;
@@ -304,7 +303,7 @@ export class AuthService {
     };
   }
 
-  public static async autoLogin(actionToken: string): Promise<{ message: string; authToken: AuthToken }> {
+  public static async autoLogin(actionToken: string): Promise<AuthToken> {
     const tokenService = new TokenService();
     const { userId, id: tokenId } = await tokenService.verifyActionToken(actionToken, UserActionType.AUTO_LOGIN);
 
@@ -323,7 +322,7 @@ export class AuthService {
     // Invalidate the action token after use
     await tokenService.invalidateToken(tokenId);
 
-    return { message: success.AUTO_LOGIN_SUCCESSFUL, authToken };
+    return authToken;
   }
 
   private static async generateAccessAndRefreshToken({
