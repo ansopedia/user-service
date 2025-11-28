@@ -13,7 +13,7 @@ import {
   RATE_LIMIT_WINDOW_MS,
   envConstants,
 } from "@/constants";
-import { addAxiosHeadersMiddleware, botDetectionMiddleware, errorHandler } from "@/middlewares";
+import { addAxiosHeadersMiddleware, allowedOrigins, botDetectionMiddleware, errorHandler } from "@/middlewares";
 import { routes } from "@/routes";
 import { errorLogger, logger } from "@/utils";
 
@@ -26,8 +26,6 @@ export const app: Application = express();
 if (NODE_ENV !== "test") {
   // Apply Helmet middleware with default options
   app.use(helmet());
-  const allowedOrigins = [envConstants.CLIENT_URL, envConstants.USER_SERVICE_BASE_URL].filter(Boolean);
-
   const corsOptions = {
     origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
       // Allow requests with no origin (mobile apps, Postman, etc.)
@@ -35,9 +33,20 @@ if (NODE_ENV !== "test") {
         return callback(null, true);
       }
 
-      // Check if origin is in allowed list
+      // Check if origin matches any allowed pattern
+      const isAllowed = allowedOrigins.some((pattern) => {
+        if (typeof pattern === "string" && pattern.startsWith("*.")) {
+          const domain = pattern.slice(2); // Remove '*.'
+          return origin.endsWith(domain);
+        }
+        if (typeof pattern === "string" && pattern.endsWith(":*")) {
+          const base = pattern.slice(0, -2); // Remove ':*'
+          return origin.startsWith(`${base}:`);
+        }
+        return pattern === origin;
+      });
 
-      if (allowedOrigins.includes(origin)) {
+      if (isAllowed) {
         return callback(null, true);
       }
 

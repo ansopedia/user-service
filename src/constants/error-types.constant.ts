@@ -82,7 +82,7 @@ export const errorMap = {
     httpStatusCode: STATUS_CODES.CONFLICT,
     body: {
       code: "duplicate_email",
-      message: "Email already registered. Use another or login.",
+      message: "Email already registered. Use another email or login.",
     },
   },
   [ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS]: {

@@ -9,9 +9,9 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     const authHeader = req.headers.authorization;
     if (authHeader == null || authHeader === "") throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
 
-    const token = extractTokenFromBearerString(authHeader);
+    const accessToken = extractTokenFromBearerString(authHeader);
 
-    res.locals.loggedInUser = await AuthService.verifyAccessToken(token);
+    res.locals.loggedInUser = await AuthService.verifyAccessToken(accessToken);
     next();
   } catch (error) {
     next(error);

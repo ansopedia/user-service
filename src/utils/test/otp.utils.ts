@@ -1,14 +1,13 @@
-import type { ObjectId, OtpEvent, OtpRecord, OtpVerifyEvent } from "@ansospace/types";
+import type { ObjectId, OtpRecord, SendOtpRequest, VerifyOtpRequest } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant.js";
 import { OtpService } from "@/api/v1/otp/otp.service.js";
-// import type { OtpEvent, OtpSchema, OtpVerifyEvent } from "@/api/v1/otp/otp.validation.js";
 import { NotificationType, STATUS_CODES } from "@/constants";
 
 import { app } from "../../app.js";
 
-export const requestOTP = async (otpEvents: OtpEvent): Promise<Response> => {
+export const requestOTP = async (otpEvents: SendOtpRequest): Promise<Response> => {
   return supertest(app).post("/api/v1/otp").send(otpEvents);
 };
 
@@ -31,7 +30,7 @@ export const retrieveOTP = async (userId: ObjectId, otpType: NotificationType): 
   return otpData as OtpRecord;
 };
 
-export const verifyOTP = async (data: OtpVerifyEvent): Promise<Response> => {
+export const verifyOTP = async (data: VerifyOtpRequest): Promise<Response> => {
   return supertest(app).post("/api/v1/otp/verify").send(data);
 };
 

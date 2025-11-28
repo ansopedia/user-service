@@ -1,4 +1,4 @@
-import type { Login, ResetPassword, SignUpResponse } from "@ansospace/types";
+import type { LoginRequest, RegisterResponse, ResetPasswordRequest } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant.js";
@@ -7,7 +7,7 @@ import { ErrorTypeEnum, NotificationType, STATUS_CODES, errorMap } from "@/const
 import { app } from "../../app.js";
 import { expectOTPVerificationSuccess, retrieveOTP, verifyOTP } from "./otp.utils.js";
 
-export const login = async (loginData: Omit<Login, "deviceInfo">): Promise<Response> => {
+export const login = async (loginData: Omit<LoginRequest, "deviceInfo">): Promise<Response> => {
   return supertest(app).post("/api/v1/auth/login").send(loginData);
 };
 
@@ -112,7 +112,7 @@ export const expectRenewTokenFailed = (response: Response) => {
   });
 };
 
-export const verifyAccount = async ({ userId, token }: SignUpResponse) => {
+export const verifyAccount = async ({ userId, actionToken }: RegisterResponse) => {
   const otpType = NotificationType.EMAIL_VERIFICATION_OTP;
   // Step 1: Retrieve OTP from database
   const otpData = await retrieveOTP(userId, otpType);
@@ -120,7 +120,7 @@ export const verifyAccount = async ({ userId, token }: SignUpResponse) => {
   // Step 2: Verify OTP
   const verifyResponse = await verifyOTP({
     otp: otpData.otp,
-    token: token,
+    actionToken,
     otpType,
   });
   expectOTPVerificationSuccess(otpType, verifyResponse);
@@ -141,7 +141,7 @@ export const expectForgetPasswordSuccess = (response: Response): void => {
   });
 };
 
-export const resetPassword = async (resetPassword: ResetPassword): Promise<Response> => {
+export const resetPassword = async (resetPassword: ResetPasswordRequest): Promise<Response> => {
   return supertest(app).post("/api/v1/auth/reset-password").send(resetPassword);
 };
 

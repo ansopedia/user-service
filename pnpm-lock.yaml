@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@ansospace/types':
-        specifier: 0.4.1
-        version: 0.4.1
+        specifier: file://F:\projects\ansospace\packages\types
+        version: file:../ansospace/packages/types
       axios:
         specifier: 1.12.2
         version: 1.12.2
@@ -171,8 +171,8 @@ importers:
 
 packages:
 
-  '@ansospace/types@0.4.1':
-    resolution: {integrity: sha512-sFpS2rYNSaSEdd5P5A4JV/JIIGFGRHoDw5KmAk6z5KG2poWCMLk7H3Iy2hz+ZGrFlvJo94EmRvxVB8xlmtlHYQ==}
+  '@ansospace/types@file:../ansospace/packages/types':
+    resolution: {directory: ../ansospace/packages/types, type: directory}
 
   '@asamuzakjp/css-color@3.2.0':
     resolution: {integrity: sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==}
@@ -956,6 +956,10 @@ packages:
   bson@6.10.4:
     resolution: {integrity: sha512-WIsKqkSC0ABoBJuT1LEX+2HEvNmNKKgnTAyd0fL8qzK4SH2i9NXg+t08YtdZp/V9IZ33cxe3iV4yM0qg8lMQng==}
     engines: {node: '>=16.20.1'}
+
+  bson@7.0.0:
+    resolution: {integrity: sha512-Kwc6Wh4lQ5OmkqqKhYGKIuELXl+EPYSCObVE6bWsp1T/cGkOCBN0I8wF/T44BiuhHyNi1mmKVPXk60d41xZ7kw==}
+    engines: {node: '>=20.19.0'}
 
   buffer-equal-constant-time@1.0.1:
     resolution: {integrity: sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==}
@@ -2596,12 +2600,15 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
+  zod@4.1.12:
+    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
+
 snapshots:
 
-  '@ansospace/types@0.4.1':
+  '@ansospace/types@file:../ansospace/packages/types':
     dependencies:
-      bson: 6.10.4
-      zod: 3.25.76
+      bson: 7.0.0
+      zod: 4.1.12
 
   '@asamuzakjp/css-color@3.2.0':
     dependencies:
@@ -3347,6 +3354,8 @@ snapshots:
       fill-range: 7.1.1
 
   bson@6.10.4: {}
+
+  bson@7.0.0: {}
 
   buffer-equal-constant-time@1.0.1: {}
 
@@ -5055,3 +5064,5 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zod@3.25.76: {}
+
+  zod@4.1.12: {}

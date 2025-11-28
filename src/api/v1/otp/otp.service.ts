@@ -1,11 +1,12 @@
 import {
   type GetOtp,
-  type OtpEvent,
   type OtpRecord,
-  type OtpVerifyEvent,
-  otpEventSchema,
+  type SendOtpRequest,
+  type SendOtpResponse,
+  type VerifyOtpRequest,
   otpSchema,
-  otpVerifyEventSchema,
+  sendOtpRequestSchema,
+  verifyOtpRequestSchema,
 } from "@ansospace/types";
 import { formatDuration, intervalToDuration, isPast } from "date-fns";
 
@@ -26,8 +27,8 @@ import { TokenService } from "../token/token.service.js";
 import { OtpDAL } from "./otp.dal.js";
 
 export class OtpService {
-  public static async sendOtp(otpEvents: OtpEvent): Promise<{ message: string; token: string }> {
-    const validOtpEvent = otpEventSchema.parse(otpEvents);
+  public static async sendOtp(otpEvents: SendOtpRequest): Promise<{ message: string } & SendOtpResponse> {
+    const validOtpEvent = sendOtpRequestSchema.parse(otpEvents);
     const { otpType } = validOtpEvent;
 
     const otp = generateOTP();
@@ -73,14 +74,14 @@ export class OtpService {
     });
 
     // Generate a temporary token for the user
-    const token = await new TokenService().createActionToken(user.id, notificationToActionMap[otpType]);
+    const actionToken = await new TokenService().createActionToken(user.id, notificationToActionMap[otpType]);
 
-    return { message, token };
+    return { message, actionToken };
   }
 
-  public static async verifyOtp(otpEvents: OtpVerifyEvent): Promise<{ message: string; actionToken: string }> {
+  public static async verifyOtp(otpEvents: VerifyOtpRequest): Promise<{ message: string; actionToken: string }> {
     // Extract the token from the parsed event data
-    const { otp, otpType, token: verificationToken } = otpVerifyEventSchema.parse(otpEvents);
+    const { otp, otpType, actionToken: verificationToken } = verifyOtpRequestSchema.parse(otpEvents);
     let actionToken: string = "";
     let message: string = success.OTP_VERIFIED_SUCCESSFULLY;
 

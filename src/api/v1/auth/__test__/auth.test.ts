@@ -1,4 +1,4 @@
-import { type Login, loginSchema, passwordSchema } from "@ansospace/types";
+import { type LoginRequest, loginRequestSchema, passwordSchema } from "@ansospace/types";
 import { ZodError, type ZodIssue } from "zod";
 
 import { ErrorTypeEnum, STATUS_CODES, errorMap, mockUser } from "@/constants";
@@ -10,11 +10,11 @@ import {
   signUp,
 } from "@/utils/test";
 
-type ValidationResult = { success: true; data: Login } | { success: false; error: ZodIssue[] };
+type ValidationResult = { success: true; data: LoginRequest } | { success: false; error: ZodIssue[] };
 // Helper function to validate schema
 const validateLoginSchema = (body: unknown): ValidationResult => {
   try {
-    const data = loginSchema.parse(body);
+    const data = loginRequestSchema.parse(body);
     return { success: true, data };
   } catch (error) {
     if (error instanceof ZodError) {

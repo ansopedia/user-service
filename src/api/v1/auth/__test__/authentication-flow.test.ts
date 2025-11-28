@@ -1,4 +1,4 @@
-import type { SignUpResponse } from "@ansospace/types";
+import type { RegisterResponse } from "@ansospace/types";
 
 import { ErrorTypeEnum, STATUS_CODES, errorMap, mockUser } from "@/constants";
 import {
@@ -16,11 +16,12 @@ import {
 } from "@/utils/test";
 
 describe("Authentication Flow", () => {
-  let signUpResponse: SignUpResponse;
+  let registerResponse: RegisterResponse;
+
   it("should sign up a user", async () => {
     const response = await signUp(mockUser);
     expectSignUpSuccess(response);
-    signUpResponse = response.body.data;
+    registerResponse = response.body.data;
   });
 
   it("should return 403 Forbidden for unverified email", async () => {
@@ -40,7 +41,7 @@ describe("Authentication Flow", () => {
   });
 
   it("should verify email", async () => {
-    await verifyAccount(signUpResponse);
+    await verifyAccount(registerResponse);
   });
 
   it("should login with email and password", async () => {

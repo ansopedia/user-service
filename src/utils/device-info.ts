@@ -1,4 +1,4 @@
-import type { DeviceInfo } from "@ansospace/types";
+import { type DeviceInfo, HttpHeaders } from "@ansospace/types";
 import { type Request } from "express";
 import { UAParser } from "ua-parser-js";
 import { isBot } from "ua-parser-js/helpers";
@@ -23,7 +23,7 @@ export const getDeviceInfo = (req: Request): DeviceInfo => {
   const isBotResult = isBot(ua);
 
   // Device ID from client header (persistent per install)
-  const deviceIdHeader: DeviceInfo["deviceId"] = req.headers["x-device-id"] as DeviceInfo["deviceId"];
+  const deviceIdHeader: DeviceInfo["deviceId"] = req.headers[HttpHeaders.X_DEVICE_ID] as DeviceInfo["deviceId"];
 
   // Resolve IP in order of trust
   const forwardedFor = (req.headers["x-forwarded-for"] as string) || "";

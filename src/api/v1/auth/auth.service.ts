@@ -4,13 +4,12 @@ import {
   type AuthenticatedUser,
   type DeviceId,
   type DeviceInfo,
-  type Email,
-  type Login,
+  type LoginRequest,
   type ObjectId,
   type RefreshTokenPayload,
-  type RegisterSchema,
-  type ResetPassword,
-  type SignUpResponse,
+  type RegisterRequest,
+  type RegisterResponse,
+  type ResetPasswordRequest,
   TokenType,
   type UserRolePermission,
   usernameSchema,
@@ -36,7 +35,7 @@ interface GenerateTokenParams {
 }
 
 export class AuthService {
-  public static async register(userData: RegisterSchema): Promise<SignUpResponse> {
+  public static async register(userData: RegisterRequest): Promise<RegisterResponse> {
     const newUser = await UserService.registerUser(userData);
 
     await OtpService.sendOtp({
@@ -46,14 +45,14 @@ export class AuthService {
 
     // Generate a temporary token for email verification
     const tokenService = new TokenService();
-    const token = await tokenService.createActionToken(newUser.id, UserActionType.VERIFY_EMAIL);
+    const actionToken = await tokenService.createActionToken(newUser.id, UserActionType.VERIFY_EMAIL);
 
     // Return the verification token along with the success message
-    return { token, userId: newUser.id };
+    return { actionToken, userId: newUser.id };
   }
 
   public static async signInWithEmailOrUsernameAndPassword(
-    loginData: Login,
+    loginData: LoginRequest,
     deviceInfo: DeviceInfo,
     deviceId: DeviceId
   ): Promise<AuthToken> {
@@ -133,7 +132,7 @@ export class AuthService {
   }
 
   public static async logout(accessToken: string): Promise<void> {
-    const res = await verifyJWTToken<AccessTokenPayload>(accessToken, TokenType.ACCESS);
+    const res = await verifyJWTToken<AccessTokenPayload>(accessToken, TokenType.AUTHORIZATION);
     const { userId, deviceId, jti, exp } = res;
 
     if (jti == null || exp == null) {
@@ -203,7 +202,7 @@ export class AuthService {
   public static async verifyAccessToken(token: string): Promise<AuthenticatedUser> {
     const { userId, permissions, jti, tokenVersion, deviceId } = await verifyJWTToken<AccessTokenPayload>(
       token,
-      TokenType.ACCESS
+      TokenType.AUTHORIZATION
     );
 
     if (jti == null) {
@@ -225,16 +224,9 @@ export class AuthService {
     return { userId, permissions, deviceId, tokenVersion };
   }
 
-  public static async forgetPassword(email: Email) {
-    return await OtpService.sendOtp({
-      email,
-      otpType: NotificationType.FORGET_PASSWORD_OTP,
-    });
-  }
-
-  public static async resetPassword({ token, password }: ResetPassword): Promise<void> {
+  public static async resetPassword({ actionToken, password }: ResetPasswordRequest): Promise<void> {
     const tokenService = new TokenService();
-    const { userId, id: tokenId } = await tokenService.verifyActionToken(token, UserActionType.RESET_PASSWORD);
+    const { userId, id: tokenId } = await tokenService.verifyActionToken(actionToken, UserActionType.RESET_PASSWORD);
 
     const user = await UserService.updateUser(userId, { password });
 
@@ -296,7 +288,6 @@ export class AuthService {
     });
 
     return {
-      userId: updatedSession.userId,
       accessToken,
       refreshToken: updatedSession.refreshToken,
       deviceId: updatedSession.deviceId,

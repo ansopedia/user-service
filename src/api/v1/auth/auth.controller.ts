@@ -1,11 +1,12 @@
 import {
   type AuthToken,
+  HttpHeaders,
   type LoginResponse,
-  emailSchema,
-  loginSchema,
+  type RegisterResponse,
+  loginRequestSchema,
   refreshTokenRequestSchema,
-  registerSchema,
-  resetPasswordSchema,
+  registerRequestSchema,
+  resetPasswordRequestSchema,
 } from "@ansospace/types";
 import type { Request, Response } from "express";
 import ms from "ms";
@@ -18,28 +19,23 @@ import { extractTokenFromBearerString, getDeviceInfo, isValidRedirectUrl, sendRe
 import { success } from "./auth.constant.js";
 import { AuthService } from "./auth.service.js";
 
-// import { type AuthToken, type SignUpResponse, loginSchema, validateRefreshTokenSchema } from "./auth.validation.js";
-
 export class AuthController {
   private static setAuthTokenHeaders(res: Response, accessToken: string, refreshToken: string, deviceId: string) {
     res.header("Access-Control-Expose-Headers", "set-cookie, authorization, refresh-token");
-    res.setHeader("authorization", accessToken);
-    res.setHeader("refresh-token", refreshToken);
-    res.setHeader("x-device-id", deviceId);
+    res.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
+    res.setHeader(HttpHeaders.REFRESH_TOKEN, refreshToken);
+    res.setHeader(HttpHeaders.X_DEVICE_ID, deviceId);
   }
 
   public static async register(req: Request, res: Response) {
-    const userData = registerSchema.parse(req.body);
+    const userData = registerRequestSchema.parse(req.body);
 
-    const signUpResponse = await AuthService.register(userData);
-    sendResponse({
+    const registerResponse = await AuthService.register(userData);
+    sendResponse<RegisterResponse>({
       response: res,
       message: success.SIGN_UP_SUCCESS,
       statusCode: STATUS_CODES.CREATED,
-      data: {
-        ...signUpResponse,
-        actionToken: signUpResponse.token,
-      },
+      data: registerResponse,
     });
   }
 
@@ -49,7 +45,7 @@ export class AuthController {
     // deviceId is undefined if it's the first time the user is logging in
     const deviceId = deviceInfo.deviceId ?? crypto.randomUUID();
 
-    const loginData = loginSchema.parse(req.body);
+    const loginData = loginRequestSchema.parse(req.body);
 
     const { accessToken, refreshToken, userId }: AuthToken = await AuthService.signInWithEmailOrUsernameAndPassword(
       loginData,
@@ -194,36 +190,18 @@ export class AuthController {
   public static async refreshToken(req: Request, res: Response) {
     const { refreshToken } = refreshTokenRequestSchema.parse(req.body);
 
-    const {
-      accessToken,
-      refreshToken: newRefreshToken,
-      userId,
-      deviceId,
-    } = await AuthService.refreshToken(refreshToken);
+    const { accessToken, refreshToken: newRefreshToken, deviceId } = await AuthService.refreshToken(refreshToken);
 
     AuthController.setAuthTokenHeaders(res, accessToken, newRefreshToken, deviceId);
     sendResponse({
       response: res,
       message: success.TOKEN_RENEWED_SUCCESSFULLY,
       statusCode: STATUS_CODES.OK,
-      data: { userId },
-    });
-  }
-
-  public static async forgetPassword(req: Request, res: Response) {
-    const email = emailSchema.parse(req.body.email);
-
-    const { message, token } = await AuthService.forgetPassword(email);
-    sendResponse({
-      response: res,
-      message,
-      statusCode: STATUS_CODES.OK,
-      data: { token },
     });
   }
 
   public static async resetPassword(req: Request, res: Response) {
-    const resetPassword = resetPasswordSchema.parse(req.body);
+    const resetPassword = resetPasswordRequestSchema.parse(req.body);
 
     await AuthService.resetPassword(resetPassword);
 
