@@ -1,7 +1,9 @@
 import type { Role } from "@ansospace/types";
-import { Model, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from "mongoose";
 
-const RoleSchema: Schema<Role> = new Schema(
+interface IRole extends Document, Role {}
+
+const RoleSchema: Schema<IRole> = new Schema(
   {
     name: {
       type: String,
@@ -33,4 +35,4 @@ const RoleSchema: Schema<Role> = new Schema(
   { timestamps: true }
 );
 
-export const RoleModel: Model<Role> = model<Role>("Role", RoleSchema);
+export const RoleModel: Model<IRole> = model<IRole>("Role", RoleSchema);

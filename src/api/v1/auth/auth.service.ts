@@ -2,15 +2,19 @@ import {
   type AccessTokenPayload,
   type AuthToken,
   type AuthenticatedUser,
+  type AutoLoginRequest,
   type DeviceId,
   type DeviceInfo,
+  type Email,
   type LoginRequest,
+  NotificationType,
   type ObjectId,
   type RefreshTokenPayload,
   type RegisterRequest,
   type RegisterResponse,
   type ResetPasswordRequest,
   TokenType,
+  UserActionType,
   type UserRolePermission,
   usernameSchema,
 } from "@ansospace/types";
@@ -19,7 +23,7 @@ import { OtpService } from "@/api/v1/otp/otp.service.js";
 import { TokenService } from "@/api/v1/token/index.js";
 import { UserDAL } from "@/api/v1/user/user.dal.js";
 import { UserService } from "@/api/v1/user/user.service.js";
-import { ErrorTypeEnum, NotificationType, type Permission, UserActionType } from "@/constants";
+import { ErrorTypeEnum, type Permission } from "@/constants";
 import { notificationService, redisService } from "@/services";
 import type { GoogleUser } from "@/types";
 import { comparePassword, generateAccessToken, verifyJWTToken } from "@/utils";
@@ -82,11 +86,8 @@ export class AuthService {
     deviceId: DeviceId
   ): Promise<AuthToken> {
     const { id: googleId, emails, name, photos, displayName } = googleUser;
-    const [{ value: email, verified: isEmailVerified }] = emails;
-
-    if (!email) {
-      throw new Error("Email not provided by Google authentication");
-    }
+    const [{ value, verified: isEmailVerified }] = emails;
+    const email: Email = value as Email;
 
     // Check if the user exists by Google ID
     let user = await UserService.getUserByGoogleId(googleId);
@@ -294,7 +295,7 @@ export class AuthService {
     };
   }
 
-  public static async autoLogin(actionToken: string): Promise<AuthToken> {
+  public static async autoLogin({ actionToken }: AutoLoginRequest): Promise<AuthToken> {
     const tokenService = new TokenService();
     const { userId, id: tokenId } = await tokenService.verifyActionToken(actionToken, UserActionType.AUTO_LOGIN);
 

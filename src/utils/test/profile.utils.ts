@@ -2,12 +2,15 @@ import type { CreateProfileData, ProfileData } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/profile/index.js";
-import { STATUS_CODES } from "@/constants";
+import { ROUTES, STATUS_CODES } from "@/constants";
 
 import { app } from "../../app.js";
 
 export const upSertProfileData = async (data: CreateProfileData, authorizationHeader: string) => {
-  return await supertest(app).put("/api/v1/profile").set("authorization", authorizationHeader).send(data);
+  return await supertest(app)
+    .put(`${ROUTES.API_ROOT}${ROUTES.PROFILES.ROOT}`)
+    .set("authorization", authorizationHeader)
+    .send(data);
 };
 
 export const expectProfileData = (response: Response, data: ProfileData) => {
@@ -16,7 +19,7 @@ export const expectProfileData = (response: Response, data: ProfileData) => {
   expect(response.body.message).toBe(success.PROFILE_UPDATED_SUCCESSFULLY);
   expect(response.body.status).toBe("success");
 
-  const expectedBody: Partial<ProfileData> & {} = {
+  const expectedBody: Partial<ProfileData> = {
     userId: data.userId,
   };
 
@@ -34,7 +37,7 @@ export const expectProfileData = (response: Response, data: ProfileData) => {
 
 export const toggleProfileVisibility = async (isPublic: boolean, authorizationHeader: string) => {
   return await supertest(app)
-    .patch("/api/v1/profile/visibility")
+    .patch(`${ROUTES.API_ROOT}${ROUTES.PROFILES.VISIBILITY}`)
     .set("authorization", authorizationHeader)
     .send({ isPublic });
 };

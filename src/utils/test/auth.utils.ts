@@ -1,8 +1,13 @@
-import type { LoginRequest, RegisterResponse, ResetPasswordRequest } from "@ansospace/types";
+import {
+  type LoginRequest,
+  NotificationType,
+  type RegisterResponse,
+  type ResetPasswordRequest,
+} from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant.js";
-import { ErrorTypeEnum, NotificationType, STATUS_CODES, errorMap } from "@/constants";
+import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 
 import { app } from "../../app.js";
 import { expectOTPVerificationSuccess, retrieveOTP, verifyOTP } from "./otp.utils.js";
@@ -39,6 +44,15 @@ export const expectLoginFailed = (response: Response) => {
   expect(response.body.code).toBe(errorObject.body.code);
 };
 
+export const expectEmailNotVerifiedError = (response: Response) => {
+  const errorObject = errorMap[ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED];
+
+  expect(response.statusCode).toBe(errorObject.httpStatusCode);
+  expect(response.body.message).toBe(errorObject.body.message);
+  expect(response.body.code).toBe(errorObject.body.code);
+  expect(response.body.status).toBe("failed");
+};
+
 export const signUp = async (signUpData: {
   email: string;
   username: string;
@@ -56,7 +70,7 @@ export const expectSignUpSuccess = (response: Response): void => {
   expect(body).toMatchObject({
     message: success.SIGN_UP_SUCCESS,
     data: {
-      token: expect.any(String),
+      actionToken: expect.any(String),
       userId: expect.any(String),
     },
   });
@@ -92,9 +106,6 @@ export const expectRenewTokenSuccess = (response: Response) => {
   expect(response.body).toMatchObject({
     message: success.TOKEN_RENEWED_SUCCESSFULLY,
     status: "success",
-    data: {
-      userId: expect.any(String),
-    },
   });
 };
 
@@ -126,10 +137,6 @@ export const verifyAccount = async ({ userId, actionToken }: RegisterResponse) =
   expectOTPVerificationSuccess(otpType, verifyResponse);
 };
 
-export const forgetPassword = async (email: string): Promise<Response> => {
-  return supertest(app).post("/api/v1/auth/forget-password").send({ email });
-};
-
 export const expectForgetPasswordSuccess = (response: Response): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
@@ -137,7 +144,7 @@ export const expectForgetPasswordSuccess = (response: Response): void => {
   expect(statusCode).toBe(STATUS_CODES.OK);
   expect(body).toMatchObject({
     message: success.FORGET_PASSWORD_EMAIL_SENT,
-    data: { token: expect.any(String) },
+    data: { actionToken: expect.any(String) },
   });
 };
 

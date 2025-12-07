@@ -12,6 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Proper Permission Descriptions with a 255-Character Limit ([#58](https://github.com/ansopedia/user-service/issues/58))
 - Add Platform Model & API Endpoints ([#145](https://github.com/ansopedia/user-service/issues/145))
 - Protect Permission Routes ([#69](https://github.com/ansopedia/user-service/issues/69))
+- Add centralized routes constants file for improved maintainability
+- Add new test utility functions for role permission and user role creation
+
+### Changed
+
+- Refactor test utilities by consolidating role-permission and user-role functions into respective modules
+- Update API endpoint paths in test utilities to use centralized route constants
+- Change authentication response fields from 'token' to 'actionToken'
+- Update type imports (e.g., RegisterSchema to RegisterRequest)
+
+### Removed
+
+- Remove deprecated test utility files for role-permission and user-role management
 
 ## [1.3.1] - 2025-10-06
 

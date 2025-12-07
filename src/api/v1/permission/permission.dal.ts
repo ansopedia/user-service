@@ -33,7 +33,7 @@ export class PermissionDAL {
   }
 
   static async getPermissionsByUserId(userId: mongoose.Types.ObjectId): Promise<Permission[]> {
-    const permissions = await PermissionModel.aggregate([
+    return await PermissionModel.aggregate([
       {
         $lookup: {
           from: "rolepermissions",
@@ -74,7 +74,5 @@ export class PermissionDAL {
         },
       },
     ]);
-
-    return permissions;
   }
 }

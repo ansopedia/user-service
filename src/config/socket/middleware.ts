@@ -1,4 +1,4 @@
-import type { AccessTokenPayload } from "@ansospace/types";
+import { type AccessTokenPayload, TokenType } from "@ansospace/types";
 import { Server } from "socket.io";
 
 import type { CustomSocket } from "@/types";
@@ -15,7 +15,7 @@ export const setupSocketMiddleware = (io: Server) => {
       }
 
       // 2. Validate token
-      const decoded = await verifyJWTToken<AccessTokenPayload>(token, "access");
+      const decoded = await verifyJWTToken<AccessTokenPayload>(token, TokenType.AUTHORIZATION);
 
       // 3. Attach user data to socket
       socket.data.userId = decoded.userId;

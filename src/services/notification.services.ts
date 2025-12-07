@@ -24,13 +24,23 @@ const sendEmail = async (body: EmailNotification) => {
       if (error.message === "fetch failed") {
         throw new Error(ErrorTypeEnum.enum.NOTIFICATION_SERVICE_UNAVAILABLE);
       }
+      // For other Error instances, treat as internal server error
+      errorLogger.error({
+        message: "Unexpected error while sending email notification",
+        error: error.message,
+      });
+      throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
     } else {
-      // TODO: fix with appropriate error message
+      // For non-Error instances, log and throw internal server error
+      errorLogger.error({
+        message: "Unexpected error type while sending email notification",
+        error: String(error),
+      });
       throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
     }
   }
 
-  if (response && !response.ok) {
+  if (!response.ok) {
     const responseBody = await response.json();
     errorLogger.error({
       message: "Email notification service responded with an error",

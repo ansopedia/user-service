@@ -1,9 +1,12 @@
 import {
   type GetOtp,
+  NotificationType,
   type OtpRecord,
   type SendOtpRequest,
   type SendOtpResponse,
+  UserActionType,
   type VerifyOtpRequest,
+  notificationToActionMap,
   otpSchema,
   sendOtpRequestSchema,
   verifyOtpRequestSchema,
@@ -12,14 +15,7 @@ import { formatDuration, intervalToDuration, isPast } from "date-fns";
 
 import { success } from "@/api/v1/auth/auth.constant.js";
 import { UserService } from "@/api/v1/user/user.service.js";
-import {
-  ErrorTypeEnum,
-  FIVE_MINUTES_IN_MS,
-  NotificationType,
-  UserActionType,
-  envConstants,
-  notificationToActionMap,
-} from "@/constants";
+import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, envConstants } from "@/constants";
 import { notificationService } from "@/services";
 import { generateOTP, verifyOTP } from "@/utils";
 

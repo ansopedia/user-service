@@ -48,7 +48,7 @@ const generateEnvFiles = () => {
     console.info("Environment files generation completed successfully!");
   } catch (error) {
     console.error(`Error generating environment files: ${error}`);
-    process.exit(1);
+    throw new Error(`Error generating environment files: ${error}`);
   }
 };
 

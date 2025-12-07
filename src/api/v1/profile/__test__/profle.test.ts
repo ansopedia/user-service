@@ -15,7 +15,6 @@ import {
 } from "@/utils/test";
 
 const profileData: CreateProfileData = {
-  avatar: "http://avatar.com",
   bio: "bio",
   name: "name",
   givenName: "givenName",

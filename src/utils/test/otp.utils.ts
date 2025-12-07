@@ -1,9 +1,15 @@
-import type { ObjectId, OtpRecord, SendOtpRequest, VerifyOtpRequest } from "@ansospace/types";
+import {
+  NotificationType,
+  type ObjectId,
+  type OtpRecord,
+  type SendOtpRequest,
+  type VerifyOtpRequest,
+} from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant.js";
 import { OtpService } from "@/api/v1/otp/otp.service.js";
-import { NotificationType, STATUS_CODES } from "@/constants";
+import { STATUS_CODES } from "@/constants";
 
 import { app } from "../../app.js";
 

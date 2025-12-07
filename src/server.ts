@@ -18,7 +18,7 @@ const initializeCryptoKeys = async () => {
     logger.info("Crypto keys loaded successfully");
   } catch (error) {
     errorLogger.error(`Failed to load crypto keys: ${error}`);
-    process.exit(1); // Exit if we can't load the keys
+    throw new Error(`Failed to load crypto keys: ${error}`);
   }
 };
 
@@ -50,30 +50,28 @@ export const startServer = async (port: number): Promise<void> => {
   });
 };
 
+const handleForceClose = (resolve: () => void, reject: (err: Error) => void) => {
+  server.close((forceErr) => {
+    if (forceErr) reject(forceErr);
+    else resolve();
+  });
+};
+
+const handleServerCloseError = (resolve: () => void, reject: (err: Error) => void) => {
+  // Force close all connections if graceful shutdown fails
+  server.closeAllConnections();
+  setTimeout(() => handleForceClose(resolve, reject), 100); // Small delay to ensure port is freed
+};
+
 export const stopServer = (): Promise<void> => {
   logger.info("Server is shutting down...");
 
   return new Promise((resolve, reject) => {
-    if (io) {
-      io.close();
-    }
+    if (io) io.close();
 
     server.close((err) => {
-      if (err) {
-        // Force close all connections if graceful shutdown fails
-        server.closeAllConnections();
-        setTimeout(() => {
-          server.close((forceErr) => {
-            if (forceErr) {
-              reject(forceErr);
-            } else {
-              resolve();
-            }
-          });
-        }, 100); // Small delay to ensure port is freed
-      } else {
-        resolve();
-      }
+      if (err) handleServerCloseError(resolve, reject);
+      else resolve();
     });
   });
 };

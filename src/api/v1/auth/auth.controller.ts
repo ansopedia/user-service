@@ -3,6 +3,7 @@ import {
   HttpHeaders,
   type LoginResponse,
   type RegisterResponse,
+  autoLoginRequestSchema,
   loginRequestSchema,
   refreshTokenRequestSchema,
   registerRequestSchema,
@@ -15,7 +16,6 @@ import { ErrorTypeEnum, STATUS_CODES, envConstants } from "@/constants";
 import { type GoogleUser } from "@/types";
 import { extractTokenFromBearerString, getDeviceInfo, isValidRedirectUrl, sendResponse } from "@/utils";
 
-// import { validateResetPasswordSchema } from "../user/user.validation.js";
 import { success } from "./auth.constant.js";
 import { AuthService } from "./auth.service.js";
 
@@ -105,7 +105,7 @@ export class AuthController {
           ? ms(envConstants.ACCESS_TOKEN_EXPIRES_IN)
           : (envConstants.ACCESS_TOKEN_EXPIRES_IN ?? 0) * 1000,
       domain: process.env.COOKIE_DOMAIN,
-      ...(deviceInfo.geolocation?.country !== null && {
+      ...(deviceInfo.geolocation?.country !== undefined && {
         // GDPR compliance for EU users
         sameSite: deviceInfo.geolocation?.country === "EU" ? "none" : "strict",
       }),
@@ -165,8 +165,6 @@ export class AuthController {
   public static async logoutOthers(_req: Request, res: Response) {
     const { userId, deviceId } = res.locals.loggedInUser;
 
-    if (deviceId === undefined) throw new Error(ErrorTypeEnum.enum.UNAUTHORIZED);
-
     await AuthService.logoutOthers(deviceId, userId);
     sendResponse({
       response: res,
@@ -213,14 +211,14 @@ export class AuthController {
   }
 
   public static async autoLogin(req: Request, res: Response) {
-    const { actionToken } = req.body;
+    const { actionToken } = autoLoginRequestSchema.parse(req.body);
 
     const deviceInfo = req.deviceInfo ?? getDeviceInfo(req);
 
     // deviceId is undefined if it's the first time the user is logging in
     const deviceId = deviceInfo.deviceId ?? crypto.randomUUID();
 
-    const { accessToken, refreshToken, userId }: AuthToken = await AuthService.autoLogin(actionToken);
+    const { accessToken, refreshToken, userId }: AuthToken = await AuthService.autoLogin({ actionToken });
     AuthController.setAuthTokenHeaders(res, accessToken, refreshToken, deviceId);
 
     sendResponse<LoginResponse>({

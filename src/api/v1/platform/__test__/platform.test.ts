@@ -1,7 +1,7 @@
 import { type GetPlatform, type UpdatePlatformInput } from "@ansospace/types";
 import { describe, expect, it } from "vitest";
 
-import { defaultPlatformData, defaultUsers, mockUser } from "@/constants";
+import { ROUTES, defaultPlatformData, defaultUsers, mockUser } from "@/constants";
 import {
   createPlatformRequest,
   deletePlatformRequest,
@@ -45,7 +45,7 @@ describe("Platform API", () => {
     userAuthToken = `Bearer ${loginResponse.header["authorization"]}`;
   });
 
-  describe("POST /api/v1/platforms", () => {
+  describe(`POST /api/v1${ROUTES.PLATFORMS}`, () => {
     it("should create a platform successfully", async () => {
       const response = await createPlatformRequest(defaultPlatformData, adminAuthToken);
 
@@ -72,7 +72,7 @@ describe("Platform API", () => {
     });
   });
 
-  describe("GET /api/v1/platforms", () => {
+  describe(`GET /api/v1${ROUTES.PLATFORMS}`, () => {
     it("should get all platforms", async () => {
       await createPlatformRequest(defaultPlatformData, adminAuthToken);
 
@@ -88,7 +88,7 @@ describe("Platform API", () => {
     });
   });
 
-  describe("GET /api/v1/platforms/:slug", () => {
+  describe(`GET /api/v1${ROUTES.PLATFORMS.BY_SLUG}`, () => {
     it("should get platform by slug", async () => {
       const { slug } = platformData;
 
@@ -104,7 +104,7 @@ describe("Platform API", () => {
     });
   });
 
-  describe("PUT /api/v1/platforms/:slug", () => {
+  describe(`PUT /api/v1${ROUTES.PLATFORMS.BY_SLUG}`, () => {
     it("should update platform successfully", async () => {
       const { slug } = platformData;
 
@@ -132,7 +132,7 @@ describe("Platform API", () => {
     });
   });
 
-  describe("DELETE /api/v1/platforms/:slug", () => {
+  describe(`DELETE /api/v1${ROUTES.PLATFORMS.BY_SLUG}`, () => {
     it("should soft delete platform successfully", async () => {
       const { slug } = platformData;
 

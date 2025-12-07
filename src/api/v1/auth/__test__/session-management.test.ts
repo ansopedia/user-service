@@ -129,7 +129,7 @@ describe("Session Management APIs", () => {
       });
     });
 
-    it("should return error for invalid token", async () => {
+    it("should return error for invalid session", async () => {
       const sessionsResponse = await getSessions("Bearer invalidtoken");
       expectUnauthorizedResponseForInvalidToken(sessionsResponse);
     });

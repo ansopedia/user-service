@@ -1,12 +1,15 @@
-import type { RegisterResponse } from "@ansospace/types";
+import { type RegisterResponse, passwordSchema } from "@ansospace/types";
 
-import { ErrorTypeEnum, STATUS_CODES, errorMap, mockUser } from "@/constants";
+import { mockUser } from "@/constants";
 import {
+  expectEmailNotVerifiedError,
+  expectLoginFailed,
   expectLoginSuccess,
   expectLogoutSuccess,
   expectRenewTokenFailed,
   expectRenewTokenSuccess,
   expectSignUpSuccess,
+  expectUnauthorizedResponseForInvalidToken,
   login,
   logoutAllSessions,
   logoutUser,
@@ -25,19 +28,21 @@ describe("Authentication Flow", () => {
   });
 
   it("should return 403 Forbidden for unverified email", async () => {
-    const errorObject = errorMap[ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED];
-
-    const { statusCode, body } = await login({
+    const response = await login({
       email: mockUser.email,
       password: mockUser.password,
     });
 
-    expect(statusCode).toBe(STATUS_CODES.FORBIDDEN);
-    expect(body).toMatchObject({
-      code: errorObject.body.code,
-      message: errorObject.body.message,
-      status: "failed",
+    expectEmailNotVerifiedError(response);
+  });
+
+  it("should respond with 401 for invalid credentials", async () => {
+    const response = await login({
+      ...mockUser,
+      password: passwordSchema.parse("notRegistered123@"),
     });
+
+    expectLoginFailed(response);
   });
 
   it("should verify email", async () => {
@@ -111,5 +116,10 @@ describe("Authentication Flow", () => {
 
     const renewTokenRes = await renewToken(refreshToken);
     expectRenewTokenSuccess(renewTokenRes);
+  });
+
+  it("should respond with 401 for invalid token", async () => {
+    const response = await renewToken("Bearer invalidToken");
+    expectUnauthorizedResponseForInvalidToken(response);
   });
 });

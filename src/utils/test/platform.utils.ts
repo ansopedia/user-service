@@ -3,13 +3,16 @@ import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/platform/platform.constant.js";
 import { app } from "@/app";
-import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
+import { ErrorTypeEnum, ROUTES, STATUS_CODES, errorMap } from "@/constants";
 
 export const createPlatformRequest = async (
   platform: CreatePlatformInput,
   authorizationHeader: string
 ): Promise<Response> => {
-  return supertest(app).post("/api/v1/platforms").send(platform).set("Authorization", authorizationHeader);
+  return supertest(app)
+    .post(`/api/v1${ROUTES.PLATFORMS.ROOT}`)
+    .send(platform)
+    .set("Authorization", authorizationHeader);
 };
 
 export const expectCreatePlatformSuccess = (response: Response, platform: CreatePlatformInput): void => {
@@ -33,7 +36,7 @@ export const expectCreatePlatformSuccess = (response: Response, platform: Create
 };
 
 export const getPlatformsRequest = async (authorizationHeader: string): Promise<Response> => {
-  return supertest(app).get("/api/v1/platforms").set("Authorization", authorizationHeader);
+  return supertest(app).get(`/api/v1${ROUTES.PLATFORMS.ROOT}`).set("Authorization", authorizationHeader);
 };
 
 export const expectGetPlatformsSuccess = (response: Response): void => {
@@ -49,7 +52,7 @@ export const expectGetPlatformsSuccess = (response: Response): void => {
 };
 
 export const getPlatformBySlugRequest = async (slug: string): Promise<Response> => {
-  return supertest(app).get(`/api/v1/platforms/${slug}`);
+  return supertest(app).get(`/api/v1${ROUTES.PLATFORMS.ROOT}/${slug}`);
 };
 
 export const expectGetPlatformBySlugSuccess = (response: Response, expectedPlatform: Partial<GetPlatform>): void => {
@@ -84,7 +87,10 @@ export const updatePlatformRequest = async (
   updateData: Partial<CreatePlatform>,
   authorizationHeader: string
 ): Promise<Response> => {
-  return supertest(app).put(`/api/v1/platforms/${slug}`).send(updateData).set("Authorization", authorizationHeader);
+  return supertest(app)
+    .put(`/api/v1${ROUTES.PLATFORMS.ROOT}/${slug}`)
+    .send(updateData)
+    .set("Authorization", authorizationHeader);
 };
 
 export const expectUpdatePlatformSuccess = (response: Response, expectedPlatform: Partial<GetPlatform>): void => {
@@ -103,7 +109,7 @@ export const expectUpdatePlatformSuccess = (response: Response, expectedPlatform
 };
 
 export const deletePlatformRequest = async (slug: string, authorizationHeader: string): Promise<Response> => {
-  return supertest(app).delete(`/api/v1/platforms/${slug}`).set("Authorization", authorizationHeader);
+  return supertest(app).delete(`/api/v1${ROUTES.PLATFORMS.ROOT}/${slug}`).set("Authorization", authorizationHeader);
 };
 
 export const expectDeletePlatformSuccess = (response: Response): void => {

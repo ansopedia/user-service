@@ -40,10 +40,10 @@ describe("Role Permission Test", () => {
 
     const rolePermission = {
       roleId: roleResponse.body.data.role.id,
-      permissionId: allPermissions[0].id,
+      permissionIds: allPermissions.map((perm) => perm.id),
     };
 
     const response = await createRolePermissionRequest(rolePermission, authorizationHeader);
-    expectCreateRolePermissionSuccess(response, rolePermission);
+    expectCreateRolePermissionSuccess(response);
   });
 });

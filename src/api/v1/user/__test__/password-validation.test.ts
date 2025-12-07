@@ -1,5 +1,5 @@
 import { passwordSchema } from "@ansospace/types";
-import { ZodError } from "zod";
+import { ZodError } from "zod/v4";
 
 describe("Password Schema", () => {
   const validatePassword = (pwd: string) => {
@@ -7,8 +7,8 @@ describe("Password Schema", () => {
       passwordSchema.parse(pwd);
       return { success: true };
     } catch (error) {
-      if (error instanceof ZodError) {
-        return { success: false, error: error.errors[0].message };
+      if (error instanceof ZodError && error.issues.length > 0) {
+        return { success: false, error: error.issues[0].message };
       }
       throw error;
     }

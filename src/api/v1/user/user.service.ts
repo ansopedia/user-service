@@ -2,20 +2,20 @@ import {
   type Email,
   type GetUser,
   type ObjectId,
-  type RegisterSchema,
+  type RegisterRequest,
   type UpdateUser,
+  type UserRole,
   type Username,
   paginationSchema,
 } from "@ansospace/types";
 
 import { ErrorTypeEnum, ROLES } from "@/constants";
-// import type { Email, ObjectId, Username } from "@/types";
 import { generateRandomUsername } from "@/utils";
 
 import { RoleDAL } from "../role/role.dal.js";
-import { UserRoleService } from "../userRole/user-role.service.js";
+import { UserRoleDAL } from "../userRole/user-role.dal.js";
 import { UserDAL } from "./user.dal.js";
-import { UserDto } from "./user.dto.js";
+import { type AssignUserRoleDTO, UserDto } from "./user.dto.js";
 
 export class UserService {
   static async generateUniqueUsername(username: Username): Promise<Username> {
@@ -28,7 +28,7 @@ export class UserService {
     return await this.generateUniqueUsername(newUsername);
   }
 
-  static async registerUser(userData: RegisterSchema): Promise<GetUser> {
+  static async registerUser(userData: RegisterRequest): Promise<GetUser> {
     const isUserExist = await UserDAL.getUserByEmail(userData.email);
 
     if (isUserExist) throw new Error(ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS);
@@ -43,7 +43,7 @@ export class UserService {
 
     if (!userRole) throw new Error(ErrorTypeEnum.enum.ROLE_NOT_FOUND);
 
-    await UserRoleService.createUserRole({
+    await UserRoleDAL.assignRoleToUser({
       userId: createdUser.id,
       roleId: userRole.id,
     });
@@ -121,5 +121,31 @@ export class UserService {
     // If user is null/undefined, !user returns true meaning username is available
     // If user exists, !user returns false meaning username is taken
     return !user;
+  }
+
+  static async assignRolesToUser({ roleIds, userId }: AssignUserRoleDTO): Promise<UserRole[]> {
+    // 1. Find which of these roles already exist for this Role
+
+    const existingRoles = await UserRoleDAL.findExistingRolesForUser({ roleIds, userId });
+
+    // Create a Set of existing Permission IDs (strings) for fast lookup
+    const existingIds = new Set(existingRoles.map((ur) => ur.roleId.toString()));
+
+    // 2. Filter out the ones that already exist
+    const newRolesToCreate = roleIds
+      .filter((roleId) => !existingIds.has(roleId.toString()))
+      .map((roleId) => ({
+        userId,
+        roleId,
+      }));
+
+    // 3. If everything already exists, throw an error based on preference
+    if (newRolesToCreate.length === 0) {
+      throw new Error(ErrorTypeEnum.enum.USER_ROLE_ALREADY_EXISTS);
+    }
+
+    // 4. Bulk Create the new ones
+    // Note: Cast to 'any' or Partial<UserRole> may be needed depending on your strict types
+    return await UserRoleDAL.assignRolesToUser(newRolesToCreate);
   }
 }

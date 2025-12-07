@@ -1,4 +1,4 @@
-import { objectId, registerSchema, usernameSchema } from "@ansospace/types";
+import { assignUserRoleBodySchema, objectId, registerRequestSchema, usernameSchema } from "@ansospace/types";
 import type { Request, Response } from "express";
 
 import { DEFAULT_PAGINATION_LIMIT, DEFAULT_PAGINATION_OFFSET, STATUS_CODES } from "@/constants";
@@ -8,7 +8,7 @@ import { success } from "./user.constant.js";
 import { UserService } from "./user.service.js";
 
 export const createUser = async (req: Request, res: Response) => {
-  const userData = registerSchema.parse(req.body);
+  const userData = registerRequestSchema.parse(req.body);
 
   const user = await UserService.registerUser(userData);
   sendResponse({
@@ -89,5 +89,21 @@ export const checkUsernameAvailability = async (req: Request, res: Response) => 
       isAvailable,
     },
     statusCode: STATUS_CODES.OK,
+  });
+};
+
+export const assignRolesToUser = async (req: Request, res: Response) => {
+  const userId = objectId.parse(req.params.userId);
+  const { roleIds } = assignUserRoleBodySchema.parse(req.body);
+
+  const assignedRolesToUser = await UserService.assignRolesToUser({ userId, roleIds });
+
+  sendResponse({
+    response: res,
+    message: assignedRolesToUser.length > 0 ? success.ROLE_ADDED_SUCCESSFULLY : success.ROLE_ALREADY_EXIST,
+    data: {
+      assignedRolesToUser,
+    },
+    statusCode: STATUS_CODES.CREATED,
   });
 };

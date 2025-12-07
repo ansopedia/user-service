@@ -39,14 +39,14 @@ export class CryptoUtil {
   }
 
   getPublicKey(): string {
-    if (this.keyPair?.publicKey === null || this.keyPair?.publicKey === undefined) {
+    if (this.keyPair?.publicKey === undefined) {
       throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
     }
     return this.keyPair.publicKey;
   }
 
   getPrivateKey(): string {
-    if (this.keyPair?.privateKey === null || this.keyPair?.privateKey === undefined) {
+    if (this.keyPair?.privateKey === undefined) {
       throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
     }
     return this.keyPair.privateKey;

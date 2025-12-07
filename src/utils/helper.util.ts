@@ -8,6 +8,7 @@ export const getServerURL = (req: Request) => {
 };
 
 export const generateRandomUsername = (): Username => {
+  // eslint-disable-next-line sonarjs/pseudo-random
   const randomString = Math.random().toString(36).substring(2, 10);
   return usernameSchema.parse(`user_${randomString}`);
 };

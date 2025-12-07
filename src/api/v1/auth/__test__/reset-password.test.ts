@@ -1,7 +1,7 @@
-import { type Password, otpSchema, passwordSchema } from "@ansospace/types";
+import { NotificationType, type Password, otpSchema, passwordSchema } from "@ansospace/types";
 import type { Response } from "supertest";
 
-import { NotificationType, envConstants, mockUser } from "@/constants";
+import { envConstants, mockUser } from "@/constants";
 import {
   expectBadRequestResponseForValidationError,
   expectForgetPasswordSuccess,
@@ -10,13 +10,15 @@ import {
   expectOTPVerificationSuccess,
   expectResetPasswordSuccess,
   expectSignUpSuccess,
-  forgetPassword,
   login,
+  requestOTP,
   resetPassword,
   signUp,
   verifyAccount,
   verifyOTP,
 } from "@/utils/test";
+
+const newCredential = "ValidPassword123@";
 
 describe("Reset Password", () => {
   beforeAll(async () => {
@@ -28,7 +30,7 @@ describe("Reset Password", () => {
 
   it("should throw error if token, password, confirmPassword is not provided", async () => {
     const res = await resetPassword({
-      token: "",
+      actionToken: "",
       password: "" as Password,
       confirmPassword: "" as Password,
     });
@@ -37,7 +39,7 @@ describe("Reset Password", () => {
 
   it("should throw error if token is invalid", async () => {
     const res = await resetPassword({
-      token: "a",
+      actionToken: "a",
       password: "a" as Password,
       confirmPassword: "a" as Password,
     });
@@ -46,7 +48,7 @@ describe("Reset Password", () => {
 
   it("should throw error if password and confirmPassword do not match", async () => {
     const res = await resetPassword({
-      token: "a",
+      actionToken: "a",
       password: "a" as Password,
       confirmPassword: "b" as Password,
     });
@@ -56,14 +58,14 @@ describe("Reset Password", () => {
   // should reset password again after isUsed flag is reset
   let verifiedOTPResponse: Response;
   it("should verify OTP successfully", async () => {
-    const res = await forgetPassword(mockUser.email);
+    const res = await requestOTP({ email: mockUser.email, otpType: NotificationType.FORGET_PASSWORD_OTP });
     expectForgetPasswordSuccess(res);
 
     const otpType = NotificationType.FORGET_PASSWORD_OTP;
 
     verifiedOTPResponse = await verifyOTP({
       otp: otpSchema.parse(envConstants.MASTER_OTP),
-      token: res.body.data.token,
+      actionToken: res.body.data.actionToken,
       otpType,
     });
     expectOTPVerificationSuccess(otpType, verifiedOTPResponse);
@@ -73,9 +75,10 @@ describe("Reset Password", () => {
     const { actionToken } = verifiedOTPResponse.body.data;
 
     const res = await resetPassword({
-      token: actionToken,
-      password: passwordSchema.parse("ValidPassword123@"),
-      confirmPassword: passwordSchema.parse("ValidPassword123@"),
+      actionToken: actionToken,
+      password: passwordSchema.parse(newCredential),
+
+      confirmPassword: passwordSchema.parse(newCredential),
     });
     expectResetPasswordSuccess(res);
   });
@@ -86,7 +89,8 @@ describe("Reset Password", () => {
   });
 
   it("should login with new password", async () => {
-    const res = await login({ ...mockUser, password: passwordSchema.parse("ValidPassword123@") });
+    const res = await login({ ...mockUser, password: passwordSchema.parse(newCredential) });
+
     expectLoginSuccess(res);
   });
 });

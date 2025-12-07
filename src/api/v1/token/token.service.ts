@@ -1,7 +1,7 @@
-import { type CreateToken, type ObjectId, type Token, TokenType } from "@ansospace/types";
+import { type CreateToken, type ObjectId, type Token, TokenType, UserActionType } from "@ansospace/types";
 import { isPast } from "date-fns";
 
-import { ErrorTypeEnum, FIVE_MINUTES_IN_MS, UserActionType } from "@/constants";
+import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
 import { errorLogger, generateActionToken, verifyJWTToken } from "@/utils";
 
 import { TokenDAL } from "./token.dal.js";

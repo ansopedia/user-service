@@ -1,9 +1,10 @@
-import type { ObjectId, Pagination, RegisterSchema } from "@ansospace/types";
+import type { ObjectId, Pagination, RegisterRequest } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/user/user.constant.js";
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 
+import type { AssignUserRoleDTO } from "../../api/v1/user/user.dto.js";
 import { app } from "../../app.js";
 
 export const expectBadRequestResponseForValidationError = (response: Response): void => {
@@ -17,11 +18,11 @@ export const expectBadRequestResponseForValidationError = (response: Response): 
   });
 };
 
-export const createUser = async (user: RegisterSchema, authorizationHeader: string): Promise<Response> => {
+export const createUser = async (user: RegisterRequest, authorizationHeader: string): Promise<Response> => {
   return supertest(app).post("/api/v1/users").send(user).set("authorization", authorizationHeader);
 };
 
-export const expectUserCreationSuccess = (response: Response, user: RegisterSchema): void => {
+export const expectUserCreationSuccess = (response: Response, user: RegisterRequest): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
 
@@ -46,7 +47,7 @@ export const findUserByUsername = async (username: string, authorizationHeader: 
 };
 
 export const getAllUsers = (queryParams: Pagination, authorizationHeader: string): Promise<Response> => {
-  return supertest(app).get(`/api/v1/users`).set("authorization", authorizationHeader).query(queryParams);
+  return supertest(app).get("/api/v1/users").set("authorization", authorizationHeader).query(queryParams);
 };
 
 export const expectUserNotFoundError = (response: Response): void => {
@@ -61,7 +62,7 @@ export const expectUserNotFoundError = (response: Response): void => {
   });
 };
 
-export const expectFindUserByUsernameSuccess = (response: Response, user: RegisterSchema): void => {
+export const expectFindUserByUsernameSuccess = (response: Response, user: RegisterRequest): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
   expect(statusCode).toBe(STATUS_CODES.OK);
@@ -134,3 +135,28 @@ export const expectUsernameAvailabilityResponse = (response: Response, expectedA
     },
   });
 };
+
+export const createUserRoleRequest = async (
+  { roleIds, userId }: AssignUserRoleDTO,
+  authorizationHeader: string
+): Promise<Response> => {
+  return supertest(app)
+    .post(`/api/v1/users/${userId}/roles`)
+    .send({ roleIds })
+    .set("authorization", authorizationHeader);
+};
+
+// export const expectCreateUserRoleSuccess = (response: Response): void => {
+//   expect(response).toBeDefined();
+//   const { statusCode, body } = response;
+
+//   expect(statusCode).toBe(STATUS_CODES.CREATED);
+//   const { assignedRolesToUser } = body.data;
+
+//   expect(body).toMatchObject({
+//     message: assignedRolesToUser.length > 0 ? success.ROLE_ADDED_SUCCESSFULLY : success.ROLE_ALREADY_EXIST,
+//     data: {
+//       assignedRolesToUser,
+//     },
+//   });
+// };

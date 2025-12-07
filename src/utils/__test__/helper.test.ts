@@ -3,12 +3,12 @@ import { usernameSchema } from "@ansospace/types";
 import { generateRandomUsername } from "@/utils";
 
 describe("generateRandomUsername", () => {
-  it('should generate a username that starts with "user_"', () => {
+  it("should generate a username that starts with 'user_'", () => {
     const randomUsername = generateRandomUsername();
     expect(randomUsername).toMatch(/^user_/);
   });
 
-  it('should generate a username with an alphanumeric string of length 8 after "user_"', () => {
+  it("should generate a username with an alphanumeric string of length 8 after 'user_'", () => {
     const randomUsername = generateRandomUsername();
     const suffix = randomUsername.substring(5); // Remove "user_"
     expect(suffix).toHaveLength(8);

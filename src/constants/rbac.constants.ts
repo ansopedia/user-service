@@ -46,6 +46,7 @@ export const PERMISSIONS = {
   EDIT_USER_ROLES: "edit-user-roles",
   DELETE_USER_ROLES: "delete-user-roles",
   RESTORE_USER_ROLES: "restore-user-roles",
+  ASSIGN_USER_ROLES: "assign-user-roles",
 
   // Profile
   VIEW_PROFILE: "view-profile",

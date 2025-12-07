@@ -88,9 +88,7 @@ export const verifyJWTToken = async <T>(
       issuer: CURRENT_SERVICE,
     };
 
-    const verifiedToken = jwt.verify(token, secret, verifyOptions) as T & jwt.JwtPayload;
-
-    return verifiedToken;
+    return jwt.verify(token, secret, verifyOptions) as T & jwt.JwtPayload;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       throw new Error(ErrorTypeEnum.enum.TOKEN_EXPIRED);

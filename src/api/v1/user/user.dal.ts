@@ -1,4 +1,5 @@
 import type {
+  Email,
   LoginRequest,
   ObjectId,
   RegisterRequest,
@@ -9,12 +10,9 @@ import type {
 } from "@ansospace/types";
 import mongoose from "mongoose";
 
-// import type { ObjectId, Username } from "@/types";
 import { hashPassword } from "@/utils";
 
 import { UserModel } from "./user.model.js";
-
-// import type { RegisterSchema, UpdateUser, User, UserRolePermission } from "./user.validation.js";
 
 export class UserDAL {
   static async createUser(userData: RegisterRequest): Promise<User> {
@@ -39,10 +37,8 @@ export class UserDAL {
     });
   }
 
-  static async getUserByEmail(emailOrUsername: string): Promise<User | null> {
-    return await UserModel.findOne({
-      $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
-    });
+  static async getUserByEmail(email: Email): Promise<User | null> {
+    return await UserModel.findOne({ email });
   }
 
   static async getUserByUsername(username: Username): Promise<User | null> {
@@ -66,7 +62,7 @@ export class UserDAL {
   }
 
   static async updateUser(userId: ObjectId, userData: UpdateUser): Promise<User | null> {
-    if (userData.password !== null && userData.password !== undefined) {
+    if (userData.password) {
       userData.password = await hashPassword(userData.password);
     }
     return await UserModel.findByIdAndUpdate(userId, userData, { new: true });

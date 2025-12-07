@@ -5,11 +5,17 @@ import { sendResponse } from "@/utils";
 
 import { UserService } from "../user/user.service.js";
 import { success } from "./profile.constant.js";
-import { ProfileService } from "./profile.service.js";
+import { type IProfileService } from "./profile.service.js";
 
 export class ProfileController {
-  static upSertProfile = async (req: Request, res: Response) => {
-    const profile = await new ProfileService().upSertProfileData({
+  private profileService: IProfileService;
+
+  constructor(profileService: IProfileService) {
+    this.profileService = profileService;
+  }
+
+  public upSertProfile = async (req: Request, res: Response) => {
+    const profile = await this.profileService.upSertProfileData({
       userId: res.locals.loggedInUser.userId,
       ...req.body,
     });
@@ -21,8 +27,8 @@ export class ProfileController {
     });
   };
 
-  static getProfile = async (_: Request, res: Response) => {
-    const profile = await new ProfileService().getProfileData(res.locals.loggedInUser.userId);
+  public getProfile = async (_: Request, res: Response) => {
+    const profile = await this.profileService.getProfileData(res.locals.loggedInUser.userId);
     const user = await UserService.getUserById(res.locals.loggedInUser.userId);
     sendResponse({
       response: res,
@@ -32,9 +38,9 @@ export class ProfileController {
     });
   };
 
-  static toggleProfileVisibility = async (req: Request, res: Response) => {
+  public toggleProfileVisibility = async (req: Request, res: Response) => {
     const { isPublic } = toggleVisibilitySchema.parse(req.body);
-    const profile = await new ProfileService().toggleProfileVisibility(res.locals.loggedInUser.userId, isPublic);
+    const profile = await this.profileService.toggleProfileVisibility(res.locals.loggedInUser.userId, isPublic);
     sendResponse({
       response: res,
       message: success.PROFILE_VISIBILITY_UPDATED_SUCCESSFULLY,

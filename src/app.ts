@@ -18,6 +18,7 @@ import { routes } from "@/routes";
 import { errorLogger, logger } from "@/utils";
 
 import "./config/passport.js";
+import { ROUTES } from "./constants/routes.constant.js";
 
 const { NODE_ENV } = envConstants;
 
@@ -29,7 +30,7 @@ if (NODE_ENV !== "test") {
   const corsOptions = {
     origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
       // Allow requests with no origin (mobile apps, Postman, etc.)
-      if (origin === undefined || origin === null) {
+      if (origin === undefined) {
         return callback(null, true);
       }
 
@@ -85,7 +86,7 @@ app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok" });
 });
 
-app.use("/api/v1", routes);
+app.use(ROUTES.API_ROOT, routes);
 
 // Handling non matching request from the client
 app.use((_req, _res, next) => {

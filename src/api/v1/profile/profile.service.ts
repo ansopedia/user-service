@@ -4,7 +4,13 @@ import { ErrorTypeEnum } from "@/constants";
 
 import { ProfileDataDAL } from "./profile.dal.js";
 
-export class ProfileService {
+export interface IProfileService {
+  upSertProfileData(data: ProfileData): Promise<ProfileData>;
+  getProfileData(userId: ObjectId): Promise<ProfileData | null>;
+  toggleProfileVisibility(userId: ObjectId, isPublic: boolean): Promise<ProfileData>;
+}
+
+export class ProfileService implements IProfileService {
   private profileDataDal: ProfileDataDAL;
 
   constructor() {

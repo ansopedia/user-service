@@ -5,4 +5,6 @@ export const success = {
   USER_RESTORED_SUCCESSFULLY: "User restored",
   USERNAME_AVAILABLE: "Username is available",
   USERNAME_UNAVAILABLE: "Username is unavailable",
+  ROLE_ADDED_SUCCESSFULLY: "Role added successfully",
+  ROLE_ALREADY_EXIST: "Role already existed",
 };

@@ -35,11 +35,11 @@ describe("User Role Test", () => {
     expectCreateRoleSuccess(response, VALID_ROLE);
 
     const userRole = {
-      roleId: response.body.data.role.id,
+      roleIds: [response.body.data.role.id],
       userId: loggedInUserId,
     };
 
     const createUserRoleResponse = await createUserRoleRequest(userRole, authorizationHeader);
-    expectCreateUserRoleSuccess(createUserRoleResponse, userRole);
+    expectCreateUserRoleSuccess(createUserRoleResponse);
   });
 });

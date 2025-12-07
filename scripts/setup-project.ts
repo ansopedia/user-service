@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-os-command-from-path */
 /* eslint-disable no-console */
 import { execSync } from "child_process";
 import fs from "fs";
@@ -25,7 +26,7 @@ const setupProject = () => {
     console.info("Project setup completed successfully!");
   } catch (error) {
     console.error(`Error during project setup: ${error}`);
-    process.exit(1);
+    throw new Error(`Error during project setup: ${error}`);
   }
 };
 

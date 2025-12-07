@@ -55,11 +55,10 @@ const PlatformSchema: Schema<IPlatform> = new Schema<IPlatform>(
 PlatformSchema.index({ slug: 1 });
 
 // Pre-save middleware to trim and lowercase slug
-PlatformSchema.pre("save", function (next) {
+PlatformSchema.pre("save", function () {
   if (this.slug) {
     this.slug = this.slug.trim().toLowerCase();
   }
-  next();
 });
 
 export const PlatformModel: Model<IPlatform> = model<IPlatform>("Platform", PlatformSchema);

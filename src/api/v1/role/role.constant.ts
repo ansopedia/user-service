@@ -4,4 +4,6 @@ export const success = {
   ROLE_FETCHED_SUCCESSFULLY: "Role fetched",
   ROLE_DELETED_SUCCESSFULLY: "Role deleted",
   ROLE_RESTORED_SUCCESSFULLY: "Role restored",
+  PERMISSION_ADDED_SUCCESSFULLY: "Permissions added successfully",
+  PERMISSIONS_ALREADY_EXIST: "Permissions already existed",
 };

@@ -9,9 +9,7 @@ const { DATABASE_URI, NODE_ENV, DB_NAME } = envConstants;
 const getTestDatabaseName = () => {
   if (NODE_ENV === "test") {
     // Use timestamp and random number for uniqueness
-    const timestamp = Date.now();
-    const random = Math.floor(Math.random() * 1000);
-    return `${DB_NAME}_test_${timestamp}_${random}`;
+    return `${DB_NAME}_test_${crypto.randomUUID()}`;
   }
   return DB_NAME;
 };

@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-hardcoded-passwords */
 import { comparePassword, hashPassword } from "@/utils";
 
 describe("Password Utility", () => {

@@ -1,13 +1,9 @@
 import type { User } from "@ansospace/types";
-import mongoose, { Document, Schema, model } from "mongoose";
+import { Document, Schema, model } from "mongoose";
 
 import { hashPassword } from "@/utils";
 
-// import type { User } from "./user.validation.js";
-
-export interface IUser extends Document, User {
-  id: mongoose.Types.ObjectId;
-}
+interface IUser extends Document, User {}
 
 const userSchema = new Schema<IUser>(
   {
@@ -46,12 +42,8 @@ const userSchema = new Schema<IUser>(
 );
 
 // Hash password before saving
-userSchema.pre("save", async function (next): Promise<void> {
-  if (!this.isModified("password")) return next();
-
-  this.password = await hashPassword(this.password);
-
-  next();
+userSchema.pre("save", async function (): Promise<void> {
+  if (this.isModified("password")) this.password = await hashPassword(this.password);
 });
 
 export const UserModel = model<IUser>("User", userSchema);

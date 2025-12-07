@@ -1,4 +1,4 @@
-import type { GetUser, User } from "@ansospace/types";
+import type { GetUser, ObjectId, User } from "@ansospace/types";
 
 export const UserDto = (user: User) => ({
   getUser: (): GetUser => {
@@ -32,3 +32,8 @@ export const UserDto = (user: User) => ({
     };
   },
 });
+
+export type AssignUserRoleDTO = {
+  userId: ObjectId;
+  roleIds: ObjectId[];
+};

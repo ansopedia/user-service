@@ -1,12 +1,10 @@
-import { type SendOtpRequest, sendOtpRequestSchema } from "@ansospace/types";
-import { ZodError } from "zod";
-
-import { NotificationType } from "@/constants";
+import { NotificationType, type SendOtpRequest, emailSchema, sendOtpRequestSchema } from "@ansospace/types";
+import { ZodError } from "zod/v4";
 
 describe("Test OTP validation", () => {
   const otpTypes: SendOtpRequest = {
     otpType: NotificationType.EMAIL_VERIFICATION_OTP,
-    email: "example@gmail.com",
+    email: emailSchema.parse("example@gmail.com"),
   };
 
   it(`should throw error if email is not provided with otpType of ${NotificationType.EMAIL_VERIFICATION_OTP}`, () => {
@@ -15,8 +13,8 @@ describe("Test OTP validation", () => {
     try {
       sendOtpRequestSchema.parse(otpTypesWithoutEmail);
     } catch (error) {
-      expect((error as ZodError).errors[0].message).toBe("Email is required");
-      expect((error as ZodError).errors[0].path).toEqual(["email"]);
+      expect((error as ZodError).issues[0].message).toBe("Invalid email format");
+      expect((error as ZodError).issues[0].path).toEqual(["email"]);
     }
   });
 

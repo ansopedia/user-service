@@ -1,4 +1,4 @@
-import type { GetRole, Role } from "@ansospace/types";
+import type { GetRole, ObjectId, Role } from "@ansospace/types";
 
 export const RoleDto = (role: Role) => ({
   getRole: (): GetRole => {
@@ -11,3 +11,8 @@ export const RoleDto = (role: Role) => ({
     };
   },
 });
+
+export type CreateRolePermissionDTO = {
+  roleId: ObjectId; // or ObjectId depending on your setup
+  permissionIds: ObjectId[];
+};

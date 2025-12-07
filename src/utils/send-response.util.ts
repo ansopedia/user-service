@@ -1,5 +1,5 @@
 import { type Response } from "express";
-import { type ZodIssue } from "zod";
+import type { ZodError } from "zod/v4";
 
 import { type ErrorCode } from "@/constants";
 
@@ -17,7 +17,7 @@ export interface SendResponseFailed {
   status: "failed";
   message: string;
   code: ErrorCode;
-  errors: ZodIssue[];
+  errors: ZodError["issues"];
 }
 
 export type SendResponse<T> = SendResponseSuccess<T> | SendResponseFailed;
@@ -32,7 +32,7 @@ interface IResponseBodyFailed {
   status: "failed";
   message: string;
   code: string;
-  errors?: ZodIssue[];
+  errors?: ZodError["issues"];
 }
 
 type IResponseBody<T> = IResponseBodySuccess<T> | IResponseBodyFailed;

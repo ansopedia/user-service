@@ -1,7 +1,5 @@
-import type { Token } from "@ansospace/types";
+import { type Token, UserActionType } from "@ansospace/types";
 import { Model, Schema, model } from "mongoose";
-
-import { UserActionType } from "@/constants";
 
 const TokenSchema: Schema<Token> = new Schema(
   {

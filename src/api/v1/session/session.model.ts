@@ -1,11 +1,7 @@
 import type { Session } from "@ansospace/types";
 import mongoose, { Document, Schema } from "mongoose";
 
-export interface ISession extends Document, Session {
-  id: mongoose.Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-}
+interface ISession extends Document, Session {}
 
 const sessionSchema = new Schema<ISession>(
   {

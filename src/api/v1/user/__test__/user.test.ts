@@ -1,3 +1,5 @@
+import { emailSchema } from "@ansospace/types";
+
 import { DEFAULT_PAGINATION_LIMIT, ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap, mockUser } from "@/constants";
 import {
   createUser,
@@ -63,7 +65,7 @@ describe("User Test", () => {
 
   it("should respond with 409 for duplicate username", async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.USER_NAME_ALREADY_EXISTS];
-    const response = await createUser({ ...mockUser, email: "new@gmail.com" }, authorizationHeader);
+    const response = await createUser({ ...mockUser, email: emailSchema.parse("new@gmail.com") }, authorizationHeader);
     expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
     expect(response.body.message).toBe(errorObject.body.message);
     expect(response.body.code).toBe(errorObject.body.code);

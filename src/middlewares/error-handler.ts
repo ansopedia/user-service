@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { ZodError } from "zod";
+import { ZodError } from "zod/v4";
 
 import { ErrorTypeEnum, getErrorObject } from "@/constants";
 import { sendResponse } from "@/utils";
