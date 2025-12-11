@@ -4,6 +4,7 @@ import {
   type ObjectId,
   type RegisterRequest,
   type UpdateUser,
+  type UserAccessControlProfile,
   type UserRole,
   type Username,
   paginationSchema,
@@ -147,5 +148,9 @@ export class UserService {
     // 4. Bulk Create the new ones
     // Note: Cast to 'any' or Partial<UserRole> may be needed depending on your strict types
     return await UserRoleDAL.assignRolesToUser(newRolesToCreate);
+  }
+
+  static async getAccessControlProfile(userId: ObjectId): Promise<UserAccessControlProfile> {
+    return await UserDAL.getAccessControlProfile(userId);
   }
 }

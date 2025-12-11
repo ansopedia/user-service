@@ -22,7 +22,7 @@ export const expectOTPRequestSuccess = (response: Response): void => {
   expect(response.body).toMatchObject({
     message: success.VERIFICATION_EMAIL_SENT,
     data: {
-      token: expect.any(String),
+      actionToken: expect.any(String),
     },
   });
 };

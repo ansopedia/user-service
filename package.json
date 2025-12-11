@@ -33,8 +33,8 @@
   "author": "ansopedia",
   "license": "ISC",
   "dependencies": {
-    "@ansospace/eslint-config": "file://E:\\Ansopedia\\ansospace\\packages\\eslint-config",
-    "@ansospace/types": "file://E:\\Ansopedia\\ansospace\\packages\\types",
+    "@ansospace/eslint-config": "file://F:\\projects\\ansospace\\packages\\eslint-config",
+    "@ansospace/types": "file://F:\\projects\\ansospace\\packages\\types",
     "axios": "1.13.2",
     "bcrypt": "6.0.0",
     "cors": "2.8.5",
@@ -104,5 +104,5 @@
   "engines": {
     "node": ">=22.18.0"
   },
-  "packageManager": "pnpm@10.24.0"
+  "packageManager": "pnpm@10.25.0"
 }

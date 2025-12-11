@@ -37,7 +37,7 @@ if (isDevelopment) {
       },
       {
         target: "pino/file",
-        options: { destination: path.join(logDirectory, "app.log") },
+        options: { destination: path.join(logDirectory, `${envConstants.NODE_ENV}.log`) },
         level: envConstants.PINO_LOG_LEVEL ?? "info",
       },
     ],

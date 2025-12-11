@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@ansospace/eslint-config':
-        specifier: file://E:\Ansopedia\ansospace\packages\eslint-config
-        version: file:../../ansospace/packages/eslint-config(@typescript-eslint/parser@8.48.1(eslint@9.39.1)(typescript@5.9.3))(eslint-config-prettier@10.1.8(eslint@9.39.1))(eslint-plugin-sonarjs@3.0.5(eslint@9.39.1))(eslint@9.39.1)(turbo@2.6.1)(typescript@5.9.3)
+        specifier: file://F:\projects\ansospace\packages\eslint-config
+        version: file:../ansospace/packages/eslint-config(@typescript-eslint/parser@8.48.1(eslint@9.39.1)(typescript@5.9.3))(eslint-config-prettier@10.1.8(eslint@9.39.1))(eslint-plugin-sonarjs@3.0.5(eslint@9.39.1))(eslint@9.39.1)(turbo@2.6.1)(typescript@5.9.3)
       '@ansospace/types':
-        specifier: file://E:\Ansopedia\ansospace\packages\types
-        version: file:../../ansospace/packages/types
+        specifier: file://F:\projects\ansospace\packages\types
+        version: file:../ansospace/packages/types
       axios:
         specifier: 1.13.2
         version: 1.13.2
@@ -174,8 +174,8 @@ importers:
 
 packages:
 
-  '@ansospace/eslint-config@file:../../ansospace/packages/eslint-config':
-    resolution: {directory: ../../ansospace/packages/eslint-config, type: directory}
+  '@ansospace/eslint-config@file:../ansospace/packages/eslint-config':
+    resolution: {directory: ../ansospace/packages/eslint-config, type: directory}
     peerDependencies:
       eslint: ^9.39.1
       eslint-config-prettier: 10.1.8
@@ -185,8 +185,8 @@ packages:
       typescript:
         optional: true
 
-  '@ansospace/types@file:../../ansospace/packages/types':
-    resolution: {directory: ../../ansospace/packages/types, type: directory}
+  '@ansospace/types@file:../ansospace/packages/types':
+    resolution: {directory: ../ansospace/packages/types, type: directory}
 
   '@asamuzakjp/css-color@3.2.0':
     resolution: {integrity: sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==}
@@ -3577,7 +3577,7 @@ packages:
 
 snapshots:
 
-  '@ansospace/eslint-config@file:../../ansospace/packages/eslint-config(@typescript-eslint/parser@8.48.1(eslint@9.39.1)(typescript@5.9.3))(eslint-config-prettier@10.1.8(eslint@9.39.1))(eslint-plugin-sonarjs@3.0.5(eslint@9.39.1))(eslint@9.39.1)(turbo@2.6.1)(typescript@5.9.3)':
+  '@ansospace/eslint-config@file:../ansospace/packages/eslint-config(@typescript-eslint/parser@8.48.1(eslint@9.39.1)(typescript@5.9.3))(eslint-config-prettier@10.1.8(eslint@9.39.1))(eslint-plugin-sonarjs@3.0.5(eslint@9.39.1))(eslint@9.39.1)(turbo@2.6.1)(typescript@5.9.3)':
     dependencies:
       eslint: 9.39.1
       eslint-config-prettier: 10.1.8(eslint@9.39.1)
@@ -3594,7 +3594,7 @@ snapshots:
       - supports-color
       - turbo
 
-  '@ansospace/types@file:../../ansospace/packages/types':
+  '@ansospace/types@file:../ansospace/packages/types':
     dependencies:
       bson: 7.0.0
       zod: 4.1.13

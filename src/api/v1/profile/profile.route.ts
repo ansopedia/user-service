@@ -9,8 +9,9 @@ import { ProfileService } from "./profile.service.js";
 const router = Router();
 const profileController = new ProfileController(new ProfileService());
 
-router.put(ROUTES.PROFILES.ROOT, authenticate, profileController.upSertProfile);
-router.get(ROUTES.PROFILES.ROOT, authenticate, profileController.getProfile);
-router.patch(ROUTES.PROFILES.VISIBILITY, authenticate, profileController.toggleProfileVisibility);
+router.put(ROUTES.PROFILE.ROOT, authenticate, profileController.upSertProfile);
+router.get(ROUTES.PROFILE.ROOT, authenticate, profileController.getProfile);
+router.patch(ROUTES.PROFILE.VISIBILITY, authenticate, profileController.toggleProfileVisibility);
+router.get(ROUTES.PROFILE.ACCESS_CONTROL, authenticate, profileController.getAccessControlProfile);
 
 export { router as profileRoutes };

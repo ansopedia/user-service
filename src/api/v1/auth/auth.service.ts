@@ -15,7 +15,6 @@ import {
   type ResetPasswordRequest,
   TokenType,
   UserActionType,
-  type UserRolePermission,
   usernameSchema,
 } from "@ansospace/types";
 
@@ -23,7 +22,7 @@ import { OtpService } from "@/api/v1/otp/otp.service.js";
 import { TokenService } from "@/api/v1/token/index.js";
 import { UserDAL } from "@/api/v1/user/user.dal.js";
 import { UserService } from "@/api/v1/user/user.service.js";
-import { ErrorTypeEnum, type Permission } from "@/constants";
+import { ErrorTypeEnum } from "@/constants";
 import { notificationService, redisService } from "@/services";
 import type { GoogleUser } from "@/types";
 import { comparePassword, generateAccessToken, verifyJWTToken } from "@/utils";
@@ -277,15 +276,13 @@ export class AuthService {
       updatedSession.tokenVersion
     );
 
-    const userRolePermissions: UserRolePermission = await UserDAL.getUserRolesAndPermissionsByUserId(
-      updatedSession.userId
-    );
+    const accessProfile = await UserDAL.getAccessControlProfile(updatedSession.userId);
 
     const accessToken = generateAccessToken({
       userId: updatedSession.userId,
       deviceId: updatedSession.deviceId,
       tokenVersion: updatedSession.tokenVersion,
-      permissions: userRolePermissions.allPermissions.map(({ name }) => name) as Permission[],
+      permissions: accessProfile.permissions,
     });
 
     return {
@@ -331,13 +328,13 @@ export class AuthService {
       tokenVersion,
     });
 
-    const userRolePermissions: UserRolePermission = await UserDAL.getUserRolesAndPermissionsByUserId(userId);
+    const accessProfile = await UserDAL.getAccessControlProfile(userId);
 
     const accessToken = generateAccessToken({
       userId: userId,
       deviceId: deviceId,
       tokenVersion: session.tokenVersion,
-      permissions: userRolePermissions.allPermissions.map(({ name }) => name) as Permission[],
+      permissions: accessProfile.permissions,
     });
 
     return { userId, accessToken, refreshToken: session.refreshToken };

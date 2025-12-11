@@ -1,4 +1,4 @@
-import { type GetUser } from "@ansospace/types";
+import { type GetUser, NotificationType, emailSchema, usernameSchema } from "@ansospace/types";
 import mongoose from "mongoose";
 
 import { defaultUsers, mockUser } from "@/constants";
@@ -7,14 +7,18 @@ import {
   expectBadRequestResponseForValidationError,
   expectFindUserByUsernameSuccess,
   expectLoginSuccess,
+  expectOTPRequestSuccess,
   expectRestoreUserSuccess,
   expectUnauthorizedResponseForInvalidAuthorizationHeader,
   expectUnauthorizedResponseForMissingAuthorizationHeader,
+  expectUnauthorizedResponseWhenUserHasInsufficientPermission,
   expectUserCreationSuccess,
   expectUserNotFoundError,
   findUserByUsername,
   login,
+  requestOTP,
   restoreUser,
+  verifyAccount,
 } from "@/utils/test";
 
 describe("Restore User", () => {
@@ -55,25 +59,34 @@ describe("Restore User", () => {
     expectUserNotFoundError(response);
   });
 
-  // it("should return 403 for unauthorized user", async () => {
-  //   const unAuthorizedUser = {
-  //     ...mockUser,
-  //     username: "unauthorized",
-  //     email: "unauthorized@gmail.com",
-  //   };
+  it("should return 403 for unauthorized user", async () => {
+    const unAuthorizedUser = {
+      ...mockUser,
+      username: usernameSchema.parse("unauthorized"),
+      email: emailSchema.parse("unauthorized@gmail.com"),
+    };
 
-  //   const createUserRes = await createUser(unAuthorizedUser, authorizationHeader);
-  //   expectUserCreationSuccess(createUserRes, unAuthorizedUser);
+    const createUserRes = await createUser(unAuthorizedUser, authorizationHeader);
+    expectUserCreationSuccess(createUserRes, unAuthorizedUser);
 
-  //   await verifyAccount(unAuthorizedUser);
+    const otpRequestResponse = await requestOTP({
+      email: unAuthorizedUser.email,
+      otpType: NotificationType.EMAIL_VERIFICATION_OTP,
+    });
+    expectOTPRequestSuccess(otpRequestResponse);
 
-  //   const loginResponse = await login(unAuthorizedUser);
-  //   expectLoginSuccess(loginResponse);
-  //   const header = `Bearer ${loginResponse.header["authorization"]}`;
+    await verifyAccount({
+      userId: createUserRes.body.data.user.id,
+      actionToken: otpRequestResponse.body.data.actionToken,
+    });
 
-  //   const restoreUserRes = await restoreUser(userToDelete.id, header);
-  //   expectUnauthorizedResponseWhenUserHasInsufficientPermission(restoreUserRes);
-  // });
+    const loginResponse = await login(unAuthorizedUser);
+    expectLoginSuccess(loginResponse);
+    const header = `Bearer ${loginResponse.header["authorization"]}`;
+
+    const restoreUserRes = await restoreUser(userToDelete.id, header);
+    expectUnauthorizedResponseWhenUserHasInsufficientPermission(restoreUserRes);
+  });
 
   it("should soft delete user", async () => {
     const response = await restoreUser(userToDelete.id, authorizationHeader);

@@ -146,17 +146,17 @@ export const createUserRoleRequest = async (
     .set("authorization", authorizationHeader);
 };
 
-// export const expectCreateUserRoleSuccess = (response: Response): void => {
-//   expect(response).toBeDefined();
-//   const { statusCode, body } = response;
+export const expectCreateUserRoleSuccess = (response: Response): void => {
+  expect(response).toBeDefined();
+  const { statusCode, body } = response;
 
-//   expect(statusCode).toBe(STATUS_CODES.CREATED);
-//   const { assignedRolesToUser } = body.data;
+  expect(statusCode).toBe(STATUS_CODES.CREATED);
+  const { assignedRolesToUser } = body.data;
 
-//   expect(body).toMatchObject({
-//     message: assignedRolesToUser.length > 0 ? success.ROLE_ADDED_SUCCESSFULLY : success.ROLE_ALREADY_EXIST,
-//     data: {
-//       assignedRolesToUser,
-//     },
-//   });
-// };
+  expect(body).toMatchObject({
+    message: assignedRolesToUser.length > 0 ? success.ROLE_ADDED_SUCCESSFULLY : success.ROLE_ALREADY_EXIST,
+    data: {
+      assignedRolesToUser,
+    },
+  });
+};

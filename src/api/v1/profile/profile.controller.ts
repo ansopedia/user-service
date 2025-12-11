@@ -1,4 +1,4 @@
-import { toggleVisibilitySchema } from "@ansospace/types";
+import { type UserAccessControlProfile, toggleVisibilitySchema } from "@ansospace/types";
 import type { Request, Response } from "express";
 
 import { sendResponse } from "@/utils";
@@ -45,6 +45,17 @@ export class ProfileController {
       response: res,
       message: success.PROFILE_VISIBILITY_UPDATED_SUCCESSFULLY,
       data: profile,
+      statusCode: 200,
+    });
+  };
+
+  public getAccessControlProfile = async (_: Request, res: Response) => {
+    const accessProfile = await UserService.getAccessControlProfile(res.locals.loggedInUser.userId);
+
+    sendResponse<UserAccessControlProfile>({
+      response: res,
+      message: success.PROFILE_PERMISSIONS_FETCHED_SUCCESSFULLY,
+      data: accessProfile,
       statusCode: 200,
     });
   };

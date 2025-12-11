@@ -1,17 +1,21 @@
-import { emailSchema } from "@ansospace/types";
+import { NotificationType, emailSchema, usernameSchema } from "@ansospace/types";
 
 import { DEFAULT_PAGINATION_LIMIT, ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap, mockUser } from "@/constants";
 import {
   createUser,
   expectFindUserByUsernameSuccess,
   expectLoginSuccess,
+  expectOTPRequestSuccess,
   expectUnauthorizedResponseForInvalidAuthorizationHeader,
   expectUnauthorizedResponseForMissingAuthorizationHeader,
+  expectUnauthorizedResponseWhenUserHasInsufficientPermission,
   expectUserCreationSuccess,
   expectUserNotFoundError,
   findUserByUsername,
   getAllUsers,
   login,
+  requestOTP,
+  verifyAccount,
 } from "@/utils/test";
 
 import { success } from "../user.constant.js";
@@ -34,21 +38,35 @@ describe("User Test", () => {
     expectUnauthorizedResponseForInvalidAuthorizationHeader(response);
   });
 
-  // it("should not create a new user without create-user permission", async () => {
-  //   const unAuthorizedUser = { ...mockUser, username: "unauthorized", email: "unauthorized@gmail.com" };
+  it("should not create a new user without create-user permission", async () => {
+    const unAuthorizedUser = {
+      ...mockUser,
+      username: usernameSchema.parse("unauthorized"),
+      email: emailSchema.parse("unauthorized@gmail.com"),
+    };
 
-  //   const response = await createUser(unAuthorizedUser, authorizationHeader);
-  //   expectUserCreationSuccess(response, unAuthorizedUser);
+    const createUserRes = await createUser(unAuthorizedUser, authorizationHeader);
+    expectUserCreationSuccess(createUserRes, unAuthorizedUser);
 
-  //   await verifyAccount(unAuthorizedUser);
+    const otpRequestResponse = await requestOTP({
+      email: unAuthorizedUser.email,
+      otpType: NotificationType.EMAIL_VERIFICATION_OTP,
+    });
+    expectOTPRequestSuccess(otpRequestResponse);
 
-  //   const loginResponse = await login(unAuthorizedUser);
-  //   expectLoginSuccess(loginResponse);
-  //   const header = `Bearer ${loginResponse.header["authorization"]}`;
+    await verifyAccount({
+      userId: createUserRes.body.data.user.id,
+      actionToken: otpRequestResponse.body.data.actionToken,
+    });
 
-  //   const mockUserRes = await createUser(mockUser, header);
-  //   expectUnauthorizedResponseWhenUserHasInsufficientPermission(mockUserRes);
-  // });
+    const loginResponse = await login(unAuthorizedUser);
+    expectLoginSuccess(loginResponse);
+
+    const header = `Bearer ${loginResponse.header["authorization"]}`;
+
+    const mockUserRes = await createUser(mockUser, header);
+    expectUnauthorizedResponseWhenUserHasInsufficientPermission(mockUserRes);
+  });
 
   it("should create a new user with valid credentials", async () => {
     const response = await createUser(mockUser, authorizationHeader);

@@ -47,6 +47,7 @@ export const PERMISSIONS = {
   DELETE_USER_ROLES: "delete-user-roles",
   RESTORE_USER_ROLES: "restore-user-roles",
   ASSIGN_USER_ROLES: "assign-user-roles",
+  VIEW_USER_ACCESS_CONTROL: "view-user-access-control",
 
   // Profile
   VIEW_PROFILE: "view-profile",
@@ -242,7 +243,20 @@ export const defaultPermissions: CreatePermission[] = [
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
-
+  {
+    name: PERMISSIONS.ASSIGN_USER_ROLES,
+    description: "Allows assigning roles to users, establishing their access privileges within the system.",
+    category: PermissionCategory.USER_MANAGEMENT,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+  {
+    name: PERMISSIONS.VIEW_USER_ACCESS_CONTROL,
+    description: "Allows viewing the consolidated access control profile of a specific user for auditing purposes.",
+    category: PermissionCategory.USER_MANAGEMENT,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
   // Profile Permissions
   {
     name: PERMISSIONS.VIEW_PROFILE,

@@ -1,4 +1,10 @@
-import { assignUserRoleBodySchema, objectId, registerRequestSchema, usernameSchema } from "@ansospace/types";
+import {
+  type UserAccessControlProfile,
+  assignUserRoleBodySchema,
+  objectId,
+  registerRequestSchema,
+  usernameSchema,
+} from "@ansospace/types";
 import type { Request, Response } from "express";
 
 import { DEFAULT_PAGINATION_LIMIT, DEFAULT_PAGINATION_OFFSET, STATUS_CODES } from "@/constants";
@@ -105,5 +111,18 @@ export const assignRolesToUser = async (req: Request, res: Response) => {
       assignedRolesToUser,
     },
     statusCode: STATUS_CODES.CREATED,
+  });
+};
+
+export const getAccessControlProfile = async (req: Request, res: Response) => {
+  const userId = objectId.parse(req.params.userId);
+
+  const accessControl = await UserService.getAccessControlProfile(userId);
+
+  sendResponse<UserAccessControlProfile>({
+    response: res,
+    message: success.USER_ACCESS_PROFILE_FETCHED_SUCCESSFULLY,
+    data: accessControl,
+    statusCode: STATUS_CODES.OK,
   });
 };

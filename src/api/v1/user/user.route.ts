@@ -7,6 +7,7 @@ import {
   assignRolesToUser,
   checkUsernameAvailability,
   createUser,
+  getAccessControlProfile,
   getAllUsers,
   getUserByUsername,
   restoreUser,
@@ -22,5 +23,11 @@ router.get(ROUTES.USERS.BY_USERNAME, authenticate, getUserByUsername);
 router.delete(ROUTES.USERS.BY_ID, authenticate, checkPermission(["delete-users"]), softDeleteUser);
 router.patch(ROUTES.USERS.RESTORE, authenticate, checkPermission(["restore-users"]), restoreUser);
 router.post(ROUTES.USERS.ASSIGN_ROLES, authenticate, checkPermission(["assign-user-roles"]), assignRolesToUser);
+router.get(
+  ROUTES.USERS.ACCESS_CONTROL,
+  authenticate,
+  checkPermission(["view-user-access-control"]),
+  getAccessControlProfile
+);
 
 export { router as userRoutes };

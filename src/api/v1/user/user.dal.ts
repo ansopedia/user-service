@@ -5,7 +5,7 @@ import type {
   RegisterRequest,
   UpdateUser,
   User,
-  UserRolePermission,
+  UserAccessControlProfile,
   Username,
 } from "@ansospace/types";
 import mongoose from "mongoose";
@@ -68,8 +68,8 @@ export class UserDAL {
     return await UserModel.findByIdAndUpdate(userId, userData, { new: true });
   }
 
-  static async getUserRolesAndPermissionsByUserId(userId: ObjectId): Promise<UserRolePermission> {
-    const userRolePermissions = await UserModel.aggregate([
+  static async getAccessControlProfile(userId: mongoose.Types.ObjectId): Promise<UserAccessControlProfile> {
+    const userAccessProfile = await UserModel.aggregate([
       {
         $match: {
           _id: new mongoose.Types.ObjectId(userId),
@@ -98,30 +98,22 @@ export class UserDAL {
                 from: "rolepermissions",
                 localField: "roleId",
                 foreignField: "roleId",
-                as: "userPermissions",
+                as: "rolePerms",
                 pipeline: [
                   {
                     $lookup: {
                       from: "permissions",
                       localField: "permissionId",
                       foreignField: "_id",
-                      as: "permissions",
-                      pipeline: [
-                        {
-                          $project: {
-                            name: 1,
-                            description: 1,
-                          },
-                        },
-                      ],
+                      as: "permDoc",
                     },
                   },
                   {
-                    $unwind: "$permissions",
+                    $unwind: "$permDoc",
                   },
                   {
                     $replaceRoot: {
-                      newRoot: "$permissions",
+                      newRoot: "$permDoc",
                     },
                   },
                 ],
@@ -129,11 +121,9 @@ export class UserDAL {
             },
             {
               $project: {
-                _id: 0,
                 roleId: 1,
                 roleName: "$roleDetails.name",
-                roleDescription: "$roleDetails.description",
-                permissions: "$userPermissions",
+                permissions: "$rolePerms",
               },
             },
           ],
@@ -141,16 +131,32 @@ export class UserDAL {
       },
       {
         $project: {
-          _id: 1,
+          _id: 0, // ❌ Remove the raw MongoDB ObjectId
+          id: { $toString: "$_id" }, // ✅ Convert to string and rename to 'id'
           username: 1,
           email: 1,
-          roles: "$userRoles",
-          allPermissions: {
+          roles: {
+            $map: {
+              input: "$userRoles",
+              as: "role",
+              in: "$$role.roleName",
+            },
+          },
+          permissions: {
             $reduce: {
               input: "$userRoles",
               initialValue: [],
               in: {
-                $setUnion: ["$$value", "$$this.permissions"],
+                $setUnion: [
+                  "$$value",
+                  {
+                    $map: {
+                      input: "$$this.permissions",
+                      as: "p",
+                      in: "$$p.name",
+                    },
+                  },
+                ],
               },
             },
           },
@@ -158,6 +164,6 @@ export class UserDAL {
       },
     ]);
 
-    return userRolePermissions[0];
+    return userAccessProfile[0];
   }
 }

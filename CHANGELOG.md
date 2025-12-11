@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add access control profile endpoint and refactor permission checks ([#161](https://github.com/ansopedia/user-service/issues/161))
 - Add Proper Permission Descriptions with a 255-Character Limit ([#58](https://github.com/ansopedia/user-service/issues/58))
 - Add Platform Model & API Endpoints ([#145](https://github.com/ansopedia/user-service/issues/145))
 - Protect Permission Routes ([#69](https://github.com/ansopedia/user-service/issues/69))

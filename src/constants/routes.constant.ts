@@ -13,11 +13,13 @@ export const ROUTES = {
     BY_ID: "/users/:userId",
     RESTORE: "/users/:userId/restore",
     ASSIGN_ROLES: "/users/:userId/roles",
+    ACCESS_CONTROL: "/users/:userId/access-control", // Allows an admin to see exactly what a specific user can do (useful for debugging "Why can't user X see this?").
   },
 
-  PROFILES: {
-    ROOT: "/profiles", // made plural for consistency
-    VISIBILITY: "/profiles/visibility",
+  PROFILE: {
+    ROOT: "/profile", // made plural for consistency
+    VISIBILITY: "/profile/visibility",
+    ACCESS_CONTROL: "/profile/access-control", // Fetches the consolidated list of permissions, roles for the currently logged-in user.
   },
 
   OTP: {
@@ -49,7 +51,7 @@ export const ROUTES = {
   },
 
   PERMISSIONS: {
-    ROOT: "/permissions",
+    ROOT: "/permissions", // Fetches the master list of all possible permissions in the system (used for creating new Roles).
   },
 
   USER_ROLES: {

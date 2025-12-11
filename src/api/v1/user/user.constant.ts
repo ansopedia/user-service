@@ -7,4 +7,5 @@ export const success = {
   USERNAME_UNAVAILABLE: "Username is unavailable",
   ROLE_ADDED_SUCCESSFULLY: "Role added successfully",
   ROLE_ALREADY_EXIST: "Role already existed",
+  USER_ACCESS_PROFILE_FETCHED_SUCCESSFULLY: "User access profile fetched successfully",
 };
