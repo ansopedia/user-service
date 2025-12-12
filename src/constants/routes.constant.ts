@@ -32,16 +32,19 @@ export const ROUTES = {
     LOGIN: "/auth/login",
     AUTO_LOGIN: "/auth/auto-login",
     REFRESH: "/auth/refresh",
-    LOGOUT: "/auth/logout",
-    LOGOUT_ALL: "/auth/logout-all",
-    LOGOUT_OTHERS: "/auth/logout-others",
     // eslint-disable-next-line -- Not a hardcoded password, just an route identifier
-    RESET_PASSWORD: "/auth/reset-password",
-
-    SESSIONS: "/auth/sessions",
+    RESET_PASSWORD: "/auth/password-reset",
 
     GOOGLE: "/auth/google",
     GOOGLE_CALLBACK: "/auth/google/callback",
+  },
+
+  // Managing active devices/tokens.
+  SESSIONS: {
+    ROOT: "/sessions",
+    CURRENT: "/sessions/current",
+    OTHERS: "/sessions/others",
+    BY_ID: "/sessions/:sessionId",
   },
 
   // RBAC routes

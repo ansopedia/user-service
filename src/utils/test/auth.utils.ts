@@ -7,13 +7,13 @@ import {
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant.js";
-import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
+import { ErrorTypeEnum, ROUTES, STATUS_CODES, errorMap } from "@/constants";
 
 import { app } from "../../app.js";
 import { expectOTPVerificationSuccess, retrieveOTP, verifyOTP } from "./otp.utils.js";
 
 export const login = async (loginData: Omit<LoginRequest, "deviceInfo">): Promise<Response> => {
-  return supertest(app).post("/api/v1/auth/login").send(loginData);
+  return supertest(app).post(`${ROUTES.API_ROOT}${ROUTES.AUTH.LOGIN}`).send(loginData);
 };
 
 export const expectLoginSuccess = (response: Response): void => {
@@ -59,7 +59,7 @@ export const signUp = async (signUpData: {
   password: string;
   confirmPassword: string;
 }): Promise<Response> => {
-  return await supertest(app).post("/api/v1/auth/register").send(signUpData);
+  return await supertest(app).post(`${ROUTES.API_ROOT}${ROUTES.AUTH.REGISTER}`).send(signUpData);
 };
 
 export const expectSignUpSuccess = (response: Response): void => {
@@ -77,7 +77,9 @@ export const expectSignUpSuccess = (response: Response): void => {
 };
 
 export const logoutUser = async (authorizationHeader: string) => {
-  return await supertest(app).post("/api/v1/auth/logout").set("authorization", authorizationHeader);
+  return await supertest(app)
+    .delete(`${ROUTES.API_ROOT}${ROUTES.SESSIONS.CURRENT}`)
+    .set("authorization", authorizationHeader);
 };
 
 export const expectLogoutSuccess = (response: Response) => {
@@ -89,7 +91,7 @@ export const expectLogoutSuccess = (response: Response) => {
 };
 
 export const renewToken = async (refreshToken: string) => {
-  return await supertest(app).post("/api/v1/auth/refresh").send({ refreshToken });
+  return await supertest(app).post(`${ROUTES.API_ROOT}${ROUTES.AUTH.REFRESH}`).send({ refreshToken });
 };
 
 export const expectRenewTokenSuccess = (response: Response) => {
@@ -149,7 +151,7 @@ export const expectForgetPasswordSuccess = (response: Response): void => {
 };
 
 export const resetPassword = async (resetPassword: ResetPasswordRequest): Promise<Response> => {
-  return supertest(app).post("/api/v1/auth/reset-password").send(resetPassword);
+  return supertest(app).post(`${ROUTES.API_ROOT}${ROUTES.AUTH.RESET_PASSWORD}`).send(resetPassword);
 };
 
 export const expectResetPasswordSuccess = (response: Response): void => {
@@ -164,12 +166,18 @@ export const expectResetPasswordSuccess = (response: Response): void => {
 };
 
 export const logoutOthers = async (authorizationHeader: string) => {
-  return await supertest(app).post("/api/v1/auth/logout-others").set("authorization", authorizationHeader);
+  return await supertest(app)
+    .delete(`${ROUTES.API_ROOT}${ROUTES.SESSIONS.OTHERS}`)
+    .set("authorization", authorizationHeader);
 };
 export const logoutAllSessions = async (authorizationHeader: string) => {
-  return await supertest(app).post("/api/v1/auth/logout-all").set("authorization", authorizationHeader);
+  return await supertest(app)
+    .delete(`${ROUTES.API_ROOT}${ROUTES.SESSIONS.ROOT}`)
+    .set("authorization", authorizationHeader);
 };
 
 export const getSessions = async (authorizationHeader: string) => {
-  return await supertest(app).get("/api/v1/auth/sessions").set("authorization", authorizationHeader);
+  return await supertest(app)
+    .get(`${ROUTES.API_ROOT}${ROUTES.SESSIONS.ROOT}`)
+    .set("authorization", authorizationHeader);
 };
