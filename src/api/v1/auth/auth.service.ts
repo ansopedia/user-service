@@ -276,7 +276,7 @@ export class AuthService {
       updatedSession.tokenVersion
     );
 
-    const accessProfile = await UserDAL.getAccessControlProfile(updatedSession.userId);
+    const accessProfile = await UserDAL.getUserAccessControl(updatedSession.userId);
 
     const accessToken = generateAccessToken({
       userId: updatedSession.userId,
@@ -328,7 +328,7 @@ export class AuthService {
       tokenVersion,
     });
 
-    const accessProfile = await UserDAL.getAccessControlProfile(userId);
+    const accessProfile = await UserDAL.getUserAccessControl(userId);
 
     const accessToken = generateAccessToken({
       userId: userId,

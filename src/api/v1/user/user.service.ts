@@ -150,7 +150,7 @@ export class UserService {
     return await UserRoleDAL.assignRolesToUser(newRolesToCreate);
   }
 
-  static async getAccessControlProfile(userId: ObjectId): Promise<UserAccessControlProfile> {
-    return await UserDAL.getAccessControlProfile(userId);
+  static async getUserAccessControl(userId: ObjectId): Promise<UserAccessControlProfile> {
+    return await UserDAL.getUserAccessControl(userId);
   }
 }

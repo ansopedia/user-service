@@ -12,6 +12,6 @@ const profileController = new ProfileController(new ProfileService());
 router.put(ROUTES.PROFILE.ROOT, authenticate, profileController.upSertProfile);
 router.get(ROUTES.PROFILE.ROOT, authenticate, profileController.getProfile);
 router.patch(ROUTES.PROFILE.VISIBILITY, authenticate, profileController.toggleProfileVisibility);
-router.get(ROUTES.PROFILE.ACCESS_CONTROL, authenticate, profileController.getAccessControlProfile);
+router.get(ROUTES.PROFILE.ACCESS_CONTROL, authenticate, profileController.getUserAccessControl);
 
 export { router as profileRoutes };

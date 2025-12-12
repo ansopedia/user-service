@@ -13,7 +13,7 @@ export const checkPermission = (requiredPermissions: Permission[]) => {
     try {
       const { loggedInUser } = res.locals;
 
-      const accessProfile = await UserDAL.getAccessControlProfile(loggedInUser.userId);
+      const accessProfile = await UserDAL.getUserAccessControl(loggedInUser.userId);
 
       const hasPermission = requiredPermissions.every((permission) =>
         permissionExistsInProfile(permission, accessProfile)

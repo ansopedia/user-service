@@ -68,7 +68,7 @@ export class UserDAL {
     return await UserModel.findByIdAndUpdate(userId, userData, { new: true });
   }
 
-  static async getAccessControlProfile(userId: mongoose.Types.ObjectId): Promise<UserAccessControlProfile> {
+  static async getUserAccessControl(userId: mongoose.Types.ObjectId): Promise<UserAccessControlProfile> {
     const userAccessProfile = await UserModel.aggregate([
       {
         $match: {

@@ -49,8 +49,8 @@ export class ProfileController {
     });
   };
 
-  public getAccessControlProfile = async (_: Request, res: Response) => {
-    const accessProfile = await UserService.getAccessControlProfile(res.locals.loggedInUser.userId);
+  public getUserAccessControl = async (_: Request, res: Response) => {
+    const accessProfile = await UserService.getUserAccessControl(res.locals.loggedInUser.userId);
 
     sendResponse<UserAccessControlProfile>({
       response: res,

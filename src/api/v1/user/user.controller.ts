@@ -114,10 +114,10 @@ export const assignRolesToUser = async (req: Request, res: Response) => {
   });
 };
 
-export const getAccessControlProfile = async (req: Request, res: Response) => {
+export const getUserAccessControl = async (req: Request, res: Response) => {
   const userId = objectId.parse(req.params.userId);
 
-  const accessControl = await UserService.getAccessControlProfile(userId);
+  const accessControl = await UserService.getUserAccessControl(userId);
 
   sendResponse<UserAccessControlProfile>({
     response: res,

@@ -7,8 +7,8 @@ import {
   assignRolesToUser,
   checkUsernameAvailability,
   createUser,
-  getAccessControlProfile,
   getAllUsers,
+  getUserAccessControl,
   getUserByUsername,
   restoreUser,
   softDeleteUser,
@@ -27,7 +27,7 @@ router.get(
   ROUTES.USERS.ACCESS_CONTROL,
   authenticate,
   checkPermission(["view-user-access-control"]),
-  getAccessControlProfile
+  getUserAccessControl
 );
 
 export { router as userRoutes };
