@@ -1,4 +1,4 @@
-import { type Token, UserActionType } from "@ansospace/types";
+import { type Token, otpEvents } from "@ansospace/types";
 import { Model, Schema, model } from "mongoose";
 
 const TokenSchema: Schema<Token> = new Schema(
@@ -6,7 +6,7 @@ const TokenSchema: Schema<Token> = new Schema(
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     action: {
       type: String,
-      enum: Object.values(UserActionType),
+      enum: otpEvents.options,
       required: true,
     },
     token: {

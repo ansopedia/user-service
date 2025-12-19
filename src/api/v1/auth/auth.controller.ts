@@ -8,6 +8,7 @@ import {
   refreshTokenRequestSchema,
   registerRequestSchema,
   resetPasswordRequestSchema,
+  sessionQueryOptionsSchema,
 } from "@ansospace/types";
 import type { Request, Response } from "express";
 import ms from "ms";
@@ -21,7 +22,10 @@ import { AuthService } from "./auth.service.js";
 
 export class AuthController {
   private static setAuthTokenHeaders(res: Response, accessToken: string, refreshToken: string, deviceId: string) {
-    res.header("Access-Control-Expose-Headers", "set-cookie, authorization, refresh-token");
+    res.header(
+      "Access-Control-Expose-Headers",
+      `set-cookie, ${HttpHeaders.AUTHORIZATION}, ${HttpHeaders.REFRESH_TOKEN}, ${HttpHeaders.X_DEVICE_ID}`
+    );
     res.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
     res.setHeader(HttpHeaders.REFRESH_TOKEN, refreshToken);
     res.setHeader(HttpHeaders.X_DEVICE_ID, deviceId);
@@ -40,7 +44,7 @@ export class AuthController {
   }
 
   public static async signInWithEmailOrUsernameAndPassword(req: Request, res: Response) {
-    const deviceInfo = req.deviceInfo ?? getDeviceInfo(req);
+    const deviceInfo = getDeviceInfo(req);
 
     // deviceId is undefined if it's the first time the user is logging in
     const deviceId = deviceInfo.deviceId ?? crypto.randomUUID();
@@ -67,7 +71,7 @@ export class AuthController {
     const googleUser = req.user as GoogleUser;
 
     // Capture device info (bot detection already handled by middleware)
-    const deviceInfo = req.deviceInfo ?? getDeviceInfo(req);
+    const deviceInfo = getDeviceInfo(req);
 
     // deviceId is undefined if it's the first time the user is logging in
     const deviceId = deviceInfo.deviceId ?? crypto.randomUUID();
@@ -173,9 +177,10 @@ export class AuthController {
     });
   }
 
-  public static async getSessions(_: Request, res: Response) {
+  public static async getSessions(req: Request, res: Response) {
     const { userId } = res.locals.loggedInUser;
-    const sessions = await AuthService.getSessions(userId);
+    const sessionQueryOptions = sessionQueryOptionsSchema.parse(req.query);
+    const sessions = await AuthService.getSessions(userId, sessionQueryOptions);
 
     sendResponse({
       response: res,
@@ -213,7 +218,7 @@ export class AuthController {
   public static async autoLogin(req: Request, res: Response) {
     const { actionToken } = autoLoginRequestSchema.parse(req.body);
 
-    const deviceInfo = req.deviceInfo ?? getDeviceInfo(req);
+    const deviceInfo = getDeviceInfo(req);
 
     // deviceId is undefined if it's the first time the user is logging in
     const deviceId = deviceInfo.deviceId ?? crypto.randomUUID();

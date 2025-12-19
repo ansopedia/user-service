@@ -1,9 +1,4 @@
-import {
-  type LoginRequest,
-  NotificationType,
-  type RegisterResponse,
-  type ResetPasswordRequest,
-} from "@ansospace/types";
+import { type LoginRequest, type RegisterResponse, type ResetPasswordRequest, otpEvents } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
 import { success } from "@/api/v1/auth/auth.constant.js";
@@ -126,17 +121,17 @@ export const expectRenewTokenFailed = (response: Response) => {
 };
 
 export const verifyAccount = async ({ userId, actionToken }: RegisterResponse) => {
-  const otpType = NotificationType.EMAIL_VERIFICATION_OTP;
+  const eventType = otpEvents.enum.EMAIL_VERIFICATION;
   // Step 1: Retrieve OTP from database
-  const otpData = await retrieveOTP(userId, otpType);
+  const otpData = await retrieveOTP(userId, eventType);
 
   // Step 2: Verify OTP
   const verifyResponse = await verifyOTP({
     otp: otpData.otp,
     actionToken,
-    otpType,
+    eventType,
   });
-  expectOTPVerificationSuccess(otpType, verifyResponse);
+  expectOTPVerificationSuccess(eventType, verifyResponse);
 };
 
 export const expectForgetPasswordSuccess = (response: Response): void => {

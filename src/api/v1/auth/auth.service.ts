@@ -7,14 +7,16 @@ import {
   type DeviceInfo,
   type Email,
   type LoginRequest,
-  NotificationType,
   type ObjectId,
   type RefreshTokenPayload,
   type RegisterRequest,
   type RegisterResponse,
   type ResetPasswordRequest,
+  type SessionQueryOptions,
   TokenType,
-  UserActionType,
+  emailNotificationEvents,
+  otpEvents,
+  userActions,
   usernameSchema,
 } from "@ansospace/types";
 
@@ -25,7 +27,7 @@ import { UserService } from "@/api/v1/user/user.service.js";
 import { ErrorTypeEnum } from "@/constants";
 import { notificationService, redisService } from "@/services";
 import type { GoogleUser } from "@/types";
-import { comparePassword, generateAccessToken, verifyJWTToken } from "@/utils";
+import { comparePassword, generateAccessToken, generateRefreshToken, verifyJWTToken } from "@/utils";
 
 import { ProfileService } from "../profile/profile.service.js";
 import { SessionDAL } from "../session/session.dal.js";
@@ -43,12 +45,12 @@ export class AuthService {
 
     await OtpService.sendOtp({
       email: userData.email,
-      otpType: NotificationType.EMAIL_VERIFICATION_OTP,
+      eventType: otpEvents.enum.EMAIL_VERIFICATION,
     });
 
     // Generate a temporary token for email verification
     const tokenService = new TokenService();
-    const actionToken = await tokenService.createActionToken(newUser.id, UserActionType.VERIFY_EMAIL);
+    const actionToken = await tokenService.createActionToken(newUser.id, userActions.enum.VERIFY_EMAIL);
 
     // Return the verification token along with the success message
     return { actionToken, userId: newUser.id };
@@ -195,8 +197,8 @@ export class AuthService {
     return { modifiedCount };
   }
 
-  public static async getSessions(userId: ObjectId) {
-    return await new SessionDAL().getActiveSessionsByUserId(userId);
+  public static async getSessions(userId: ObjectId, options: SessionQueryOptions) {
+    return await new SessionDAL().getActiveSessionsByUserId(userId, options);
   }
 
   public static async verifyAccessToken(token: string): Promise<AuthenticatedUser> {
@@ -226,7 +228,7 @@ export class AuthService {
 
   public static async resetPassword({ actionToken, password }: ResetPasswordRequest): Promise<void> {
     const tokenService = new TokenService();
-    const { userId, id: tokenId } = await tokenService.verifyActionToken(actionToken, UserActionType.RESET_PASSWORD);
+    const { userId, id: tokenId } = await tokenService.verifyActionToken(actionToken, userActions.enum.RESET_PASSWORD);
 
     const user = await UserService.updateUser(userId, { password });
 
@@ -234,67 +236,80 @@ export class AuthService {
 
     await notificationService.sendEmail({
       to: user.email,
-      eventType: NotificationType.PASSWORD_CHANGE_CONFIRMATION,
+      eventType: emailNotificationEvents.enum.PASSWORD_CHANGE_CONFIRMATION,
       payload: { recipientName: user.username },
       subject: "Password Changed",
     });
   }
 
-  public static async refreshToken(refreshToken: string) {
-    const res = await verifyJWTToken<RefreshTokenPayload>(refreshToken, TokenType.REFRESH);
-    const { sessionId, jti, exp } = res;
+  public static async refreshToken(incomingRefreshToken: string) {
+    // 1. Verify the incoming token structure
+    const decoded = await verifyJWTToken<RefreshTokenPayload>(incomingRefreshToken, TokenType.REFRESH);
+    const { sessionId, jti, exp } = decoded;
 
     if (jti == null || exp == null) {
       throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
     }
 
+    if (sessionId == null) throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
+
+    // 2. Fetch the EXISTING session (Do not create new)
     const session = await new SessionDAL().getSessionById(sessionId);
 
-    if (!session) {
-      throw new Error(ErrorTypeEnum.enum.SESSION_NOT_FOUND);
+    // 3. Validation
+    if (!session) throw new Error(ErrorTypeEnum.enum.SESSION_NOT_FOUND);
+    if (!session.isActive) throw new Error(ErrorTypeEnum.enum.SESSION_INACTIVE);
+
+    // 4. 🚨 SECURITY: Refresh Token Reuse Detection
+    // If the token coming from the client doesn't match what we have in the DB,
+    // it means an old (stolen) token is being reused.
+    if (session.refreshToken !== incomingRefreshToken) {
+      // Nuclear option: Invalidate the session immediately to stop the attacker
+      await new SessionDAL().updateSession(sessionId, { isActive: false });
+      throw new Error(ErrorTypeEnum.enum.SECURITY_TOKEN_REUSE_DETECTED);
     }
 
-    if (!session.isActive) {
-      throw new Error(ErrorTypeEnum.enum.SESSION_INACTIVE);
-    }
+    // 5. Generate NEW Tokens
+    const newAccessProfile = await UserDAL.getUserAccessControl(session.userId);
 
-    // Mark previous token/session inactive after renewing
-    await new SessionDAL().updateSessionByUserAndDevice(session.userId, session.deviceId, { isActive: false });
+    // We increment version to invalidate old Access Tokens immediately
+    const newTokenVersion = session.tokenVersion + 1;
 
-    const updatedSession = await new SessionDAL().insertSession({
-      userId: session.userId,
-      deviceId: session.deviceId,
-      deviceInfo: session.deviceInfo,
-      lastActive: new Date(),
-      tokenVersion: session.tokenVersion + 1,
+    // 6. UPDATE the existing session (Rotate the token)
+    // We update the Refresh Token string and the Last Active time
+    const newRefreshToken = generateRefreshToken({
+      sessionId: session.id, // Keep the SAME Session ID
+      // userId: session.userId,
+      // tokenVersion: newTokenVersion,
     });
 
-    // Cache tokenVersion in Redis
-    await redisService.setUserDeviceTokenVersion(
-      session.userId.toString(),
-      session.deviceId,
-      updatedSession.tokenVersion
-    );
+    await new SessionDAL().updateSession(sessionId, {
+      refreshToken: newRefreshToken, // Save the new "Key"
+      lastActive: new Date(),
+      tokenVersion: newTokenVersion,
+      deviceInfo: session.deviceInfo, // Optional: Update IP/Location if changed
+    });
 
-    const accessProfile = await UserDAL.getUserAccessControl(updatedSession.userId);
+    // 7. Sync with Redis (for fast Access Token validation)
+    await redisService.setUserDeviceTokenVersion(session.userId.toString(), session.deviceId, newTokenVersion);
 
-    const accessToken = generateAccessToken({
-      userId: updatedSession.userId,
-      deviceId: updatedSession.deviceId,
-      tokenVersion: updatedSession.tokenVersion,
-      permissions: accessProfile.permissions,
+    const newAccessToken = generateAccessToken({
+      userId: session.userId,
+      deviceId: session.deviceId,
+      tokenVersion: newTokenVersion,
+      permissions: newAccessProfile.permissions,
     });
 
     return {
-      accessToken,
-      refreshToken: updatedSession.refreshToken,
-      deviceId: updatedSession.deviceId,
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken, // Send new rotation key
+      deviceId: session.deviceId,
     };
   }
 
   public static async autoLogin({ actionToken }: AutoLoginRequest): Promise<AuthToken> {
     const tokenService = new TokenService();
-    const { userId, id: tokenId } = await tokenService.verifyActionToken(actionToken, UserActionType.AUTO_LOGIN);
+    const { userId, id: tokenId } = await tokenService.verifyActionToken(actionToken, userActions.enum.AUTO_LOGIN);
 
     // For auto-login, we need device info, but since it's from OTP verification, we can use default or empty device info
     // To keep it simple, we'll use a default deviceId and empty deviceInfo

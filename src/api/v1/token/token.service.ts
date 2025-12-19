@@ -1,4 +1,4 @@
-import { type CreateToken, type ObjectId, type Token, TokenType, UserActionType } from "@ansospace/types";
+import { type CreateToken, type ObjectId, type Token, TokenType, type UserActions } from "@ansospace/types";
 import { isPast } from "date-fns";
 
 import { ErrorTypeEnum, FIVE_MINUTES_IN_MS } from "@/constants";
@@ -13,7 +13,7 @@ export class TokenService {
     this.tokenDAL = new TokenDAL();
   }
 
-  async createActionToken(userId: ObjectId, action: UserActionType) {
+  async createActionToken(userId: ObjectId, action: UserActions) {
     const token = generateActionToken({ userId, action });
 
     const tokenPayload: CreateToken = {
@@ -28,7 +28,7 @@ export class TokenService {
     return token;
   }
 
-  async verifyActionToken(token: string, action: UserActionType): Promise<Token> {
+  async verifyActionToken(token: string, action: UserActions): Promise<Token> {
     try {
       const verifiedToken = await verifyJWTToken<Token>(token, TokenType.ACTION);
 

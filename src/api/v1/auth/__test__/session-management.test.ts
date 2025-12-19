@@ -115,7 +115,7 @@ describe("Session Management APIs", () => {
       // Validate session structure
       sessions.forEach((session: unknown) => {
         expect(session).toMatchObject({
-          _id: expect.any(String),
+          id: expect.any(String),
           userId: expect.any(String),
           deviceId: expect.any(String),
           deviceInfo: expect.any(Object),

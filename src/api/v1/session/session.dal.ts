@@ -1,7 +1,9 @@
-import type { DeviceId, ObjectId, Session } from "@ansospace/types";
+import type { DeviceId, ObjectId, Session, SessionQueryOptions } from "@ansospace/types";
+import type { SortOrder, UpdateQuery } from "mongoose";
 
 import { generateRefreshToken } from "@/utils";
 
+import { toSessionDTO } from "./session.dto.js";
 import sessionModel from "./session.model.js";
 
 // Type for safe session data (without sensitive fields)
@@ -10,10 +12,10 @@ export type SessionSafe = Omit<Session, "refreshToken">;
 interface ISessionDal {
   getSessionById(sessionId: ObjectId): Promise<Session | null>;
   getSessionsByUserId(userId: ObjectId): Promise<Session[]>;
-  getActiveSessionsByUserId(userId: ObjectId): Promise<Session[]>;
+  getActiveSessionsByUserId(userId: ObjectId, options: SessionQueryOptions): Promise<Session[]>;
   getActiveSessionsSafe(userId: ObjectId): Promise<SessionSafe[]>; // Safe version without sensitive data
   insertSession(session: Omit<Session, "refreshToken" | "createdAt" | "updatedAt" | "isActive">): Promise<Session>;
-  updateSession(sessionId: ObjectId): Promise<Session | null>;
+  updateSession(sessionId: ObjectId, updates: UpdateQuery<Session>): Promise<Session | null>;
   updateSessionByUserAndDevice(userId: ObjectId, deviceId: DeviceId, update: Partial<Session>): Promise<Session | null>;
   deleteSession(sessionId: ObjectId): Promise<void>;
   deleteSessionByUserAndDevice(userId: ObjectId, deviceId: DeviceId): Promise<void>;
@@ -24,9 +26,24 @@ interface ISessionDal {
 }
 
 export class SessionDAL implements ISessionDal {
-  async getActiveSessionsByUserId(userId: ObjectId): Promise<Session[]> {
-    // Select only safe fields, exclude sensitive data like refreshToken
-    return await sessionModel.find({ userId, isActive: true }).select("-refreshToken"); // Exclude refreshToken using select notation
+  async getActiveSessionsByUserId(userId: ObjectId, options: SessionQueryOptions): Promise<Session[]> {
+    // 1. Set Defaults
+    const { limit, skip, sortBy } = options; // Default to 20 sessions
+    const order = options.order === "asc" ? 1 : -1; // -1 is Descending (Newest first)
+
+    // 2. Build the Sort Object dynamically
+    const sortCriteria: { [key: string]: SortOrder } = { [sortBy]: order };
+
+    // 3. Execute Query with filters
+    const docs = await sessionModel
+      .find({ userId, isActive: true })
+      .select("-refreshToken") // Security
+      .sort(sortCriteria) // Sorting (e.g., Newest Active first)
+      .skip(skip) // Pagination
+      .limit(limit); // Limiting
+
+    // 4. Transform to DTO
+    return docs.map(toSessionDTO);
   }
 
   async getActiveSessionsSafe(userId: ObjectId): Promise<SessionSafe[]> {
@@ -67,17 +84,14 @@ export class SessionDAL implements ISessionDal {
     return await newSession.save();
   }
 
-  async updateSession(sessionId: ObjectId): Promise<Session | null> {
-    const refreshToken = generateRefreshToken({ sessionId });
-
+  async updateSession(
+    sessionId: ObjectId,
+    updates: UpdateQuery<Session> // Use Mongoose's UpdateQuery type
+  ): Promise<Session | null> {
     return await sessionModel.findByIdAndUpdate(
       sessionId,
-      {
-        refreshToken,
-        lastActive: new Date(),
-        $inc: { tokenVersion: 1 },
-      },
-      { new: true }
+      updates,
+      { new: true } // Return the updated document
     );
   }
 

@@ -45,6 +45,7 @@ const errorType = [
   "PLATFORM_ALREADY_EXISTS",
   "PLATFORM_NOT_FOUND",
   "PLATFORM_SLUG_ALREADY_EXISTS",
+  "SECURITY_TOKEN_REUSE_DETECTED",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -342,6 +343,13 @@ export const errorMap = {
     body: {
       code: "platform_slug_already_exists",
       message: "Platform slug already exists. Use a different slug.",
+    },
+  },
+  [ErrorTypeEnum.enum.SECURITY_TOKEN_REUSE_DETECTED]: {
+    httpStatusCode: STATUS_CODES.FORBIDDEN,
+    body: {
+      code: "security_violation", // Generic code for client
+      message: "Security alert: Suspicious activity detected. Please sign in again.",
     },
   },
 };

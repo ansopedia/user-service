@@ -1,13 +1,13 @@
-import { NotificationType, type SendOtpRequest, emailSchema, sendOtpRequestSchema } from "@ansospace/types";
+import { type SendOtpRequest, emailSchema, otpEvents, sendOtpRequestSchema } from "@ansospace/types";
 import { ZodError } from "zod/v4";
 
 describe("Test OTP validation", () => {
   const otpTypes: SendOtpRequest = {
-    otpType: NotificationType.EMAIL_VERIFICATION_OTP,
+    eventType: otpEvents.enum.EMAIL_VERIFICATION,
     email: emailSchema.parse("example@gmail.com"),
   };
 
-  it(`should throw error if email is not provided with otpType of ${NotificationType.EMAIL_VERIFICATION_OTP}`, () => {
+  it(`should throw error if email is not provided with otpType of ${otpEvents.enum.EMAIL_VERIFICATION}`, () => {
     const otpTypesWithoutEmail = { ...otpTypes, email: undefined };
 
     try {

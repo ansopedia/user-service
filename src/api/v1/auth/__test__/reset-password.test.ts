@@ -1,4 +1,4 @@
-import { NotificationType, type Password, otpSchema, passwordSchema } from "@ansospace/types";
+import { type Password, otpEvents, otpSchema, passwordSchema } from "@ansospace/types";
 import type { Response } from "supertest";
 
 import { envConstants, mockUser } from "@/constants";
@@ -58,17 +58,17 @@ describe("Reset Password", () => {
   // should reset password again after isUsed flag is reset
   let verifiedOTPResponse: Response;
   it("should verify OTP successfully", async () => {
-    const res = await requestOTP({ email: mockUser.email, otpType: NotificationType.FORGET_PASSWORD_OTP });
+    const res = await requestOTP({ email: mockUser.email, eventType: otpEvents.enum.FORGET_PASSWORD });
     expectForgetPasswordSuccess(res);
 
-    const otpType = NotificationType.FORGET_PASSWORD_OTP;
+    const eventType = otpEvents.enum.FORGET_PASSWORD;
 
     verifiedOTPResponse = await verifyOTP({
       otp: otpSchema.parse(envConstants.MASTER_OTP),
       actionToken: res.body.data.actionToken,
-      otpType,
+      eventType,
     });
-    expectOTPVerificationSuccess(otpType, verifiedOTPResponse);
+    expectOTPVerificationSuccess(eventType, verifiedOTPResponse);
   });
 
   it("should reset password successfully", async () => {

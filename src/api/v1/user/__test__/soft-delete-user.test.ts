@@ -1,4 +1,4 @@
-import { type GetUser, NotificationType, emailSchema, usernameSchema } from "@ansospace/types";
+import { type GetUser, emailSchema, otpEvents, usernameSchema } from "@ansospace/types";
 import mongoose from "mongoose";
 
 import { defaultUsers, mockUser } from "@/constants";
@@ -75,7 +75,7 @@ describe("Soft Delete User", () => {
 
     const otpRequestResponse = await requestOTP({
       email: unAuthorizedUser.email,
-      otpType: NotificationType.EMAIL_VERIFICATION_OTP,
+      eventType: otpEvents.enum.EMAIL_VERIFICATION,
     });
     expectOTPRequestSuccess(otpRequestResponse);
 

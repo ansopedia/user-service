@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Protect Permission Routes ([#69](https://github.com/ansopedia/user-service/issues/69))
 - Add centralized routes constants file for improved maintainability
 - Add new test utility functions for role permission and user role creation
+- Add session DTO for data transformation
+- Add SECURITY_TOKEN_REUSE_DETECTED error type for security alerts
 
 ### Changed
 
@@ -22,10 +24,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update API endpoint paths in test utilities to use centralized route constants
 - Change authentication response fields from 'token' to 'actionToken'
 - Update type imports (e.g., RegisterSchema to RegisterRequest)
+- Update dependencies to latest versions (mongoose 9.0.2, maxmind 5.0.1, ms 2.1.3, ua-parser-js 2.0.7, zod 4.2.1, and dev dependencies)
+- Refactor OTP verification to use eventType instead of otpType
+- Enhance session DAL with pagination, sorting, and DTO transformation
+- Update ua-parser-js bot detection import
 
 ### Removed
 
 - Remove deprecated test utility files for role-permission and user-role management
+- Remove pre-save validation hooks from user-role model
 
 ## [1.3.1] - 2025-10-06
 

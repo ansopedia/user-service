@@ -22,7 +22,7 @@ export class OtpDAL {
 
   static async upsertOTP(otpSchema: SaveOtp) {
     return await OtpModel.findOneAndUpdate(
-      { userId: otpSchema.userId, otpType: otpSchema.otpType },
+      { userId: otpSchema.userId, eventType: otpSchema.eventType },
       { ...otpSchema },
       { upsert: true, new: true }
     );

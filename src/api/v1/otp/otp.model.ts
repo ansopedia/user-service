@@ -1,4 +1,4 @@
-import type { OtpRecord } from "@ansospace/types";
+import { type OtpRecord, otpEvents } from "@ansospace/types";
 import { Schema, model } from "mongoose";
 
 const OtpSchemas = new Schema<OtpRecord>(
@@ -12,8 +12,9 @@ const OtpSchemas = new Schema<OtpRecord>(
       type: Date,
       required: true,
     },
-    otpType: {
+    eventType: {
       type: String,
+      enum: otpEvents.options,
       required: true,
     },
   },

@@ -1,9 +1,10 @@
 import {
-  NotificationType,
   type ObjectId,
+  type OtpEvents,
   type OtpRecord,
   type SendOtpRequest,
   type VerifyOtpRequest,
+  otpEvents,
 } from "@ansospace/types";
 import supertest, { type Response } from "supertest";
 
@@ -27,12 +28,12 @@ export const expectOTPRequestSuccess = (response: Response): void => {
   });
 };
 
-export const retrieveOTP = async (userId: ObjectId, otpType: NotificationType): Promise<OtpRecord> => {
+export const retrieveOTP = async (userId: ObjectId, eventType: OtpEvents): Promise<OtpRecord> => {
   const otpDetails = await OtpService.getOtpDetailsByUserId({
     userId,
-    otpType,
+    eventType,
   });
-  const otpData = otpDetails.find((data) => data.otpType === otpType);
+  const otpData = otpDetails.find((data) => data.eventType === eventType);
   return otpData as OtpRecord;
 };
 
@@ -40,15 +41,15 @@ export const verifyOTP = async (data: VerifyOtpRequest): Promise<Response> => {
   return supertest(app).post("/api/v1/otp/verify").send(data);
 };
 
-export const expectOTPVerificationSuccess = (otpType: NotificationType, response: Response): void => {
+export const expectOTPVerificationSuccess = (eventType: OtpEvents, response: Response): void => {
   expect(response.statusCode).toBe(STATUS_CODES.OK);
 
-  const expectedMessages = new Map<NotificationType, string>([
-    [NotificationType.EMAIL_VERIFICATION_OTP, success.EMAIL_VERIFIED_SUCCESSFULLY],
-    [NotificationType.FORGET_PASSWORD_OTP, success.PASSWORD_RESET_SUCCESSFULLY],
+  const expectedMessages = new Map<OtpEvents, string>([
+    [otpEvents.enum.EMAIL_VERIFICATION, success.EMAIL_VERIFIED_SUCCESSFULLY],
+    [otpEvents.enum.FORGET_PASSWORD, success.PASSWORD_RESET_SUCCESSFULLY],
   ]);
 
-  const expectedMessage = expectedMessages.get(otpType) ?? success.OTP_VERIFIED_SUCCESSFULLY;
+  const expectedMessage = expectedMessages.get(eventType) ?? success.OTP_VERIFIED_SUCCESSFULLY;
 
   expect(response.body).toMatchObject({
     message: expectedMessage,

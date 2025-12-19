@@ -1,4 +1,4 @@
-import { NotificationType, emailSchema, usernameSchema } from "@ansospace/types";
+import { emailSchema, otpEvents, usernameSchema } from "@ansospace/types";
 
 import { DEFAULT_PAGINATION_LIMIT, ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap, mockUser } from "@/constants";
 import {
@@ -50,7 +50,7 @@ describe("User Test", () => {
 
     const otpRequestResponse = await requestOTP({
       email: unAuthorizedUser.email,
-      otpType: NotificationType.EMAIL_VERIFICATION_OTP,
+      eventType: otpEvents.enum.EMAIL_VERIFICATION,
     });
     expectOTPRequestSuccess(otpRequestResponse);
 
