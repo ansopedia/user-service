@@ -17,7 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add new test utility functions for role permission and user role creation
 - Add session DTO for data transformation
 - Add SECURITY_TOKEN_REUSE_DETECTED error type for security alerts
-- Add `api/v1/auth/change-password` api end-point
+- Add change password endpoint for Logged-in users ([#162](https://github.com/ansopedia/user-service/issues/162))
+
+### Fixed
+
+- Bug: Authentication service crashes for OAuth-only users attempting password login ([#163](https://github.com/ansopedia/user-service/issues/163))
 
 ### Changed
 

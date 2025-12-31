@@ -66,6 +66,12 @@ export class AuthService {
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
+    // Guard clause for OAuth-only users
+    if (!user.password) {
+      // SCENARIO: User exists but has no password (signed up via Google/Facebook)
+      throw new Error(ErrorTypeEnum.enum.SOCIAL_LOGIN_REQUIRED);
+    }
+
     const isPasswordMatch = await comparePassword(loginData.password, user.password);
 
     if (!isPasswordMatch) throw new Error(ErrorTypeEnum.enum.INVALID_CREDENTIALS);

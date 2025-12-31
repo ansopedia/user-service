@@ -77,6 +77,20 @@ export class UserDAL {
       },
       {
         $lookup: {
+          from: "profiles", // Your ProfileDataModel collection name
+          localField: "_id", // User's _id
+          foreignField: "userId", // Profile's userId
+          as: "profileDoc",
+        },
+      },
+      {
+        $unwind: {
+          path: "$profileDoc",
+          preserveNullAndEmptyArrays: true, // Vital! If profile doesn't exist yet, don't crash.
+        },
+      },
+      {
+        $lookup: {
           from: "userroles",
           localField: "_id",
           foreignField: "userId",
@@ -135,6 +149,11 @@ export class UserDAL {
           id: { $toString: "$_id" }, // ✅ Convert to string and rename to 'id'
           username: 1,
           email: 1,
+          displayName: {
+            $ifNull: ["$profileDoc.name", "$username"],
+          }, // Fallback to username
+          avatar: "$profileDoc.avatar",
+          isEmailVerified: 1,
           roles: {
             $map: {
               input: "$userRoles",

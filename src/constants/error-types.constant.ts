@@ -47,6 +47,7 @@ const errorType = [
   "PLATFORM_NOT_FOUND",
   "PLATFORM_SLUG_ALREADY_EXISTS",
   "SECURITY_TOKEN_REUSE_DETECTED",
+  "SOCIAL_LOGIN_REQUIRED",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -358,6 +359,13 @@ export const errorMap = {
     body: {
       code: "security_violation", // Generic code for client
       message: "Security alert: Suspicious activity detected. Please sign in again.",
+    },
+  },
+  [ErrorTypeEnum.enum.SOCIAL_LOGIN_REQUIRED]: {
+    httpStatusCode: STATUS_CODES.BAD_REQUEST, // or 422
+    body: {
+      code: "social_login_required",
+      message: "This account was created via a social provider (e.g., Google). Please sign in using that provider.",
     },
   },
 };
