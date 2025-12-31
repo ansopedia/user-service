@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add new test utility functions for role permission and user role creation
 - Add session DTO for data transformation
 - Add SECURITY_TOKEN_REUSE_DETECTED error type for security alerts
+- Add `api/v1/auth/change-password` api end-point
 
 ### Changed
 

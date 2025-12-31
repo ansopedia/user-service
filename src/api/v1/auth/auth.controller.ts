@@ -4,6 +4,7 @@ import {
   type LoginResponse,
   type RegisterResponse,
   autoLoginRequestSchema,
+  changePasswordRequestSchema,
   loginRequestSchema,
   refreshTokenRequestSchema,
   registerRequestSchema,
@@ -211,6 +212,19 @@ export class AuthController {
     sendResponse({
       response: res,
       message: success.PASSWORD_RESET_SUCCESSFULLY,
+      statusCode: STATUS_CODES.OK,
+    });
+  }
+
+  public static async changePassword(req: Request, res: Response) {
+    const { userId } = res.locals.loggedInUser;
+    const password = changePasswordRequestSchema.parse(req.body);
+
+    await AuthService.changePassword(userId, password);
+
+    sendResponse({
+      response: res,
+      message: success.PASSWORD_CHANGED_SUCCESSFULLY,
       statusCode: STATUS_CODES.OK,
     });
   }

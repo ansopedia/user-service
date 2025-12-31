@@ -12,6 +12,7 @@ router.post(ROUTES.AUTH.LOGIN, AuthController.signInWithEmailOrUsernameAndPasswo
 router.post(ROUTES.AUTH.AUTO_LOGIN, AuthController.autoLogin); // Auto Login using Action Token (returns new Access + Refresh tokens).
 router.post(ROUTES.AUTH.REFRESH, AuthController.refreshToken); // Exchange a valid Refresh Token for a new Access Token.
 router.post(ROUTES.AUTH.RESET_PASSWORD, AuthController.resetPassword); // Reset password using a verified token.
+router.post(ROUTES.AUTH.CHANGE_PASSWORD, authenticate, AuthController.changePassword); // Change password using a verified token.
 
 router.get(ROUTES.AUTH.GOOGLE, signInWithGoogle); // Initiate Google OAuth flow.
 router.get(ROUTES.AUTH.GOOGLE_CALLBACK, signInWithGoogleCallback, AuthController.signInWithGoogleCallback); // Handle Google OAuth callback.

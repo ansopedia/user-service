@@ -16,6 +16,7 @@ const errorType = [
   "ROLE_PERMISSION_ALREADY_EXISTS",
   "USER_ROLE_ALREADY_EXISTS",
   "INVALID_CREDENTIALS",
+  "INVALID_CURRENT_PASSWORD",
   "UNAUTHORIZED",
   "FORBIDDEN",
   "NO_AUTH_HEADER",
@@ -140,6 +141,13 @@ export const errorMap = {
     body: {
       code: "invalid_credentials",
       message: "Incorrect username or password.",
+    },
+  },
+  [ErrorTypeEnum.enum.INVALID_CURRENT_PASSWORD]: {
+    httpStatusCode: STATUS_CODES.BAD_REQUEST,
+    body: {
+      code: "invalid_current_password",
+      message: "The current password you entered is incorrect.",
     },
   },
   [ErrorTypeEnum.enum.UNAUTHORIZED]: {

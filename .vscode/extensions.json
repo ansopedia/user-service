@@ -4,7 +4,6 @@
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "yoavbls.pretty-ts-errors",
-    "vitest.explorer",
-    "redis.redis-for-vscode"
+    "vitest.explorer"
   ]
 }

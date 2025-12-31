@@ -3,6 +3,7 @@ import {
   type AuthToken,
   type AuthenticatedUser,
   type AutoLoginRequest,
+  type ChangePasswordRequest,
   type DeviceId,
   type DeviceInfo,
   type Email,
@@ -238,6 +239,28 @@ export class AuthService {
       to: user.email,
       eventType: emailNotificationEvents.enum.PASSWORD_CHANGE_CONFIRMATION,
       payload: { recipientName: user.username },
+      subject: "Password Changed",
+    });
+  }
+
+  public static async changePassword(
+    userId: ObjectId,
+    { currentPassword, password }: ChangePasswordRequest
+  ): Promise<void> {
+    const user = await UserDAL.getUserById(userId);
+
+    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
+
+    const isPasswordMatch = await comparePassword(currentPassword, user.password);
+
+    if (!isPasswordMatch) throw new Error(ErrorTypeEnum.enum.INVALID_CURRENT_PASSWORD);
+
+    const updatedUser = await UserService.updateUser(userId, { password });
+
+    await notificationService.sendEmail({
+      to: updatedUser.email,
+      eventType: emailNotificationEvents.enum.PASSWORD_CHANGE_CONFIRMATION,
+      payload: { recipientName: updatedUser.username },
       subject: "Password Changed",
     });
   }
