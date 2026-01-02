@@ -11,7 +11,6 @@ export const allowedOrigins = [
   "http://192.168.1.70:5173",
   // eslint-disable-next-line sonarjs/no-clear-text-protocols -- http is acceptable for local network development
   "http://192.168.1.70:3000",
-  "https://*.ansopedia.com",
   envConstants.CLIENT_URL,
   envConstants.USER_SERVICE_BASE_URL,
 ];

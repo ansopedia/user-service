@@ -22,11 +22,97 @@ import { success } from "./auth.constant.js";
 import { AuthService } from "./auth.service.js";
 
 export class AuthController {
+  /**
+   * ✅ NEW HELPER: Centralized Cookie Logic
+   * Handles GDPR/Geolocation logic and standardized attributes.
+   */
+  private static setAuthCookies(
+    res: Response,
+    accessToken: string,
+    refreshToken: string,
+    userId: string,
+    deviceId: string,
+    geolocation?: { country?: string }
+  ) {
+    const isProd = process.env.NODE_ENV === "production";
+
+    // 1. Determine Domain
+    // On Localhost: leave undefined (browsers handle ports automatically)
+    // On Prod: set to ".ansospace.com" (note the leading dot for broad support)
+    const domain = isProd ? ".ansospace.com" : "localhost";
+
+    type SameSite = "strict" | "none" | "lax";
+    // 2. Determine SameSite Strategy
+    // Default to 'lax' for better UX during OAuth redirects (Google -> Your App).
+    // If 'strict', the cookie is blocked on the redirect, effectively logging the user out immediately.
+    let sameSite: SameSite = "lax";
+
+    // Restore your GDPR logic:
+    if (geolocation?.country === "EU") {
+      sameSite = "none";
+    }
+
+    const commonOptions = {
+      httpOnly: true, // Prevents client-side JS from reading the cookie (XSS protection)
+      secure: isProd, // Requires HTTPS (use false for local development)
+      domain: domain, // ✅ CRITICAL
+      sameSite: sameSite, // 'lax' or 'strict' recommended to prevent CSRF
+      path: "/", // ✅ CRITICAL: Ensure it's available on all routes
+    };
+
+    // 1. Access Token
+    res.cookie("authorization", accessToken, {
+      ...commonOptions,
+      maxAge:
+        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string"
+          ? ms(envConstants.ACCESS_TOKEN_EXPIRES_IN)
+          : (envConstants.ACCESS_TOKEN_EXPIRES_IN ?? 0) * 1000,
+    });
+
+    // 2. Refresh Token
+    res.cookie(HttpHeaders.REFRESH_TOKEN, refreshToken, {
+      ...commonOptions,
+      maxAge:
+        typeof envConstants.REFRESH_TOKEN_EXPIRES_IN === "string"
+          ? ms(envConstants.REFRESH_TOKEN_EXPIRES_IN)
+          : (envConstants.REFRESH_TOKEN_EXPIRES_IN ?? 0) * 1000,
+    });
+
+    // 3. Metadata (User ID & Device ID)
+    res.cookie("user-id", userId, { ...commonOptions });
+    res.cookie(HttpHeaders.X_DEVICE_ID, deviceId, { ...commonOptions });
+  }
+
+  private static clearAuthCookies(res: Response) {
+    const isProd = process.env.NODE_ENV === "production";
+
+    // 1. Determine Domain
+    // On Localhost: leave undefined (browsers handle ports automatically)
+    // On Prod: set to ".ansospace.com" (note the leading dot for broad support)
+    const domain = isProd ? ".ansospace.com" : undefined;
+
+    // GDPR Compliance: strict for most, none for EU (if cross-site needed) or lax
+    const sameSite = "lax";
+    const commonOptions = {
+      httpOnly: true,
+      secure: isProd, // Must be true in Prod
+      domain: domain, // ✅ CRITICAL
+      sameSite: sameSite as "strict" | "none" | "lax",
+      path: "/", // ✅ CRITICAL: Ensure it's available on all routes
+    };
+
+    res.clearCookie("authorization", commonOptions);
+    res.clearCookie(HttpHeaders.REFRESH_TOKEN, commonOptions);
+    res.clearCookie("user-id", commonOptions);
+    res.clearCookie(HttpHeaders.X_DEVICE_ID, commonOptions);
+  }
+
   private static setAuthTokenHeaders(res: Response, accessToken: string, refreshToken: string, deviceId: string) {
     res.header(
       "Access-Control-Expose-Headers",
       `set-cookie, ${HttpHeaders.AUTHORIZATION}, ${HttpHeaders.REFRESH_TOKEN}, ${HttpHeaders.X_DEVICE_ID}`
     );
+    res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
     res.setHeader(HttpHeaders.REFRESH_TOKEN, refreshToken);
     res.setHeader(HttpHeaders.X_DEVICE_ID, deviceId);
@@ -58,7 +144,11 @@ export class AuthController {
       deviceId
     );
 
+    // 1. Set Headers (For Mobile/CLI)
     AuthController.setAuthTokenHeaders(res, accessToken, refreshToken, deviceId);
+
+    // 2. ✅ Set Cookies (For Web) - Now supported!
+    AuthController.setAuthCookies(res, accessToken, refreshToken, userId, deviceId, deviceInfo.geolocation);
 
     sendResponse<LoginResponse>({
       response: res,
@@ -79,52 +169,11 @@ export class AuthController {
 
     const { accessToken, refreshToken, userId } = await AuthService.signInWithGoogle(googleUser, deviceInfo, deviceId);
 
+    // 1. Set Headers (For Mobile/CLI)
     AuthController.setAuthTokenHeaders(res, accessToken, refreshToken, deviceId);
 
-    res.cookie("authorization", accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge:
-        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string" && envConstants.ACCESS_TOKEN_EXPIRES_IN
-          ? ms(envConstants.ACCESS_TOKEN_EXPIRES_IN)
-          : (envConstants.ACCESS_TOKEN_EXPIRES_IN ?? 0) * 1000,
-    });
-
-    res.cookie("refresh-token", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge:
-        typeof envConstants.REFRESH_TOKEN_EXPIRES_IN === "string" && envConstants.REFRESH_TOKEN_EXPIRES_IN
-          ? ms(envConstants.REFRESH_TOKEN_EXPIRES_IN)
-          : (envConstants.REFRESH_TOKEN_EXPIRES_IN ?? 0) * 1000,
-    });
-
-    res.cookie("user-id", userId, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge:
-        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string" && envConstants.ACCESS_TOKEN_EXPIRES_IN
-          ? ms(envConstants.ACCESS_TOKEN_EXPIRES_IN)
-          : (envConstants.ACCESS_TOKEN_EXPIRES_IN ?? 0) * 1000,
-      domain: process.env.COOKIE_DOMAIN,
-      ...(deviceInfo.geolocation?.country !== undefined && {
-        // GDPR compliance for EU users
-        sameSite: deviceInfo.geolocation?.country === "EU" ? "none" : "strict",
-      }),
-    });
-
-    res.cookie("x-device-id", deviceId, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge:
-        typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string" && envConstants.ACCESS_TOKEN_EXPIRES_IN
-          ? ms(envConstants.ACCESS_TOKEN_EXPIRES_IN)
-          : (envConstants.ACCESS_TOKEN_EXPIRES_IN ?? 0) * 1000,
-    });
+    // 2. ✅ Set Cookies (For Web) - Now supported!
+    AuthController.setAuthCookies(res, accessToken, refreshToken, userId, deviceId, deviceInfo.geolocation);
 
     // Validate and sanitize the redirect URL
     const state = req.query.state as string;
@@ -142,13 +191,20 @@ export class AuthController {
   }
 
   public static async logout(req: Request, res: Response) {
+    let accessToken: string | null = null;
     const authHeader = req.headers.authorization;
 
-    if (authHeader == null || authHeader === "") throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
-
-    const accessToken = extractTokenFromBearerString(authHeader);
+    if (authHeader !== undefined && authHeader.startsWith("Bearer ")) {
+      accessToken = extractTokenFromBearerString(authHeader);
+    } else if (req.cookies?.authorization !== undefined) {
+      accessToken = req.cookies.authorization;
+    }
+    if (accessToken == null) throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
 
     await AuthService.logout(accessToken);
+
+    // ✅ Clear Cookies on success
+    AuthController.clearAuthCookies(res);
     sendResponse({
       response: res,
       message: success.LOGGED_OUT_SUCCESSFULLY,
@@ -160,6 +216,9 @@ export class AuthController {
     const { userId } = res.locals.loggedInUser;
 
     await AuthService.logoutAll(userId);
+
+    // ✅ Clear cookies
+    AuthController.clearAuthCookies(res);
     sendResponse({
       response: res,
       message: success.LOGGED_OUT_SUCCESSFULLY,

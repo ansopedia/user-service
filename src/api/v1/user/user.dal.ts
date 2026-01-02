@@ -154,6 +154,7 @@ export class UserDAL {
           }, // Fallback to username
           avatar: "$profileDoc.avatar",
           isEmailVerified: 1,
+          hasPassword: { $cond: { if: { $gt: ["$password", null] }, then: true, else: false } },
           roles: {
             $map: {
               input: "$userRoles",

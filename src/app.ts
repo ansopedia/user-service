@@ -1,3 +1,4 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Application } from "express";
 import rateLimit from "express-rate-limit";
@@ -56,7 +57,7 @@ if (NODE_ENV !== "test") {
       }
       return callback(new Error(ErrorTypeEnum.enum.ORIGIN_NOT_ALLOWED), false);
     },
-    credentials: true,
+    credentials: true, // Allows cookies to be sent/received
   };
 
   // Apply CORS middleware
@@ -77,6 +78,7 @@ app.use(globalLimiter);
 app.use(botDetectionMiddleware);
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(passport.initialize());
 app.use(pinoHttp({ logger }));
 app.use(addAxiosHeadersMiddleware);

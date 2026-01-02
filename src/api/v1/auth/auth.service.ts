@@ -257,9 +257,12 @@ export class AuthService {
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
-    const isPasswordMatch = await comparePassword(currentPassword, user.password);
-
-    if (!isPasswordMatch) throw new Error(ErrorTypeEnum.enum.INVALID_CURRENT_PASSWORD);
+    if (user.password && currentPassword) {
+      // Only check if the user has a password and the current password is provided
+      // If the user has no password, we don't need to check the current password because they are not logged in with a password (OAuth only)
+      const isPasswordMatch = await comparePassword(currentPassword, user.password as string);
+      if (!isPasswordMatch) throw new Error(ErrorTypeEnum.enum.INVALID_CURRENT_PASSWORD);
+    }
 
     const updatedUser = await UserService.updateUser(userId, { password });
 
