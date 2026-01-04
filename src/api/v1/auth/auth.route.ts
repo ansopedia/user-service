@@ -1,8 +1,10 @@
 import { Router } from "express";
 
-import { authenticate, signInWithGoogle, signInWithGoogleCallback } from "@/middlewares";
+import { authenticate, checkPermission, signInWithGoogle, signInWithGoogleCallback } from "@/middlewares";
 
+import { PERMISSIONS } from "../../../constants/rbac.constants.js";
 import { ROUTES } from "../../../constants/routes.constant.js";
+import { AuditLogController } from "../audit/audit-log.controller.js";
 import { AuthController } from "./auth.controller.js";
 
 const router = Router();
@@ -16,6 +18,13 @@ router.post(ROUTES.AUTH.CHANGE_PASSWORD, authenticate, AuthController.changePass
 
 router.get(ROUTES.AUTH.GOOGLE, signInWithGoogle); // Initiate Google OAuth flow.
 router.get(ROUTES.AUTH.GOOGLE_CALLBACK, signInWithGoogleCallback, AuthController.signInWithGoogleCallback); // Handle Google OAuth callback.
+
+router.get(
+  ROUTES.AUTH.AUDIT_LOGS,
+  authenticate,
+  checkPermission([PERMISSIONS.VIEW_AUDIT_LOGS]),
+  AuditLogController.getAuditLogs
+);
 
 // Sessions related routes
 router.get(ROUTES.SESSIONS.ROOT, authenticate, AuthController.getSessions); // List all active sessions (IP, Browser, Device) for the user.

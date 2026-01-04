@@ -1,4 +1,4 @@
-import type { DeviceId, ObjectId, Session, SessionQueryOptions } from "@ansospace/types";
+import type { DeviceId, DeviceInfo, ObjectId, Session, SessionQueryOptions } from "@ansospace/types";
 import type { SortOrder, UpdateQuery } from "mongoose";
 
 import { generateRefreshToken } from "@/utils";
@@ -11,10 +11,14 @@ export type SessionSafe = Omit<Session, "refreshToken">;
 
 interface ISessionDal {
   getSessionById(sessionId: ObjectId): Promise<Session | null>;
+  getSessionByUserAndDevice(userId: ObjectId, deviceId: DeviceId): Promise<Session | null>;
   getSessionsByUserId(userId: ObjectId): Promise<Session[]>;
   getActiveSessionsByUserId(userId: ObjectId, options: SessionQueryOptions): Promise<Session[]>;
   getActiveSessionsSafe(userId: ObjectId): Promise<SessionSafe[]>; // Safe version without sensitive data
-  insertSession(session: Omit<Session, "refreshToken" | "createdAt" | "updatedAt" | "isActive">): Promise<Session>;
+  insertSession(
+    session: Omit<Session, "refreshToken" | "createdAt" | "updatedAt" | "isActive" | "id">
+  ): Promise<Session>;
+  upsertSession(userId: ObjectId, deviceId: DeviceId, deviceInfo: DeviceInfo, tokenVersion: number): Promise<Session>;
   updateSession(sessionId: ObjectId, updates: UpdateQuery<Session>): Promise<Session | null>;
   updateSessionByUserAndDevice(userId: ObjectId, deviceId: DeviceId, update: Partial<Session>): Promise<Session | null>;
   deleteSession(sessionId: ObjectId): Promise<void>;
@@ -71,6 +75,10 @@ export class SessionDAL implements ISessionDal {
     return await sessionModel.findById(sessionId);
   }
 
+  async getSessionByUserAndDevice(userId: ObjectId, deviceId: DeviceId): Promise<Session | null> {
+    return await sessionModel.findOne({ userId, deviceId });
+  }
+
   async getSessionsByUserId(userId: ObjectId): Promise<Session[]> {
     return await sessionModel.find({ userId });
   }
@@ -82,6 +90,37 @@ export class SessionDAL implements ISessionDal {
     const refreshToken = generateRefreshToken({ sessionId: newSession.id });
     newSession.refreshToken = refreshToken;
     return await newSession.save();
+  }
+
+  async upsertSession(
+    userId: ObjectId,
+    deviceId: DeviceId,
+    deviceInfo: DeviceInfo,
+    tokenVersion: number
+  ): Promise<Session> {
+    const existingSession = await sessionModel.findOne({ userId, deviceId });
+
+    if (existingSession) {
+      // ✅ RE-LOGIN: Increment Version (Never Reset!)
+      const nextVersion = (existingSession.tokenVersion ?? 0) + 1;
+
+      existingSession.deviceInfo = deviceInfo;
+      existingSession.lastActive = new Date();
+      existingSession.lastLoginAt = new Date(); // Start of NEW session
+      existingSession.tokenVersion = nextVersion;
+      existingSession.isActive = true;
+      existingSession.refreshToken = generateRefreshToken({ sessionId: existingSession.id });
+      return await existingSession.save();
+    }
+
+    return await this.insertSession({
+      userId,
+      deviceId,
+      deviceInfo,
+      tokenVersion,
+      lastActive: new Date(),
+      lastLoginAt: new Date(),
+    } as any); // Cast to any to bypass strict type check if lastLoginAt is missing in base type
   }
 
   async updateSession(

@@ -13,6 +13,7 @@ import {
   type RegisterRequest,
   type RegisterResponse,
   type ResetPasswordRequest,
+  type Session,
   type SessionQueryOptions,
   TokenType,
   emailNotificationEvents,
@@ -30,6 +31,7 @@ import { notificationService, redisService } from "@/services";
 import type { GoogleUser } from "@/types";
 import { comparePassword, generateAccessToken, generateRefreshToken, verifyJWTToken } from "@/utils";
 
+import { AuditLogService } from "../audit/audit-log.service.js";
 import { ProfileService } from "../profile/profile.service.js";
 import { SessionDAL } from "../session/session.dal.js";
 
@@ -43,6 +45,10 @@ interface GenerateTokenParams {
 export class AuthService {
   public static async register(userData: RegisterRequest): Promise<RegisterResponse> {
     const newUser = await UserService.registerUser(userData);
+
+    AuditLogService.log(newUser.id, "auth.register", {
+      metadata: { email: userData.email, username: userData.username },
+    });
 
     await OtpService.sendOtp({
       email: userData.email,
@@ -79,6 +85,14 @@ export class AuthService {
     if (user.isDeleted) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     if (!user.isEmailVerified) throw new Error(ErrorTypeEnum.enum.EMAIL_NOT_VERIFIED);
+
+    AuditLogService.log(user.id, `auth.login.${loginData.email ? "email" : "username"}`, {
+      ip: deviceInfo.ip,
+      metadata: {
+        browser: deviceInfo.browser?.name,
+        os: deviceInfo.os?.name,
+      },
+    });
 
     return await this.generateAccessAndRefreshToken({
       userId: user.id,
@@ -132,6 +146,15 @@ export class AuthService {
       }
     }
 
+    AuditLogService.log(user.id, "auth.login.google", {
+      sessionId: deviceId,
+      ip: deviceInfo.ip,
+      metadata: {
+        browser: deviceInfo.browser?.name,
+        os: deviceInfo.os?.name,
+      },
+    });
+
     return await this.generateAccessAndRefreshToken({
       userId: user.id,
       deviceInfo: deviceInfo,
@@ -157,7 +180,9 @@ export class AuthService {
     await redisService.revokeJti(jti, exp);
 
     // Deactivate the specific session
-    await new SessionDAL().updateSessionByUserAndDevice(userId, deviceId, { isActive: false });
+    const session = await new SessionDAL().updateSessionByUserAndDevice(userId, deviceId, { isActive: false });
+
+    AuditLogService.log(userId, "auth.logout", { sessionId: session?.id });
   }
 
   public static async logoutAll(userId: ObjectId): Promise<{ modifiedCount?: number }> {
@@ -176,6 +201,10 @@ export class AuthService {
         session.tokenVersion + 1
       );
     }
+
+    AuditLogService.log(userId, "auth.logout.all", {
+      metadata: { sessionCount: sessions.length },
+    });
 
     return { modifiedCount: sessions.length };
   }
@@ -200,6 +229,10 @@ export class AuthService {
         modifiedCount++;
       }
     }
+
+    AuditLogService.log(userId, "auth.logout.others", {
+      metadata: { sessionCount: modifiedCount, deviceId },
+    });
 
     return { modifiedCount };
   }
@@ -247,6 +280,8 @@ export class AuthService {
       payload: { recipientName: user.username },
       subject: "Password Changed",
     });
+
+    AuditLogService.log(userId, "auth.password.reset", {});
   }
 
   public static async changePassword(
@@ -258,8 +293,6 @@ export class AuthService {
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
     if (user.password && currentPassword) {
-      // Only check if the user has a password and the current password is provided
-      // If the user has no password, we don't need to check the current password because they are not logged in with a password (OAuth only)
       const isPasswordMatch = await comparePassword(currentPassword, user.password as string);
       if (!isPasswordMatch) throw new Error(ErrorTypeEnum.enum.INVALID_CURRENT_PASSWORD);
     }
@@ -272,80 +305,60 @@ export class AuthService {
       payload: { recipientName: updatedUser.username },
       subject: "Password Changed",
     });
+
+    AuditLogService.log(userId, "auth.password.change", {});
   }
 
   public static async refreshToken(incomingRefreshToken: string) {
     // 1. Verify the incoming token structure
     const decoded = await verifyJWTToken<RefreshTokenPayload>(incomingRefreshToken, TokenType.REFRESH);
-    const { sessionId, jti, exp } = decoded;
-
-    if (jti == null || exp == null) {
-      throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
-    }
+    const { sessionId } = decoded;
 
     if (sessionId == null) throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
 
-    // 2. Fetch the EXISTING session (Do not create new)
-    const session = await new SessionDAL().getSessionById(sessionId);
+    // 2. Fetch the EXISTING session
+    const sessionDAL = new SessionDAL();
+    const session = await sessionDAL.getSessionById(sessionId);
 
     // 3. Validation
     if (!session) throw new Error(ErrorTypeEnum.enum.SESSION_NOT_FOUND);
     if (!session.isActive) throw new Error(ErrorTypeEnum.enum.SESSION_INACTIVE);
 
     // 4. 🚨 SECURITY: Refresh Token Reuse Detection
-    // If the token coming from the client doesn't match what we have in the DB,
-    // it means an old (stolen) token is being reused.
     if (session.refreshToken !== incomingRefreshToken) {
-      // Nuclear option: Invalidate the session immediately to stop the attacker
-      await new SessionDAL().updateSession(sessionId, { isActive: false });
+      await sessionDAL.updateSession(sessionId, { isActive: false });
+
+      AuditLogService.log(session.userId, "auth.token.refresh.fail", {
+        sessionId: session.id.toString(),
+        metadata: { reason: "token_reuse_detected" },
+      });
+
       throw new Error(ErrorTypeEnum.enum.SECURITY_TOKEN_REUSE_DETECTED);
     }
 
-    // 5. Generate NEW Tokens
-    const newAccessProfile = await UserDAL.getUserAccessControl(session.userId);
-
-    // We increment version to invalidate old Access Tokens immediately
+    // 5. Rotate the token and increment version
     const newTokenVersion = session.tokenVersion + 1;
+    const newRefreshToken = generateRefreshToken({ sessionId: session.id });
 
-    // 6. UPDATE the existing session (Rotate the token)
-    // We update the Refresh Token string and the Last Active time
-    const newRefreshToken = generateRefreshToken({
-      sessionId: session.id, // Keep the SAME Session ID
-      // userId: session.userId,
-      // tokenVersion: newTokenVersion,
-    });
-
-    await new SessionDAL().updateSession(sessionId, {
-      refreshToken: newRefreshToken, // Save the new "Key"
+    const updatedSession = await sessionDAL.updateSession(sessionId, {
+      refreshToken: newRefreshToken,
       lastActive: new Date(),
       tokenVersion: newTokenVersion,
-      deviceInfo: session.deviceInfo, // Optional: Update IP/Location if changed
     });
 
-    // 7. Sync with Redis (for fast Access Token validation)
-    await redisService.setUserDeviceTokenVersion(session.userId.toString(), session.deviceId, newTokenVersion);
+    if (!updatedSession) throw new Error(ErrorTypeEnum.enum.SESSION_NOT_FOUND);
 
-    const newAccessToken = generateAccessToken({
-      userId: session.userId,
-      deviceId: session.deviceId,
-      tokenVersion: newTokenVersion,
-      permissions: newAccessProfile.permissions,
-    });
+    // auth.token.refresh is disabled as too noisy (per user request)
 
-    return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken, // Send new rotation key
-      deviceId: session.deviceId,
-    };
+    // 6. Sync with Redis and Generate Tokens
+    return await this.syncSessionAndGenerateTokens(updatedSession);
   }
 
   public static async autoLogin({ actionToken }: AutoLoginRequest): Promise<AuthToken> {
     const tokenService = new TokenService();
     const { userId, id: tokenId } = await tokenService.verifyActionToken(actionToken, userActions.enum.AUTO_LOGIN);
 
-    // For auto-login, we need device info, but since it's from OTP verification, we can use default or empty device info
-    // To keep it simple, we'll use a default deviceId and empty deviceInfo
-    const deviceId: DeviceId = crypto.randomUUID();
+    const deviceId: DeviceId = crypto.randomUUID() as DeviceId;
     const deviceInfo = {} as DeviceInfo;
 
     const authToken = await this.generateAccessAndRefreshToken({
@@ -358,6 +371,10 @@ export class AuthService {
     // Invalidate the action token after use
     await tokenService.invalidateToken(tokenId);
 
+    AuditLogService.log(userId, "auth.login.auto", {
+      sessionId: deviceId,
+    });
+
     return authToken;
   }
 
@@ -367,23 +384,48 @@ export class AuthService {
     deviceId,
     tokenVersion,
   }: GenerateTokenParams) {
-    const session = await new SessionDAL().insertSession({
-      userId: userId,
-      deviceId,
-      deviceInfo: deviceInfo,
-      lastActive: new Date(),
-      tokenVersion,
-    });
+    const sessionDAL = new SessionDAL();
 
+    // 1. Find existing session for this device
+    const existingSession = await sessionDAL.getSessionByUserAndDevice(userId, deviceId);
+    let session: Session;
+
+    if (existingSession) {
+      session = await sessionDAL.upsertSession(userId, deviceId, deviceInfo, existingSession.tokenVersion ?? 0);
+    } else {
+      session = await sessionDAL.upsertSession(userId, deviceId, deviceInfo, tokenVersion);
+    }
+
+    // 3. Finalize: Sync Redis and Generate Tokens
+    return await this.syncSessionAndGenerateTokens(session);
+  }
+
+  /**
+   * Helper to synchronize session state with Redis and generate access tokens.
+   */
+  private static async syncSessionAndGenerateTokens(session: Session) {
+    const { userId, deviceId, tokenVersion, refreshToken } = session;
+
+    // 1. Fetch latest permissions
     const accessProfile = await UserDAL.getUserAccessControl(userId);
 
+    // 2. Sync with Redis (for fast Access Token validation)
+    await redisService.setUserDeviceTokenVersion(userId.toString(), deviceId, tokenVersion);
+
+    // 3. Generate Access Token
     const accessToken = generateAccessToken({
-      userId: userId,
-      deviceId: deviceId,
-      tokenVersion: session.tokenVersion,
+      userId,
+      deviceId,
+      tokenVersion,
       permissions: accessProfile.permissions,
     });
 
-    return { userId, accessToken, refreshToken: session.refreshToken };
+    return {
+      userId,
+      accessToken,
+      refreshToken,
+      deviceId,
+      deviceInfo: session.deviceInfo,
+    };
   }
 }

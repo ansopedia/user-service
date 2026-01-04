@@ -2,6 +2,7 @@ import {
   type AuthToken,
   HttpHeaders,
   type LoginResponse,
+  type ObjectId,
   type RegisterResponse,
   autoLoginRequestSchema,
   changePasswordRequestSchema,
@@ -30,7 +31,7 @@ export class AuthController {
     res: Response,
     accessToken: string,
     refreshToken: string,
-    userId: string,
+    userId: ObjectId,
     deviceId: string,
     geolocation?: { country?: string }
   ) {
@@ -61,7 +62,7 @@ export class AuthController {
     };
 
     // 1. Access Token
-    res.cookie("authorization", accessToken, {
+    res.cookie(HttpHeaders.AUTHORIZATION, accessToken, {
       ...commonOptions,
       maxAge:
         typeof envConstants.ACCESS_TOKEN_EXPIRES_IN === "string"
@@ -101,10 +102,8 @@ export class AuthController {
       path: "/", // ✅ CRITICAL: Ensure it's available on all routes
     };
 
-    res.clearCookie("authorization", commonOptions);
+    res.clearCookie(HttpHeaders.AUTHORIZATION, commonOptions);
     res.clearCookie(HttpHeaders.REFRESH_TOKEN, commonOptions);
-    res.clearCookie("user-id", commonOptions);
-    res.clearCookie(HttpHeaders.X_DEVICE_ID, commonOptions);
   }
 
   private static setAuthTokenHeaders(res: Response, accessToken: string, refreshToken: string, deviceId: string) {
@@ -253,9 +252,19 @@ export class AuthController {
   public static async refreshToken(req: Request, res: Response) {
     const { refreshToken } = refreshTokenRequestSchema.parse(req.body);
 
-    const { accessToken, refreshToken: newRefreshToken, deviceId } = await AuthService.refreshToken(refreshToken);
+    const {
+      accessToken,
+      refreshToken: newRefreshToken,
+      deviceId,
+      userId,
+      deviceInfo,
+    } = await AuthService.refreshToken(refreshToken);
 
+    // 1. Set Headers (For Mobile/CLI)
     AuthController.setAuthTokenHeaders(res, accessToken, newRefreshToken, deviceId);
+
+    // 2. ✅ Set Cookies (For Web) - Now supported!
+    AuthController.setAuthCookies(res, accessToken, newRefreshToken, userId, deviceId, deviceInfo.geolocation);
     sendResponse({
       response: res,
       message: success.TOKEN_RENEWED_SUCCESSFULLY,

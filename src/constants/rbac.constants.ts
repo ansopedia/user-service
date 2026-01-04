@@ -70,6 +70,9 @@ export const PERMISSIONS = {
 
   // Permission Management Permissions
   VIEW_PERMISSIONS: "view-permissions",
+
+  // Audit Management Permissions
+  VIEW_AUDIT_LOGS: "view-audit-logs",
 } as const;
 
 // Create a type based on the values of PERMISSIONS
@@ -363,6 +366,14 @@ export const defaultPermissions: CreatePermission[] = [
     createdBy: systemUserObjectId,
     isDeleted: false,
   },
+  {
+    name: PERMISSIONS.VIEW_AUDIT_LOGS,
+    description:
+      "Allows users to view audit logs of their own activities and authorized users to view logs across the system for security auditing.",
+    category: PermissionCategory.SYSTEM,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
 ];
 export const defaultRoles: CreateRole[] = [
   {
@@ -399,8 +410,9 @@ export const defaultRolePermissions: IDefaultRolePermission = {
     PERMISSIONS.EDIT_PLATFORM,
     PERMISSIONS.DELETE_PLATFORM,
     PERMISSIONS.VIEW_PERMISSIONS,
+    PERMISSIONS.VIEW_AUDIT_LOGS,
   ],
-  [ROLES.USER]: [PERMISSIONS.EDIT_PROFILE, PERMISSIONS.DELETE_PROFILE],
+  [ROLES.USER]: [PERMISSIONS.EDIT_PROFILE, PERMISSIONS.DELETE_PROFILE, PERMISSIONS.VIEW_AUDIT_LOGS],
 };
 
 export const defaultUsers = {

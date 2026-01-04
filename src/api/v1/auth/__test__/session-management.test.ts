@@ -1,5 +1,8 @@
+import { HttpHeaders } from "@ansospace/types";
+import supertest from "supertest";
+
 import { success } from "@/api/v1/auth/auth.constant.js";
-import { STATUS_CODES, mockUser } from "@/constants";
+import { ROUTES, STATUS_CODES, mockUser } from "@/constants";
 import {
   expectLoginSuccess,
   expectLogoutSuccess,
@@ -16,6 +19,8 @@ import {
   signUp,
   verifyAccount,
 } from "@/utils/test";
+
+import { app } from "../../../../app.js";
 
 describe("Session Management APIs", () => {
   let refreshToken1: string;
@@ -137,6 +142,38 @@ describe("Session Management APIs", () => {
     it("should return error for missing authorization header", async () => {
       const sessionsResponse = await getSessions("");
       expectUnauthorizedResponseForMissingAuthorizationHeader(sessionsResponse);
+    });
+
+    it("should upsert session when logging in again from the same device", async () => {
+      const deviceId = "test-device-id";
+
+      // 1. First login with deviceId
+      const loginRes1 = await supertest(app)
+        .post(`${ROUTES.API_ROOT}${ROUTES.AUTH.LOGIN}`)
+        .set(HttpHeaders.X_DEVICE_ID, deviceId)
+        .send(mockUser);
+      expectLoginSuccess(loginRes1);
+
+      // 2. Second login with SAME deviceId
+      const loginRes2 = await supertest(app)
+        .post(`${ROUTES.API_ROOT}${ROUTES.AUTH.LOGIN}`)
+        .set(HttpHeaders.X_DEVICE_ID, deviceId)
+        .send(mockUser);
+      expectLoginSuccess(loginRes2);
+
+      const authHeader = `Bearer ${loginRes2.headers["authorization"] as string}`;
+
+      // 3. Verify total sessions (should only be 1 for THIS deviceId)
+      const sessionsResponse = await getSessions(authHeader);
+      const sessions = sessionsResponse.body.data;
+      const deviceSessions = sessions.filter((s: any) => s.deviceId === deviceId);
+
+      expect(deviceSessions.length).toBe(1);
+
+      // 4. Verify Monotonic Increment (tokenVersion should be 1, not 0)
+      const [session] = deviceSessions;
+      expect(session.tokenVersion).toBe(((loginRes1.body.data.tokenVersion as number) ?? 0) + 1);
+      expect(session.lastLoginAt).toBeDefined();
     });
   });
 

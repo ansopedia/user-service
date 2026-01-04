@@ -22,8 +22,13 @@ export const getDeviceInfo = (req: Request): DeviceInfo => {
 
   const isBotResult = isBot(ua);
 
-  // Device ID from client header (persistent per install)
-  const deviceIdHeader: DeviceInfo["deviceId"] = req.headers[HttpHeaders.X_DEVICE_ID] as DeviceInfo["deviceId"];
+  // Device ID from client header or cookie (persistent per install)
+  let deviceId: DeviceInfo["deviceId"] = req.headers[HttpHeaders.X_DEVICE_ID] as DeviceInfo["deviceId"];
+
+  // 2. Check Cookie (Web/Next.js)
+  if (deviceId == null && req.cookies != null && req.cookies[HttpHeaders.X_DEVICE_ID] != null) {
+    deviceId = req.cookies[HttpHeaders.X_DEVICE_ID] as DeviceInfo["deviceId"];
+  }
 
   // Resolve IP in order of trust
   const forwardedFor = (req.headers["x-forwarded-for"] as string) || "";
@@ -52,7 +57,7 @@ export const getDeviceInfo = (req: Request): DeviceInfo => {
 
   return {
     ...result,
-    deviceId: deviceIdHeader,
+    deviceId,
     isBot: isBotResult,
     ip,
     timestamp: new Date(),

@@ -53,11 +53,13 @@ export const ROUTES = {
     LOGIN: "/auth/login",
     AUTO_LOGIN: "/auth/auto-login",
     REFRESH: "/auth/refresh",
-    
+
     RESET_PASSWORD: "/auth/reset-password",
     CHANGE_PASSWORD: "/auth/change-password",
 
     GOOGLE: "/auth/google",
     GOOGLE_CALLBACK: "/auth/google/callback",
+
+    AUDIT_LOGS: "/auth/audit-logs",
   },
 } as const;
