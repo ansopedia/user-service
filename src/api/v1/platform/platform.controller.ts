@@ -39,7 +39,7 @@ export const getPlatforms = async (_: Request, res: Response) => {
 
 export const getPlatformBySlug = async (req: Request, res: Response) => {
   const { slug } = req.params;
-  const platform = await PlatformService.getPlatformBySlug(slug);
+  const platform = await PlatformService.getPlatformBySlug(slug as string);
 
   sendResponse({
     response: res,
@@ -55,7 +55,7 @@ export const updatePlatform = async (req: Request, res: Response) => {
   const { slug } = req.params;
   const parsedInput = UpdatePlatformInputSchema.parse(req.body);
 
-  const updatedPlatform = await PlatformService.updatePlatformBySlug(slug, {
+  const updatedPlatform = await PlatformService.updatePlatformBySlug(slug as string, {
     ...parsedInput,
     updatedBy: res.locals.loggedInUser.userId,
   });
@@ -73,7 +73,7 @@ export const updatePlatform = async (req: Request, res: Response) => {
 export const deletePlatform = async (req: Request, res: Response) => {
   const { slug } = req.params;
 
-  await PlatformService.deletePlatformBySlug(slug, res.locals.loggedInUser.userId);
+  await PlatformService.deletePlatformBySlug(slug as string, res.locals.loggedInUser.userId);
 
   sendResponse({
     response: res,
