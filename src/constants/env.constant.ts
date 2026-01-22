@@ -31,6 +31,7 @@ const envSchema = z.object({
     .enum(["development", "stage", "local", "test", "production"], {
       error: "NODE_ENV is required and must be one of development, stage, local, test, or production",
     })
+    .default("development")
     .readonly(),
   ACTION_TOKEN_SECRET: z.string().min(1, { error: "ACTION_TOKEN_SECRET is required" }).readonly(),
   ACCESS_TOKEN_EXPIRES_IN: z.custom<SignOptions["expiresIn"]>().readonly(),

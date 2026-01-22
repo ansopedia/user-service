@@ -12,5 +12,6 @@ export const toSessionDTO = (doc: Omit<Session, "id"> & { _id: ObjectId }): Sess
     deviceId: doc.deviceId,
     deviceInfo: doc.deviceInfo,
     isActive: doc.isActive,
+    lastLoginAt: doc.lastLoginAt,
   };
 };

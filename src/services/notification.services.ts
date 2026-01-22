@@ -5,7 +5,7 @@ import { errorLogger } from "@/utils";
 
 const sendEmail = async (body: EmailNotification) => {
   // Skiping sending notification for test environment
-  if (envConstants.NODE_ENV !== "test") return;
+  if (envConstants.NODE_ENV === "test") return;
 
   let response: Response | undefined;
   try {
