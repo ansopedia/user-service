@@ -16,7 +16,7 @@ import {
 } from "@/constants";
 import { addAxiosHeadersMiddleware, allowedOrigins, botDetectionMiddleware, errorHandler } from "@/middlewares";
 import { routes } from "@/routes";
-import { errorLogger, logger } from "@/utils";
+import { CryptoUtil, errorLogger, logger } from "@/utils";
 
 import "./config/passport.js";
 import { ROUTES } from "./constants/routes.constant.js";
@@ -86,6 +86,17 @@ app.use(morgan("dev"));
 
 app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok" });
+});
+
+app.get("/.well-known/jwks.json", (_req, res) => {
+  try {
+    const cryptoUtil = CryptoUtil.getInstance();
+    const jwks = cryptoUtil.getJwks();
+    res.status(200).json(jwks);
+  } catch (error) {
+    errorLogger.error(`Error serving JWKS: ${error}`);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 app.use(ROUTES.API_ROOT, routes);

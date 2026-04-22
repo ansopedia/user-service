@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 import { ErrorTypeEnum, envConstants } from "@/constants";
 
 import { errorLogger } from "./logger.js";
@@ -10,6 +12,7 @@ interface KeyPair {
 export class CryptoUtil {
   private static instance: CryptoUtil | null = null;
   private keyPair: KeyPair | null = null;
+  private jwks: Record<string, unknown> | null = null;
 
   private constructor() {}
 
@@ -50,5 +53,26 @@ export class CryptoUtil {
       throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
     }
     return this.keyPair.privateKey;
+  }
+
+  getJwks(): Record<string, unknown> {
+    if (this.jwks) return this.jwks;
+    
+    const publicKeyStr = this.getPublicKey();
+    const publicKey = crypto.createPublicKey(publicKeyStr);
+    const jwk = publicKey.export({ format: "jwk" });
+    
+    this.jwks = {
+      keys: [
+        {
+          ...jwk,
+          kid: "ansopedia-user-service-key",
+          use: "sig",
+          alg: "RS256",
+        },
+      ],
+    };
+    
+    return this.jwks;
   }
 }
