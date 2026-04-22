@@ -14,13 +14,13 @@ import { OtpService } from "./otp.service.js";
 export class OtpController {
   public static async sendOtp(req: Request, res: Response) {
     const parsedBody = sendOtpRequestSchema.parse(req.body);
-    const { message, actionToken } = await OtpService.sendOtp(parsedBody);
+    const { message, actionToken, userId } = await OtpService.sendOtp(parsedBody);
 
     sendResponse<SendOtpResponse>({
       response: res,
       message: message,
       statusCode: STATUS_CODES.OK,
-      data: { actionToken },
+      data: { actionToken, userId },
     });
   }
 

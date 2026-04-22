@@ -68,7 +68,7 @@ export class OtpService {
     // Generate a temporary token for the user
     const actionToken = await new TokenService().createActionToken(user.id, sendOtpToActionMap[eventType]);
 
-    return { message, actionToken };
+    return { message, actionToken, userId: user.id };
   }
 
   public static async verifyOtp(verifyOtpRequest: VerifyOtpRequest): Promise<{ message: string; actionToken: string }> {

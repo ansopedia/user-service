@@ -12,8 +12,8 @@ importers:
         specifier: 0.0.1
         version: 0.0.1(@typescript-eslint/parser@8.50.0(eslint@9.39.2)(typescript@5.9.3))(eslint-config-prettier@10.1.8(eslint@9.39.2))(eslint-plugin-sonarjs@3.0.5(eslint@9.39.2))(eslint@9.39.2)(turbo@2.7.5)(typescript@5.9.3)
       '@ansospace/types':
-        specifier: 0.5.0
-        version: 0.5.0
+        specifier: file:..\ansospace\packages\types
+        version: file:../ansospace/packages/types
       axios:
         specifier: 1.13.2
         version: 1.13.2
@@ -191,8 +191,8 @@ packages:
       typescript:
         optional: true
 
-  '@ansospace/types@0.5.0':
-    resolution: {integrity: sha512-QBvNWNY964DmsQog9xMr67mLz8Mg1zPCUWg3xJZUhuCFQKcM9avbGcyEf2I48QgtlYuHIBGn45Z/H6NK8GHB5g==}
+  '@ansospace/types@file:../ansospace/packages/types':
+    resolution: {directory: ../ansospace/packages/types, type: directory}
 
   '@babel/code-frame@7.28.6':
     resolution: {integrity: sha512-JYgintcMjRiCvS8mMECzaEn+m3PfoQiyqukOMCCVQtoJGYJw8j/8LBJEiqkHLkfwCcs74E3pbAUFNg7d9VNJ+Q==}
@@ -3308,7 +3308,7 @@ snapshots:
       - supports-color
       - turbo
 
-  '@ansospace/types@0.5.0':
+  '@ansospace/types@file:../ansospace/packages/types':
     dependencies:
       bson: 7.1.1
       zod: 4.3.2
@@ -6052,7 +6052,7 @@ snapshots:
 
   refa@0.12.1:
     dependencies:
-      '@eslint-community/regexpp': 4.12.1
+      '@eslint-community/regexpp': 4.12.2
 
   reflect.getprototypeof@1.0.10:
     dependencies:
@@ -6068,7 +6068,7 @@ snapshots:
 
   regexp-ast-analysis@0.7.1:
     dependencies:
-      '@eslint-community/regexpp': 4.12.1
+      '@eslint-community/regexpp': 4.12.2
       refa: 0.12.1
 
   regexp.prototype.flags@1.5.4:
@@ -6185,7 +6185,7 @@ snapshots:
 
   scslre@0.3.0:
     dependencies:
-      '@eslint-community/regexpp': 4.12.1
+      '@eslint-community/regexpp': 4.12.2
       refa: 0.12.1
       regexp-ast-analysis: 0.7.1
 
